@@ -590,6 +590,13 @@
     flushing = false;
   }
   setInterval(flush, 15000);
+  /** read the live state from the Google Sheet (null if sync is off or slow) */
+  TC.fetchState = async function (ms = 2500) {
+    if (!TC.cfg.syncUrl) return null;
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+    try { const u = TC.cfg.syncUrl + (TC.cfg.syncUrl.includes("?") ? "&" : "?") + "action=state&t=" + Date.now(); const r = await fetch(u, { signal: ctl.signal }); return await r.json(); }
+    catch (e) { return null; } finally { clearTimeout(t); }
+  };
   TC.flush = flush;
   TC.exportCSV = function () {
     const log = safeJSON(localStorage.getItem("tc_log")) || [];

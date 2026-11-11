@@ -100,6 +100,13 @@
           h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級 Intermediate", "高級 Advanced"][kid.level] + " · " + G.zh)),
         h("div", { style: "width:13rem;height:15rem", html: TC.ollieSVG("cheer") })));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
+    // with sync on: show how many gates this traveller has already stamped
+    TC.fetchState().then((st) => {
+      const k = st && st.kids && (st.kids[kid.id] || st.kids[String(+kid.id)]);
+      if (!k || !ov.isConnected) return;
+      const n = (k.gates || []).filter((g) => g !== gate).length;
+      ov.querySelector(".bpass > div:nth-child(2)").append(h("div", { style: "font-size:2.2rem;font-weight:700;color:#e8a21a;margin-top:.4rem" }, `★ ${n} / 6 stamps · 已收集 ${n} 個印章`));
+    });
     await TC.speak(`Welcome to ${G.city}, ${kid.name}!`);
     await sleep(600); ov.remove();
     TC.log({ type: "start" });
