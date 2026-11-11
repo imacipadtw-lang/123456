@@ -2,11 +2,10 @@
 (function () {
   "use strict";
   TC.games = TC.games || {};
-  const img = (n) => { const i = new Image(); i.src = `assets/emoji/${n}.svg`; return i; };
-  const IM = {}; ["bus", "train", "taxi", "plane", "bike", "boat", "truck", "scooter", "tree", "checkered-flag", "star", "trophy"].forEach((n) => (IM[n] = img(n)));
+  const IM = {}; ["bus", "train", "taxi", "plane", "bike", "boat", "truck", "scooter", "tree", "star", "trophy"].forEach((n) => (IM[n] = TC.artImg(n)));
 
   let cv, ctx, W, H, raf = 0;
-  const S = { pos: 0, speed: 0, target: 0, boost: 0, curveX: 0, signs: [], finishAt: 0, rival: 0, rivalSpeed: 0, bubble: null, shake: 0, kidColor: "#ffc83d", kidName: "", place: 2, running: false, finished: false };
+  const S = { lane: 0, laneX: 0, stars: [], got: 0, hint: 0, pos: 0, speed: 0, target: 0, boost: 0, curveX: 0, signs: [], finishAt: 0, rival: 0, rivalSpeed: 0, bubble: null, shake: 0, kidColor: "#ffc83d", kidName: "", place: 2, running: false, finished: false };
   const SEG = 220; // world units per stripe pair
 
   function curve(d) { return Math.sin(d / 1300) * 0.9 + Math.sin(d / 520 + 1) * 0.45; }
@@ -64,6 +63,13 @@
       spr.push({ d, side: i % 2 ? 1.5 : -1.5, img: IM.tree, s: 1.1 });
     }
     S.signs.forEach((sg) => !sg.done && spr.push({ d: sg.d, side: 0, sign: sg }));
+    S.laneX += (S.lane - S.laneX) * 0.18;
+    S.stars.forEach((st) => {
+      if (st.done) return;
+      const dz = st.d - S.pos;
+      if (dz < 140 && dz > -40) { if (Math.abs(st.lane - S.laneX) < 0.5) { st.done = true; S.got++; TC.sfx("coin"); TC.floatText("+1 ★", 50 + st.lane * 18, 62, "#ffc83d"); } }
+      if (!st.done && dz > -60) spr.push({ d: st.d, side: st.lane * 0.62, img: IM.star, s: 0.42, spin: true });
+    });
     if (S.finishAt) spr.push({ d: S.finishAt, side: 0, banner: true });
     spr.push({ d: S.rival, side: -0.35, rival: true });
     spr.sort((a, b) => b.d - a.d);
@@ -73,14 +79,22 @@
       const row = rows.reduce((a, r) => (Math.abs(r.y - y) < Math.abs(a.y - y) ? r : a), rows[0]);
       const sc = dy / (H - y0);
       const px = row.x + s.side * row.half;
-      if (s.img) { const sz = H * 0.5 * sc * s.s; if (s.img.complete) ctx.drawImage(s.img, px - sz / 2, y - sz, sz, sz); }
+      if (s.img) { const sz = H * 0.5 * sc * s.s; if (s.img.complete) { if (s.spin) { const k = Math.abs(Math.cos(performance.now() / 260)); ctx.drawImage(s.img, px - (sz * k) / 2, y - sz * 1.3, sz * k, sz); } else ctx.drawImage(s.img, px - sz / 2, y - sz, sz, sz); } }
       else if (s.sign) drawSign(px, y, sc, s.sign);
       else if (s.banner) drawBanner(row.x, y, row.half);
       else if (s.rival) drawKart(px, y, sc * 0.9, "#9b6bff", "O", 0, true);
     }
     // player kart
     const tilt = Math.max(-0.12, Math.min(0.12, curve(S.pos) * 0.12));
-    drawKart(W / 2, H * 0.8, 1, S.kidColor, S.kidName[0] || "?", tilt, false);
+    const roadHalfBottom = W * 0.62 * ((H * 0.8 - y0) / (H - y0));
+    drawKart(W / 2 + S.laneX * roadHalfBottom * 0.62, H * 0.8, 1, S.kidColor, S.kidName[0] || "?", tilt + (S.lane - S.laneX) * 0.25, false);
+    // star counter + lane hint
+    if (S.running) {
+      ctx.font = `700 ${H * 0.055}px Fredoka, sans-serif`; ctx.textAlign = "right"; ctx.lineWidth = H * 0.01; ctx.strokeStyle = "#0a1633"; ctx.fillStyle = "#ffc83d";
+      ctx.strokeText(`★ ${S.got}`, W * 0.97, H * 0.2); ctx.fillText(`★ ${S.got}`, W * 0.97, H * 0.2);
+      if (S.hint > 0 && !S.bubble) { S.hint -= dt; ctx.globalAlpha = Math.min(1, S.hint); ctx.textAlign = "center"; ctx.font = `700 ${H * 0.045}px Fredoka, "Microsoft JhengHei", sans-serif`; ctx.fillStyle = "#fff";
+        ctx.strokeText("👈 點左右換車道，收集星星！ 👉", W / 2, H * 0.62); ctx.fillText("👈 點左右換車道，收集星星！ 👉", W / 2, H * 0.62); ctx.globalAlpha = 1; }
+    }
     if (S.boost > 0 || S.speed > 900) speedLines();
     // bubble with the vehicle picture
     if (S.bubble) {
@@ -126,11 +140,15 @@
     ctx.save(); ctx.translate(x, y); ctx.rotate(tilt);
     ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.beginPath(); ctx.ellipse(0, 0, 70 * u, 14 * u, 0, 0, 7); ctx.fill();
     ctx.fillStyle = "#111"; roundRect(-66 * u, -38 * u, 30 * u, 36 * u, 6 * u); ctx.fill(); roundRect(36 * u, -38 * u, 30 * u, 36 * u, 6 * u); ctx.fill();
-    ctx.fillStyle = color; roundRect(-48 * u, -62 * u, 96 * u, 50 * u, 16 * u); ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,.35)"; roundRect(-40 * u, -58 * u, 80 * u, 12 * u, 6 * u); ctx.fill();
+    const gb = ctx.createLinearGradient(0, -62 * u, 0, -12 * u); gb.addColorStop(0, "#ffffff"); gb.addColorStop(0.12, color); gb.addColorStop(1, "rgba(0,0,0,.45)");
+    ctx.fillStyle = color; roundRect(-48 * u, -62 * u, 96 * u, 50 * u, 16 * u); ctx.fill(); ctx.fillStyle = gb; ctx.globalAlpha = 0.55; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = "rgba(255,255,255,.45)"; roundRect(-40 * u, -58 * u, 80 * u, 10 * u, 5 * u); ctx.fill();
+    ctx.fillStyle = "#26293a"; roundRect(-60 * u, -78 * u, 120 * u, 10 * u, 4 * u); ctx.fill(); ctx.fillRect(-46 * u, -70 * u, 8 * u, 12 * u); ctx.fillRect(38 * u, -70 * u, 8 * u, 12 * u);
+    ctx.fillStyle = "#8a94b8"; ctx.beginPath(); ctx.arc(-22 * u, -18 * u, 6 * u, 0, 7); ctx.arc(22 * u, -18 * u, 6 * u, 0, 7); ctx.fill();
     ctx.fillStyle = "#0a1633"; roundRect(-56 * u, -30 * u, 112 * u, 12 * u, 5 * u); ctx.fill();
     // driver helmet
-    ctx.fillStyle = rival ? "#8fa2ff" : "#fff"; ctx.beginPath(); ctx.arc(0, -82 * u, 26 * u, 0, 7); ctx.fill();
+    const gh = ctx.createRadialGradient(-9 * u, -92 * u, 2 * u, 0, -82 * u, 28 * u); gh.addColorStop(0, "#ffffff"); gh.addColorStop(0.5, rival ? "#8fa2ff" : "#eef2ff"); gh.addColorStop(1, rival ? "#4a5bc0" : "#9aa6cf");
+    ctx.fillStyle = gh; ctx.beginPath(); ctx.arc(0, -82 * u, 26 * u, 0, 7); ctx.fill();
     ctx.fillStyle = color; ctx.font = `700 ${30 * u}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(letter, 0, -80 * u); ctx.textBaseline = "alphabetic";
     if (!rival && S.boost > 0) { for (let i = 0; i < 2; i++) { const fx = (i ? 30 : -30) * u; ctx.fillStyle = Math.random() > 0.5 ? "#ffc83d" : "#ff5a5a"; ctx.beginPath(); ctx.moveTo(fx - 10 * u, -20 * u); ctx.lineTo(fx + 10 * u, -20 * u); ctx.lineTo(fx, (10 + Math.random() * 30) * u); ctx.fill(); } }
     ctx.restore();
@@ -149,15 +167,18 @@
   TC.games.kart = {
     mount(api) {
       cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d");
+      cv.addEventListener("pointerdown", (e) => { if (!S.running || S.bubble) return; const r = cv.getBoundingClientRect(); S.lane = Math.max(-1, Math.min(1, S.lane + (e.clientX - r.left < r.width / 2 ? -1 : 1))); TC.sfx("whoosh"); });
       resize(); addEventListener("resize", resize);
       raf = requestAnimationFrame(draw);
     },
     idle() { S.running = false; S.bubble = null; S.target = 300; S.rivalSpeed = 0; S.signs = []; S.finishAt = 0; S.kidName = ""; S.kidColor = "#ffc83d"; },
     async play(api) {
       const G = api.G, kid = api.kid;
-      Object.assign(S, { pos: 0, speed: 0, target: 0, boost: 0, rival: 1500, rivalSpeed: 0, signs: [], finishAt: 0, bubble: null, kidColor: kid.color, kidName: kid.name, running: true });
+      Object.assign(S, { pos: 0, speed: 0, target: 0, boost: 0, rival: 1500, rivalSpeed: 0, signs: [], finishAt: 0, bubble: null, kidColor: kid.color, kidName: kid.name, running: true, lane: 0, laneX: 0, stars: [], got: 0, hint: 6 });
       const items = G.items.slice().sort(() => Math.random() - 0.5).slice(0, TC.rounds(5));
       items.forEach((it, i) => S.signs.push({ d: 3500 + i * 5200, it }));
+      // star trails between the signs, weaving across the three lanes
+      for (let d = 1200; d < 3500 + items.length * 5200 + 4000; d += 420) { const near = S.signs.some((sg) => Math.abs(sg.d - d) < 900); if (!near) S.stars.push({ d, lane: Math.round(Math.sin(d / 1700) * 1.4), done: false }); }
       const N = items.length + 1;
       await TC.speak("Ready? Go!"); TC.sfx("boost");
       S.rivalSpeed = 420;
@@ -182,7 +203,7 @@
       }
       // finish
       api.progress(items.length, N);
-      S.finishAt = S.pos + 5200; S.rival = Math.min(S.rival, S.pos - 900); S.rivalSpeed = 500;
+      S.lane = 0; S.finishAt = S.pos + 5200; S.rival = Math.min(S.rival, S.pos - 900); S.rivalSpeed = 500;
       await driveTo(S.finishAt + 700, api); if (api.aborted) return null;
       const F = G.finale, L = api.level;
       const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], keys: F.keys[L], word: "first" });

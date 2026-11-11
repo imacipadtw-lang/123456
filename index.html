@@ -52,11 +52,11 @@
 <script src="js/art.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
-  const icons = { 1: "racecar", 2: "rainbow", 3: "tiger", 4: "microphone", 5: "gift", 6: "trophy" };
+  const icons = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}"><img src="assets/emoji/${icons[n]}.svg" alt=""><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}"><img src="${TC.art(icons[n])}" alt=""><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
   });
 </script>
 </body>

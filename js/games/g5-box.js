@@ -33,6 +33,8 @@
   .g5 .clue .b em{font-style:normal;background:#9b6bff;color:#fff;border-radius:50%;width:3rem;height:3rem;display:grid;place-items:center;font-size:1.6rem;flex:0 0 auto}
   .g5 .shelfItems{position:absolute;right:3%;top:16%;display:flex;flex-direction:column;gap:1.5vh;padding:1.5vh;border-radius:2vh;background:rgba(255,255,255,.08);min-height:12vh}
   .g5 .shelfItems img{width:10vh;height:10vh;animation:pop .5s}
+  .g5 .boxw,.g5 .clue{cursor:pointer;touch-action:manipulation}
+  .g5 .tapopen{position:absolute;left:50%;top:76%;transform:translateX(-50%);font-size:3.2rem;font-weight:700;color:#ffc83d;text-shadow:0 .3rem 0 #000;animation:float 1s ease-in-out infinite;white-space:nowrap}
   .g5 .label{position:absolute;left:50%;top:70%;transform:translateX(-50%);font-size:5rem;font-weight:700;opacity:0;transition:opacity .3s;text-shadow:0 .3rem 0 #000}
   .g5 .open .label{opacity:1}
   `;
@@ -40,7 +42,7 @@
                { n: "RARE", c1: "#9b6bff", c2: "#ff5fa2", beam: "rgba(155,107,255,.6)", col: "#c9a8ff" },
                { n: "EPIC", c1: "#ff5fa2", c2: "#ff9a2e", beam: "rgba(255,95,162,.6)", col: "#ff8cc0" },
                { n: "LEGENDARY", c1: "#ffc83d", c2: "#ff9a2e", beam: "rgba(255,210,80,.75)", col: "#ffc83d" }];
-  let root, boxw, scene, clueBox, itemImg, rarEl, labelEl, shelf;
+  let root, boxw, scene, clueBox, itemImg, rarEl, labelEl, shelf, tapOpen, openReady = false, flipNext = null;
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g5" });
@@ -52,14 +54,19 @@
     scene.append(beams, boxw, itemImg, rarEl, labelEl);
     clueBox = TC.h("div", { class: "clues" });
     shelf = TC.h("div", { class: "shelfItems" });
-    root.append(TC.h("div", { class: "shelf" }), shelf, scene, clueBox);
+    tapOpen = TC.h("div", { class: "tapopen hidden zh" }, "👆 TAP TO OPEN! 點箱子打開！");
+    root.append(TC.h("div", { class: "shelf" }), shelf, scene, clueBox, tapOpen);
     api.stage.append(root);
+    boxw.addEventListener("pointerdown", () => {
+      if (TC.pending && openReady) { TC.pending(); return; }
+      boxw.classList.remove("shake"); void boxw.offsetWidth; boxw.classList.add("shake"); TC.sfx("snare"); setTimeout(() => boxw.classList.remove("shake"), 450);
+    });
     setRar(RAR[1]);
   }
   function setRar(r) { scene.style.setProperty("--c1", r.c1); scene.style.setProperty("--c2", r.c2); scene.style.setProperty("--beam", r.beam); rarEl.textContent = "★ " + r.n + " ★"; rarEl.style.color = r.col; }
   function makeClues(list) {
     clueBox.innerHTML = "";
-    return list.map((t, i) => { const c = TC.h("div", { class: "clue" }, TC.h("div", { class: "in" }, TC.h("div", { class: "f" }, `CLUE ${i + 1} ❓`), TC.h("div", { class: "b" }, TC.h("em", {}, i + 1 + ""), t))); clueBox.append(c); return c; });
+    return list.map((t, i) => { const c = TC.h("div", { class: "clue", onpointerdown: () => flipNext && flipNext() }, TC.h("div", { class: "in" }, TC.h("div", { class: "f" }, `CLUE ${i + 1} ❓`), TC.h("div", { class: "b" }, TC.h("em", {}, i + 1 + ""), t))); clueBox.append(c); return c; });
   }
 
   TC.games.box = {
@@ -78,23 +85,26 @@
         const cards = makeClues(it.clues);
         let shown = 0, done = false;
         const flip = async () => { if (shown >= cards.length || done) return; const c = cards[shown++]; c.classList.add("on"); TC.sfx("pop"); await TC.speak(it.clues[shown - 1]); };
+        flipNext = () => { if (!TC.isQuiet()) flip(); };
         await flip();
-        const timer = setInterval(() => { if (!done) flip(); }, 8000);
+        const timer = setInterval(() => { if (!done) flip(); }, 9000);
         const say = L === 1 ? cap(it.w) + "!" : L === 2 ? it.q2 : it.s3;
         const keys = it.keys || [[it.w]];
         const distractors = G.items.filter((x) => x.w !== it.w).map((x) => ({ w: x.w, keys: x.keys || [[x.w]] }));
         const r = await api.ask({ teacher: G.teacher, tzh: "聽線索，猜猜是什麼？", say, zh: "", keys, word: it.w, distractors, autoModel: false, hideKey: true,
           onWrong: (w) => { boxw.classList.add("shake"); TC.sfx("wrong"); TC.toast(`No, it isn't ${w}! 不是喔！`, 1600); setTimeout(() => boxw.classList.remove("shake"), 700); setTimeout(flip, 900); } });
-        done = true; clearInterval(timer);
+        done = true; clearInterval(timer); flipNext = null;
         if (api.aborted) return null;
         TC.hideTalk();
         cards.forEach((c) => c.classList.add("on"));
+        tapOpen.classList.remove("hidden"); openReady = true; TC.sfx("pop");
+        await TC.waitAction(7000); openReady = false; tapOpen.classList.add("hidden");
         boxw.classList.add("shake"); TC.sfx("drum"); await TC.sleep(1000); boxw.classList.remove("shake");
-        itemImg.src = `assets/emoji/${it.img}.svg`; labelEl.textContent = cap(it.w) + "!";
+        itemImg.src = TC.art(it.img); labelEl.textContent = cap(it.w) + "!";
         scene.classList.add("open"); TC.sfx(i === items.length - 1 ? "fanfare" : "levelup"); TC.confetti(i === items.length - 1 ? 220 : 100, [rar.c1, rar.c2, "#fff"]);
         await TC.speak(`Yes, it is! ${cap(it.w)}!`);
         await TC.sleep(1300);
-        got.push(it); shelf.append(TC.h("img", { src: `assets/emoji/${it.img}.svg`, alt: it.w }));
+        got.push(it); shelf.append(TC.artImg(it.img));
         scene.classList.remove("open"); boxw.className = "boxw";
         await TC.sleep(300);
       }

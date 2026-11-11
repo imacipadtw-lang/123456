@@ -44,7 +44,7 @@
       "..oo....oo.."] }
   ];
 
-  let cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [];
+  let cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [], swRects = [], pickCb = null, picked = null, toyMode = false;
   function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); layout(); }
   let L = { s: 30, ox: 0, oy: 0, d: 10 };
   function layout() {
@@ -98,8 +98,11 @@
     for (const p of sparks) { p.vy += 0.15; p.x += p.vx; p.y += p.vy; p.l -= 0.015; ctx.globalAlpha = Math.max(0, p.l); ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, H * 0.008, H * 0.008); }
     ctx.globalAlpha = 1; sparks = sparks.filter((p) => p.l > 0);
     // palette swatches (left)
+    swRects = [];
     palette.forEach((p, i) => {
-      const x = W * 0.05, y = H * 0.16 + i * H * 0.088, sz = H * 0.062, pulse = p.done ? 0 : Math.sin(t * 5 + i) * 0.06;
+      const x = W * 0.05, y = H * 0.16 + i * H * 0.088, sz = H * (picked === p.name ? 0.075 : 0.062), pulse = p.done ? 0 : Math.sin(t * 5 + i) * 0.06;
+      swRects.push({ p, x: x - 10, y: y - sz * 0.6, w: W * 0.2, h: sz * 1.5 });
+      if (picked === p.name) { ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x - 14, y - sz * 0.55, W * 0.2, sz * 1.5, 18) : ctx.rect(x - 14, y - sz * 0.55, W * 0.2, sz * 1.5); ctx.fill(); }
       cube(x, y - sz * pulse, sz, sz * 0.35, p.hex, p.done ? 0.35 : 1);
       ctx.font = `600 ${H * 0.032}px Fredoka, sans-serif`; ctx.textAlign = "left"; ctx.fillStyle = p.done ? "rgba(10,22,51,.35)" : "#0a1633";
       ctx.fillText(p.done ? "✓ " + p.name : p.name, x + sz * 1.55, y + sz * 0.68);
@@ -121,7 +124,17 @@
   const heardColor = (text, allowed) => TC.pickHeard(text, allowed);
 
   TC.games.craft = {
-    mount(api) { cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d"); t0 = performance.now(); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
+    mount(api) { cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d");
+      cv.addEventListener("pointerdown", (e) => {
+        const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * (W / r.width), y = (e.clientY - r.top) * (H / r.height);
+        const hit = swRects.find((q) => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h && !q.p.done);
+        if (hit && pickCb) { picked = hit.p.name; TC.sfx("pop"); TC.playHuman(hit.p.name); const f = pickCb; pickCb = null; f(hit.p.name); return; }
+        if (toyMode || !pickCb) { // toy: tap a block to make it hop
+          const { s, ox, oy } = L; const c = Math.floor((x - ox) / s), rr = Math.floor((y - oy) / s);
+          const b = blocks.find((q) => q.placed && q.c === c && q.r === rr && q.y === 0);
+          if (b) { b.vy = -H * 0.03; b.y = -1; TC.sfx("pop"); burst(x, y, b.hex); }
+        }
+      }); t0 = performance.now(); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
     idle() { setArt(ART[(Math.random() * ART.length) | 0]); blocks.forEach((b) => { b.placed = true; }); glow = null; },
     async play(api) {
       const G = api.G, C = G.colors;
@@ -132,17 +145,22 @@
       for (let i = 0; i < palette.length; i++) {
         api.progress(i, N);
         const left = palette.filter((p) => !p.done).map((p) => p.name);
-        const first = left[0], L = api.level;
+        // 👆 the child taps the colour block they want (or the teacher presses Enter)
+        picked = null; TC.floatText("👆 Tap a color!", 30, 22, "#0a1633");
+        const tapped = await new Promise((res) => { pickCb = res; TC.pending = () => { pickCb = null; res(null); }; setTimeout(() => { if (pickCb) { pickCb = null; TC.pending = null; res(null); } }, 9000); });
+        TC.pending = null;
+        if (api.aborted) return null;
+        const first = tapped || left[0], L = api.level; picked = first;
         const say = L === 1 ? cap(first) + "!" : L === 2 ? `I want ${first}.` : `I want ${first}, please.`;
         const r = await api.ask({ teacher: "What color do you want?", tzh: "你想要什麼顏色？（選左邊任何一個）", say, zh: C[first].zh + "（或其他顏色）", keys: [left], word: first });
         if (api.aborted) return null;
         const got = (r.ok && heardColor(r.heard, left)) || first;
-        const p = palette.find((x) => x.name === got); p.done = true;
+        const p = palette.find((x) => x.name === got); p.done = true; picked = null;
         TC.floatText(cap(got) + "!", 55, 40, C[got].hex);
         await drop(got);
       }
       api.progress(palette.length, N);
-      TC.sfx("fanfare"); TC.confetti(120);
+      TC.sfx("fanfare"); TC.confetti(120); toyMode = true;
       await TC.speak(a.reveal);
       const F = G.finale, L = api.level, names = Object.keys(C);
       const fav = palette[0].name;
@@ -153,7 +171,8 @@
       glow = C[liked].hex; TC.sfx("levelup");
       TC.floatText(`${cap(liked)}! ✨`, 55, 30, glow);
       await TC.speak(`${cap(liked)}! I like ${liked}, too!`);
-      await TC.sleep(1500);
+      TC.floatText("👆 Tap the blocks!", 55, 22, "#0a1633");
+      await TC.sleep(4000); toyMode = false;
       api.progress(N, N);
       return { ok: true };
     }

@@ -285,6 +285,17 @@
     return c.out(s); };
   A.mic = () => { const c = Ctx(); return c.out(c.shadow(100, 188, 34, 6) + `<rect x="88" y="100" width="24" height="80" rx="10" fill="${c.g("#26293a")}"/>` + c.sphere(100, 66, 48, "#c9d6ff") + `<g stroke="#8a94b8" stroke-width="3" opacity=".7"><path d="M64 56 H136 M58 72 H142 M66 88 H134"/></g>`); };
 
+  A.kart = () => { const c = Ctx(); let s = c.shadow(100, 182, 86, 8);
+    s += c.path("M14 140 Q14 118 40 114 L70 108 Q84 86 110 86 L132 86 Q150 88 156 108 L180 114 Q192 118 192 136 Q192 150 176 150 L28 150 Q14 150 14 140Z", "#ff4b55");
+    s += c.sphere(108, 74, 24, "#ffc83d") + `<rect x="100" y="66" width="26" height="10" rx="5" fill="${c.v("#bfe6ff", "#3d8bff")}"/>`;
+    s += `<circle cx="60" cy="128" r="14" fill="#fff"/><text x="60" y="135" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="18" fill="#ff4b55">1</text>`;
+    s += `<path d="M150 104 l26 -10 l6 12 l-24 8z" fill="${c.g("#26293a")}"/>` + c.hl(60, 118, 40, 6, -6, 0.7) + c.wheel(48, 152, 22) + c.wheel(156, 152, 22);
+    return c.out(s); };
+  A.rainbow = () => { const c = Ctx(); let s = "";
+    ["#ff4b55", "#ff9a2e", "#ffd21f", "#35d35a", "#3d8bff", "#9b5cff"].forEach((col, i) => { const r = 86 - i * 10; s += `<path d="M${100 - r} 150 A${r} ${r} 0 0 1 ${100 + r} 150" stroke="${col}" stroke-width="11" fill="none"/>`; });
+    s += c.hl(70, 76, 40, 8, -30, 0.6) + c.sphere(28, 150, 22, "#ffffff", 0.3) + c.sphere(50, 156, 18, "#ffffff", 0.3) + c.sphere(172, 150, 22, "#ffffff", 0.3) + c.sphere(150, 156, 18, "#ffffff", 0.3);
+    return c.out(s); };
+
   /* ---------- Ollie-Bot in 3D ---------- */
   A.ollie = () => { const c = Ctx(); let s = c.shadow(100, 222, 58, 8);
     s += `<line x1="100" y1="40" x2="100" y2="16" stroke="#c9d6ff" stroke-width="5" stroke-linecap="round"/>` + c.path("M100 0l5 10 11 1-8 7 3 11-11-6-11 6 3-11-8-7 11-1z", "#ffc83d");

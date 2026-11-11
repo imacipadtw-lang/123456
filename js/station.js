@@ -154,6 +154,7 @@
   $("#hearBtn").onclick = () => TC.hearModel();
   $("#skipBtn").onclick = () => TC.skipTurn();
   document.addEventListener("pointerdown", () => TC.ac(), { once: true });
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
   TC.onKey = (e, burst) => {
     if (burst || e.repeat) return;
     const k = e.key;
@@ -164,7 +165,7 @@
       else TC.teacherOK();
     } else if (k === "h" || k === "H") TC.hearModel();
     else if (k === "n" || k === "N" || k === "ArrowRight") TC.skipTurn();
-    else if (k === "Escape") { if (running) { api.aborted = true; TC.skipTurn(); TC.ASR.stop(); document.querySelectorAll(".overlay").forEach((o) => o.remove()); if (resultOpen) resultOpen(); } }
+    else if (k === "Escape") { if (running) { api.aborted = true; TC.skipTurn(); TC.ASR.stop(); document.querySelectorAll(".overlay,.pz,.actbtn,.lineup").forEach((o) => o.remove()); if (TC.pending) { const p = TC.pending; TC.pending = null; p(); } if (resultOpen) resultOpen(); } }
     else if ((k === "s" || k === "S") && !running) TC.openSettings();
     else if ((k === "c" || k === "C") && !running) TC.cameraScan();
     else if ((k === "m" || k === "M") && !running) TC.manualPick();

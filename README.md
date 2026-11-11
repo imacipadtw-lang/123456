@@ -36,4 +36,4 @@ Settings → Pages → Source 選 **GitHub Actions**。之後推到 main 分支�
 - 遊戲程式：學校自用。
 - 護照單字與例句：© 南投縣草屯鎮土城國小（《土城國小英語護照》）。
 - 發音檔：各自依 Commons 原授權（CC BY-SA 3.0 或公眾領域），錄音者見 credits。
-- 圖示 Twemoji（CC BY 4.0）、字型 Fredoka（OFL 1.1）、jsQR（Apache-2.0）、qrcode-generator（MIT）。
+- 所有圖案為原創程式繪製（js/art.js）；字型 Fredoka（OFL 1.1）、jsQR（Apache-2.0）、qrcode-generator（MIT）。

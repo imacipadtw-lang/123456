@@ -3,8 +3,7 @@
 (function () {
   "use strict";
   TC.games = TC.games || {};
-  const img = (n) => { const i = new Image(); i.src = `assets/emoji/${n}.svg`; return i; };
-  const IM = { basketball: img("basketball"), baseball: img("baseball"), tennis: img("tennis"), trophy: img("trophy"), bike: img("bike"), flag: img("checkered-flag"), cloud: img("cloud") };
+  const IM = { basketball: TC.artImg("basketball"), baseball: TC.artImg("baseball"), tennis: TC.artImg("tennis"), trophy: TC.artImg("trophy"), bike: TC.artImg("bike"), cloud: TC.artImg("cloud") };
   let cv, ctx, W, H, k = 1, raf;
   const GY = 470; // ground line in base units (720 high)
   const A = { x: 200, y: GY, pose: "idle", t: 0, color: "#ffc83d", name: "", glider: false, bike: false, rot: 0 };
@@ -142,6 +141,22 @@
     A.pose = "idle"; A.rot = 0; A.y = GY;
   }
 
+  const BTN_CSS = `.actbtn{position:fixed;left:50%;top:58%;transform:translate(-50%,-50%);z-index:26;width:30vh;height:30vh;border-radius:50%;display:grid;place-items:center;
+    font:700 6vh Fredoka,sans-serif;color:#fff;text-shadow:0 .5vh 0 rgba(0,0,0,.3);cursor:pointer;touch-action:manipulation;
+    background:radial-gradient(circle at 35% 28%,#ffe9a8,#ffb020 45%,#e06a00);box-shadow:0 2.2vh 0 #a84e00,0 3vh 5vh rgba(0,0,0,.4),0 0 0 1.4vh rgba(255,255,255,.35);animation:pulse .8s ease-in-out infinite}
+    .actbtn:active{transform:translate(-50%,-44%);box-shadow:0 .6vh 0 #a84e00}
+    .actbtn small{display:block;font-size:2.2vh;margin-top:-4vh}`;
+  let actBtn = null;
+  function actionButton(word) {
+    return new Promise((res) => {
+      if (!document.getElementById("g6css")) document.head.append(TC.h("style", { id: "g6css" }, BTN_CSS));
+      actBtn = TC.h("div", { class: "actbtn" }, TC.h("div", {}, word.toUpperCase() + "!", TC.h("small", { class: "zh" }, "👆 用力按！")));
+      const go = () => { if (!actBtn) return; actBtn.remove(); actBtn = null; TC.pending = null; clearTimeout(t); TC.sfx("boost"); res(); };
+      actBtn.addEventListener("pointerdown", go); document.body.append(actBtn); TC.pending = go;
+      const t = setTimeout(go, 7000);
+    });
+  }
+
   TC.games.obby = {
     mount(api) { cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d"); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
     idle(api) { const G = (api && api.G) || TC_CONTENT.gates[6]; buildCourse(G.moves); Object.assign(A, { x: 200, y: GY, pose: "run", name: "", color: "#ffc83d", glider: false, bike: false }); trophy = false; ball = null; cam = 0;
@@ -164,6 +179,8 @@
         const r = await api.ask({ teacher: m.t, tzh: `你會${m.zh}嗎？`, say, zh: m.zh, keys, word: m.w });
         if (api.aborted) return null;
         TC.hideTalk();
+        await actionButton(m.w);
+        if (api.aborted) return null;
         TC.floatText(cap(m.w) + "!", 50, 30, "#ffc83d");
         await act(o); o.done = true;
         await runTo(flags[i].x + 30);

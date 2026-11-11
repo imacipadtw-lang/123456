@@ -416,6 +416,7 @@
 
   /* ---------------- Ollie-Bot (robot owl guide from the passport) ---------------- */
   TC.ollieSVG = function (cls = "") {
+    if (TC.art) return `<div class="ollie3d ${cls}"><img src="${TC.art("ollie")}" alt="Ollie-Bot" draggable="false"></div>`;
     return `<svg class="ollie ${cls}" viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg" aria-label="Ollie-Bot">
 <g class="body">
  <line x1="100" y1="38" x2="100" y2="14" stroke="#c9d6ff" stroke-width="5" stroke-linecap="round"/>
@@ -434,7 +435,7 @@
 </g></svg>`;
   };
   TC.ollie = function (state) {
-    document.querySelectorAll("svg.ollie").forEach((o) => { o.classList.remove("talk", "cheer"); if (state === "talk" || state === "cheer") o.classList.add(state); });
+    document.querySelectorAll("svg.ollie,.ollie3d").forEach((o) => { o.classList.remove("talk", "cheer"); if (state === "talk" || state === "cheer") o.classList.add(state); });
   };
 
   /* ---------------- passport scanning ---------------- */
