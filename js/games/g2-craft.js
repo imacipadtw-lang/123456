@@ -69,7 +69,7 @@
       "..oo....oo.."] }
   ];
 
-  let cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [], swRects = [], pickCb = null, picked = null, toyMode = false;
+  let spinStart = 0, cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [], swRects = [], pickCb = null, picked = null, toyMode = false;
   function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); layout(); }
   let L = { s: 30, ox: 0, oy: 0, d: 10 };
   function layout() {
@@ -107,8 +107,11 @@
     const rows = art.grid.length;
     // ghost outline of the hidden picture
     for (const b of blocks) if (!b.placed) { ctx.strokeStyle = "rgba(10,22,51,.25)"; ctx.setLineDash([s * 0.15, s * 0.12]); ctx.strokeRect(ox + b.c * s + 2, oy + b.r * s + 2, s - 4, s - 4); ctx.setLineDash([]); }
-    // blocks: bottom rows first, left → right
+    // blocks: bottom rows first, left → right (the finished sculpture spins once at the finale)
     const order = blocks.slice().sort((a, b) => b.r - a.r || a.c - b.c);
+    const cols = Math.max(...art.grid.map((r) => r.length)), cx = ox + (cols * s) / 2;
+    let sx = 1; if (spinStart) { const k = Math.min(1, (performance.now() - spinStart) / 2400); sx = Math.cos(k * Math.PI * 2); if (k >= 1) spinStart = 0; }
+    ctx.save(); ctx.translate(cx, 0); ctx.scale(Math.abs(sx) < 0.04 ? 0.04 : sx, 1); ctx.translate(-cx, 0);
     for (const b of order) {
       if (!b.placed) continue;
       if (b.y < 0) { b.vy += 2.2; b.y += b.vy; if (b.y >= 0) { b.y = 0; if (b.vy > 8) { b.vy = -b.vy * 0.28; if (!b.popped) { b.popped = 1; TC.sfx("click"); } } else b.vy = 0; } }
@@ -116,6 +119,7 @@
       const wob = glow ? Math.sin(t * 6 + b.c * 0.5 + b.r * 0.3) * s * 0.06 : 0;
       cube(ox + b.c * s, oy + b.r * s + b.y + wob, s, d, b.hex);
     }
+    ctx.restore();
     // shadow line
     ctx.fillStyle = "rgba(0,0,0,.15)"; ctx.fillRect(ox - d, oy + rows * s, art.grid[0].length * s + d * 2, s * 0.25);
     // glow fireworks
@@ -186,7 +190,7 @@
         await drop(got);
       }
       api.progress(palette.length, N);
-      TC.sfx("fanfare"); TC.confetti(120); toyMode = true;
+      TC.sfx("fanfare"); TC.confetti(120); toyMode = true; spinStart = performance.now();
       await TC.speak(a.reveal);
       const F = G.finale, L = api.level, names = Object.keys(C);
       const fav = palette[0].name;
