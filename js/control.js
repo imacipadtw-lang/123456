@@ -98,10 +98,12 @@
   TC.onKey = (e) => {
     if (/^[a-zA-Z]$/.test(e.key) && solvedCb) typeLetter(e.key.toUpperCase());
     else if (e.key === "Backspace" && solvedCb) { for (let i = SECRET.length - 1; i >= 0; i--) if (typed[i]) { typed[i] = null; break; } renderSlots(); }
-    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); TC.teacherOK(); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (solvedCb) assist(); else TC.teacherOK(); }
     else if (e.key === "Escape") reset();
   };
 
+  function assist() { if (!solvedCb) return; typed = SECRET.split(""); const cb = solvedCb; solvedCb = null; renderSlots(); TC.sfx("coin"); cb(); }
+  $("#assistBtn").onclick = assist;
   TC.onScan(async (kid) => {
     TC.ac();
     if (busy) { TC.toast(`${kid.name}：請等前一位完成`); return; }
