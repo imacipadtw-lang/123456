@@ -183,7 +183,7 @@
   /* ---------------- microphone: level meter + recording ---------------- */
   const Mic = (TC.Mic = { stream: null, analyser: null, level: 0, rec: null, chunks: [], ok: false });
   Mic.init = async function () {
-    if (Mic.ok) return true;
+    if (Mic.ok || Mic.released) return Mic.ok;
     try {
       Mic.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
       const c = TC.ac(); const src = c.createMediaStreamSource(Mic.stream);
@@ -207,6 +207,10 @@
       })();
       Mic.ok = true; return true;
     } catch (e) { console.warn("mic", e); Mic.ok = false; return false; }
+  };
+  Mic.release = function () {
+    try { Mic.stream && Mic.stream.getTracks().forEach((t) => t.stop()); } catch (e) {}
+    Mic.stream = null; Mic.rec = null; TC.cfg.record = false; Mic.released = true;
   };
   Mic.startRec = function () {
     if (!TC.cfg.record || !Mic.stream || !window.MediaRecorder) return;
@@ -242,6 +246,9 @@
       }
     };
     r.onerror = (e) => {
+      if (e.error === "audio-capture" && Mic.stream) { // some Android panels cannot share the mic: give it to the recogniser
+        Mic.release(); TC.toast("已把麥克風交給 AI 語音辨識（此裝置不支援同時錄音）", 3000);
+      }
       if (e.error === "not-allowed" || e.error === "service-not-allowed") { ASR.state = "denied"; ASR.want = false; }
       else if (e.error === "network") ASR.state = "network";
       setAIPill();

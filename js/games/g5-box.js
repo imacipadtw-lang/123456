@@ -103,7 +103,15 @@
         itemImg.src = TC.art(it.img); labelEl.textContent = cap(it.w) + "!";
         scene.classList.add("open"); TC.sfx(i === items.length - 1 ? "fanfare" : "levelup"); TC.confetti(i === items.length - 1 ? 220 : 100, [rar.c1, rar.c2, "#fff"]);
         await TC.speak(`Yes, it is! ${cap(it.w)}!`);
-        await TC.sleep(1300);
+        // follow-up conversation for intermediate/advanced travellers
+        if (L >= 2 && !TC.cfg.rounds) {
+          const q = `Do you like ${it.like}?`;
+          const fr = await api.ask({ teacher: q, tzh: `你喜歡${it.zh}嗎？`, say: L === 3 ? `Yes, I do. I like ${it.like}!` : "Yes, I do!", zh: "也可以說 No, I don't.", keys: [["yes", "yeah", "no", "nope"]], word: "yes" });
+          if (api.aborted) return null;
+          TC.hideTalk();
+          if (/\bno\b|don'?t/i.test(fr.heard || "")) await TC.speak("That's OK!"); else await TC.speak("Me too!");
+        }
+        await TC.sleep(800);
         got.push(it); shelf.append(TC.artImg(it.img));
         scene.classList.remove("open"); boxw.className = "boxw";
         await TC.sleep(300);

@@ -143,7 +143,16 @@
         TC.sfx(r.n === "LEGENDARY" ? "fanfare" : "levelup"); TC.confetti(r.n === "LEGENDARY" ? 220 : 90, [r.egg, r.glow, "#fff"]);
         nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on"); rar.textContent = `★ ${r.n} ★`;
         await TC.speak(`${it.art === "an" ? "An" : "A"} ${it.w}! ${it.fin3}`);
-        await TC.sleep(900);
+        // advanced travellers describe their new pet
+        if (L === 3 && it.color && !TC.cfg.rounds) {
+          const COLS = Object.keys(TC_CONTENT.gates[2].colors);
+          const fr = await api.ask({ teacher: "What color is it?", tzh: "牠是什麼顏色？", say: `It is ${it.color}.`, zh: "說出牠的顏色", keys: [COLS], word: it.color });
+          if (api.aborted) return null;
+          TC.hideTalk();
+          const said = TC.pickHeard(fr.heard, COLS) || it.color;
+          await TC.speak(it.color.split(" and ").includes(said) ? `Yes! The ${it.w} is ${it.color}.` : `${cap(said)}? Cool! I think it is ${it.color}.`);
+        }
+        await TC.sleep(600);
         got.push({ it, r }); addCard(it, r);
       }
       api.progress(items.length, N);

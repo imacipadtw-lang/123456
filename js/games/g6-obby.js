@@ -189,7 +189,7 @@
         await runTo(o.x - 70); if (api.aborted) return null;
         const say = L === 1 ? cap(m.w) + "!" : L === 2 ? m.s2 : m.s3;
         const keys = m.keys || [[m.w]];
-        const r = await api.ask({ teacher: m.t, tzh: `你會${m.zh}嗎？`, say, zh: m.zh, keys, word: m.w });
+        const r = await api.ask({ teacher: m.t, tzh: `看看前面的障礙，你會做什麼？（${m.zh}）`, say, zh: m.zh, keys, word: m.w });
         if (api.aborted) return null;
         TC.hideTalk();
         await actionButton(m.w);
