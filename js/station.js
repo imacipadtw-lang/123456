@@ -89,8 +89,11 @@
     game.idle && game.idle(api);
   }
 
+  let kidStart = 0;
+  setInterval(() => { const c = $("#clock"); if (!c) return; if (!running || !kidStart) { c.textContent = `⏱ 排隊 ${queue.length}`; c.style.color = ""; return; }
+    const s = ((Date.now() - kidStart) / 1000) | 0; c.textContent = `⏱ ${(s / 60) | 0}:${String(s % 60).padStart(2, "0")} · 排隊 ${queue.length}`; c.style.color = s > 300 ? "#ff8a8a" : ""; }, 1000);
   async function playKid(kid) {
-    TC.kid = kid; api.aborted = false;
+    TC.kid = kid; api.aborted = false; kidStart = Date.now();
     TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null }; TC.lastSay = "";
     setKidChip(kid);
     const ov = h("div", { class: "overlay welcome" },
