@@ -39,7 +39,11 @@
   TC.passportCode = async function (letter, api) {
     const list = (window.TC_PASSCODE || {})[letter];
     if (!list || !list.length) return letter;
-    const e = list[(Math.random() * list.length) | 0];
+    // younger travellers get numbers from the first pages of the passport
+    const lvl = (TC.kid && TC.kid.level) || 2;
+    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : lvl === 2 ? 13 : 25));
+    const pool = easy.length ? easy : list;
+    const e = pool[(Math.random() * pool.length) | 0];
     const ans = h("div", { class: "ans" }, "");
     const box = h("div", { class: "pz" },
       h("h3", {}, h("div", { class: "book" }, h("i"), h("i")), "Passport Code!", h("span", { class: "zh" }, "護照密碼")),

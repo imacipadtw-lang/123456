@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0 };
+  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -329,6 +329,7 @@
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
+      if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) TC.speak(spec.teacher.replace(/___/g, ""));
       const wrongSeen = new Set();
       let finished = false, hintT = null, best = 0;
       const t0 = Date.now();
@@ -569,6 +570,7 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
+      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（電腦語音先問一次）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
       <label><span>電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
@@ -578,12 +580,12 @@
       <p><small>快捷鍵：Enter/空白鍵＝老師判定通過 ✓ · H＝聽示範 · N＝跳過 · C＝相機掃描 · M＝手動選擇 · Esc＝回到掃描畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sRec").value = TC.cfg.record ? "1" : "0";
+    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sRec").value = TC.cfg.record ? "1" : "0";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g;

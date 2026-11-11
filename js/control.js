@@ -114,7 +114,11 @@
     document.querySelectorAll(".slot").forEach((s, i) => setTimeout(() => { s.classList.add("good"); TC.sfx("coin"); }, i * 120));
     TC.confetti(200); TC.sfx("levelup");
     await sleep(900);
-    await TC.speak(`${SECRET}! Yes! Who are we?`);
+    // twist: the secret word is itself a passport word
+    $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是護照第 111 號單字 friend！翻開第 8 頁看看 → “She is my friend.”</span>`;
+    await TC.speak(`${SECRET}! It is passport word number 111. She is my friend.`);
+    await sleep(600);
+    await TC.speak("Who are we?");
     const F = TC_CONTENT.finalLine;
     await TC.ask({ teacher: "Who are we? We are…", tzh: "我們是什麼？", say: F.say, keys: F.keys, word: "friend", zh: "我們是好朋友！" });
     TC.hideTalk();

@@ -40,6 +40,7 @@
 </details>
 <script src="js/vendor/jsQR.js"></script>
 <script src="js/content.js"></script>
+<script src="js/passport-code.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
 <script>
@@ -63,7 +64,9 @@
     TC.kid = null;
     TC.sfx("coin"); if (navigator.vibrate) navigator.vibrate(120);
     const G = TC_CONTENT.gates[gate];
-    $("#out").prepend(TC.h("div", { class: "res" }, TC.h("div", { class: "L" }, SECRET[gate - 1]), TC.h("div", {}, TC.h("b", {}, `✓ ${kid.name}`), TC.h("div", {}, `Gate ${gate} · ${G.city} 已登記`), TC.h("small", {}, `請孩子把字母寫在第 ${gate} 格`))));
+    const L = SECRET[gate - 1], pc = (window.TC_PASSCODE || {})[L] || [], e = pc[(Math.random() * pc.length) | 0];
+    $("#out").prepend(TC.h("div", { class: "res" }, TC.h("div", { class: "L" }, L), TC.h("div", {}, TC.h("b", {}, `✓ ${kid.name}`), TC.h("div", {}, `Gate ${gate} · ${G.city} 已登記`),
+      TC.h("small", {}, e ? `護照密碼：請孩子翻到第${e.level}關（第${e.page}頁）找第 ${e.no} 號「${e.w}」，第一個字母 ${L} 寫在第 ${gate} 格` : `請孩子把字母寫在第 ${gate} 格`))));
   }
   $("#start").onclick = async () => {
     TC.ac();
