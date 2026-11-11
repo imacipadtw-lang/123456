@@ -275,13 +275,15 @@ window.TC_CONTENT.sentences = {
    ]
   },
   {
-   "no": 513,
-   "s": "I eat rice.",
-   "zh": "我吃米飯。",
+   "no": 523,
+   "s": "The bear is brown.",
+   "zh": "熊是棕色的。",
    "keys": [
     [
-     "eat",
-     "rice"
+     "bear"
+    ],
+    [
+     "brown"
     ]
    ]
   }
