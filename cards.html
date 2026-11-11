@@ -81,7 +81,9 @@
         <div class="owl">${TC.ollieSVG()}</div>`;
       sheet.append(card);
     });
-    $("#msg").textContent = `已產生 ${ids.length} 張卡片。QR 內容格式：TCES-座號-年級-名字（不含中文姓名）。`;
+    const bad = ids.filter((id) => /[^A-Za-z .\-]/.test(roster[id].name));
+    $("#msg").innerHTML = `已產生 ${ids.length} 張卡片。QR 內容格式：TCES-座號-年級-英文名字（不含中文姓名）。` +
+      (bad.length ? `<br><b style="color:#d6337a">⚠ 第 ${bad.join("、")} 號的名字含有中文或特殊符號：USB 掃描機無法輸入這些字，請改用英文名字（例如 Amy、Ming）。</b>` : "");
   }
   $("#make").onclick = () => { TC.cfg.roster = $("#roster").value; make(); };
   $("#print").onclick = () => { TC.cfg.roster = $("#roster").value; make(); setTimeout(() => print(), 300); };
