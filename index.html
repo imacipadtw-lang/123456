@@ -61,5 +61,6 @@
     g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}"><img src="${TC.art(icons[n])}" alt=""><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
   });
 </script>
+<script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
 </body>
 </html>

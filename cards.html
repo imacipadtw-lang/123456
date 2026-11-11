@@ -89,5 +89,6 @@
   $("#demo").onclick = () => { $("#roster").value = ["01 Amy 1", "02 Ben 2", "03 Cindy 3", "04 David 4", "05 Emma 5", "06 Frank 6"].join("\n"); TC.cfg.roster = $("#roster").value; make(); };
   if (TC.cfg.roster) make();
 </script>
+<script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
 </body>
 </html>
