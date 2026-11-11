@@ -182,7 +182,14 @@
       // star trails between the signs, weaving across the three lanes
       for (let d = 1200; d < 3500 + items.length * 5200 + 4000; d += 420) { const near = S.signs.some((sg) => Math.abs(sg.d - d) < 900); if (!near) S.stars.push({ d, lane: Math.round(Math.sin(d / 1700) * 1.4), done: false }); }
       const N = items.length + 1;
-      await TC.speak("Ready? Go!"); TC.sfx("boost");
+      // start lights: three reds, then green
+      const lights = TC.h("div", { style: "position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:30;display:flex;gap:2vh;padding:2vh 3vh;border-radius:3vh;background:#14182b;box-shadow:0 2vh 4vh rgba(0,0,0,.5)" });
+      const bulbs = [0, 1, 2].map(() => { const b = TC.h("div", { style: "width:10vh;height:10vh;border-radius:50%;background:#3a2030;box-shadow:inset 0 -1vh 2vh rgba(0,0,0,.5)" }); lights.append(b); return b; });
+      document.body.append(lights);
+      for (let i = 0; i < 3; i++) { await TC.sleep(650); bulbs[i].style.background = "radial-gradient(circle at 35% 30%,#ffb3b3,#ff2a2a 60%,#a00)"; bulbs[i].style.boxShadow = "0 0 4vh #ff3b3b"; TC.sfx("tick"); TC.sfx("pop"); }
+      await TC.sleep(700); bulbs.forEach((b) => { b.style.background = "radial-gradient(circle at 35% 30%,#d6ffe0,#2ee66b 60%,#0a8a3a)"; b.style.boxShadow = "0 0 4vh #2ee66b"; });
+      TC.floatText("GO!", 50, 40, "#2ee66b"); TC.sfx("boost"); TC.speak("Go!");
+      setTimeout(() => lights.remove(), 900);
       S.rivalSpeed = 420;
       for (let i = 0; i < items.length; i++) {
         api.progress(i, N);
