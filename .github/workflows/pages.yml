@@ -1,9 +1,9 @@
-# Publishes the site to GitHub Pages on every push to the main branch (or when run manually).
+# Publishes the site to GitHub Pages on every push (or when run manually). The app lives in english-quest/.
 # One-time setup: repository Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, claude/elementary-english-game-stations-jdh5fp]
   workflow_dispatch:
 permissions:
   contents: read
