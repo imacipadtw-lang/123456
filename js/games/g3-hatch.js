@@ -63,6 +63,7 @@
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g3" });
     root.append(TC.h("div", { class: "hill", style: "left:-12%;top:52%;width:62%;height:44%" }), TC.h("div", { class: "hill", style: "right:-16%;top:56%;width:70%;height:44%" }));
+    { const e = TC.artImg("eiffel", "deco"); e.style.cssText = "left:76%;top:16%;width:22vh;height:30vh;opacity:.85"; root.append(e); }
     [[4, 34, 15], [17, 40, 11], [72, 36, 14], [86, 42, 12]].forEach(([x, y, w]) => { const t = TC.artImg("tree", "deco"); t.style.cssText = `left:${x}%;top:${y}%;width:${w}vh`; root.append(t); });
     [[8, 12, 16], [62, 6, 20]].forEach(([x, y, w]) => { const c = TC.artImg("cloud", "deco"); c.style.cssText = `left:${x}%;top:${y}%;width:${w}vh;opacity:.9;animation:float ${4 + x / 20}s ease-in-out infinite`; root.append(c); });
     aura = TC.h("div", { class: "aura" });

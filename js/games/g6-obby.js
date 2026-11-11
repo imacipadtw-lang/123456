@@ -3,6 +3,7 @@
 (function () {
   "use strict";
   TC.games = TC.games || {};
+  const PALM = TC.artImg("palm");
   const IM = { basketball: TC.artImg("basketball"), baseball: TC.artImg("baseball"), tennis: TC.artImg("tennis"), trophy: TC.artImg("trophy"), bike: TC.artImg("bike"), cloud: TC.artImg("cloud") };
   let cv, ctx, W, H, k = 1, raf;
   const GY = 470; // ground line in base units (720 high)
@@ -37,6 +38,7 @@
     // stadium silhouette far away
     ctx.fillStyle = "rgba(60,90,160,.25)";
     for (let i = 0; i < 8; i++) { const sx = ((i * 380 - cam * 0.35) % (VW + 380) + VW + 380) % (VW + 380) - 190; ctx.fillRect(sx, GY - 230, 300, 230); ctx.fillRect(sx + 20, GY - 260, 20, 40); ctx.fillRect(sx + 260, GY - 260, 20, 40); }
+    for (let i = 0; i < 7; i++) { const px = ((i * 330 + 120 - cam * 0.5) % (VW + 330) + VW + 330) % (VW + 330) - 160; if (PALM.complete) ctx.drawImage(PALM, px, GY - 260, 200, 260); }
     ctx.translate(-cam, 0);
     // ground blocks (obby studs)
     const x0 = Math.floor(cam / 80) * 80;

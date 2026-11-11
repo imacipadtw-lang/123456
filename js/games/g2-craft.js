@@ -69,6 +69,7 @@
       "..oo....oo.."] }
   ];
 
+  const OPERA = TC.artImg("opera");
   let spinStart = 0, cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [], swRects = [], pickCb = null, picked = null, toyMode = false;
   function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); layout(); }
   let L = { s: 30, ox: 0, oy: 0, d: 10 };
@@ -100,6 +101,7 @@
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     // voxel clouds
     for (let i = 0; i < 4; i++) { const cx = ((t * 18 * (i + 1) + i * 420) % (W + 300)) - 150, cy = H * (0.1 + i * 0.07), s = H * 0.03; for (let k = 0; k < 4; k++) cube(cx + k * s, cy + (k % 2 ? 0 : -s * 0.5), s, s * 0.35, "#ffffff", 0.85); }
+    if (OPERA.complete) { const ow = H * 0.26; ctx.globalAlpha = 0.9; ctx.drawImage(OPERA, W * 0.8, H * 0.71 - ow * 0.9, ow * 1.05, ow); ctx.globalAlpha = 1; }
     // ground grid
     ctx.strokeStyle = "rgba(0,0,0,.08)"; for (let x = 0; x < W; x += H * 0.05) { ctx.beginPath(); ctx.moveTo(x, H * 0.71); ctx.lineTo(x - H * 0.1, H); ctx.stroke(); }
     if (!art) return;

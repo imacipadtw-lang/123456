@@ -61,6 +61,7 @@
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g4" });
+    { const py = TC.artImg("pyramids"); py.style.cssText = "position:absolute;left:3%;top:24%;width:34vh;height:32vh;opacity:.35;filter:hue-rotate(-20deg) saturate(.8)"; root.append(py); const py2 = TC.artImg("pyramids"); py2.style.cssText = "position:absolute;right:16%;top:28%;width:26vh;height:24vh;opacity:.25;transform:scaleX(-1)"; root.append(py2); }
     root.append(TC.h("div", { class: "spot", style: "left:5%" }), TC.h("div", { class: "spot", style: "right:5%;animation-delay:-2s" }));
     const floor = TC.h("div", { class: "floor" }); for (let i = 0; i < 60; i++) floor.append(TC.h("i", { style: `animation-delay:${-((i * 7) % 11) * 0.13}s` })); root.append(floor, TC.h("div", { class: "ball" }));
     bot = TC.h("div", { class: "bot", html: TC.ollieSVG() });

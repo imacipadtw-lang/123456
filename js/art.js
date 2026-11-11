@@ -323,6 +323,24 @@
   }
   ["stand", "sit", "clap", "raise", "jump", "dance", "sing", "run"].forEach((p) => (A["pose-" + p] = () => poseKid(p)));
 
+  /* ---------- city landmarks (simple original silhouettes for the gate backdrops) ---------- */
+  A.tower = () => { const c = Ctx(); let s = ""; // a red-and-white lattice tower (Tokyo)
+    s += `<path d="M100 6 L106 60 L118 120 L136 196 L64 196 L82 120 L94 60Z" fill="${c.v("#ff6b4a", "#c8321e")}"/>`;
+    [40, 80, 120, 160].forEach((y, i) => (s += `<rect x="${86 - i * 9}" y="${y}" width="${28 + i * 18}" height="${i === 2 ? 10 : 6}" fill="#fff" opacity=".9"/>`));
+    s += `<path d="M84 196 Q100 150 116 196" fill="#1b2b5e" opacity=".35"/>`; return c.out(s); };
+  A.eiffel = () => { const c = Ctx(); let s = ""; // iron lattice tower (Paris)
+    s += `<path d="M100 4 L104 50 L114 110 L150 196 L126 196 Q100 150 74 196 L50 196 L86 110 L96 50Z" fill="${c.v("#9a7a5a", "#5a4030")}"/>`;
+    s += `<rect x="80" y="104" width="40" height="8" fill="#5a4030"/><rect x="90" y="56" width="20" height="6" fill="#5a4030"/>`; return c.out(s); };
+  A.pyramids = () => { const c = Ctx(); return c.out(`<path d="M10 190 L80 80 L150 190Z" fill="${c.v("#ffd27a", "#c98a3a")}"/><path d="M80 80 L150 190 L110 190Z" fill="#000" opacity=".15"/><path d="M110 190 L160 110 L200 190Z" fill="${c.v("#ffdf9a", "#d29a4a")}"/><path d="M160 110 L200 190 L182 190Z" fill="#000" opacity=".15"/>`, "0 0 210 200"); };
+  A.palm = () => { const c = Ctx(); let s = `<path d="M100 196 Q92 120 106 60" stroke="#8a5a32" stroke-width="12" fill="none" stroke-linecap="round"/>`;
+    [[-60, 40], [-20, 10], [20, 6], [60, 34], [80, 70], [-80, 72]].forEach(([dx, dy]) => (s += `<path d="M106 60 Q${106 + dx / 2} ${40 + dy / 3} ${106 + dx} ${60 + dy}" stroke="#2fa84f" stroke-width="14" fill="none" stroke-linecap="round"/>`));
+    s += c.sphere(100, 70, 8, "#8a5a32", 0.3) + c.sphere(114, 72, 8, "#8a5a32", 0.3); return c.out(s); };
+  A.opera = () => { const c = Ctx(); let s = `<rect x="10" y="160" width="190" height="24" fill="#d9c9a8"/>`; // white shells on a harbour (Sydney)
+    [[30, 160, 70, 60], [70, 160, 110, 40], [110, 160, 150, 70], [150, 160, 190, 90]].forEach(([x0, y0, x1, top]) => (s += `<path d="M${x0} ${y0} Q${x0 + 6} ${top} ${x1} ${top + 6} Q${(x0 + x1) / 2 + 6} ${(y0 + top) / 2 + 20} ${x1 - 4} ${y0}Z" fill="${c.v("#ffffff", "#c9d6ef")}"/>`));
+    return c.out(s, "0 0 210 200"); };
+  A.mountains = () => { const c = Ctx(); let s = `<path d="M0 190 L60 60 L100 120 L140 40 L210 190Z" fill="${c.v("#7a8ac8", "#3a4a8a")}"/><path d="M60 60 L76 92 L64 88 L52 96 Z M140 40 L158 78 L144 72 L128 82Z" fill="#fff"/>`;
+    [20, 50, 160, 190].forEach((x) => (s += `<path d="M${x} 196 L${x - 12} 196 L${x} 150 L${x + 12} 196Z" fill="#1f6a3a"/>`)); return c.out(s, "0 0 210 200"); };
+
   /* ---------- Ollie-Bot in 3D ---------- */
   A.ollie = () => { const c = Ctx(); let s = c.shadow(100, 222, 58, 8);
     s += `<line x1="100" y1="40" x2="100" y2="16" stroke="#c9d6ff" stroke-width="5" stroke-linecap="round"/>` + c.path("M100 0l5 10 11 1-8 7 3 11-11-6-11 6 3-11-8-7 11-1z", "#ffc83d");

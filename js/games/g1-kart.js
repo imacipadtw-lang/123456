@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   TC.games = TC.games || {};
-  const OLLIE = TC.artImg("ollie");
+  const OLLIE = TC.artImg("ollie"), TOWER = TC.artImg("tower");
   const IM = {}; ["bus", "train", "taxi", "plane", "bike", "boat", "truck", "scooter", "tree", "star", "trophy"].forEach((n) => (IM[n] = TC.artImg(n)));
 
   let cv, ctx, W, H, raf = 0;
@@ -42,6 +42,7 @@
     const span = W * 1.8, fx = ((W * 0.28 - par) % span + span) % span - W * 0.4;
     ctx.fillStyle = "#43307e"; ctx.beginPath(); ctx.moveTo(fx - H * 0.32, y0); ctx.lineTo(fx - H * 0.045, y0 - H * 0.21); ctx.lineTo(fx + H * 0.045, y0 - H * 0.21); ctx.lineTo(fx + H * 0.32, y0); ctx.fill();
     ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(fx - H * 0.085, y0 - H * 0.155); ctx.lineTo(fx - H * 0.045, y0 - H * 0.21); ctx.lineTo(fx + H * 0.045, y0 - H * 0.21); ctx.lineTo(fx + H * 0.085, y0 - H * 0.155); ctx.lineTo(fx + H * 0.03, y0 - H * 0.172); ctx.lineTo(fx, y0 - H * 0.152); ctx.lineTo(fx - H * 0.03, y0 - H * 0.172); ctx.fill();
+    { const tx = ((W * 0.82 - par * 0.6) % (W * 1.6) + W * 1.6) % (W * 1.6) - W * 0.2, th = H * 0.3; if (TOWER.complete) ctx.drawImage(TOWER, tx - th * 0.5, y0 - th, th, th); }
     // road, scanline by scanline
     const rows = []; let x = W / 2, dx = 0; const step = 2;
     S.curveX += curve(S.pos) * S.speed * dt * 1.2;
