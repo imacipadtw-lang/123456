@@ -69,7 +69,14 @@
     if (o.type === "wall") { for (let r = 0; r < 5; r++) for (let c = 0; c < 2; c++) block3d(x + c * 60, GY - 60 - r * 60, 60, 60, (r + c) % 2 ? "#9b6bff" : "#7d55d9"); }
     if (o.type === "track") { ctx.fillStyle = "#e0523f"; ctx.fillRect(x, GY - 6, w, 14); ctx.fillStyle = "#fff"; for (let i = 20; i < w; i += 90) { ctx.beginPath(); ctx.moveTo(x + i, GY - 30); ctx.lineTo(x + i + 30, GY - 18); ctx.lineTo(x + i, GY - 6); ctx.fill(); } }
     if (o.type === "bikeLane") { ctx.fillStyle = "#4cc9ff"; ctx.fillRect(x, GY - 6, w, 14); if (!o.done && !A.bike && IM.bike.complete) ctx.drawImage(IM.bike, x - 30, GY - 90, 90, 90); }
-    if (o.type === "cliff") { ctx.fillStyle = "#26293a"; ctx.fillRect(x, GY + 40, w, 720 - GY); ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 4; for (let i = 0; i < 5; i++) { const yy = GY - 200 + i * 40; ctx.beginPath(); ctx.moveTo(x + 40 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.lineTo(x + 100 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.stroke(); } }
+    if (o.type === "cliff") {
+      const ab = ctx.createLinearGradient(0, GY, 0, 720); ab.addColorStop(0, "#5a6aa8"); ab.addColorStop(0.5, "#26293a"); ab.addColorStop(1, "#0a0c18"); ctx.fillStyle = ab; ctx.fillRect(x, GY, w, 720 - GY);
+      ctx.fillStyle = "#8a5a32"; ctx.beginPath(); ctx.moveTo(x, GY); ctx.lineTo(x + 26, GY + 60); ctx.lineTo(x + 8, GY + 130); ctx.lineTo(x + 30, GY + 250); ctx.lineTo(x, 720); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x + w, GY); ctx.lineTo(x + w - 24, GY + 70); ctx.lineTo(x + w - 6, GY + 150); ctx.lineTo(x + w - 28, GY + 260); ctx.lineTo(x + w, 720); ctx.fill();
+      const sx = x + w / 2, sy = GY - 150 + Math.sin(A.t * 3) * 8; // floating warning sign over the gap
+      ctx.fillStyle = "#ffc83d"; ctx.beginPath(); ctx.moveTo(sx, sy - 50); ctx.lineTo(sx + 48, sy + 34); ctx.lineTo(sx - 48, sy + 34); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#26293a"; ctx.lineWidth = 6; ctx.stroke(); ctx.fillStyle = "#26293a"; ctx.font = "700 54px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillText("!", sx, sy + 26);
+      ctx.fillStyle = "#26293a"; ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 4; for (let i = 0; i < 5; i++) { const yy = GY - 200 + i * 40; ctx.beginPath(); ctx.moveTo(x + 40 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.lineTo(x + 100 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.stroke(); } }
   }
   /** a glossy obby block with a top face and side shading */
   function block3d(x, y, w, h, col) {
