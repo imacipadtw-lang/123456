@@ -502,7 +502,7 @@
     else if (/^Numpad\d$/.test(e.code)) ch = e.code[6];
     else if (KEYMAP[e.code]) ch = KEYMAP[e.code][e.shiftKey ? 1 : 0];
     if (/^(Shift|Control|Alt|Meta|CapsLock)/.test(e.code)) return;
-    if (e.code === "Enter" || e.code === "NumpadEnter") {
+    if (e.code === "Enter" || e.code === "NumpadEnter" || (e.code === "Tab" && scanBuf.length >= 6)) { // some scanners end with Tab
       const t = scanBuf; scanBuf = "";
       if (t.length >= 6 && /^tces/i.test(t)) { e.preventDefault(); e.stopPropagation(); handleScanText(t); return; }
       if (t) { e.preventDefault(); return; } // half a scan: swallow the Enter
