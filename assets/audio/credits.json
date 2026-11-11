@@ -305,6 +305,23 @@
   "changes": "converted to MP3 96 kbps mono, leading/trailing silence trimmed, loudness normalised",
   "durationSec": 0.6
  },
+ "cookie": {
+  "file": "cookie.mp3",
+  "source": "File:LL-Q1860 (eng)-Simplificationalizer-cookie.wav",
+  "page": "https://commons.wikimedia.org/wiki/File:LL-Q1860_(eng)-Simplificationalizer-cookie.wav",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/LL-Q1860_(eng)-Simplificationalizer-cookie.wav",
+  "speaker": "Simplificationalizer (Lingua Libre)",
+  "uploader": "Simplificationalizer",
+  "licence": "CC0",
+  "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "recorded": "2020-07-08",
+  "uploaded": "2020-07-08T22:37:59Z",
+  "sha1": "a33ec5bf0f243b0e293a78d9bac5474720a53dad",
+  "accent": "US, New Jersey (same speaker as the Wiktionary-labelled lemon recording)",
+  "downloaded": "2026-11-11",
+  "changes": "converted to MP3 96 kbps mono, leading/trailing silence trimmed, loudness normalised",
+  "durationSec": 0.5
+ },
  "cute": {
   "file": "cute.mp3",
   "source": "File:En-us-cute.ogg",

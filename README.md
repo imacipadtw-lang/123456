@@ -30,7 +30,7 @@
 - 語音辨識：Web Speech API（en-US），對兒童口音寬鬆比對（含常見近音字）；老師問句不含答案字，避免 AI 把老師的聲音當成孩子的答案；聽不到時老師按 ✓（或 Enter）。
 - QR：USB／藍牙 2D 掃描機（鍵盤模式，中文輸入法開著也能讀）、webcam（jsQR）、手動選擇，或 ⭐ 貴賓按鈕。
 - 分級：QR 內含年級 → 自動對應護照初級／中級／高級，可隨時切換。
-- 發音：119 個 Wikimedia Commons 美式英語真人錄音，每個都用 Commons 公布的 SHA-1 逐一驗證；來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。沒有真人錄音的句子使用標示「電腦語音」的瀏覽器語音。
+- 發音：120 個 Wikimedia Commons 美式英語真人錄音，每個都用 Commons 公布的 SHA-1 逐一驗證；來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。沒有真人錄音的句子使用標示「電腦語音」的瀏覽器語音。
 - 圖案：全部為本專案原創、以程式繪製的 3D 亮面公仔風格圖（`js/art.js`），沒有使用第三方圖庫或遊戲角色。
 - 選用同步：`apps-script/Code.gs`（Google Apps Script + 試算表）匯整六間教室進度到即時看板。
 - 隱私：名單、錄音、照片只留在各台電腦；QR 只有座號、年級、英文名字。

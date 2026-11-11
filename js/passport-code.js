@@ -181,13 +181,6 @@ window.TC_PASSCODE = {
    "zh": "英文",
    "level": 13,
    "page": "18"
-  },
-  {
-   "no": 410,
-   "w": "eraser",
-   "zh": "橡皮擦",
-   "level": 16,
-   "page": "22"
   }
  ],
  "N": [
