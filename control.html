@@ -44,7 +44,7 @@
   .cert .st{display:flex;gap:1.4em;margin:1.6em 0}
   .cert .st div{width:6.4em;height:6.4em;border-radius:50%;border:.35em double var(--c);color:var(--c);display:grid;place-items:center;font-weight:700;font-size:1.4em;transform:rotate(-10deg);line-height:1.1}
   .cert .ft{margin-top:auto;display:flex;justify-content:space-between;width:100%;font-size:1.6em;color:#5a6aa8}
-  .cert .ow{position:absolute;right:3%;top:4%;width:10em;height:11.5em}
+  .cert .ow{position:absolute;right:3%;top:13%;width:9em;height:10.4em}
   /* live board */
   .bb{position:absolute;left:2rem;right:2rem;top:.6rem;height:9rem;display:flex;align-items:center;gap:1.6rem;background:var(--panel);border:2px solid var(--line);border-radius:1.6rem;padding:0 1.6rem}
   .bb-o{width:7rem;height:8rem}
@@ -65,7 +65,7 @@
   @media print{
     body *{visibility:hidden}
     .cert,.cert *{visibility:visible}
-    .cert{position:fixed;left:0;top:0;width:100%;border-radius:0;box-shadow:none;animation:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .cert{position:fixed;left:0;top:0;width:297mm;height:210mm;aspect-ratio:auto;font-size:3.3mm;border-width:7mm;border-radius:0;box-shadow:none;animation:none;padding:9mm 14mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4 landscape;margin:0}
   }
 </style>
