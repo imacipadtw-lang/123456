@@ -7,7 +7,11 @@
   .g4{position:absolute;inset:0;overflow:hidden;background:radial-gradient(70% 60% at 50% 40%,#3b1c7a,#120827)}
   .g4 .spot{position:absolute;top:-20%;width:40%;height:140%;background:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);transform-origin:50% 0;mix-blend-mode:screen;animation:spotA 4s ease-in-out infinite}
   @keyframes spotA{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}}
-  .g4 .floor{position:absolute;left:0;right:0;bottom:0;height:34%;display:grid;grid-template-columns:repeat(10,1fr);perspective:60vh}
+  .g4 .floor{position:absolute;left:-30%;right:-30%;bottom:22%;height:46%;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(5,1fr);transform:perspective(70vh) rotateX(58deg);transform-origin:50% 100%;gap:.6vh}
+  .g4 .floor i{border-radius:.8vh;box-shadow:inset 0 0 2vh rgba(255,255,255,.08)}
+  .g4 .ball{position:absolute;left:50%;top:-3vh;width:14vh;height:14vh;margin-left:-7vh;border-radius:50%;animation:spin 6s linear infinite;
+     background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),transparent 30%),repeating-conic-gradient(#c9d6ff 0 10deg,#6f7fd8 10deg 20deg),#8fa2ff;box-shadow:0 0 4vh rgba(201,214,255,.7)}
+  .g4 .ball:before{content:"";position:absolute;left:50%;top:-20vh;width:.4vh;height:20vh;background:#c9d6ff}
   .g4 .floor i{border:1px solid rgba(255,255,255,.08);animation:tile 1.2s infinite}
   @keyframes tile{0%,100%{background:rgba(255,95,162,.15)}50%{background:rgba(76,201,255,.25)}}
   .g4 .bot{position:absolute;left:50%;top:16%;width:26vh;height:30vh;margin-left:-13vh;transition:transform .2s}
@@ -58,7 +62,7 @@
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g4" });
     root.append(TC.h("div", { class: "spot", style: "left:5%" }), TC.h("div", { class: "spot", style: "right:5%;animation-delay:-2s" }));
-    const floor = TC.h("div", { class: "floor" }); for (let i = 0; i < 30; i++) floor.append(TC.h("i", { style: `animation-delay:${-(i % 7) * 0.17}s` })); root.append(floor);
+    const floor = TC.h("div", { class: "floor" }); for (let i = 0; i < 60; i++) floor.append(TC.h("i", { style: `animation-delay:${-((i * 7) % 11) * 0.13}s` })); root.append(floor, TC.h("div", { class: "ball" }));
     bot = TC.h("div", { class: "bot", html: TC.ollieSVG() });
     lane = TC.h("div", { class: "lane" }); hit = TC.h("div", { class: "hit" }); lane.append(hit);
     const power = TC.h("div", { class: "power" }); powerBar = TC.h("i"); power.append(powerBar);
