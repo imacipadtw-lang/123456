@@ -121,7 +121,11 @@
       ctx.translate(960, 0); ctx.scale(-1, 1); ctx.drawImage(v, (960 - w) / 2, (720 - hh) / 2, w, hh); ctx.setTransform(1, 0, 0, 1, 0, 0);
       st.getTracks().forEach((t) => t.stop()); ok = true;
     } catch (e) {}
-    if (!ok) { const g = ctx.createLinearGradient(0, 0, 960, 720); g.addColorStop(0, "#ff5fa2"); g.addColorStop(1, "#9b6bff"); ctx.fillStyle = g; ctx.fillRect(0, 0, 960, 720); ctx.font = "700 120px Fredoka"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText("CHEESE! 😁", 480, 400); }
+    if (!ok) { // no camera: a party card with Ollie instead of a photo
+      const g = ctx.createLinearGradient(0, 0, 960, 720); g.addColorStop(0, "#ff5fa2"); g.addColorStop(1, "#9b6bff"); ctx.fillStyle = g; ctx.fillRect(0, 0, 960, 720);
+      const o = new Image(); o.src = TC.art("ollie"); await new Promise((r) => { o.onload = r; o.onerror = r; setTimeout(r, 800); });
+      try { ctx.drawImage(o, 330, 90, 300, 348); } catch (e) {}
+      ctx.font = "700 110px Fredoka"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText("SAY CHEESE!", 480, 560); }
     ctx.fillStyle = "rgba(10,22,51,.55)"; ctx.fillRect(0, 640, 960, 80); ctx.fillStyle = "#ffc83d"; ctx.font = "700 40px Fredoka"; ctx.textAlign = "center";
     ctx.fillText("TUCHENG ENGLISH DAY · GATE 4 BEAT PARTY", 480, 695);
     return cvs;
@@ -163,6 +167,7 @@
       const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], zh: "說完就拍照！", keys: F.keys[L], word: "cheese" });
       duck = false;
       if (api.aborted) { stopBeat(); return null; }
+      TC.hideTalk(); lane.querySelectorAll(".cmd").forEach((c) => c.remove()); hit.classList.remove("pulse"); poseCard && poseCard.classList.remove("on");
       const cvs = await snapshot();
       const ph = TC.h("div", { class: "photo" }, cvs, TC.h("div", {}, `${api.kid.name} & friends · Say cheese!`));
       root.append(ph); TC.sfx("fanfare"); TC.confetti(200); pose("dance");
