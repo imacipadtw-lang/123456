@@ -68,7 +68,9 @@
     clueBox = TC.h("div", { class: "clues" });
     shelf = TC.h("div", { class: "shelfItems" });
     tapOpen = TC.h("div", { class: "tapopen hidden zh" }, "👆 TAP TO OPEN! 點箱子打開！");
-    root.append(TC.h("div", { class: "shelf" }), shelf, scene, clueBox, tapOpen);
+    const bg = TC.h("div", { style: "position:absolute;inset:0;pointer-events:none" });
+    ["apple", "pizza", "cake", "strawberry", "ice-cream", "banana", "cookie", "watermelon"].forEach((n, i) => { const im = TC.artImg(n); im.style.cssText = `position:absolute;left:${[34, 62, 44, 72, 30, 58, 78, 40][i]}%;top:${[8, 10, 60, 40, 34, 70, 64, 18][i]}%;width:${8 + (i % 3) * 3}vh;opacity:.18;filter:blur(2px);animation:drift ${7 + i}s ease-in-out ${-i}s infinite alternate`; bg.append(im); });
+    root.append(bg, TC.h("div", { class: "shelf" }), shelf, scene, clueBox, tapOpen);
     api.stage.append(root);
     boxw.addEventListener("pointerdown", () => {
       if (TC.pending && openReady) { TC.pending(); return; }
