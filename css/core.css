@@ -119,6 +119,13 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 .stars img{width:6rem;height:6rem;margin:0 .3rem;filter:drop-shadow(0 .6rem .6rem rgba(0,0,0,.35))}
 .stars img.off{filter:grayscale(1) brightness(.6);opacity:.5}
 
+/* everybody-together chorus */
+.chorus{position:fixed;inset:0;z-index:48;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;background:radial-gradient(circle,rgba(20,10,60,.55),rgba(5,10,25,.9));text-align:center}
+.chorus .c1{font-size:3.4rem;font-weight:700;color:var(--sun)}
+.chorus .c2{font-size:9rem;font-weight:700;line-height:1.05;max-width:90vw;text-shadow:0 .6rem 0 rgba(0,0,0,.35);animation:pulse 1s ease-in-out infinite}
+.chorus .bar{width:60vw;height:3rem;border-radius:2rem;background:rgba(255,255,255,.12);overflow:hidden;border:3px solid rgba(255,255,255,.3)}
+.chorus .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2ee6b6,#ffc83d,#ff5fa2);transition:width .1s}
+
 /* manual picker */
 .picker{position:fixed;inset:0;z-index:60;background:rgba(5,10,25,.85);display:flex;align-items:center;justify-content:center}
 .picker .card{background:var(--bg2);border:2px solid var(--line);border-radius:2rem;padding:2rem;max-width:80vw}

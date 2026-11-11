@@ -365,7 +365,7 @@
           revealKey();
           $("#kLine").querySelectorAll(".w").forEach((w) => w.classList.add("hit"));
           TC.sfx("ding");
-          TC.stats.lines++; TC.stats.stars += r.stars; TC.stats.turns++;
+          TC.stats.lines++; TC.stats.stars += r.stars; TC.stats.turns++; TC.lastSay = spec.say;
           if (r.blob) TC.stats.lastBlob = r.blob;
           TC.log({ type: "line", say: spec.say, heard: r.heard || "", by: r.by });
         }

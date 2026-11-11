@@ -91,7 +91,7 @@
 
   async function playKid(kid) {
     TC.kid = kid; api.aborted = false;
-    TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null };
+    TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null }; TC.lastSay = "";
     setKidChip(kid);
     const ov = h("div", { class: "overlay welcome" },
       h("div", { class: "bpass" },
@@ -107,6 +107,15 @@
     try { res = await game.play(api); } catch (e) { console.error(e); TC.toast("遊戲發生錯誤，老師可按 Esc 重來"); }
     TC.hideTalk();
     if (api.aborted) return;
+    // 🎉 everybody (classmates + parents) says the child's final line together
+    if (TC.lastSay && !TC.cfg.rounds) {
+      const bar = h("i"), ch = h("div", { class: "chorus" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2", style: `font-size:${TC.lastSay.length > 24 ? 6.4 : TC.lastSay.length > 14 ? 8 : 10}rem` }, TC.lastSay), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:1.8rem;color:var(--ink2)" }, "越大聲，煙火越多！"));
+      document.body.append(ch); TC.sfx("levelup");
+      let peak = 0; const t0 = Date.now();
+      await new Promise((res) => { (function loop() { const l = TC.Mic.level || 0; peak = Math.max(peak, l); bar.style.width = Math.min(100, peak * 140) + "%"; if (l > 0.35 && Math.random() < 0.15) TC.confetti(30); if (Date.now() - t0 < 4500 && !api.aborted) requestAnimationFrame(loop); else res(); })(); });
+      TC.confetti(peak > 0.5 ? 260 : 120); TC.sfx(peak > 0.5 ? "fanfare" : "ding"); await sleep(700); ch.remove();
+      if (api.aborted) return;
+    }
     // 🧩 Sentence Builder with a passport sentence (skipped in quick mode)
     if (!TC.cfg.rounds) {
       const pool = (TC_CONTENT.sentences[gate] || []).filter((x) => { const n = x.s.split(/\s+/).length; return kid.level === 1 ? n <= 4 : kid.level === 2 ? n <= 5 : n >= 4; });
@@ -196,7 +205,7 @@
       else TC.teacherOK();
     } else if (k === "h" || k === "H") TC.hearModel();
     else if (k === "n" || k === "N" || k === "ArrowRight") TC.skipTurn();
-    else if (k === "Escape") { if (running) { api.aborted = true; TC.skipTurn(); TC.ASR.stop(); document.querySelectorAll(".overlay,.pz,.actbtn,.lineup").forEach((o) => o.remove()); if (TC.pending) { const p = TC.pending; TC.pending = null; p(); } if (resultOpen) resultOpen(); } }
+    else if (k === "Escape") { if (running) { api.aborted = true; TC.skipTurn(); TC.ASR.stop(); document.querySelectorAll(".overlay,.pz,.actbtn,.lineup,.chorus").forEach((o) => o.remove()); if (TC.pending) { const p = TC.pending; TC.pending = null; p(); } if (resultOpen) resultOpen(); } }
     else if ((k === "s" || k === "S") && !running) TC.openSettings();
     else if ((k === "c" || k === "C") && !running) TC.cameraScan();
     else if ((k === "m" || k === "M") && !running) TC.manualPick();
