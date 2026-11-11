@@ -571,3 +571,15 @@ window.TC_CONTENT.sentences = {
   }
  ]
 };
+
+/* Warm-up chat at the start of each gate (teacher ↔ child), rotating passport patterns.
+   Answer words never appear in the teacher's question, so the AI cannot hear the teacher. */
+window.TC_CONTENT.greetings = {
+  name: { teacher: "Hello! What's your name?", tzh: "你叫什麼名字？", no: [662, 405, 37],
+    say: { 1: "[Name]!", 2: "My name is [Name].", 3: "Hello! My name is [Name]." }, keys: [["my", "i", "am", "[name]"]] },
+  feel: { teacher: "How are you today?", tzh: "你今天好嗎？", no: [255, 258, 259, 37],
+    say: { 1: "Happy!", 2: "I'm happy!", 3: "I'm happy and excited!" }, keys: [["happy", "fine", "good", "great", "excited", "ok", "okay", "tired", "sad", "hungry"]] },
+  age: { teacher: "How old are you?", tzh: "你幾歲？", no: [148, 661],
+    say: { 1: "[Age]!", 2: "I am [age].", 3: "I am [age] years old." }, keys: [["six", "seven", "eight", "nine", "ten", "eleven", "twelve", "years", "old"]] }
+};
+window.TC_CONTENT.greetingOrder = { 1: "name", 2: "feel", 3: "age", 4: "name", 5: "feel", 6: "age" };

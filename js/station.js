@@ -103,6 +103,16 @@
     await TC.speak(`Welcome to ${G.city}, ${kid.name}!`);
     await sleep(600); ov.remove();
     TC.log({ type: "start" });
+    // 👋 warm-up chat with the teacher (standard mode)
+    if (!TC.cfg.rounds) {
+      const gr = TC_CONTENT.greetings[TC_CONTENT.greetingOrder[gate]], L = kid.level;
+      const age = ["", "seven", "eight", "nine", "ten", "eleven", "twelve"][kid.grade] || "ten"; // typical age for the grade
+      const fill = (t) => t.replace("[Name]", kid.name).replace("[name]", kid.name.toLowerCase()).replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age);
+      api.progress(-1, 0);
+      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say[L]), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill)), word: gr === TC_CONTENT.greetings.feel ? "happy" : "" });
+      TC.hideTalk();
+      if (api.aborted) return;
+    }
     let res = null;
     try { res = await game.play(api); } catch (e) { console.error(e); TC.toast("遊戲發生錯誤，老師可按 Esc 重來"); }
     TC.hideTalk();
@@ -181,6 +191,8 @@
     if (G.key === "box") rows = G.items.map((it) => [it.clues.join(" "), cap(it.w) + "!", it.q2, it.s3]);
     if (G.key === "obby") rows = G.moves.map((m) => [m.t, cap(m.w) + "!", m.s2, m.s3]);
     rows.push(["★ " + G.finale.teacher, G.finale.say[1], G.finale.say[2], G.finale.say[3]]);
+    const gr = TC_CONTENT.greetings[TC_CONTENT.greetingOrder[gate]];
+    rows.unshift(["👋 " + gr.teacher, gr.say[1], gr.say[2], gr.say[3]]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
       h("p", { class: "zh" }, "老師說左欄，孩子說右邊三欄（依程度）。遊戲後會有「句子拼拼看」和「護照密碼」。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到掃描"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
