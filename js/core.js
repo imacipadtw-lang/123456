@@ -358,7 +358,7 @@
       const sayWords = String(spec.say || "").split(/\s+/).filter(Boolean);
       $("#kLine").innerHTML = sayWords.map((w, i) => {
         const n = TC.norm(w)[0] || ""; const isKey = [...keyWords].some((k) => TC.wordMatch(n, k));
-        const hide = isKey && spec.hideKey;
+        const hide = spec.hideKey && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
       $("#heard").innerHTML = "&nbsp;";
