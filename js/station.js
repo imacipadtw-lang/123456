@@ -98,6 +98,16 @@
     try { res = await game.play(api); } catch (e) { console.error(e); TC.toast("遊戲發生錯誤，老師可按 Esc 重來"); }
     TC.hideTalk();
     if (api.aborted) return;
+    // 🧩 Sentence Builder with a passport sentence (skipped in quick mode)
+    if (!TC.cfg.rounds) {
+      const pool = (TC_CONTENT.sentences[gate] || []).filter((x) => { const n = x.s.split(/\s+/).length; return kid.level === 1 ? n <= 4 : kid.level === 2 ? n <= 5 : n >= 4; });
+      const pz = pool[(Math.random() * pool.length) | 0];
+      if (pz) await TC.sentencePuzzle(pz.s, pz.zh, kid.level === 3 ? pz.keys : pz.keys.slice(0, 1), api);
+      if (api.aborted) return;
+    }
+    // 🛂 Passport Code: look the number up in the paper passport → secret letter
+    await TC.passportCode(LETTER, api);
+    if (api.aborted) return;
     await showResult(kid, res || {});
   }
 
@@ -120,7 +130,7 @@
     TC.sfx("stamp"); TC.ollie("cheer");
     // rolling decoder
     const AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i = 0; i < 18; i++) { letter.textContent = AZ[(Math.random() * 26) | 0]; TC.sfx("tick"); await sleep(70 + i * 6); }
+    for (let i = 0; i < 8; i++) { letter.textContent = AZ[(Math.random() * 26) | 0]; TC.sfx("tick"); await sleep(60 + i * 8); }
     letter.classList.remove("roll"); letter.textContent = LETTER; TC.sfx("levelup"); TC.confetti(200);
     TC.log({ type: "complete", stars, letter: LETTER, lines: TC.stats.lines });
     await sleep(500);

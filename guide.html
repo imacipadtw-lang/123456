@@ -143,7 +143,7 @@
     const lvl = (a, b, c) => `<td>${a}</td><td>${b}</td><td>${c}</td>`;
     if (G.items && G.key === "kart") G.items.forEach((it) => rows += `<tr><td>${esc(G.teacher)}<br><small>${it.no} ${it.w} ${it.zh}</small></td>${lvl(bold(cap(it.w) + "!", [it.w]), bold(`It's a${/^[aeiou]/.test(it.w) ? "n" : ""} ${it.w}.`, [it.w]), bold(it.s3, [it.w]))}</tr>`);
     if (G.key === "craft") Object.entries(G.colors).forEach(([c, v]) => rows += `<tr><td>${esc(G.teacher)}<br><small>${v.no} ${c} ${v.zh}</small></td>${lvl(bold(cap(c) + "!", [c]), bold(`I want ${c}.`, [c]), bold(`I want ${c}, please.`, [c]))}</tr>`);
-    if (G.key === "catch") G.items.forEach((it) => rows += `<tr><td>${esc(G.teacher)}<br><small>${it.no} ${it.w} ${it.zh}</small></td>${lvl(bold(cap(it.w) + "!", [it.w]), bold(`It's ${it.art || "a"} ${it.w}.`, [it.w]), bold(it.s3, [it.w, ...it.k3.slice(0, 1)]))}</tr>`);
+    if (G.key === "hatch") G.items.forEach((it) => rows += `<tr><td>${esc(G.teacher)}<br><small>${it.no} ${it.w} ${it.zh}</small></td>${lvl(bold(cap(it.w) + "!", [it.w]), bold(`It's ${it.art || "a"} ${it.w}.`, [it.w]), bold(it.s3, [it.w, ...it.k3.slice(0, 1)]))}</tr>`);
     if (G.key === "beat") for (let i = 0; i < 5; i++) rows += `<tr><td>${esc(G.teacher)}<br><small>護照 ${G.moves[1][i].no}／${G.moves[2][i].no}／${G.moves[3][i].no}</small></td>${lvl(bold(G.moves[1][i].say, G.moves[1][i].keys), bold(G.moves[2][i].say, G.moves[2][i].keys), bold(G.moves[3][i].say, G.moves[3][i].keys))}</tr>`;
     if (G.key === "box") G.items.forEach((it) => rows += `<tr><td>${esc(G.teacher)}<br><small>線索：${esc(it.clues.join(" "))}<br>${it.no} ${it.w} ${it.zh}</small></td>${lvl(bold(cap(it.w) + "!", [it.w]), bold(it.q2, [it.w]), bold(it.s3, [it.w]))}</tr>`);
     if (G.key === "obby") G.moves.forEach((m) => rows += `<tr><td>${esc(m.t)}<br><small>${m.no} ${m.w} ${m.zh}</small></td>${lvl(bold(cap(m.w) + "!", [m.w]), bold(m.s2, [m.w]), bold(m.s3, [m.w]))}</tr>`);
@@ -151,7 +151,7 @@
     rows += `<tr style="background:#fff8e1"><td><b>最後一題</b><br>${esc(F.teacher)}<br><small>護照 ${(F.no || []).join("、")}</small></td>${lvl(fs(1), fs(2), fs(3))}</tr>`;
     out.insertAdjacentHTML("beforeend", `<h3><span class="g" style="background:${G.color}">${g}</span> ${esc(G.title)} · ${esc(G.zh)} · ${esc(G.city)} <small style="font-weight:400;color:#556">（${esc(G.passport)}）</small></h3>
       <table><tr><th style="width:26%">老師說 Teacher</th><th>初級 1–2 年級</th><th>中級 3–4 年級</th><th>高級 5–6 年級</th></tr>${rows}</table>
-      ${G.key === "craft" ? "<p>孩子可以從畫面左邊剩下的顏色中任選一個說出來；[color] 代表孩子選的顏色。</p>" : ""}${G.key === "catch" || G.key === "box" ? "<p>答案字一開始會以「?」遮住，等孩子猜或提示時間到才顯示；說錯其他動物／食物時，螢幕會回答 “Not a …!”／“No, it isn't!”。</p>" : ""}`);
+      ${G.key === "craft" ? "<p>孩子可以從畫面左邊剩下的顏色中任選一個說出來；[color] 代表孩子選的顏色。</p>" : ""}${G.key === "hatch" || G.key === "box" ? "<p>答案字一開始會以「?」遮住，等孩子猜或提示時間到才顯示；說錯其他動物／食物時，螢幕會回答 “Not a …!”／“No, it isn't!”。</p>" : ""}`);
   }
   out.insertAdjacentHTML("beforeend", `<h3>★ 終點登機門 Final Gate</h3><table><tr><th>步驟</th><th>內容</th></tr><tr><td>解碼</td><td>孩子按出或說出 6 個字母：<b>${C.secret}</b></td></tr><tr><td>老師</td><td>Who are we? We are…</td></tr><tr><td>孩子</td><td><b>${esc(C.finalLine.say)}</b>（護照 ${C.finalLine.no.join("、")}）</td></tr></table>`);
 </script>

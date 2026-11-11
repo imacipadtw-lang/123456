@@ -53,8 +53,8 @@ window.TC_CONTENT = {
 
     /* ---------------- Gate 3 · Word Monster Catch ---------------- */
     3: {
-      key: "catch", title: "Animal Catch", zh: "英語動物捕捉隊", city: "Paris", color: "#ffc83d",
-      genre: "Creature collecting 收集養成", passport: "第1關 動物 · 第9、10關 形容詞",
+      key: "hatch", title: "Pet Hatch", zh: "英語寵物孵蛋", city: "Paris", color: "#ffc83d",
+      genre: "Egg hatching & pets 孵蛋收集", passport: "第1關 動物 · 第9、10關 形容詞",
       teacher: "What is it?",
       items: [
         { w: "tiger", no: 11, zh: "老虎", img: "tiger", s3: "The tiger is strong.", k3: ["strong"], fin3: "It is strong!" },
@@ -147,4 +147,423 @@ window.TC_CONTENT = {
         say: { 1: "Basketball!", 2: "I like basketball.", 3: "My favorite sport is basketball." } }
     }
   }
+};
+
+/* Sentence Builder puzzles: passport example sentences (number = passport word number) */
+window.TC_CONTENT.sentences = {
+ "1": [
+  {
+   "no": 17,
+   "s": "The train is fast.",
+   "zh": "火車很快。",
+   "keys": [
+    [
+     "train"
+    ],
+    [
+     "fast"
+    ]
+   ]
+  },
+  {
+   "no": 19,
+   "s": "The plane is in the sky.",
+   "zh": "飛機在天上。",
+   "keys": [
+    [
+     "plane"
+    ],
+    [
+     "sky"
+    ]
+   ]
+  },
+  {
+   "no": 16,
+   "s": "I ride my bike to school.",
+   "zh": "我騎腳踏車上學。",
+   "keys": [
+    [
+     "ride",
+     "bike"
+    ],
+    [
+     "school"
+    ]
+   ]
+  },
+  {
+   "no": 18,
+   "s": "We take a taxi home.",
+   "zh": "我們搭計程車回家。",
+   "keys": [
+    [
+     "taxi"
+    ],
+    [
+     "home"
+    ]
+   ]
+  },
+  {
+   "no": 248,
+   "s": "The turtle is slow.",
+   "zh": "烏龜很慢。",
+   "keys": [
+    [
+     "turtle"
+    ],
+    [
+     "slow"
+    ]
+   ]
+  }
+ ],
+ "2": [
+  {
+   "no": 507,
+   "s": "The sky is blue.",
+   "zh": "天空是藍色的。",
+   "keys": [
+    [
+     "sky"
+    ],
+    [
+     "blue"
+    ]
+   ]
+  },
+  {
+   "no": 508,
+   "s": "The sun is yellow.",
+   "zh": "太陽是黃色的。",
+   "keys": [
+    [
+     "sun"
+    ],
+    [
+     "yellow"
+    ]
+   ]
+  },
+  {
+   "no": 505,
+   "s": "The apple is red.",
+   "zh": "蘋果是紅色的。",
+   "keys": [
+    [
+     "apple"
+    ],
+    [
+     "red"
+    ]
+   ]
+  },
+  {
+   "no": 439,
+   "s": "Blue is my favorite color.",
+   "zh": "藍色是我最喜歡的顏色。",
+   "keys": [
+    [
+     "blue"
+    ],
+    [
+     "favorite"
+    ]
+   ]
+  },
+  {
+   "no": 513,
+   "s": "I eat rice.",
+   "zh": "我吃米飯。",
+   "keys": [
+    [
+     "eat",
+     "rice"
+    ]
+   ]
+  }
+ ],
+ "3": [
+  {
+   "no": 11,
+   "s": "The tiger is strong.",
+   "zh": "老虎很強壯。",
+   "keys": [
+    [
+     "tiger"
+    ],
+    [
+     "strong"
+    ]
+   ]
+  },
+  {
+   "no": 10,
+   "s": "The rabbit has long ears.",
+   "zh": "兔子有長耳朵。",
+   "keys": [
+    [
+     "rabbit"
+    ],
+    [
+     "ears",
+     "long"
+    ]
+   ]
+  },
+  {
+   "no": 8,
+   "s": "The monkey is eating bananas.",
+   "zh": "猴子在吃香蕉。",
+   "keys": [
+    [
+     "monkey"
+    ],
+    [
+     "banana",
+     "bananas",
+     "eating"
+    ]
+   ]
+  },
+  {
+   "no": 5,
+   "s": "The duck is swimming.",
+   "zh": "鴨子在游泳。",
+   "keys": [
+    [
+     "duck"
+    ],
+    [
+     "swimming",
+     "swim"
+    ]
+   ]
+  },
+  {
+   "no": 12,
+   "s": "The turtle is slow.",
+   "zh": "烏龜很慢。",
+   "keys": [
+    [
+     "turtle"
+    ],
+    [
+     "slow"
+    ]
+   ]
+  }
+ ],
+ "4": [
+  {
+   "no": 680,
+   "s": "Clap your hands with me.",
+   "zh": "跟我一起拍手。",
+   "keys": [
+    [
+     "clap"
+    ],
+    [
+     "hands",
+     "hand"
+    ]
+   ]
+  },
+  {
+   "no": 671,
+   "s": "Raise your hand if you know.",
+   "zh": "如果你知道答案，請舉手。",
+   "keys": [
+    [
+     "raise"
+    ],
+    [
+     "hand",
+     "know"
+    ]
+   ]
+  },
+  {
+   "no": 673,
+   "s": "Let's line up quietly.",
+   "zh": "我們安靜排隊。",
+   "keys": [
+    [
+     "line"
+    ],
+    [
+     "quietly",
+     "quiet",
+     "up"
+    ]
+   ]
+  },
+  {
+   "no": 669,
+   "s": "Please stand up.",
+   "zh": "請站起來。",
+   "keys": [
+    [
+     "stand"
+    ]
+   ]
+  },
+  {
+   "no": 116,
+   "s": "We dance together.",
+   "zh": "我們一起跳舞。",
+   "keys": [
+    [
+     "dance"
+    ],
+    [
+     "together"
+    ]
+   ]
+  }
+ ],
+ "5": [
+  {
+   "no": 604,
+   "s": "I like apples.",
+   "zh": "我喜歡蘋果。",
+   "keys": [
+    [
+     "like"
+    ],
+    [
+     "apple",
+     "apples"
+    ]
+   ]
+  },
+  {
+   "no": 526,
+   "s": "Lemons are sour.",
+   "zh": "檸檬是酸的。",
+   "keys": [
+    [
+     "lemon",
+     "lemons"
+    ],
+    [
+     "sour"
+    ]
+   ]
+  },
+  {
+   "no": 532,
+   "s": "Pizza is my favorite food.",
+   "zh": "披薩是我最喜歡的食物。",
+   "keys": [
+    [
+     "pizza"
+    ],
+    [
+     "favorite",
+     "food"
+    ]
+   ]
+  },
+  {
+   "no": 546,
+   "s": "Strawberries are sweet.",
+   "zh": "草莓是甜的。",
+   "keys": [
+    [
+     "strawberry",
+     "strawberries"
+    ],
+    [
+     "sweet"
+    ]
+   ]
+  },
+  {
+   "no": 566,
+   "s": "I love ice cream.",
+   "zh": "我愛冰淇淋。",
+   "keys": [
+    [
+     "love",
+     "like"
+    ],
+    [
+     "ice",
+     "cream"
+    ]
+   ]
+  }
+ ],
+ "6": [
+  {
+   "no": 134,
+   "s": "I can run fast.",
+   "zh": "我可以跑得很快。",
+   "keys": [
+    [
+     "run"
+    ],
+    [
+     "fast"
+    ]
+   ]
+  },
+  {
+   "no": 394,
+   "s": "I can swim fast.",
+   "zh": "我游得很快。",
+   "keys": [
+    [
+     "swim"
+    ],
+    [
+     "fast"
+    ]
+   ]
+  },
+  {
+   "no": 139,
+   "s": "Birds can fly.",
+   "zh": "鳥會飛。",
+   "keys": [
+    [
+     "birds",
+     "bird"
+    ],
+    [
+     "fly"
+    ]
+   ]
+  },
+  {
+   "no": 607,
+   "s": "She jumps high.",
+   "zh": "她跳得很高。",
+   "keys": [
+    [
+     "jump",
+     "jumps"
+    ],
+    [
+     "high"
+    ]
+   ]
+  },
+  {
+   "no": 311,
+   "s": "My favorite sport is soccer.",
+   "zh": "我最喜歡的運動是足球。",
+   "keys": [
+    [
+     "favorite"
+    ],
+    [
+     "sport",
+     "soccer"
+    ]
+   ]
+  }
+ ]
 };
