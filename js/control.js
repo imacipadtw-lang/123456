@@ -136,12 +136,32 @@
     reset();
   });
 
+  /** 3-2-1 smile! — a webcam photo for the certificate (kept on this computer only) */
+  async function takePhoto() {
+    let st = null;
+    try { st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 } } }); } catch (e) { return null; }
+    const v = h("video", { playsinline: "", muted: "", style: "width:62vh;height:62vh;object-fit:cover;border-radius:50%;border:1.2vh solid #ffc83d;transform:scaleX(-1);box-shadow:0 0 6vh rgba(255,200,61,.6)" });
+    const num = h("div", { style: "font-size:16vh;font-weight:700;color:#ffc83d;text-shadow:0 1vh 0 rgba(0,0,0,.3)" }, "3");
+    const ov = h("div", { class: "overlay" }, h("div", { class: "zh", style: "font-size:4rem;font-weight:700" }, "📸 Smile! 笑一個！"), v, num);
+    document.body.append(ov); v.srcObject = st; try { await v.play(); } catch (e) {}
+    for (const n of ["3", "2", "1"]) { num.textContent = n; TC.sfx("tick"); await sleep(800); }
+    num.textContent = "😁"; TC.sfx("click");
+    const c = document.createElement("canvas"); c.width = c.height = 600; const x = c.getContext("2d");
+    const s = Math.min(v.videoWidth, v.videoHeight) || 600; x.translate(600, 0); x.scale(-1, 1);
+    try { x.drawImage(v, (v.videoWidth - s) / 2, (v.videoHeight - s) / 2, s, s, 0, 0, 600, 600); } catch (e) {}
+    st.getTracks().forEach((t) => t.stop());
+    ov.animate([{ background: "rgba(255,255,255,1)" }, { background: "rgba(5,10,25,.72)" }], { duration: 400 });
+    await sleep(500); ov.remove();
+    return c.toDataURL("image/jpeg", 0.85);
+  }
   async function certificate(kid) {
     const d = new Date(), date = `${d.getFullYear()} / ${d.getMonth() + 1} / ${d.getDate()}`;
+    const photo = await takePhoto();
     const next = h("button", { class: "big-btn go" }, "NEXT ▶");
     const ov = h("div", { class: "overlay" },
       h("div", { class: "cert" },
         h("div", { class: "ow", html: TC.ollieSVG() }),
+        photo ? h("img", { class: "ph", src: photo, alt: kid.name }) : h("div", { class: "ph ph-o", html: TC.ollieSVG() }),
         h("div", { class: "k1" }, "TUCHENG ELEMENTARY SCHOOL · ENGLISH DAY"),
         h("h1", {}, "World English Traveler"),
         h("div", { class: "zh" }, "環遊世界英語小達人"),
