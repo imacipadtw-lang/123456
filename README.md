@@ -20,6 +20,7 @@
 - `opening.html` 開場動畫（大廳大螢幕，七個畫面介紹規則，可自動播放）
 - `control.html` 終點登機門（解碼、獎狀列印）＋即時看板
 - `cards.html` 列印護照 QR 登機卡（每頁 8 張）
+- `teacher-cards.html` 關主一頁卡（每關一張 A4，可直接列印）
 - `phone.html` 老師手機掃描蓋章（備援）
 - `guide.html` 活動手冊（流程、時間表、各關台詞、設備、部長參訪路線、備援、隱私）
 - `credits.html` 真人發音來源與授權
