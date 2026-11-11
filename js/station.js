@@ -161,6 +161,26 @@
   // one tap for visitors (e.g. the minister): a guest traveller at the intermediate level
   $("#vipBtn").onclick = () => { TC.ac(); const g = TC.mkKid("99", "Guest", 3); g.color = "#ffc83d"; TC.handleScan ? TC.handleScan(g) : null; };
   $("#setBtn").onclick = () => TC.openSettings();
+  // 📋 teacher script for this gate, generated from the same content the game uses
+  $("#helpBtn").onclick = () => {
+    const cap = (w) => w[0].toUpperCase() + w.slice(1);
+    let rows = [];
+    if (G.key === "kart") rows = G.items.map((it) => [G.teacher, cap(it.w) + "!", `It's a${/^[aeiou]/.test(it.w) ? "n" : ""} ${it.w}.`, it.s3]);
+    if (G.key === "craft") rows = Object.keys(G.colors).map((c) => [G.teacher, cap(c) + "!", `I want ${c}.`, `I want ${c}, please.`]);
+    if (G.key === "hatch") rows = G.items.map((it) => [G.teacher, cap(it.w) + "!", `It's ${it.art || "a"} ${it.w}.`, it.s3]);
+    if (G.key === "beat") rows = [0, 1, 2, 3, 4].map((i) => [G.teacher, G.moves[1][i].say, G.moves[2][i].say, G.moves[3][i].say]);
+    if (G.key === "box") rows = G.items.map((it) => [it.clues.join(" "), cap(it.w) + "!", it.q2, it.s3]);
+    if (G.key === "obby") rows = G.moves.map((m) => [m.t, cap(m.w) + "!", m.s2, m.s3]);
+    rows.push(["★ " + G.finale.teacher, G.finale.say[1], G.finale.say[2], G.finale.say[3]]);
+    const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
+      h("p", { class: "zh" }, "老師說左欄，孩子說右邊三欄（依程度）。遊戲後會有「句子拼拼看」和「護照密碼」。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到掃描"),
+      h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
+        h("tr", {}, ...["老師 Teacher", "初級", "中級", "高級"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
+        ...rows.map((r) => h("tr", {}, ...r.map((t) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" }, t))))),
+      h("div", { class: "row" }, h("button", { class: "save", onclick: () => wrap.remove() }, "關閉 Close")));
+    const wrap = h("div", { class: "settings", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);
+    document.body.append(wrap);
+  };
   $("#okBtn").onclick = () => TC.teacherOK();
   $("#hearBtn").onclick = () => TC.hearModel();
   $("#skipBtn").onclick = () => TC.skipTurn();

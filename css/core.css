@@ -23,7 +23,7 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 .layer{position:absolute;inset:0}
 
 /* ---------- HUD ---------- */
-#hud{position:fixed;left:0;right:0;top:0;height:7.2rem;display:flex;align-items:center;gap:1.4rem;padding:0 1.6rem;z-index:20;pointer-events:none;
+#hud{position:fixed;left:0;right:0;top:0;height:7.2rem;display:flex;align-items:center;gap:1.4rem;padding:0 1.6rem;z-index:42;pointer-events:none;
   background:linear-gradient(180deg,rgba(5,12,30,.75),rgba(5,12,30,0))}
 #hud>*{pointer-events:auto}
 .gate-badge{display:flex;align-items:center;gap:1rem;background:var(--panel);border:2px solid var(--gate);border-radius:1.4rem;padding:.6rem 1.4rem .6rem .7rem;box-shadow:0 0 1.6rem color-mix(in srgb,var(--gate) 45%,transparent)}
