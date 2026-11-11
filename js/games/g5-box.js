@@ -5,19 +5,30 @@
   const css = `
   .g5{position:absolute;inset:0;overflow:hidden;background:radial-gradient(80% 70% at 50% 45%,#3a2a7a,#0d0a26)}
   .g5 .shelf{position:absolute;left:0;right:0;top:66%;height:4%;background:linear-gradient(#b07a4a,#6d4527);box-shadow:0 1vh 2vh rgba(0,0,0,.5)}
-  .g5 .boxw{position:absolute;left:50%;top:30%;width:30vh;height:30vh;margin-left:-15vh;transform-origin:50% 100%}
+  .g5 .boxw{position:absolute;left:50%;top:26%;width:30vh;height:30vh;margin-left:-15vh;transform-origin:50% 100%}
   .g5 .boxw.drop{animation:dropIn .8s cubic-bezier(.3,1.4,.5,1)}
   .g5 .boxw.shake{animation:shake .45s infinite}
   @keyframes dropIn{from{transform:translateY(-80vh)}}
-  .g5 .bx{position:absolute;left:5%;right:5%;bottom:0;height:72%;border-radius:1.2vh;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:inset 0 -2vh 3vh rgba(0,0,0,.25),0 0 6vh var(--c1)}
-  .g5 .bx:before{content:"";position:absolute;left:44%;width:12%;top:0;bottom:0;background:#ffe58a}
-  .g5 .bx b{position:absolute;inset:0;display:grid;place-items:center;font-size:13vh;color:rgba(255,255,255,.92);text-shadow:0 .6vh 0 rgba(0,0,0,.25)}
-  .g5 .lid{position:absolute;left:0;right:0;top:12%;height:20%;border-radius:1.2vh;background:linear-gradient(135deg,var(--c2),var(--c1));transition:transform .7s cubic-bezier(.3,1.5,.5,1)}
-  .g5 .lid:before{content:"";position:absolute;left:44%;width:12%;top:0;bottom:0;background:#ffe58a}
-  .g5 .lid:after{content:"🎀";position:absolute;left:50%;top:-6vh;transform:translateX(-50%);font-size:8vh}
-  .g5 .open .lid{transform:translate(30vh,-25vh) rotate(50deg)}
+  .g5 .boxw{perspective:120vh}
+  .g5 .cube{position:absolute;left:calc(50% - 11vh);width:22vh;bottom:4%;height:22vh;transform-style:preserve-3d;animation:cubeTurn 6s ease-in-out infinite}
+  @keyframes cubeTurn{0%,100%{transform:rotateX(-14deg) rotateY(-28deg)}50%{transform:rotateX(-14deg) rotateY(28deg)}}
+  .g5 .face{position:absolute;inset:0;border-radius:1vh;display:grid;place-items:center;backface-visibility:hidden;
+     background:linear-gradient(90deg,transparent 42%,#ffe58a 42%,#ffd21f 58%,transparent 58%),linear-gradient(135deg,color-mix(in srgb,var(--c1) 70%,#fff),var(--c1) 45%,var(--c2));
+     box-shadow:inset 0 0 0 .5vh rgba(255,255,255,.25),inset 0 -2vh 3vh rgba(0,0,0,.2)}
+  .g5 .face b{font-size:12vh;color:#fff;text-shadow:0 .6vh 0 rgba(0,0,0,.25),0 0 2vh rgba(255,255,255,.6)}
+  .g5 .f-front{transform:translateZ(11vh)}.g5 .f-back{transform:rotateY(180deg) translateZ(11vh)}
+  .g5 .f-right{transform:rotateY(90deg) translateZ(11vh)}.g5 .f-left{transform:rotateY(-90deg) translateZ(11vh)}
+  .g5 .f-bottom{transform:rotateX(-90deg) translateZ(11vh);filter:brightness(.6)}
+  .g5 .lid3{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,1.4,.5,1),opacity .8s}
+  .g5 .f-top{transform:rotateX(90deg) translateZ(11vh);background:linear-gradient(90deg,transparent 42%,#ffe58a 42%,#ffd21f 58%,transparent 58%),linear-gradient(0deg,transparent 42%,#ffe58a 42%,#ffd21f 58%,transparent 58%),linear-gradient(135deg,color-mix(in srgb,var(--c2) 60%,#fff),var(--c2))}
+  .g5 .bow{position:absolute;left:50%;top:6.5vh;z-index:2;width:16vh;height:10vh;margin-left:-8vh;transform:translateZ(0) translateY(-50%);pointer-events:none;
+     background:radial-gradient(circle at 50% 60%,#ffe58a 0 18%,transparent 19%),radial-gradient(ellipse 34% 48% at 26% 50%,#ffd21f 60%,transparent 62%),radial-gradient(ellipse 34% 48% at 74% 50%,#ffd21f 60%,transparent 62%);filter:drop-shadow(0 .5vh .5vh rgba(0,0,0,.3))}
+  .g5 .open .lid3{transform:translateY(-55vh) rotateX(70deg) rotateZ(30deg);opacity:0}
+  .g5 .open .cube{animation-play-state:paused}
+  .g5 .open .f-front b{opacity:0}
   .g5 .beams{position:absolute;left:50%;top:50%;width:120vh;height:120vh;margin:-60vh 0 0 -60vh;border-radius:50%;opacity:0;background:repeating-conic-gradient(var(--beam) 0 8deg,transparent 8deg 22deg);transition:opacity .4s;animation:spin 6s linear infinite;mask:radial-gradient(circle,#000 10%,transparent 60%);-webkit-mask:radial-gradient(circle,#000 10%,transparent 60%)}
   .g5 .open .beams{opacity:.9}
+  .g5 .open .bow{opacity:0;transition:opacity .3s}
   .g5 .item{position:absolute;left:50%;top:30%;width:26vh;height:26vh;margin-left:-13vh;opacity:0;transform:scale(.2) translateY(30vh)}
   .g5 .open .item{animation:itemUp 1s cubic-bezier(.2,1.5,.4,1) forwards}
   @keyframes itemUp{to{opacity:1;transform:scale(1) translateY(-14vh) rotate(360deg)}}
@@ -48,7 +59,9 @@
     root = TC.h("div", { class: "g5" });
     scene = TC.h("div", { class: "scene", style: "position:absolute;inset:0" });
     const beams = TC.h("div", { class: "beams" });
-    boxw = TC.h("div", { class: "boxw" }, TC.h("div", { class: "bx" }, TC.h("b", {}, "?")), TC.h("div", { class: "lid" }));
+    const F = (cls, txt) => TC.h("div", { class: "face " + cls }, txt ? TC.h("b", {}, txt) : null);
+    boxw = TC.h("div", { class: "boxw" }, TC.h("div", { class: "cube" }, F("f-back"), F("f-left"), F("f-right"), F("f-bottom"), F("f-front", "?"),
+      TC.h("div", { class: "lid3" }, F("f-top"))), TC.h("div", { class: "bow" }));
     itemImg = TC.h("img", { class: "item", alt: "" });
     rarEl = TC.h("div", { class: "rar" }); labelEl = TC.h("div", { class: "label" });
     scene.append(beams, boxw, itemImg, rarEl, labelEl);
