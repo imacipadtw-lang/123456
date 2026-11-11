@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   TC.games = TC.games || {};
+  const OLLIE = TC.artImg("ollie");
   const IM = {}; ["bus", "train", "taxi", "plane", "bike", "boat", "truck", "scooter", "tree", "star", "trophy"].forEach((n) => (IM[n] = TC.artImg(n)));
 
   let cv, ctx, W, H, raf = 0;
@@ -149,7 +150,8 @@
     // driver helmet
     const gh = ctx.createRadialGradient(-9 * u, -92 * u, 2 * u, 0, -82 * u, 28 * u); gh.addColorStop(0, "#ffffff"); gh.addColorStop(0.5, rival ? "#8fa2ff" : "#eef2ff"); gh.addColorStop(1, rival ? "#4a5bc0" : "#9aa6cf");
     ctx.fillStyle = gh; ctx.beginPath(); ctx.arc(0, -82 * u, 26 * u, 0, 7); ctx.fill();
-    ctx.fillStyle = color; ctx.font = `700 ${30 * u}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(letter, 0, -80 * u); ctx.textBaseline = "alphabetic";
+    if (rival && OLLIE.complete) ctx.drawImage(OLLIE, -30 * u, -122 * u, 60 * u, 70 * u);
+    else { ctx.fillStyle = color; ctx.font = `700 ${30 * u}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(letter, 0, -80 * u); ctx.textBaseline = "alphabetic"; }
     if (!rival && S.boost > 0) { for (let i = 0; i < 2; i++) { const fx = (i ? 30 : -30) * u; ctx.fillStyle = Math.random() > 0.5 ? "#ffc83d" : "#ff5a5a"; ctx.beginPath(); ctx.moveTo(fx - 10 * u, -20 * u); ctx.lineTo(fx + 10 * u, -20 * u); ctx.lineTo(fx, (10 + Math.random() * 30) * u); ctx.fill(); } }
     ctx.restore();
   }

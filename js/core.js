@@ -149,7 +149,8 @@
       try { speechSynthesis.cancel(); } catch (e) {}
       const u = new SpeechSynthesisUtterance(text);
       const v = TC.pickVoice(); if (v) u.voice = v;
-      u.lang = "en-US"; u.rate = opt.rate || 0.92; u.pitch = opt.pitch || 1.05; u.volume = TC.cfg.volume;
+      u.lang = "en-US"; u.rate = opt.rate || 0.92; u.pitch = opt.pitch || 1.18; u.volume = TC.cfg.volume; // Ollie's voice: a little higher
+
       let done = false; const fin = () => { if (!done) { done = true; TC.quiet(false); TC.ollie && TC.ollie("idle"); res(); } };
       TC.quiet(true);
       u.onend = fin; u.onerror = fin; setTimeout(fin, 1500 + text.length * 120);
@@ -163,7 +164,7 @@
     const single = words.length <= 2 && word && TC.hasHuman(word);
     if (single) { showSrc("human", word); await TC.playHuman(word); return "human"; }
     if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); await sleep(250); }
-    showSrc("tts"); await TC.speak(sentence, { rate: 0.85 });
+    showSrc("tts"); await TC.speak(sentence, { rate: 0.85, pitch: 1.0 }); // model sentences: natural pitch
     return "tts";
   };
   function showSrc(kind, word) {
