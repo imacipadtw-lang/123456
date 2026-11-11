@@ -210,7 +210,9 @@
       if (api.aborted) return null;
       S.target = 900; S.boost = 2; TC.sfx("fanfare"); TC.confetti(220);
       TC.floatText("1st PLACE!", 50, 35, "#ffc83d");
-      await TC.sleep(2200); S.target = 0; S.running = false;
+      const tro = TC.artImg("trophy"); tro.style.cssText = "position:fixed;left:50%;top:44%;width:34vh;height:34vh;margin:-17vh;z-index:44;filter:drop-shadow(0 0 4vh #ffc83d)";
+      document.body.append(tro); tro.animate([{ transform: "scale(.2) rotate(-30deg)", opacity: 0 }, { transform: "scale(1.15) rotate(6deg)", opacity: 1 }, { transform: "scale(1) rotate(0)" }], { duration: 800, easing: "cubic-bezier(.2,1.5,.4,1)" });
+      await TC.sleep(2600); tro.remove(); S.target = 0; S.running = false;
       api.progress(N, N);
       return { ok: true };
     }

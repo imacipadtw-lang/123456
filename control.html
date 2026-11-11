@@ -46,12 +46,20 @@
   .cert .ft{margin-top:auto;display:flex;justify-content:space-between;width:100%;font-size:1.6em;color:#5a6aa8}
   .cert .ow{position:absolute;right:3%;top:4%;width:10em;height:11.5em}
   /* live board */
-  .board{position:absolute;inset:1rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(22rem,1fr));gap:1rem;align-content:start;overflow:auto}
+  .bb{position:absolute;left:2rem;right:2rem;top:.6rem;height:9rem;display:flex;align-items:center;gap:1.6rem;background:var(--panel);border:2px solid var(--line);border-radius:1.6rem;padding:0 1.6rem}
+  .bb-o{width:7rem;height:8rem}
+  .bb-t{flex:1}
+  .bb-h{font-size:2.6rem;font-weight:700}
+  .bb-bar{height:1.6rem;border-radius:1rem;background:rgba(255,255,255,.12);margin-top:.6rem;overflow:hidden}
+  .bb-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2ee6b6,#ffc83d,#ff5fa2);transition:width 1s}
+  .bb-n{text-align:center;min-width:9rem}.bb-n b{display:block;font-size:4rem;color:var(--sun);line-height:1}.bb-n span{font-size:1.3rem;color:var(--ink2)}
+  .board{position:absolute;inset:11rem 2rem 2.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(22rem,1fr));gap:1rem;align-content:start;overflow:auto}
   .kc{background:var(--panel);border:2px solid var(--line);border-radius:1.2rem;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem}
   .kc .av{width:4rem;height:4rem;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.8rem;color:#0a1633;flex:0 0 auto}
   .kc b{font-size:1.6rem;display:block}
   .kc .dots{display:flex;gap:.35rem;margin-top:.3rem}
-  .kc .dots i{width:1.4rem;height:1.4rem;border-radius:50%;background:rgba(255,255,255,.15)}
+  .kc .dots i{width:2.4rem;height:2.4rem;border-radius:50%;background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.25)}
+  .kc .dots img.emb{width:2.6rem;height:2.6rem;animation:pop .4s}
   .kc.fin{border-color:var(--sun);box-shadow:0 0 1.2rem rgba(255,200,61,.4)}
   .src{position:absolute;right:2rem;bottom:1rem;font-size:1.2rem;color:var(--ink2)}
   @media print{
@@ -79,7 +87,10 @@
       <div class="hint zh">看你護照卡上的 6 個字母，依序按下去！也可以直接用英文說出這個字。</div>
     </div>
   </section>
-  <section class="view hidden" id="vBoard"><div class="board" id="board"></div><div class="src" id="boardSrc"></div></section>
+  <section class="view hidden" id="vBoard">
+    <div class="bb"><div class="bb-o" id="bbO"></div><div class="bb-t"><div class="zh bb-h">🌏 小旅客環遊世界 · 英語即時看板</div><div class="bb-bar"><i id="bbBar"></i></div></div>
+      <div class="bb-n"><b id="bbKids">0</b><span class="zh">完成</span></div><div class="bb-n"><b id="bbStamps">0</b><span class="zh">印章</span></div><div class="bb-n"><b id="bbLines">0</b><span class="zh">英文句子</span></div></div>
+    <div class="board" id="board"></div><div class="src" id="boardSrc"></div></section>
 </div>
 
 <header id="hud">

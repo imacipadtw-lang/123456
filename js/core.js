@@ -267,7 +267,13 @@
   const SOUND = { two: ["to", "too"], four: ["for", "fore"], eight: ["ate"], one: ["won"], red: ["read"], blue: ["blew"], bear: ["bare"],
     pink: ["ping"], plane: ["plain", "playing"], taxi: ["texas", "taxis"], bike: ["bite", "back"], bus: ["boss", "buzz"], cheese: ["chee", "cheers", "jeez"],
     hi: ["high"], fly: ["flies"], tiger: ["tigger"], zebra: ["zibra", "zeebra"], cake: ["kate"], cookie: ["cooky", "cookies"], sit: ["set"], clap: ["clip", "club"],
-    friend: ["friends", "french"], swim: ["swimming"], climb: ["climbing", "time"], jump: ["jumping", "john"], run: ["running", "ron"], ride: ["right", "riding"] };
+    friend: ["friends", "french"], swim: ["swimming"], climb: ["climbing", "time"], jump: ["jumping", "john"], run: ["running", "ron"], ride: ["right", "riding", "write"],
+    // common near-misses for young Taiwanese learners (kept apart from other words in the same game)
+    monkey: ["money", "monkeys"], rabbit: ["rabid", "robert"], turtle: ["total"], elephant: ["element"], duck: ["dock", "doc"],
+    lion: ["line", "lying"], horse: ["house", "hose"], train: ["drain"], boat: ["both", "vote"], truck: ["track", "chuck"], egg: ["eggs", "ig"],
+    green: ["grin"], purple: ["people"], white: ["wide", "why"], black: ["block"], stand: ["stan", "standing"], dance: ["dense", "dancing"],
+    pizza: ["pisa"], lemon: ["lemons", "lemmon"], apple: ["apples", "app"], father: ["farther"], tennis: ["tenis"] };
+  SOUND.tiger.push("taiga", "tigers");
   TC.norm = function (text) {
     let t = " " + String(text).toLowerCase() + " ";
     t = t.replace(/\b1st\b/g, "first").replace(/\b2nd\b/g, "second").replace(/\b3rd\b/g, "third");

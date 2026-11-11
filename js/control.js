@@ -22,6 +22,7 @@
     </svg>`;
   }
   drawRoute();
+  $("#bbO").innerHTML = TC.ollieSVG();
 
   /* ---------- live stats (Google Sheet sync if set, otherwise this device's log) ---------- */
   function localState() {
@@ -50,11 +51,16 @@
     const kids = Object.entries(state.kids || {});
     $("#sKids").textContent = kids.filter(([, k]) => k.final).length;
     $("#sLines").textContent = state.lines || 0;
-    $("#sStamps").textContent = kids.reduce((a, [, k]) => a + (k.gates || []).length, 0);
+    $("#sStamps").textContent = kids.reduce((a, [, k]) => a + (k.final ? 6 : (k.gates || []).length), 0);
+    const stamps = +$("#sStamps").textContent, total = Math.max(1, Object.keys(TC.roster()).length || 28) * 6;
+    $("#bbKids").textContent = $("#sKids").textContent; $("#bbLines").textContent = $("#sLines").textContent; $("#bbStamps").textContent = stamps;
+    $("#bbBar").style.width = Math.min(100, (stamps / total) * 100) + "%";
     const b = $("#board"); b.innerHTML = "";
     kids.sort((a, z) => a[0].localeCompare(z[0])).forEach(([id, k]) => {
       const col = TC.mkKid(id, k.name || id, +k.grade || 3).color;
-      const dots = h("div", { class: "dots" }, ...GATES.map((g) => h("i", { style: (k.gates || []).includes(g.n) ? `background:${g.color}` : "" })));
+      const EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
+      const done = k.final ? [1, 2, 3, 4, 5, 6] : (k.gates || []);
+      const dots = h("div", { class: "dots" }, ...GATES.map((g) => done.includes(g.n) ? Object.assign(TC.artImg(EMB[g.n]), { className: "emb", title: g.city }) : h("i", { title: g.city })));
       b.append(h("div", { class: "kc" + (k.final ? " fin" : "") }, h("div", { class: "av", style: `background:${col}` }, (k.name || "?")[0]), h("div", {}, h("b", {}, `${id} ${k.name || ""} ${k.final ? "🏆" : ""}`), dots)));
     });
     if (!kids.length) b.append(h("div", { class: "zh", style: "font-size:2rem;color:var(--ink2)" }, "還沒有資料。孩子完成關卡後會出現在這裡。"));
