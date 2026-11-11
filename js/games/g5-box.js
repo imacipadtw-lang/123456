@@ -1,0 +1,115 @@
+/* Gate 5 · Mystery Box — listen to the clues, guess the food, open the box (passport L19–21 food, L9 sweet/sour) */
+(function () {
+  "use strict";
+  TC.games = TC.games || {};
+  const css = `
+  .g5{position:absolute;inset:0;overflow:hidden;background:radial-gradient(80% 70% at 50% 45%,#3a2a7a,#0d0a26)}
+  .g5 .shelf{position:absolute;left:0;right:0;top:66%;height:4%;background:linear-gradient(#b07a4a,#6d4527);box-shadow:0 1vh 2vh rgba(0,0,0,.5)}
+  .g5 .boxw{position:absolute;left:50%;top:30%;width:30vh;height:30vh;margin-left:-15vh;transform-origin:50% 100%}
+  .g5 .boxw.drop{animation:dropIn .8s cubic-bezier(.3,1.4,.5,1)}
+  .g5 .boxw.shake{animation:shake .45s infinite}
+  @keyframes dropIn{from{transform:translateY(-80vh)}}
+  .g5 .bx{position:absolute;left:5%;right:5%;bottom:0;height:72%;border-radius:1.2vh;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:inset 0 -2vh 3vh rgba(0,0,0,.25),0 0 6vh var(--c1)}
+  .g5 .bx:before{content:"";position:absolute;left:44%;width:12%;top:0;bottom:0;background:#ffe58a}
+  .g5 .bx b{position:absolute;inset:0;display:grid;place-items:center;font-size:13vh;color:rgba(255,255,255,.92);text-shadow:0 .6vh 0 rgba(0,0,0,.25)}
+  .g5 .lid{position:absolute;left:0;right:0;top:12%;height:20%;border-radius:1.2vh;background:linear-gradient(135deg,var(--c2),var(--c1));transition:transform .7s cubic-bezier(.3,1.5,.5,1)}
+  .g5 .lid:before{content:"";position:absolute;left:44%;width:12%;top:0;bottom:0;background:#ffe58a}
+  .g5 .lid:after{content:"🎀";position:absolute;left:50%;top:-6vh;transform:translateX(-50%);font-size:8vh}
+  .g5 .open .lid{transform:translate(30vh,-25vh) rotate(50deg)}
+  .g5 .beams{position:absolute;left:50%;top:50%;width:120vh;height:120vh;margin:-60vh 0 0 -60vh;border-radius:50%;opacity:0;background:repeating-conic-gradient(var(--beam) 0 8deg,transparent 8deg 22deg);transition:opacity .4s;animation:spin 6s linear infinite;mask:radial-gradient(circle,#000 10%,transparent 60%);-webkit-mask:radial-gradient(circle,#000 10%,transparent 60%)}
+  .g5 .open .beams{opacity:.9}
+  .g5 .item{position:absolute;left:50%;top:30%;width:26vh;height:26vh;margin-left:-13vh;opacity:0;transform:scale(.2) translateY(30vh)}
+  .g5 .open .item{animation:itemUp 1s cubic-bezier(.2,1.5,.4,1) forwards}
+  @keyframes itemUp{to{opacity:1;transform:scale(1) translateY(-14vh) rotate(360deg)}}
+  .g5 .rar{position:absolute;left:50%;top:9%;transform:translateX(-50%);font-size:3.2rem;font-weight:700;letter-spacing:.2em;opacity:0;text-shadow:0 0 2rem currentColor}
+  .g5 .open .rar{opacity:1;transition:opacity .4s .5s}
+  .g5 .clues{position:absolute;left:3%;top:18%;width:27%;display:flex;flex-direction:column;gap:1.4vh}
+  .g5 .clue{height:9vh;perspective:60vh}
+  .g5 .clue .in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+  .g5 .clue.on .in{transform:rotateY(180deg)}
+  .g5 .clue .f,.g5 .clue .b{position:absolute;inset:0;border-radius:1.4vh;display:flex;align-items:center;gap:1rem;padding:0 1.4rem;backface-visibility:hidden;font-weight:700}
+  .g5 .clue .f{background:#2b3f7a;font-size:3rem;justify-content:center}
+  .g5 .clue .b{background:#fff;color:#0a1633;font-size:2.4rem;transform:rotateY(180deg)}
+  .g5 .clue .b em{font-style:normal;background:#9b6bff;color:#fff;border-radius:50%;width:3rem;height:3rem;display:grid;place-items:center;font-size:1.6rem;flex:0 0 auto}
+  .g5 .shelfItems{position:absolute;right:3%;top:16%;display:flex;flex-direction:column;gap:1.5vh;padding:1.5vh;border-radius:2vh;background:rgba(255,255,255,.08);min-height:12vh}
+  .g5 .shelfItems img{width:10vh;height:10vh;animation:pop .5s}
+  .g5 .label{position:absolute;left:50%;top:70%;transform:translateX(-50%);font-size:5rem;font-weight:700;opacity:0;transition:opacity .3s;text-shadow:0 .3rem 0 #000}
+  .g5 .open .label{opacity:1}
+  `;
+  const RAR = [{ n: "COMMON", c1: "#3d8bff", c2: "#2ee6b6", beam: "rgba(76,201,255,.55)", col: "#4cc9ff" },
+               { n: "RARE", c1: "#9b6bff", c2: "#ff5fa2", beam: "rgba(155,107,255,.6)", col: "#c9a8ff" },
+               { n: "EPIC", c1: "#ff5fa2", c2: "#ff9a2e", beam: "rgba(255,95,162,.6)", col: "#ff8cc0" },
+               { n: "LEGENDARY", c1: "#ffc83d", c2: "#ff9a2e", beam: "rgba(255,210,80,.75)", col: "#ffc83d" }];
+  let root, boxw, scene, clueBox, itemImg, rarEl, labelEl, shelf;
+  function build(api) {
+    api.stage.append(TC.h("style", {}, css));
+    root = TC.h("div", { class: "g5" });
+    scene = TC.h("div", { class: "scene", style: "position:absolute;inset:0" });
+    const beams = TC.h("div", { class: "beams" });
+    boxw = TC.h("div", { class: "boxw" }, TC.h("div", { class: "bx" }, TC.h("b", {}, "?")), TC.h("div", { class: "lid" }));
+    itemImg = TC.h("img", { class: "item", alt: "" });
+    rarEl = TC.h("div", { class: "rar" }); labelEl = TC.h("div", { class: "label" });
+    scene.append(beams, boxw, itemImg, rarEl, labelEl);
+    clueBox = TC.h("div", { class: "clues" });
+    shelf = TC.h("div", { class: "shelfItems" });
+    root.append(TC.h("div", { class: "shelf" }), shelf, scene, clueBox);
+    api.stage.append(root);
+    setRar(RAR[1]);
+  }
+  function setRar(r) { scene.style.setProperty("--c1", r.c1); scene.style.setProperty("--c2", r.c2); scene.style.setProperty("--beam", r.beam); rarEl.textContent = "★ " + r.n + " ★"; rarEl.style.color = r.col; }
+  function makeClues(list) {
+    clueBox.innerHTML = "";
+    return list.map((t, i) => { const c = TC.h("div", { class: "clue" }, TC.h("div", { class: "in" }, TC.h("div", { class: "f" }, `CLUE ${i + 1} ❓`), TC.h("div", { class: "b" }, TC.h("em", {}, i + 1 + ""), t))); clueBox.append(c); return c; });
+  }
+
+  TC.games.box = {
+    mount(api) { build(api); },
+    idle() { scene.classList.remove("open"); boxw.className = "boxw"; clueBox.innerHTML = ""; shelf.innerHTML = ""; setRar(RAR[1]); },
+    async play(api) {
+      const G = api.G; shelf.innerHTML = "";
+      const items = G.items.slice().sort(() => Math.random() - 0.5).slice(0, TC.rounds(4));
+      const got = [], N = items.length + 1;
+      for (let i = 0; i < items.length; i++) {
+        api.progress(i, N);
+        const it = items[i], L = api.level;
+        const rar = i === items.length - 1 ? RAR[3] : RAR[[0, 1, 2][(Math.random() * 3) | 0]];
+        setRar(rar); scene.classList.remove("open"); boxw.className = "boxw"; void boxw.offsetWidth; boxw.classList.add("drop");
+        TC.sfx("whoosh"); await TC.sleep(800);
+        const cards = makeClues(it.clues);
+        let shown = 0, done = false;
+        const flip = async () => { if (shown >= cards.length || done) return; const c = cards[shown++]; c.classList.add("on"); TC.sfx("pop"); await TC.speak(it.clues[shown - 1]); };
+        await flip();
+        const timer = setInterval(() => { if (!done) flip(); }, 8000);
+        const say = L === 1 ? cap(it.w) + "!" : L === 2 ? it.q2 : it.s3;
+        const keys = it.keys || [[it.w]];
+        const distractors = G.items.filter((x) => x.w !== it.w).map((x) => ({ w: x.w, keys: x.keys || [[x.w]] }));
+        const r = await api.ask({ teacher: G.teacher, tzh: "聽線索，猜猜是什麼？", say, zh: "", keys, word: it.w, distractors, autoModel: false, hideKey: true,
+          onWrong: (w) => { boxw.classList.add("shake"); TC.sfx("wrong"); TC.toast(`No, it isn't ${w}! 不是喔！`, 1600); setTimeout(() => boxw.classList.remove("shake"), 700); setTimeout(flip, 900); } });
+        done = true; clearInterval(timer);
+        if (api.aborted) return null;
+        TC.hideTalk();
+        cards.forEach((c) => c.classList.add("on"));
+        boxw.classList.add("shake"); TC.sfx("drum"); await TC.sleep(1000); boxw.classList.remove("shake");
+        itemImg.src = `assets/emoji/${it.img}.svg`; labelEl.textContent = cap(it.w) + "!";
+        scene.classList.add("open"); TC.sfx(i === items.length - 1 ? "fanfare" : "levelup"); TC.confetti(i === items.length - 1 ? 220 : 100, [rar.c1, rar.c2, "#fff"]);
+        await TC.speak(`Yes, it is! ${cap(it.w)}!`);
+        await TC.sleep(1300);
+        got.push(it); shelf.append(TC.h("img", { src: `assets/emoji/${it.img}.svg`, alt: it.w }));
+        scene.classList.remove("open"); boxw.className = "boxw";
+        await TC.sleep(300);
+      }
+      api.progress(items.length, N);
+      clueBox.innerHTML = "";
+      const F = G.finale, L = api.level;
+      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], zh: "我們來開派對吃東西！", keys: F.keys[L], word: "hungry" });
+      if (api.aborted) return null;
+      shelf.querySelectorAll("img").forEach((im, k) => im.animate([{ transform: "translateY(0)" }, { transform: "translateY(-6vh) scale(1.3)" }, { transform: "translateY(0)" }], { duration: 600, delay: k * 120, iterations: 3 }));
+      TC.sfx("fanfare"); TC.confetti(200);
+      await TC.speak("Yummy! Let's eat!");
+      await TC.sleep(1200);
+      api.progress(N, N);
+      return { ok: true };
+    }
+  };
+  function cap(w) { return w[0].toUpperCase() + w.slice(1); }
+})();

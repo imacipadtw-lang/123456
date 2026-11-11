@@ -1,0 +1,150 @@
+/* =====================================================================
+   Content for the six gates — every target word and sentence below comes
+   from 《土城國小英語護照》(700 words, 25 levels). The number in "no"
+   is the passport word number so teachers can check it against the book.
+   Level 1 = 初級 Basic (grades 1–2), 2 = 中級 Intermediate (3–4),
+   3 = 高級 Advanced (5–6).  keys = words the AI must hear for that level.
+   ===================================================================== */
+window.TC_CONTENT = {
+  secret: "FRIEND",              // one letter per gate, in gate order
+  finalLine: { say: "We are friends!", keys: [["friend", "friends"]], no: [40, 111] },
+
+  gates: {
+    /* ---------------- Gate 1 · Turbo Talk Kart ---------------- */
+    1: {
+      key: "kart", title: "Turbo Talk Kart", zh: "極速英語賽車", city: "Tokyo", color: "#4cc9ff",
+      genre: "Kart racing 賽車遊戲", passport: "第1關 交通工具 · 第7關 序數 · 第10關 fast",
+      teacher: "What is it?",
+      items: [
+        { w: "bus", no: 20, zh: "公車", img: "bus", s3: "I wait for the bus every day." },
+        { w: "train", no: 17, zh: "火車", img: "train", s3: "The train is fast." },
+        { w: "taxi", no: 18, zh: "計程車", img: "taxi", s3: "We take a taxi home." },
+        { w: "plane", no: 19, zh: "飛機", img: "plane", s3: "The plane is in the sky." },
+        { w: "bike", no: 16, zh: "腳踏車", img: "bike", s3: "I ride my bike to school." },
+        { w: "boat", no: 15, zh: "船", img: "boat", s3: "This is a small boat." },
+        { w: "truck", no: 23, zh: "卡車", img: "truck", s3: "The truck is big." },
+        { w: "scooter", no: 21, zh: "摩托車", img: "scooter", s3: "He rides a scooter." }
+      ],
+      finale: { teacher: "Who is first?", zh: "誰是第一名？",
+        say: { 1: "First!", 2: "I'm first!", 3: "I'm first! Great! Let's go!" },
+        keys: { 1: [["first"]], 2: [["first"]], 3: [["first"], ["great", "go"]] }, no: [169, 37, 265] }
+    },
+
+    /* ---------------- Gate 2 · Pixel Craft ---------------- */
+    2: {
+      key: "craft", title: "Pixel Craft", zh: "方塊創造家", city: "Sydney", color: "#2ee6b6",
+      genre: "Block building 方塊建造", passport: "第19關 顏色 · 第22關 want · 第17關 color / favorite",
+      teacher: "What color do you want?",
+      colors: {
+        red: { no: 505, zh: "紅色", hex: "#ff4b4b", s3: "The apple is red." },
+        orange: { no: 525, zh: "橘色", hex: "#ff9a2e", s3: "The pumpkin is orange." },
+        yellow: { no: 508, zh: "黃色", hex: "#ffd23d", s3: "The sun is yellow." },
+        green: { no: 506, zh: "綠色", hex: "#35d35a", s3: "His pants are green." },
+        blue: { no: 507, zh: "藍色", hex: "#3d8bff", s3: "The sky is blue." },
+        purple: { no: 512, zh: "紫色", hex: "#9b5cff", s3: "The grape is purple." },
+        pink: { no: 510, zh: "粉紅色", hex: "#ff7ac0", s3: "The flower is pink." },
+        white: { no: 509, zh: "白色", hex: "#f4f7ff", s3: "The snow is white." },
+        black: { no: 511, zh: "黑色", hex: "#26293a", s3: "The cat is black." },
+        brown: { no: 523, zh: "棕色", hex: "#9a5b34", s3: "The bear is brown." }
+      },
+      finale: { teacher: "What color do you like?", zh: "你喜歡什麼顏色？", no: [440, 439],
+        say: { 1: "[color]!", 2: "I like [color].", 3: "[Color] is my favorite color." } }
+    },
+
+    /* ---------------- Gate 3 · Word Monster Catch ---------------- */
+    3: {
+      key: "catch", title: "Animal Catch", zh: "英語動物捕捉隊", city: "Paris", color: "#ffc83d",
+      genre: "Creature collecting 收集養成", passport: "第1關 動物 · 第9、10關 形容詞",
+      teacher: "What is it?",
+      items: [
+        { w: "tiger", no: 11, zh: "老虎", img: "tiger", s3: "The tiger is strong.", k3: ["strong"], fin3: "It is strong!" },
+        { w: "elephant", no: 6, zh: "大象", img: "elephant", s3: "The elephant is big.", k3: ["big"], fin3: "It is big!", art: "an" },
+        { w: "rabbit", no: 10, zh: "兔子", img: "rabbit", s3: "The rabbit is fast.", k3: ["fast"], fin3: "It is fast!" },
+        { w: "turtle", no: 12, zh: "烏龜", img: "turtle", s3: "The turtle is slow.", k3: ["slow"], fin3: "It is slow!" },
+        { w: "monkey", no: 8, zh: "猴子", img: "monkey", s3: "The monkey is eating bananas.", k3: ["banana", "bananas", "eating"], fin3: "It is cute!" },
+        { w: "pig", no: 9, zh: "豬", img: "pig", s3: "The pig is pink.", k3: ["pink"], fin3: "It is pink!" },
+        { w: "zebra", no: 13, zh: "斑馬", img: "zebra", s3: "The zebra has stripes.", k3: ["stripes", "stripe"], fin3: "It has stripes!" },
+        { w: "duck", no: 5, zh: "鴨", img: "duck", s3: "The duck is swimming.", k3: ["swimming", "swim"], fin3: "It can swim!" },
+        { w: "cat", no: 3, zh: "貓", img: "cat", s3: "The cat is cute.", k3: ["cute"], fin3: "It is cute!" },
+        { w: "horse", no: 7, zh: "馬", img: "horse", s3: "The horse is running.", k3: ["running", "run"], fin3: "It is fast!" },
+        { w: "lion", no: 14, zh: "獅子", img: "lion", s3: "The lion is the king.", k3: ["king"], fin3: "It is the king!" },
+        { w: "dog", no: 4, zh: "狗", img: "dog", s3: "The dog is barking.", k3: ["barking", "bark"], fin3: "It is cute!" }
+      ],
+      finale: { teacher: "Which one do you like?", zh: "你喜歡哪一個？", no: [667, 604],
+        say: { 1: "[Animal]!", 2: "I like the [animal].", 3: "I like the [animal]. [fin3]" } }
+    },
+
+    /* ---------------- Gate 4 · Beat Party ---------------- */
+    4: {
+      key: "beat", title: "Beat Party", zh: "英語節奏派對", city: "Cairo", color: "#ff5fa2",
+      genre: "Rhythm & dance 節奏舞蹈", passport: "第25關 教室用語 · 第6、22關 動詞",
+      teacher: "You are the boss! Tell us!",
+      // pose = what Ollie-Bot does on screen
+      moves: {
+        1: [ { say: "Jump!", keys: [["jump"]], pose: "jump", no: [607] },
+             { say: "Clap!", keys: [["clap"]], pose: "clap", no: [680] },
+             { say: "Dance!", keys: [["dance"]], pose: "dance", no: [116] },
+             { say: "Sing!", keys: [["sing"]], pose: "sing", no: [115] },
+             { say: "Run!", keys: [["run"]], pose: "run", no: [70] } ],
+        2: [ { say: "Stand up!", keys: [["stand"]], pose: "stand", no: [669] },
+             { say: "Clap your hands!", keys: [["clap"]], pose: "clap", no: [680] },
+             { say: "Raise your hand!", keys: [["raise", "hand"]], pose: "raise", no: [671] },
+             { say: "Jump!", keys: [["jump"]], pose: "jump", no: [607] },
+             { say: "Sit down!", keys: [["sit"]], pose: "sit", no: [670] } ],
+        3: [ { say: "Please stand up!", keys: [["stand"]], pose: "stand", no: [669] },
+             { say: "Clap your hands with me!", keys: [["clap"]], pose: "clap", no: [680] },
+             { say: "We dance together!", keys: [["dance"]], pose: "dance", no: [116] },
+             { say: "Raise your hand, please!", keys: [["raise", "hand"]], pose: "raise", no: [671] },
+             { say: "Please sit down!", keys: [["sit"]], pose: "sit", no: [670] } ]
+      },
+      finale: { teacher: "Photo time! 拍照囉！", zh: "大家看鏡頭", say: { 1: "Say cheese!", 2: "Say cheese!", 3: "Smile and say cheese!" },
+        keys: { 1: [["cheese"]], 2: [["cheese"]], 3: [["cheese"]] }, no: [697] }
+    },
+
+    /* ---------------- Gate 5 · Mystery Box ---------------- */
+    5: {
+      key: "box", title: "Mystery Box", zh: "神秘盲盒", city: "Vancouver", color: "#9b6bff",
+      genre: "Mystery box / unboxing 開箱驚喜", passport: "第19–21關 食物 · 第9關 sweet / sour",
+      teacher: "Listen to the clues. What is it?",
+      // q2 = intermediate question form, s3 = advanced sentence (passport sentence where possible)
+      items: [
+        { w: "apple", no: 518, zh: "蘋果", img: "apple", clues: ["It's red.", "It's sweet.", "It's a fruit."], q2: "Is it an apple?", s3: "Is it an apple? I like apples.", like: "apples" },
+        { w: "banana", no: 542, zh: "香蕉", img: "banana", clues: ["It's yellow.", "It's sweet.", "Monkeys like it."], q2: "Is it a banana?", s3: "Is it a banana? I like bananas.", like: "bananas" },
+        { w: "lemon", no: 526, zh: "檸檬", img: "lemon", clues: ["It's yellow.", "It's sour.", "It's a fruit."], q2: "Is it a lemon?", s3: "Is it a lemon? Lemons are sour.", like: "lemons" },
+        { w: "watermelon", no: 544, zh: "西瓜", img: "watermelon", clues: ["It's big.", "It's green.", "It's red inside."], q2: "Is it a watermelon?", s3: "Is it a watermelon? I like watermelon.", like: "watermelon" },
+        { w: "strawberry", no: 546, zh: "草莓", img: "strawberry", clues: ["It's small.", "It's red.", "It's sweet."], q2: "Is it a strawberry?", s3: "Is it a strawberry? Strawberries are sweet.", like: "strawberries" },
+        { w: "cookie", no: 529, zh: "餅乾", img: "cookie", clues: ["It's small.", "It's sweet.", "Grandma bakes it."], q2: "Is it a cookie?", s3: "Is it a cookie? I like cookies.", like: "cookies" },
+        { w: "cake", no: 517, zh: "蛋糕", img: "cake", clues: ["It's sweet.", "It has cream.", "I eat it on my birthday."], q2: "Is it a cake?", s3: "Is it a cake? The cake is delicious.", like: "cake" },
+        { w: "hamburger", no: 516, zh: "漢堡", img: "hamburger", clues: ["It's round.", "It has bread.", "It has beef."], q2: "Is it a hamburger?", s3: "Is it a hamburger? I like hamburgers.", like: "hamburgers" },
+        { w: "pizza", no: 532, zh: "披薩", img: "pizza", clues: ["It's round.", "It has cheese.", "It's from Italy."], q2: "Is it pizza?", s3: "Is it pizza? Pizza is my favorite food.", like: "pizza" },
+        { w: "ice cream", no: 566, zh: "冰淇淋", img: "ice-cream", clues: ["It's cold.", "It's sweet.", "We eat it in summer."], q2: "Is it ice cream?", s3: "Is it ice cream? I love ice cream.", like: "ice cream", keys: [["ice", "cream"]] },
+        { w: "egg", no: 515, zh: "蛋", img: "egg", clues: ["It's white.", "It's small.", "It's from a chicken."], q2: "Is it an egg?", s3: "Is it an egg? She cooks an egg.", like: "eggs" }
+      ],
+      finale: { teacher: "Are you hungry?", zh: "你餓了嗎？", no: [59, 364],
+        say: { 1: "Yes!", 2: "Yes, I am hungry!", 3: "Yes! I am hungry. Great! Let's go!" },
+        keys: { 1: [["yes", "yeah", "hungry"]], 2: [["hungry"]], 3: [["hungry"]] } }
+    },
+
+    /* ---------------- Gate 6 · Sports Obby ---------------- */
+    6: {
+      key: "obby", title: "Sports Day Obby", zh: "運動會障礙跑酷", city: "San Diego", color: "#ff9a2e",
+      genre: "Obby / runner 障礙跑酷", passport: "第4、6、22關 動詞 · 第19關 運動 · can",
+      teacher: "Can you ___?",
+      moves: [
+        { w: "jump", no: 607, zh: "跳", obstacle: "hurdle", t: "Can you jump?", s2: "I can jump!", s3: "Yes! I can jump high!" },
+        { w: "swim", no: 394, zh: "游泳", obstacle: "river", t: "Can you swim?", s2: "I can swim!", s3: "Yes! I can swim fast!" },
+        { w: "climb", no: 140, zh: "爬", obstacle: "wall", t: "Can you climb?", s2: "I can climb!", s3: "Yes! I can climb trees!" },
+        { w: "run", no: 70, zh: "跑", obstacle: "track", t: "Can you run?", s2: "I can run!", s3: "Yes! I can run fast!" },
+        { w: "ride", no: 125, zh: "騎", obstacle: "bikeLane", t: "Can you ride a bike?", s2: "I can ride a bike!", s3: "Yes! I can ride a bike!", keys: [["ride", "bike"]] },
+        { w: "fly", no: 139, zh: "飛", obstacle: "cliff", t: "Can you fly?", s2: "I can fly!", s3: "Yes! I can fly high!" }
+      ],
+      sports: {
+        basketball: { no: 501, zh: "籃球", img: "basketball" },
+        baseball: { no: 502, zh: "棒球", img: "baseball" },
+        tennis: { no: 503, zh: "網球", img: "tennis" }
+      },
+      finale: { teacher: "What sport do you like?", zh: "你喜歡什麼運動？", no: [311, 604],
+        say: { 1: "Basketball!", 2: "I like basketball.", 3: "My favorite sport is basketball." } }
+    }
+  }
+};
