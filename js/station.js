@@ -99,7 +99,7 @@
     const ov = h("div", { class: "overlay welcome" },
       h("div", { class: "bpass" },
         h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, kid.name[0]),
-        h("div", {}, h("div", { class: "k" }, "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, `Welcome, ${kid.name}!`),
+        h("div", {}, h("div", { class: "k" }, kid.id === "99" ? "VIP BOARDING PASS · TUCHENG ENGLISH DAY" : "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, kid.id === "99" ? "Welcome, VIP Guest!" : `Welcome, ${kid.name}!`),
           h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級 Intermediate", "高級 Advanced"][kid.level] + " · " + G.zh)),
         h("div", { style: "width:13rem;height:15rem", html: TC.ollieSVG("cheer") })));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
@@ -110,7 +110,7 @@
       const n = (k.gates || []).filter((g) => g !== gate).length;
       ov.querySelector(".bpass > div:nth-child(2)").append(h("div", { style: "font-size:2.2rem;font-weight:700;color:#e8a21a;margin-top:.4rem" }, `★ ${n} / 6 stamps · 已收集 ${n} 個印章`));
     });
-    await TC.speak(`Welcome to ${G.city}, ${kid.name}!`);
+    await TC.speak(kid.id === "99" ? `Welcome to ${G.city}, our special guest!` : `Welcome to ${G.city}, ${kid.name}!`);
     await sleep(600); ov.remove();
     TC.log({ type: "start" });
     // 👋 warm-up chat with the teacher (standard mode)
