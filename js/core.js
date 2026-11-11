@@ -443,6 +443,7 @@
   const KEYMAP = { Minus: ["-", "_"], Period: [".", ">"], Space: [" ", " "], Slash: ["/", "?"], Equal: ["=", "+"] };
   let scanBuf = "", scanLast = 0, scanCb = null;
   TC.onScan = (cb) => (scanCb = cb);
+  TC.handleScan = (kid) => scanCb && scanCb(kid);
   function handleScanText(text) {
     const kid = TC.parseKid(text);
     if (kid && scanCb) scanCb(kid); else if (text.length > 3) TC.toast("看不懂這個 QR：" + text);

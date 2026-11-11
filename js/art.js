@@ -296,6 +296,33 @@
     s += c.hl(70, 76, 40, 8, -30, 0.6) + c.sphere(28, 150, 22, "#ffffff", 0.3) + c.sphere(50, 156, 18, "#ffffff", 0.3) + c.sphere(172, 150, 22, "#ffffff", 0.3) + c.sphere(150, 156, 18, "#ffffff", 0.3);
     return c.out(s); };
 
+  /* ---------- action poses: a chibi kid doing each classroom command ---------- */
+  function poseKid(p) {
+    const c = Ctx(); const skin = "#ffd3a8", shirt = "#4cc9ff", pants = "#3d4a8a";
+    const limb = (x1, y1, x2, y2, col, w = 13) => `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+    const P = {
+      stand: { arms: [[78, 104, 66, 146], [122, 104, 134, 146]], legs: [[90, 150, 88, 186], [110, 150, 112, 186]], dy: 0, extra: `<path d="M160 120 v-60 m-12 12 l12 -12 l12 12" stroke="#2ee6b6" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` },
+      sit: { arms: [[78, 124, 70, 160], [122, 124, 130, 160]], legs: [[90, 170, 60, 172], [110, 170, 140, 172]], dy: 22, extra: `<rect x="56" y="176" width="88" height="10" rx="5" fill="${c.g("#c98a4f")}"/><path d="M160 60 v60 m-12 -12 l12 12 l12 -12" stroke="#ff9a2e" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` },
+      clap: { arms: [[78, 104, 94, 122], [122, 104, 106, 122]], legs: [[90, 150, 86, 186], [110, 150, 114, 186]], dy: 0, extra: "", front: `<g stroke="#ffc83d" stroke-width="6" stroke-linecap="round"><path d="M100 108 v-10 M84 112 l-10 -6 M116 112 l10 -6 M82 132 l-10 6 M118 132 l10 6"/></g>` },
+      raise: { arms: [[78, 104, 66, 146], [122, 104, 136, 44]], legs: [[90, 150, 88, 186], [110, 150, 112, 186]], dy: 0, extra: "" },
+      jump: { arms: [[78, 100, 52, 70], [122, 100, 148, 70]], legs: [[90, 146, 76, 168], [110, 146, 124, 168]], dy: -18, extra: `<ellipse cx="100" cy="190" rx="40" ry="6" fill="#000" opacity=".15"/><g stroke="#2ee6b6" stroke-width="5" stroke-linecap="round"><path d="M60 182 h-14 M154 182 h-14"/></g>` },
+      dance: { arms: [[78, 104, 50, 84], [122, 104, 146, 128]], legs: [[90, 150, 74, 184], [110, 150, 120, 186]], dy: 0, extra: `<g fill="#ff5fa2"><path d="M154 54 v28 a8 6 0 1 1 -4 -5 v-18 l16 -4 v20 a8 6 0 1 1 -4 -5 v-12z"/></g>` },
+      sing: { arms: [[78, 104, 96, 112], [122, 104, 134, 140]], legs: [[90, 150, 88, 186], [110, 150, 112, 186]], dy: 0, extra: `<g fill="#9b6bff"><path d="M140 40 v24 a7 5 0 1 1 -4 -4 v-20z"/><path d="M160 58 v20 a7 5 0 1 1 -4 -4 v-16z"/></g>`,
+        front: `<rect x="92" y="94" width="8" height="22" rx="3" fill="#26293a" transform="rotate(-15 96 104)"/><circle cx="99" cy="92" r="8" fill="${c.g("#c9d6ff")}"/><circle cx="96" cy="112" r="8" fill="${c.g(skin)}"/>` },
+      run: { arms: [[78, 104, 58, 120], [122, 104, 142, 88]], legs: [[90, 150, 70, 174], [110, 150, 132, 168]], dy: 0, extra: `<g stroke="#8a94b8" stroke-width="5" stroke-linecap="round" opacity=".8"><path d="M40 110 h-20 M44 130 h-26 M40 150 h-18"/></g>` }
+    }[p];
+    let s = c.shadow(100, 192, 44, 6) + P.extra;
+    s += `<g transform="translate(0 ${P.dy})">`;
+    P.legs.forEach(([a, b, x, y]) => (s += limb(a, b, x, y, pants, 15)));
+    s += `<rect x="74" y="96" width="52" height="58" rx="18" fill="${c.g(shirt)}"/>`;
+    P.arms.forEach(([a, b, x, y]) => (s += limb(a, b, x, y, shirt, 13) + `<circle cx="${x}" cy="${y}" r="8" fill="${c.g(skin)}"/>`));
+    s += c.sphere(100, 66, 32, skin, 0.6) + c.path("M68 62 Q70 30 100 30 Q132 30 132 62 Q120 46 100 50 Q80 46 68 62Z", "#5a3518");
+    s += c.eyes(100, 68, 11, 5) + c.smile(100, 80, 6) + c.blush(100, 78, 20);
+    s += (P.front || "") + `</g>`;
+    return c.out(s);
+  }
+  ["stand", "sit", "clap", "raise", "jump", "dance", "sing", "run"].forEach((p) => (A["pose-" + p] = () => poseKid(p)));
+
   /* ---------- Ollie-Bot in 3D ---------- */
   A.ollie = () => { const c = Ctx(); let s = c.shadow(100, 222, 58, 8);
     s += `<line x1="100" y1="40" x2="100" y2="16" stroke="#c9d6ff" stroke-width="5" stroke-linecap="round"/>` + c.path("M100 0l5 10 11 1-8 7 3 11-11-6-11 6 3-11-8-7 11-1z", "#ffc83d");

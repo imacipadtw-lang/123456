@@ -37,7 +37,11 @@
   .g4 .hit{position:absolute;left:3%;top:50%;width:11vh;height:11vh;margin-top:-5.5vh;border-radius:50%;border:.5rem solid #fff;box-shadow:0 0 2rem #ff5fa2}
   .g4 .hit.pulse{animation:hitp .6s infinite}
   @keyframes hitp{50%{transform:scale(1.15);box-shadow:0 0 4rem #ff5fa2}}
-  .g4 .cmd{position:absolute;top:50%;transform:translateY(-50%);left:100%;white-space:nowrap;background:linear-gradient(90deg,#ff5fa2,#9b6bff);padding:.6rem 2rem;border-radius:2rem;font-size:3.6rem;font-weight:700;box-shadow:0 0 2rem rgba(255,95,162,.6)}
+  .g4 .cmd{position:absolute;top:50%;transform:translateY(-50%);left:100%;white-space:nowrap;background:linear-gradient(90deg,#ff5fa2,#9b6bff);padding:.4rem 2rem .4rem .6rem;border-radius:2rem;font-size:3.6rem;font-weight:700;box-shadow:0 0 2rem rgba(255,95,162,.6);display:flex;align-items:center;gap:1rem}
+  .g4 .cmd img{width:9vh;height:9vh;margin:-2vh 0;filter:drop-shadow(0 .6vh .6vh rgba(0,0,0,.3))}
+  .g4 .posecard{position:absolute;right:10%;top:14%;width:26vh;height:26vh;border-radius:3vh;background:radial-gradient(circle at 40% 30%,#fff,#e6ecff);box-shadow:0 1.6vh 0 #9b6bff,0 2.4vh 4vh rgba(0,0,0,.4);display:grid;place-items:center;opacity:0;transform:scale(.6) rotate(-8deg);transition:all .4s cubic-bezier(.2,1.5,.4,1)}
+  .g4 .posecard.on{opacity:1;transform:scale(1) rotate(-4deg)}
+  .g4 .posecard img{width:90%;height:90%}
   .g4 .power{position:absolute;right:2.5%;top:16%;width:4.5vh;height:36%;border-radius:2vh;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid rgba(255,255,255,.3)}
   .g4 .power i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#2ee6b6,#ffc83d,#ff5fa2)}
   .g4 .power-l{position:absolute;right:1%;top:53%;width:9vh;text-align:center;font-size:1.3rem;font-weight:700}
@@ -92,9 +96,12 @@
     root.append(pads, djhint);
   }
   function djTime(on) { pads.classList.toggle("on", on); djhint.classList.toggle("on", on); lane.style.opacity = on ? 0 : 1; }
-  async function slideIn(text) {
+  let poseCard;
+  async function slideIn(text, pose) {
     lane.querySelectorAll(".cmd").forEach((c) => c.remove());
-    const c = TC.h("div", { class: "cmd" }, text); lane.append(c);
+    const c = TC.h("div", { class: "cmd" }, TC.artImg("pose-" + pose), text); lane.append(c);
+    if (!poseCard) { poseCard = TC.h("div", { class: "posecard" }); root.append(poseCard); }
+    poseCard.innerHTML = ""; poseCard.append(TC.artImg("pose-" + pose)); poseCard.classList.add("on");
     const lw = lane.clientWidth;
     await c.animate([{ left: "100%" }, { left: (hit.offsetLeft + hit.offsetWidth + 20) / lw * 100 + "%" }], { duration: 1500, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" }).finished;
     hit.classList.add("pulse"); return c;
@@ -129,7 +136,7 @@
       for (let i = 0; i < moves.length; i++) {
         api.progress(i, N);
         const m = moves[i];
-        await slideIn(m.say);
+        await slideIn(m.say, m.pose);
         peak = 0; duck = true; // keep the music soft while the AI listens
         const t0 = Date.now();
         const r = await api.ask({ teacher: G.teacher, tzh: "你是老大！大聲叫大家做動作！", say: m.say, zh: "老師和家長要跟著做喔！", keys: m.keys, word: m.keys[0][0] });
@@ -142,7 +149,7 @@
         TC.floatText(loud ? "LOUD & PROUD!" : fast ? "PERFECT!" : "GREAT!", 50, 30, loud ? "#ff5fa2" : "#2ee6b6");
         TC.confetti(loud ? 160 : 70);
         pose(m.pose); notes(loud ? 10 : 5); TC.hideTalk(); djTime(true);
-        await TC.sleep(4200); djTime(false); pose("");
+        await TC.sleep(4200); djTime(false); pose(""); poseCard && poseCard.classList.remove("on");
       }
       api.progress(moves.length, N);
       const F = G.finale, L = api.level;

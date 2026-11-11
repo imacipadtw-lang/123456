@@ -158,6 +158,8 @@
   $("#goBtn").onclick = runQueue;
   $("#camBtn").onclick = () => { TC.ac(); TC.cameraScan(); };
   $("#manBtn").onclick = () => { TC.ac(); TC.manualPick(); };
+  // one tap for visitors (e.g. the minister): a guest traveller at the intermediate level
+  $("#vipBtn").onclick = () => { TC.ac(); const g = TC.mkKid("99", "Guest", 3); g.color = "#ffc83d"; TC.handleScan ? TC.handleScan(g) : null; };
   $("#setBtn").onclick = () => TC.openSettings();
   $("#okBtn").onclick = () => TC.teacherOK();
   $("#hearBtn").onclick = () => TC.hearModel();

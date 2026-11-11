@@ -43,8 +43,11 @@
     for (let x = x0; x < cam + VW + 80; x += 80) {
       if (groundAt(x + 40) === null) continue;
       const c = ["#35d35a", "#2fbf50"][(x / 80) & 1];
-      ctx.fillStyle = c; ctx.fillRect(x, GY, 80, 40); ctx.fillStyle = "#8a5a32"; ctx.fillRect(x, GY + 40, 80, 720 - GY);
-      ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.fillRect(x + 14, GY + 8, 18, 8); ctx.fillRect(x + 48, GY + 8, 18, 8);
+      const gg = ctx.createLinearGradient(0, GY, 0, GY + 40); gg.addColorStop(0, "#8ff27a"); gg.addColorStop(0.25, c); gg.addColorStop(1, "#1f8a3a");
+      ctx.fillStyle = gg; ctx.fillRect(x, GY, 80, 40);
+      const gd = ctx.createLinearGradient(0, GY + 40, 0, 720); gd.addColorStop(0, "#a8703f"); gd.addColorStop(1, "#5a3518"); ctx.fillStyle = gd; ctx.fillRect(x, GY + 40, 80, 720 - GY);
+      ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.ellipse(x + 23, GY + 10, 10, 5, 0, 0, 7); ctx.ellipse(x + 57, GY + 10, 10, 5, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "rgba(0,0,0,.12)"; ctx.fillRect(x + 78, GY, 2, 40);
     }
     // obstacles
     for (const o of course) drawObstacle(o);
@@ -61,13 +64,22 @@
 
   function drawObstacle(o) {
     const { x, w } = o;
-    if (o.type === "hurdle") { ctx.fillStyle = "#ff5a5a"; ctx.fillRect(x + 50, GY - 110, 40, 110); ctx.fillStyle = "#fff"; for (let i = 0; i < 3; i++) ctx.fillRect(x + 50, GY - 100 + i * 36, 40, 14); }
-    if (o.type === "river") { const t = A.t; ctx.fillStyle = "#3d8bff"; ctx.fillRect(x, GY + 20, w, 720 - GY); ctx.fillStyle = "rgba(255,255,255,.5)"; for (let i = 0; i < w; i += 60) ctx.fillRect(x + i + Math.sin(t * 3 + i) * 10, GY + 30, 30, 6); }
-    if (o.type === "wall") { for (let r = 0; r < 5; r++) for (let c = 0; c < 2; c++) { ctx.fillStyle = (r + c) % 2 ? "#9b6bff" : "#7d55d9"; ctx.fillRect(x + c * 60, GY - 60 - r * 60, 60, 60); } }
+    if (o.type === "hurdle") { block3d(x + 50, GY - 110, 40, 110, "#ff5a5a"); ctx.fillStyle = "rgba(255,255,255,.9)"; for (let i = 0; i < 3; i++) ctx.fillRect(x + 50, GY - 100 + i * 36, 40, 12); }
+    if (o.type === "river") { const t = A.t; const wg = ctx.createLinearGradient(0, GY + 20, 0, 720); wg.addColorStop(0, "#7fd3ff"); wg.addColorStop(0.3, "#3d8bff"); wg.addColorStop(1, "#1b4fb8"); ctx.fillStyle = wg; ctx.fillRect(x, GY + 20, w, 720 - GY); ctx.fillStyle = "rgba(255,255,255,.5)"; for (let i = 0; i < w; i += 60) ctx.fillRect(x + i + Math.sin(t * 3 + i) * 10, GY + 30, 30, 6); }
+    if (o.type === "wall") { for (let r = 0; r < 5; r++) for (let c = 0; c < 2; c++) block3d(x + c * 60, GY - 60 - r * 60, 60, 60, (r + c) % 2 ? "#9b6bff" : "#7d55d9"); }
     if (o.type === "track") { ctx.fillStyle = "#e0523f"; ctx.fillRect(x, GY - 6, w, 14); ctx.fillStyle = "#fff"; for (let i = 20; i < w; i += 90) { ctx.beginPath(); ctx.moveTo(x + i, GY - 30); ctx.lineTo(x + i + 30, GY - 18); ctx.lineTo(x + i, GY - 6); ctx.fill(); } }
     if (o.type === "bikeLane") { ctx.fillStyle = "#4cc9ff"; ctx.fillRect(x, GY - 6, w, 14); if (!o.done && !A.bike && IM.bike.complete) ctx.drawImage(IM.bike, x - 30, GY - 90, 90, 90); }
     if (o.type === "cliff") { ctx.fillStyle = "#26293a"; ctx.fillRect(x, GY + 40, w, 720 - GY); ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 4; for (let i = 0; i < 5; i++) { const yy = GY - 200 + i * 40; ctx.beginPath(); ctx.moveTo(x + 40 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.lineTo(x + 100 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.stroke(); } }
   }
+  /** a glossy obby block with a top face and side shading */
+  function block3d(x, y, w, h, col) {
+    const g = ctx.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, shadeHex(col, 1.35)); g.addColorStop(0.5, col); g.addColorStop(1, shadeHex(col, 0.65));
+    ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = shadeHex(col, 1.5); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 10, y - 10); ctx.lineTo(x + w + 10, y - 10); ctx.lineTo(x + w, y); ctx.fill();
+    ctx.fillStyle = shadeHex(col, 0.55); ctx.beginPath(); ctx.moveTo(x + w, y); ctx.lineTo(x + w + 10, y - 10); ctx.lineTo(x + w + 10, y + h - 10); ctx.lineTo(x + w, y + h); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,.3)"; ctx.fillRect(x + w * 0.12, y + h * 0.1, w * 0.18, Math.min(10, h * 0.2));
+  }
+  function shadeHex(hex, f) { const n = parseInt(hex.slice(1), 16); const c = (v) => Math.max(0, Math.min(255, Math.round(f > 1 ? v + (255 - v) * (f - 1) : v * f))); return `rgb(${c(n >> 16)},${c((n >> 8) & 255)},${c(n & 255)})`; }
   function drawFinish() {
     const x = finishX; if (!x) return;
     ctx.fillStyle = "#26293a"; ctx.fillRect(x, GY - 300, 12, 300); ctx.fillRect(x + 600, GY - 300, 12, 300);
@@ -87,7 +99,7 @@
     ctx.save(); ctx.translate(-10, -50); ctx.rotate(sw * 0.7); ctx.fillRect(-9, 0, 18, 50); ctx.restore();
     ctx.save(); ctx.translate(10, -50); ctx.rotate(-sw * 0.7); ctx.fillRect(-9, 0, 18, 50); ctx.restore();
     // torso
-    ctx.fillStyle = color; ctx.fillRect(-26, -110, 52, 62);
+    const tg = ctx.createLinearGradient(-26, -110, 26, -48); tg.addColorStop(0, shadeHex(color, 1.35)); tg.addColorStop(1, shadeHex(color, 0.7)); ctx.fillStyle = tg; ctx.fillRect(-26, -110, 52, 62);
     ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.font = "700 26px Fredoka"; ctx.textAlign = "center"; ctx.fillText(A.name ? A.name[0] : "", 0, -70);
     // arms
     ctx.fillStyle = "#ffd3a8";
@@ -95,7 +107,8 @@
     ctx.save(); ctx.translate(-30, -104); ctx.rotate(armA); ctx.fillRect(-8, 0, 16, 50); ctx.restore();
     ctx.save(); ctx.translate(30, -104); ctx.rotate(pose === "fly" || pose === "cheer" ? 2.6 : pose === "climb" ? 2.8 - sw * 0.4 : -armA); ctx.fillRect(-8, 0, 16, 50); ctx.restore();
     // head
-    ctx.fillStyle = "#ffd3a8"; ctx.fillRect(-24, -158, 48, 48);
+    const hg = ctx.createLinearGradient(-24, -158, 24, -110); hg.addColorStop(0, "#ffe6cc"); hg.addColorStop(1, "#e8a878"); ctx.fillStyle = hg; ctx.fillRect(-24, -158, 48, 48);
+    ctx.fillStyle = "rgba(255,255,255,.45)"; ctx.fillRect(-18, -152, 12, 6);
     ctx.fillStyle = "#0a1633"; ctx.fillRect(-12, -140, 7, 9); ctx.fillRect(6, -140, 7, 9); ctx.fillRect(-8, -124, 16, 4);
     ctx.fillStyle = color; ctx.fillRect(-26, -164, 52, 14);
     if (A.glider) { ctx.fillStyle = "#ff5fa2"; ctx.beginPath(); ctx.moveTo(-110, -150); ctx.quadraticCurveTo(0, -230, 110, -150); ctx.lineTo(0, -170); ctx.fill(); }
