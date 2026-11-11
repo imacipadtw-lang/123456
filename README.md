@@ -6,10 +6,14 @@
 |---|---|---|---|
 | 1 Tokyo | Turbo Talk Kart 極速英語賽車 | 賽車 | 第1關交通工具、第7關序數 |
 | 2 Sydney | Pixel Craft 方塊創造家 | 方塊建造 | 第19關顏色、want、favorite |
-| 3 Paris | Animal Catch 英語動物捕捉隊 | 收集 | 第1關動物、第9–10關形容詞 |
+| 3 Paris | Pet Hatch 英語寵物孵蛋 | 孵蛋收集 | 第1關動物、第9–10關形容詞 |
 | 4 Cairo | Beat Party 英語節奏派對 | 節奏舞蹈 | 第25關教室用語、動詞 |
 | 5 Vancouver | Mystery Box 神秘盲盒 | 開箱 | 第19–21關食物 |
 | 6 San Diego | Sports Day Obby 運動會障礙跑酷 | 障礙跑酷 | 動詞、運動、can |
+
+## 護照解謎
+- 🧩 句子拼拼看：點單字卡排出護照例句，再唸出來。
+- 🛂 護照密碼：螢幕給一個護照單字編號（含第幾關、第幾頁），孩子翻紙本護照找到並說出這個字，第一個字母就是秘密字母；六關拼出 FRIEND。
 
 ## 頁面
 - `index.html` 總入口

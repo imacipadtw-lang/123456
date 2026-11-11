@@ -68,7 +68,9 @@ window.TC_CONTENT = {
         { w: "cat", no: 3, zh: "貓", img: "cat", s3: "The cat is cute.", k3: ["cute"], fin3: "It is cute!" },
         { w: "horse", no: 7, zh: "馬", img: "horse", s3: "The horse is running.", k3: ["running", "run"], fin3: "It is fast!" },
         { w: "lion", no: 14, zh: "獅子", img: "lion", s3: "The lion is the king.", k3: ["king"], fin3: "It is the king!" },
-        { w: "dog", no: 4, zh: "狗", img: "dog", s3: "The dog is barking.", k3: ["barking", "bark"], fin3: "It is cute!" }
+        { w: "dog", no: 4, zh: "狗", img: "dog", s3: "The dog is barking.", k3: ["barking", "bark"], fin3: "It is cute!" },
+        { w: "bear", no: 2, zh: "熊", img: "bear", s3: "The bear is big.", k3: ["big"], fin3: "It is big!" },
+        { w: "bird", no: 1, zh: "鳥", img: "bird", s3: "The bird is singing.", k3: ["singing", "sing"], fin3: "Birds can fly!" }
       ],
       finale: { teacher: "Which one do you like?", zh: "你喜歡哪一個？", no: [667, 604],
         say: { 1: "[Animal]!", 2: "I like the [animal].", 3: "I like the [animal]. [fin3]" } }

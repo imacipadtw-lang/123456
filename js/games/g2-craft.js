@@ -128,7 +128,7 @@
       cv.addEventListener("pointerdown", (e) => {
         const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * (W / r.width), y = (e.clientY - r.top) * (H / r.height);
         const hit = swRects.find((q) => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h && !q.p.done);
-        if (hit && pickCb) { picked = hit.p.name; TC.sfx("pop"); TC.playHuman(hit.p.name); const f = pickCb; pickCb = null; f(hit.p.name); return; }
+        if (hit && pickCb) { picked = hit.p.name; TC.sfx("pop"); TC.model(hit.p.name, hit.p.name); const f = pickCb; pickCb = null; f(hit.p.name); return; }
         if (toyMode || !pickCb) { // toy: tap a block to make it hop
           const { s, ox, oy } = L; const c = Math.floor((x - ox) / s), rr = Math.floor((y - oy) / s);
           const b = blocks.find((q) => q.placed && q.c === c && q.r === rr && q.y === 0);

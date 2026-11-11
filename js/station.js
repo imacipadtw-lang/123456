@@ -23,6 +23,13 @@
   $("#scanGenre").textContent = G.genre;
   $("#passportRef").textContent = "護照對應：" + G.passport;
   $("#scanOllie").innerHTML = TC.ollieSVG();
+  // floating 3D items from this gate's content drift behind the attract screen
+  const GATE_ART = { 1: ["bus", "train", "plane", "taxi", "bike", "boat", "kart"], 2: ["rainbow", "star", "medal", "apple", "lemon", "watermelon"], 3: ["mystegg", "tiger", "rabbit", "pig", "elephant", "lion", "duck"],
+    4: ["mic", "star", "ollie", "medal", "star", "mic"], 5: ["gift", "apple", "ice-cream", "pizza", "cake", "strawberry", "hamburger"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
+  const floaty = h("div", { class: "floaty" });
+  (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
+    if (left > 30 && left < 62 && top > 10 && top < 80) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
+  $("#scan").prepend(floaty);
   TC.setAIPill();
 
   const queue = [];
@@ -87,9 +94,11 @@
     TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null };
     setKidChip(kid);
     const ov = h("div", { class: "overlay welcome" },
-      h("div", { style: "width:14rem;height:16rem", html: TC.ollieSVG("cheer") }),
-      h("h2", {}, `Welcome, ${kid.name}!`),
-      h("p", {}, `Gate ${gate} · ${G.city} · `, h("span", { class: "zh" }, ["", "初級", "中級", "高級"][kid.level] + " 挑戰")));
+      h("div", { class: "bpass" },
+        h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, kid.name[0]),
+        h("div", {}, h("div", { class: "k" }, "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, `Welcome, ${kid.name}!`),
+          h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級 Intermediate", "高級 Advanced"][kid.level] + " · " + G.zh)),
+        h("div", { style: "width:13rem;height:15rem", html: TC.ollieSVG("cheer") })));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
     await TC.speak(`Welcome to ${G.city}, ${kid.name}!`);
     await sleep(600); ov.remove();
@@ -121,8 +130,8 @@
     const replay = h("button", { class: "big-btn", onclick: () => playBlob() }, "🔊 ", h("span", { class: "zh" }, `聽 ${kid.name} 說英文`));
     const next = h("button", { class: "big-btn go" }, queue.length ? `NEXT: ${queue[0].name} ▶` : "DONE ✓");
     const ov = h("div", { class: "overlay" },
-      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date}`), h("div", { class: "s3" }, `✈ ${kid.name}`))),
-      h("div", { class: "stars" }, "★".repeat(stars) + "☆".repeat(3 - stars)),
+      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.artImg({ 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" }[gate], "art"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date} · ${kid.name}`))),
+      h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "zh", style: "font-size:1.8rem" }, `把字母寫在護照卡的第 ${gate} 格！ Write it in box ${gate}!`),
       h("div", { class: "res-actions" }, replay, next));

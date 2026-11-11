@@ -21,11 +21,12 @@
   .g3 .cracks{position:absolute;inset:0;pointer-events:none}
   .g3 .cracks path{stroke:#3a2a5a;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .2s}
   .g3 .cracks path.on{opacity:.85}
-  .g3 .top{position:absolute;left:0;right:0;top:0;height:46%;overflow:hidden;transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
-  .g3 .bot{position:absolute;left:0;right:0;bottom:0;height:54%;overflow:hidden}
-  .g3 .top img{position:absolute;left:0;top:0;width:100%;height:217%}
-  .g3 .bot img{position:absolute;left:0;bottom:0;width:100%;height:185%}
-  .g3 .peek .top{transform:translateY(-38%) rotate(-14deg)}
+  .g3 .top,.g3 .bot{position:absolute;inset:0}
+  .g3 .top{clip-path:polygon(0 0,100% 0,100% 47%,88% 53%,76% 45%,64% 54%,52% 45%,40% 54%,28% 45%,16% 53%,0 46%);transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
+  .g3 .bot{clip-path:polygon(0 46%,16% 53%,28% 45%,40% 54%,52% 45%,64% 54%,76% 45%,88% 53%,100% 47%,100% 100%,0 100%)}
+  .g3 .top img,.g3 .bot img{position:absolute;inset:0;width:100%;height:100%}
+  .g3 .peek .cracks,.g3 .pop .cracks{opacity:0}
+  .g3 .peek .top{transform:translateY(-30%) rotate(-12deg)}
   .g3 .pop .top{transform:translate(-60vh,-80vh) rotate(-140deg)}
   .g3 .pop .bot{transition:transform .7s ease-in;transform:translate(40vh,60vh) rotate(120deg)}
   .g3 .pet{position:absolute;left:8%;right:8%;top:6%;bottom:8%;opacity:0;transform:scale(.6) translateY(20%);transition:transform .7s cubic-bezier(.2,1.6,.4,1),opacity .3s,filter .6s}
@@ -150,7 +151,7 @@
       setEgg(RAR[3]); stage.className = "stage hidden"; rar.textContent = "MY PETS"; aura.classList.add("on");
       const line = TC.h("div", { class: "lineup" }); root.append(line);
       let chosen = got[0];
-      const cards = got.map((g) => { const c = addCard(g.it, g.r, line); c.onclick = () => { chosen = g; cards.forEach((x) => x.classList.remove("sel")); c.classList.add("sel"); TC.sfx("pop"); TC.playHuman(g.it.w); if (TC.pending) TC.pending(); }; return c; });
+      const cards = got.map((g) => { const c = addCard(g.it, g.r, line); c.onclick = () => { chosen = g; cards.forEach((x) => x.classList.remove("sel")); c.classList.add("sel"); TC.sfx("pop"); TC.model(g.it.w, g.it.w); if (TC.pending) TC.pending(); }; return c; });
       pets.innerHTML = "";
       await TC.speak("Which one do you like? Tap it!");
       await TC.waitAction(9000);
