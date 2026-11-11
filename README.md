@@ -18,6 +18,7 @@
 ## 頁面
 - `index.html` 總入口
 - `station.html?gate=1`…`6` 六個關卡（放在各教室的觸控電視）
+- `opening.html` 開場動畫（大廳大螢幕，七個畫面介紹規則，可自動播放）
 - `control.html` 終點登機門＋即時看板（大廳）
 - `cards.html` 列印護照 QR 登機卡
 - `phone.html` 老師手機掃描蓋章（備援）
