@@ -195,6 +195,14 @@
         const rms = Math.sqrt(s / buf.length);
         Mic.level = Math.max(Mic.level * 0.82, Math.min(1, rms * 7));
         const m = $("#micMeter"); if (m) m.style.width = (Mic.level * 100).toFixed(0) + "%";
+        const wv = $("#wave");
+        if (wv && wv.offsetParent) { // live voice waveform: shows the AI is listening
+          const g = wv.getContext("2d"), W = wv.width, H = wv.height; g.clearRect(0, 0, W, H);
+          const grad = g.createLinearGradient(0, 0, W, 0); grad.addColorStop(0, "#2ee6b6"); grad.addColorStop(0.5, "#ffc83d"); grad.addColorStop(1, "#ff5fa2");
+          g.strokeStyle = grad; g.lineWidth = 3; g.beginPath();
+          for (let i = 0; i < W; i++) { const v = buf[Math.floor((i / W) * buf.length)] || 0; const y = H / 2 + Math.max(-1, Math.min(1, v * 6)) * (H / 2 - 4); i ? g.lineTo(i, y) : g.moveTo(i, y); }
+          g.stroke();
+        }
         requestAnimationFrame(loop);
       })();
       Mic.ok = true; return true;
@@ -340,6 +348,7 @@
         r.blob = blob; r.ms = Date.now() - t0;
         if (r.ok) {
           r.stars = r.by === "ai" ? (best >= 0.8 ? 3 : 2) : 2;
+          if (r.by === "ai") { const b = h("div", { class: "ai-badge" }, "🤖 AI 聽懂了！", h("q", {}, r.heard)); document.body.append(b); setTimeout(() => b.remove(), 1900); }
           revealKey();
           $("#kLine").querySelectorAll(".w").forEach((w) => w.classList.add("hit"));
           TC.sfx("ding");

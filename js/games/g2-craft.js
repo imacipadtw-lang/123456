@@ -27,6 +27,31 @@
       ".yyyyooyyyy.",
       "..yyyyyyyy..",
       "....yyyy...."] },
+    { name: "sun", reveal: "It's the sun! The sun is yellow.", grid: [
+      "......o......",
+      "..o...o...o..",
+      "...o.yyy.o...",
+      "....yyyyy....",
+      "...yykykyy...",
+      "ooyyyyyyyyyoo",
+      "...yyrrryy...",
+      "....yyyyy....",
+      "...o.yyy.o...",
+      "..o...o...o..",
+      "......o......"] },
+    { name: "icecream", reveal: "It's ice cream! I love ice cream.", grid: [
+      "....rr....",
+      "...iiii...",
+      "..iiiiii..",
+      ".iwiiiiii.",
+      ".iiiiiiii.",
+      ".nnnnnnnn.",
+      "..oyoyoy..",
+      "..yoyoyo..",
+      "...oyoy...",
+      "...yoyo...",
+      "....oo....",
+      "....oo...."] },
     { name: "ollie", reveal: "It's Ollie-Bot! Hello, Ollie!", grid: [
       ".....y......",
       "....yyy.....",
@@ -136,6 +161,7 @@
         }
       }); t0 = performance.now(); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
     idle() { setArt(ART[(Math.random() * ART.length) | 0]); blocks.forEach((b) => { b.placed = true; }); glow = null; },
+    preview(i) { setArt(ART[i]); blocks.forEach((b) => { b.placed = true; }); },
     async play(api) {
       const G = api.G, C = G.colors;
       const pool = TC.cfg.rounds ? ART.filter((x) => new Set(x.grid.join("").replace(/\./g, "")).size <= TC.cfg.rounds + 1) : ART;

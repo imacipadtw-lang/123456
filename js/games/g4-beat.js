@@ -42,9 +42,9 @@
   .g4 .posecard{position:absolute;right:10%;top:14%;width:26vh;height:26vh;border-radius:3vh;background:radial-gradient(circle at 40% 30%,#fff,#e6ecff);box-shadow:0 1.6vh 0 #9b6bff,0 2.4vh 4vh rgba(0,0,0,.4);display:grid;place-items:center;opacity:0;transform:scale(.6) rotate(-8deg);transition:all .4s cubic-bezier(.2,1.5,.4,1)}
   .g4 .posecard.on{opacity:1;transform:scale(1) rotate(-4deg)}
   .g4 .posecard img{width:90%;height:90%}
-  .g4 .power{position:absolute;right:2.5%;top:16%;width:4.5vh;height:36%;border-radius:2vh;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid rgba(255,255,255,.3)}
+  .g4 .power{position:absolute;right:2.5%;top:14%;width:4.5vh;height:32%;border-radius:2vh;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid rgba(255,255,255,.3)}
   .g4 .power i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#2ee6b6,#ffc83d,#ff5fa2)}
-  .g4 .power-l{position:absolute;right:1%;top:53%;width:9vh;text-align:center;font-size:1.3rem;font-weight:700}
+  .g4 .power-l{position:absolute;right:1%;top:47%;width:9vh;text-align:center;font-size:1.3rem;font-weight:700}
   .g4 .combo{position:absolute;left:3%;top:16%;font-size:2.4rem;font-weight:700}
   .g4 .note{position:absolute;width:6vh;height:6vh;animation:noteUp 1.6s ease-out forwards}
   @keyframes noteUp{to{transform:translateY(-25vh) rotate(30deg);opacity:0}}
