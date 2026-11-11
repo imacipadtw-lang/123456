@@ -32,8 +32,8 @@
   .keys button:active{transform:translateY(.2rem)}
   .keys .wide{grid-column:span 2;background:#5a2b4f}
   body.decoding .stats{display:none}
-  .attract{position:absolute;left:0;right:0;top:47%;text-align:center}
-  .attract h2{font-size:5rem;margin:.5rem 0}
+  .attract{position:absolute;left:0;right:0;top:54%;text-align:center}
+  .attract h2{font-size:3.8rem;margin:1.4rem 0 1rem}
   /* certificate */
   .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:#fffdf5;color:#0a1633;border-radius:1.6em;padding:3% 4%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5);border:1.2em solid #ffc83d;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
   .cert .k1{font-size:1.8em;letter-spacing:.4em;color:#5a6aa8;font-weight:700}
@@ -78,7 +78,7 @@
     <div class="attract" id="attract">
       <div class="scan-box" style="display:inline-flex"><span class="qr">🛂</span><span>Final Gate: scan your passport! <span class="zh">終點登機門：請掃描護照</span></span></div>
       <h2 class="zh">集滿 6 個秘密字母，解開密碼就能登機！</h2>
-      <div class="scan-actions" style="justify-content:center"><button class="big-btn" id="camBtn">📷 <span class="zh">相機掃描</span></button><button class="big-btn" id="manBtn">👆 <span class="zh">手動選擇</span></button></div>
+      <div class="scan-actions" style="justify-content:center"><button class="big-btn" id="camBtn">📷 <span class="zh">相機掃描</span></button><button class="big-btn" id="manBtn">👆 <span class="zh">手動選擇</span></button><button class="big-btn" id="vipBtn">⭐ <span class="zh">貴賓體驗 Guest</span></button></div>
     </div>
     <div class="dec hidden" id="dec">
       <h2 id="decTitle">What's the secret word?</h2>
