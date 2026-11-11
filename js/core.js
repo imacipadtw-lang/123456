@@ -72,12 +72,24 @@
   };
 
   /* ---------------- sound effects (synthesised, no files) ---------------- */
-  let ac = null;
+  let ac = null, bus = null;
   TC.ac = () => {
-    if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (C) ac = new C(); }
+    if (!ac) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (C) {
+        ac = new C();
+        // master bus: compressor + a soft echo send so effects sound full on TV speakers
+        const comp = ac.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4; comp.connect(ac.destination);
+        bus = ac.createGain(); bus.gain.value = 1; bus.connect(comp);
+        const d = ac.createDelay(1); d.delayTime.value = 0.16; const fb = ac.createGain(); fb.gain.value = 0.22; const wet = ac.createGain(); wet.gain.value = 0.18;
+        const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3500;
+        bus.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(wet); wet.connect(comp);
+      }
+    }
     if (ac && ac.state === "suspended") ac.resume();
     return ac;
   };
+  const out = () => bus || (ac && ac.destination);
   function tone(f, t0, dur, type = "sine", vol = 0.25, f2 = null) {
     const c = TC.ac(); if (!c) return;
     const o = c.createOscillator(), g = c.createGain();
@@ -87,7 +99,7 @@
     g.gain.setValueAtTime(0.0001, c.currentTime + t0);
     g.gain.exponentialRampToValueAtTime(v, c.currentTime + t0 + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t0 + dur);
-    o.connect(g).connect(c.destination); o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + 0.05);
+    o.connect(g).connect(out()); o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + 0.05);
   }
   function noise(t0, dur, vol = 0.3, hp = 800) {
     const c = TC.ac(); if (!c) return;
@@ -95,11 +107,13 @@
     for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
     const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
     f.type = "highpass"; f.frequency.value = hp; g.gain.value = vol * TC.cfg.volume;
-    s.buffer = b; s.connect(f).connect(g).connect(c.destination); s.start(c.currentTime + t0);
+    s.buffer = b; s.connect(f).connect(g).connect(out()); s.start(c.currentTime + t0);
   }
+  function sparkle(t0) { for (let i = 0; i < 6; i++) tone(2093 + Math.random() * 1500, t0 + i * 0.045, 0.12, "sine", 0.06); }
   TC.sfx = function (name) {
     switch (name) {
-      case "ding": tone(880, 0, 0.15, "triangle", 0.3); tone(1320, 0.08, 0.3, "triangle", 0.3); break;
+      case "ding": [880, 1320, 1760].forEach((f, i) => { tone(f, i * 0.06, 0.5, "sine", 0.22); tone(f * 2.01, i * 0.06, 0.25, "sine", 0.05); }); sparkle(0.12); break;
+      case "sparkle": sparkle(0); break;
       case "coin": tone(988, 0, 0.08, "square", 0.15); tone(1319, 0.07, 0.25, "square", 0.15); break;
       case "pop": tone(500, 0, 0.12, "sine", 0.35, 1100); break;
       case "click": tone(1200, 0, 0.04, "square", 0.1); break;
@@ -112,8 +126,8 @@
       case "kick": tone(150, 0, 0.18, "sine", 0.6, 45); break;
       case "snare": noise(0, 0.12, 0.25, 1200); break;
       case "hat": noise(0, 0.04, 0.12, 6000); break;
-      case "fanfare": [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.35, "triangle", 0.25)); tone(1047, 0.5, 0.8, "triangle", 0.25); tone(1319, 0.5, 0.8, "triangle", 0.18); break;
-      case "levelup": [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.07, 0.2, "square", 0.12)); break;
+      case "fanfare": [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.35, "triangle", 0.25)); [1047, 1319, 1568].forEach((f) => tone(f, 0.5, 1.1, "triangle", 0.16)); tone(131, 0.5, 1.1, "sine", 0.35); tone(262, 0.5, 1.1, "sine", 0.18); sparkle(0.55); break;
+      case "levelup": [392, 523, 659, 784, 1047].forEach((f, i) => { tone(f, i * 0.07, 0.22, "square", 0.09); tone(f, i * 0.07, 0.3, "sine", 0.12); }); sparkle(0.35); break;
       case "catch": tone(660, 0, 0.1, "square", 0.15); tone(440, 0.12, 0.1, "square", 0.15); tone(880, 0.24, 0.3, "square", 0.15); break;
     }
   };
