@@ -28,7 +28,7 @@
     4: ["mic", "star", "ollie", "medal", "star", "mic"], 5: ["gift", "apple", "ice-cream", "pizza", "cake", "strawberry", "hamburger"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
   const floaty = h("div", { class: "floaty" });
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
-    if (left > 30 && left < 62 && top > 10 && top < 80) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
+    if ((left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
   $("#scan").prepend(floaty);
   TC.setAIPill();
 
