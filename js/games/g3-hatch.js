@@ -44,6 +44,8 @@
   .g3 .pcard img{width:8rem;height:8rem}
   .g3 .pcard b{display:block;font-size:1.8rem}
   .g3 .pcard small{font-size:1.1rem;font-weight:700;color:var(--rc)}
+  .g3 .pcard .trait{font-size:1.2rem;font-weight:600;color:#5a6aa8}
+  .g3 .lineup .pcard .trait{font-size:2rem}
   .g3 .lineup{position:absolute;inset:9rem 2rem 24vh;display:flex;align-items:center;justify-content:center;gap:2.4rem;z-index:7}
   .g3 .lineup .pcard{width:22rem;transform:scale(1);transition:transform .2s}
   .g3 .lineup .pcard img{width:15rem;height:15rem}
@@ -110,7 +112,8 @@
     });
   }
   function addCard(it, r, parent = pets) {
-    const c = TC.h("div", { class: "pcard", style: `--rc:${r.rc}` }, TC.artImg(it.img), TC.h("b", {}, cap(it.w)), TC.h("small", {}, "★ " + r.n));
+    const trait = it.fin3.replace(/^(It is |It |Birds )/, "");
+    const c = TC.h("div", { class: "pcard", style: `--rc:${r.rc}` }, TC.artImg(it.img), TC.h("b", {}, cap(it.w)), TC.h("small", {}, "★ " + r.n), TC.h("div", { class: "trait" }, trait));
     parent.append(c); return c;
   }
 
