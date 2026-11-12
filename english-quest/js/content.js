@@ -5,6 +5,7 @@
    Level 1 = 初級 Basic (grades 1–2), 2 = 中級 Intermediate (3–4),
    3 = 高級 Advanced (5–6).  keys = words the AI must hear for that level.
    ===================================================================== */
+window.TC_SCHOOL = { zh: "南投縣草屯鎮土城國民小學", en: "Tucheng Elementary School", emblem: "assets/img/tucheng-emblem.svg" };
 window.TC_CONTENT = {
   secret: "FRIEND",              // one letter per gate, in gate order
   finalLine: { say: "We are friends!", keys: [["friend", "friends"]], no: [40, 111] },

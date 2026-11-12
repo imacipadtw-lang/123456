@@ -353,6 +353,35 @@
     s += c.hl(70, 60, 30, 12, -20, 0.7) + c.ell(80, 212, 14, 8, "#ffc83d", 0, 0.4) + c.ell(120, 212, 14, 8, "#ffc83d", 0, 0.4);
     return c.out(s, "0 0 200 232"); };
 
+  /* ---------- 土城 badge: every character, vehicle and object wears the school's mark ----------
+     A small original pin based on the school emblem (mint sky, green hills, cream field, red 「土城」).
+     SEAL[name] = [x, y, radius, tilt°] in that picture's own coordinates; anything not listed gets a pin at the lower right. */
+  let sealN = 0;
+  function seal(x, y, r, rot = 0) {
+    const id = "tcs" + sealN++, k = r / 20; // drawn for r = 20, scaled
+    return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k})"><defs><clipPath id="${id}"><circle r="17.2"/></clipPath>` +
+      `<linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#f0bd3a"/><stop offset="1" stop-color="#b9820f"/></linearGradient></defs>` +
+      `<circle r="21" cy="1.6" fill="#000" opacity=".22"/><circle r="20" fill="url(#${id}r)"/><circle r="18" fill="#14401f"/>` +
+      `<g clip-path="url(#${id})"><rect x="-18" y="-18" width="36" height="17" fill="#8ff7dc"/><rect x="-18" y="-1" width="36" height="19" fill="#eef0d6"/>` +
+      `<path d="M-19 -1 L-10 -13 L-3 -1Z M3 -1 L10 -12 L19 -1Z" fill="#3f9a12"/><path d="M-9 -1 L0 -16 L9 -1Z" fill="#7ad94e"/>` +
+      `<text x="0" y="13.2" text-anchor="middle" font-family="'Noto Sans TC','Microsoft JhengHei','PingFang TC','Heiti TC','Noto Sans CJK TC',sans-serif" font-weight="900" font-size="14.5" fill="#c4170c" stroke="#fff" stroke-width="1.6" paint-order="stroke" letter-spacing="-.5">土城</text>` +
+      `<path d="M-17 -6 A18 18 0 0 1 17 -6 Q0 -12 -17 -6Z" fill="#fff" opacity=".28"/></g></g>`;
+  }
+  const chest = [100, 150, 19], SEAL = {
+    cat: chest, dog: chest, bear: chest, pig: chest, rabbit: chest, tiger: chest, lion: [100, 152, 19], monkey: chest, elephant: [100, 154, 19], zebra: [100, 152, 18], horse: [100, 152, 18],
+    duck: [92, 150, 19], bird: [104, 138, 19], turtle: [70, 138, 20, -8],
+    bus: [100, 122, 19], taxi: [100, 130, 18], train: [78, 118, 17], plane: [104, 108, 16, -6], bike: [96, 132, 17], boat: [78, 96, 19, -8], truck: [66, 114, 20], scooter: [118, 150, 16], kart: [96, 150, 16],
+    trophy: [100, 86, 19], gift: [100, 150, 20], mystegg: [100, 128, 24], medal: [150, 60, 19, 10], mic: [100, 74, 19], tree: [100, 86, 19], rainbow: [100, 150, 20], ollie: [100, 55, 16],
+    tower: [150, 40, 20, 8], eiffel: [150, 40, 20, 8], pyramids: [160, 60, 20, 8], palm: [160, 150, 20, 8], opera: [170, 40, 20, 8], mountains: [40, 44, 20, -8],
+    "pose-stand": [100, 132, 11], "pose-sit": [100, 138, 11], "pose-clap": [100, 150, 11], "pose-raise": [100, 132, 11], "pose-jump": [100, 112, 11], "pose-dance": [100, 132, 11], "pose-sing": [100, 132, 11], "pose-run": [100, 128, 11],
+  };
+  TC.seal = seal; TC.SEAL = SEAL;
+  function withSeal(name, svg) {
+    const vb = (svg.match(/viewBox="([^"]+)"/) || [0, "0 0 200 200"])[1].split(/\s+/).map(Number);
+    const p = SEAL[name] || [vb[0] + vb[2] - 34, vb[1] + vb[3] - 40, 19, -10];
+    return svg.replace(/<\/svg>\s*$/, seal(p[0], p[1], p[2], p[3] || 0) + "</svg>");
+  }
+
   /* ---------- public API ---------- */
   const cache = {};
   TC.ART = A;
@@ -360,7 +389,7 @@
     const key = name + "|" + args.join(",");
     if (!cache[key]) {
       const f = A[name]; if (!f) return "";
-      cache[key] = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(f(...args));
+      cache[key] = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(withSeal(name, f(...args)));
     }
     return cache[key];
   };
