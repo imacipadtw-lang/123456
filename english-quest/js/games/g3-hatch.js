@@ -1,5 +1,5 @@
-/* Gate 3 · Pet Hatch — tap the egg to crack it, name the shadow inside, hatch a pet with a rarity glow
-   (egg-hatching / pet-collecting loop, as in today's most-played kids' games; passport L1 animals + L9/L10 adjectives) */
+/* Gate 3 · Pet Hatch — tap the egg three times, a pet hatches with a rarity glow, then "What is it?" → say the animal
+   (egg-hatching / pet-collecting loop, as in today's most-played kids' games; passport L1 animals + L9 big / small) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
@@ -25,39 +25,49 @@
   .g3 .top{clip-path:polygon(0 0,100% 0,100% 47%,88% 53%,76% 45%,64% 54%,52% 45%,40% 54%,28% 45%,16% 53%,0 46%);transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
   .g3 .bot{clip-path:polygon(0 46%,16% 53%,28% 45%,40% 54%,52% 45%,64% 54%,76% 45%,88% 53%,100% 47%,100% 100%,0 100%)}
   .g3 .top img,.g3 .bot img{position:absolute;inset:0;width:100%;height:100%}
-  .g3 .peek .cracks,.g3 .pop .cracks{opacity:0}
-  .g3 .peek .top{transform:translateY(-30%) rotate(-12deg)}
-  .g3 .pop .top{transform:translate(-60vh,-80vh) rotate(-140deg)}
-  .g3 .pop .bot{transition:transform .7s ease-in;transform:translate(40vh,60vh) rotate(120deg)}
-  .g3 .pet{position:absolute;left:8%;right:8%;top:6%;bottom:8%;opacity:0;transform:scale(.6) translateY(20%);transition:transform .7s cubic-bezier(.2,1.6,.4,1),opacity .3s,filter .6s}
+  .g3 .egg.shake{animation:eggwob .2s 3}
+  .g3 .pop .cracks{opacity:0}
+  .g3 .pop .top{transition:transform .7s cubic-bezier(.3,1.4,.5,1),opacity .3s .45s;transform:translate(-60vh,-80vh) rotate(-140deg);opacity:0}
+  .g3 .pop .bot{transition:transform .7s ease-in,opacity .3s .45s;transform:translate(40vh,60vh) rotate(120deg);opacity:0}
+  .g3 .pet{position:absolute;left:8%;right:8%;top:6%;bottom:8%;opacity:0;transform-origin:50% 100%;transform:scale(.6) translateY(20%);transition:transform .7s cubic-bezier(.2,1.6,.4,1),opacity .3s}
   .g3 .pet img{width:100%;height:100%}
-  .g3 .peek .pet{opacity:1;filter:brightness(.12) saturate(0) drop-shadow(0 0 2vh #fff);transform:scale(.62) translateY(4%)}
-  .g3 .pop .pet{opacity:1;filter:none drop-shadow(0 2vh 2vh rgba(0,0,0,.3));transform:scale(1.05) translateY(-6%)}
+  .g3 .pop .pet{opacity:1;filter:drop-shadow(0 2vh 2vh rgba(0,0,0,.3));transform:none}
+  .g3 .pop.big .pet{transform:translateY(15%) scale(1.26)}
+  .g3 .pop.small .pet{transform:scale(.38)}
+  .g3 .ref{position:absolute;left:calc(50% - 47vh);top:47%;width:21vh;height:23vh;opacity:0;transform:scale(.3);transform-origin:50% 100%;transition:transform .5s cubic-bezier(.2,1.6,.4,1),opacity .3s;pointer-events:none}
+  .g3 .ref.on{opacity:1;transform:none}
+  .g3 .ref img{width:100%;height:100%;filter:drop-shadow(0 1vh 1vh rgba(0,0,0,.3))}
+  .g3 .pet img{transform-origin:50% 100%}
   .g3 .pop .pet img{animation:petjoy .8s ease-in-out infinite}
-  @keyframes petjoy{50%{transform:translateY(-6%) scale(1.04,.96)}}
-  .g3 .tapme{position:absolute;left:50%;top:84%;transform:translateX(-50%);font-size:3.4rem;font-weight:700;color:#fff;text-shadow:0 .3rem 0 #0a1633,0 0 1.5rem #0a1633;white-space:nowrap;animation:float 1s ease-in-out infinite}
-  .g3 .rar{position:absolute;left:50%;top:13%;transform:translateX(-50%);font-size:3.6rem;font-weight:700;letter-spacing:.15em;color:#fff;text-shadow:0 0 1.5rem var(--glow),0 .3rem 0 #0a1633;white-space:nowrap}
-  .g3 .name{position:absolute;left:50%;top:66%;transform:translateX(-50%);font-size:6rem;font-weight:700;color:#fff;text-shadow:0 .4rem 0 #0a1633,0 0 2rem #0a1633;opacity:0;transition:opacity .3s;white-space:nowrap}
+  .g3 .pop.big .pet img{animation-name:petbig}
+  @keyframes petjoy{50%{transform:translateY(-4%) scale(1.04,.96)}}
+  @keyframes petbig{50%{transform:scale(1.03,.97)}}
+  .g3 .tapme{position:absolute;left:0;right:0;top:84%;text-align:center;font-size:3.4rem;font-weight:700;color:#fff;text-shadow:0 .3rem 0 #0a1633,0 0 1.5rem #0a1633;white-space:nowrap;animation:float 1s ease-in-out infinite}
+  .g3 .rar{position:absolute;left:50%;top:72.5%;transform:translateX(-50%);font-size:3.6rem;font-weight:700;letter-spacing:.15em;color:#fff;text-shadow:0 0 1.5rem var(--glow),0 .3rem 0 #0a1633;white-space:nowrap}
+  .g3 .rar.low{top:62.5%;font-size:3rem;animation:rarpop .45s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes rarpop{from{transform:translateX(-50%) scale(.3);opacity:0}}
+  .g3 .name{position:absolute;left:50%;top:67.5%;transform:translateX(-50%);font-size:6rem;font-weight:700;color:#fff;text-shadow:0 .4rem 0 #0a1633,0 0 2rem #0a1633;opacity:0;transition:opacity .3s;white-space:nowrap}
   .g3 .name.on{opacity:1}
   .g3 .pets{position:absolute;right:1.4rem;top:8.6rem;display:flex;flex-direction:column;gap:.8rem;z-index:6}
-  .g3 .pcard{width:13rem;border-radius:1.4rem;padding:.5rem;text-align:center;background:linear-gradient(180deg,#fff,#eef2ff);color:#0a1633;box-shadow:0 .5rem 0 var(--rc),0 1rem 1.6rem rgba(0,0,0,.3);border:.35rem solid var(--rc);animation:pop .5s;cursor:pointer;touch-action:manipulation}
-  .g3 .pcard img{width:8rem;height:8rem}
-  .g3 .pcard b{display:block;font-size:1.8rem}
-  .g3 .pcard small{font-size:1.1rem;font-weight:700;color:var(--rc)}
-  .g3 .pcard .trait{font-size:1.2rem;font-weight:600;color:#5a6aa8}
-  .g3 .lineup .pcard .trait{font-size:2rem}
-  .g3 .lineup{position:absolute;inset:9rem 2rem 24vh;display:flex;align-items:center;justify-content:center;gap:2.4rem;z-index:7}
-  .g3 .lineup .pcard{width:22rem;transform:scale(1);transition:transform .2s}
-  .g3 .lineup .pcard img{width:15rem;height:15rem}
-  .g3 .lineup .pcard b{font-size:3rem}
-  .g3 .lineup .pcard.sel{transform:scale(1.15) rotate(-3deg);box-shadow:0 0 0 .6rem #fff,0 0 4rem var(--rc)}
+  .g3 .pcard{width:13rem;border-radius:1.4rem;padding:.3rem .5rem .4rem;text-align:center;background:linear-gradient(180deg,#fff,#eef2ff);color:#0a1633;box-shadow:0 .5rem 0 var(--rc),0 1rem 1.6rem rgba(0,0,0,.3);border:.35rem solid var(--rc);animation:pop .5s;cursor:pointer;touch-action:manipulation}
+  .g3 .pcard img{width:5.8rem;height:5.8rem;display:block;margin:0 auto}
+  .g3 .pcard b{display:block;font-size:1.6rem;line-height:1.15}
+  .g3 .pcard small{font-size:1rem;font-weight:700;color:var(--rc)}
+  .g3 .pcard .cn{display:inline;margin-left:.5rem;font-size:1.2rem;font-weight:600;color:#5a6aa8}
+  .g3 .lineup .pcard .cn{display:block;margin:0;font-size:2rem}
+  .g3 .lineup .pcard small{font-size:1.1rem}
+  .g3 .lineup{position:absolute;inset:14.6rem 2rem 24vh;display:flex;align-items:center;justify-content:center;gap:2.4rem;z-index:7}
+  .g3 .lineup .pcard{width:22rem;padding:.5rem;transform:scale(1);transition:transform .2s}
+  .g3 .lineup .pcard img{width:13.5rem;height:13.5rem}
+  .g3 .lineup .pcard b{font-size:3rem;line-height:normal}
+  .g3 .lineup .pcard.sel{transform:scale(1.12) rotate(-3deg);box-shadow:0 0 0 .6rem #fff,0 0 4rem var(--rc)}
   `;
   const RAR = [{ n: "COMMON", egg: "#5ab0ff", glow: "#7fd3ff", aura: "rgba(127,211,255,.55)", rc: "#3d8bff" },
                { n: "RARE", egg: "#9b6bff", glow: "#c9a8ff", aura: "rgba(180,140,255,.6)", rc: "#9b6bff" },
                { n: "EPIC", egg: "#ff5fa2", glow: "#ff9ac2", aura: "rgba(255,120,180,.6)", rc: "#ff3d8a" },
                { n: "LEGENDARY", egg: "#ffc83d", glow: "#ffe58a", aura: "rgba(255,210,80,.75)", rc: "#e8a21a" }];
   const CRACKS = ["M100 70 l-14 18 l12 10 l-10 16", "M100 70 l14 14 l-8 14 l14 12", "M60 100 l16 6 l6 -14 l18 8", "M140 104 l-18 4 l-4 -14 l-16 10", "M52 96 Q100 84 148 96"];
-  let root, stage, egg, eggTop, eggBot, cracks, pet, aura, rar, nameEl, tapme, pets;
+  let root, stage, egg, eggTop, eggBot, cracks, pet, aura, rar, nameEl, tapme, pets, ref;
 
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
@@ -74,9 +84,10 @@
     cracks = TC.h("div", { class: "cracks", html: `<svg viewBox="0 0 200 200" width="100%" height="100%">${CRACKS.map((d) => `<path d="${d}"/>`).join("")}</svg>` });
     egg = TC.h("div", { class: "egg" }, eggBot, pet, eggTop, cracks);
     stage.append(egg);
-    rar = TC.h("div", { class: "rar" }); nameEl = TC.h("div", { class: "name" }); tapme = TC.h("div", { class: "tapme hidden zh" }, "👆 TAP TAP TAP! 點蛋三下！");
+    rar = TC.h("div", { class: "rar" }); nameEl = TC.h("div", { class: "name" }); tapme = TC.h("div", { class: "tapme hidden zh" });
     pets = TC.h("div", { class: "pets" });
-    root.append(aura, TC.h("div", { class: "nest" }), stage, rar, nameEl, tapme, pets);
+    ref = TC.h("div", { class: "ref" }, TC.artImg("ollie")); // size reference for "Big or small?"
+    root.append(aura, TC.h("div", { class: "nest" }), ref, stage, rar, nameEl, tapme, pets);
     api.stage.append(root);
     stage.addEventListener("pointerdown", () => tapHandler && tapHandler());
   }
@@ -86,7 +97,7 @@
     const src = TC.art("mystegg", r.egg);
     eggTop.firstChild.src = src; eggBot.firstChild.src = src;
     cracks.querySelectorAll("path").forEach((p) => p.classList.remove("on"));
-    stage.className = "stage"; egg.className = "egg idle"; aura.classList.remove("on"); nameEl.classList.remove("on");
+    stage.className = "stage"; egg.className = "egg idle"; aura.classList.remove("on"); nameEl.classList.remove("on"); ref.classList.remove("on"); rar.className = "rar";
   }
   function burst(n = 18) {
     const r = stage.getBoundingClientRect();
@@ -100,7 +111,7 @@
   /** child taps the egg 3 times (or teacher presses Enter / waits) */
   function tapToCrack() {
     return new Promise((res) => {
-      let taps = 0; tapme.classList.remove("hidden");
+      let taps = 0; tapme.textContent = "👆 TAP TAP TAP! 點蛋三下！"; tapme.classList.remove("hidden");
       const paths = cracks.querySelectorAll("path");
       const hit = () => {
         taps++; egg.classList.remove("idle", "wob"); void egg.offsetWidth; egg.classList.add("wob");
@@ -113,73 +124,85 @@
     });
   }
   function addCard(it, r, parent = pets) {
-    const trait = it.fin3.replace(/^(It is |It |Birds )/, "");
-    const c = TC.h("div", { class: "pcard", style: `--rc:${r.rc}` }, TC.artImg(it.img), TC.h("b", {}, cap(it.w)), TC.h("small", {}, "★ " + r.n), TC.h("div", { class: "trait" }, trait));
+    const c = TC.h("div", { class: "pcard", style: `--rc:${r.rc}` }, TC.artImg(it.img), TC.h("b", {}, cap(it.w)), TC.h("small", {}, "★ " + r.n), TC.h("div", { class: "cn zh" }, it.zh));
     parent.append(c); return c;
   }
 
   TC.games.hatch = {
     mount(api) { build(api); this.idle(api); },
-    idle() { pets.innerHTML = ""; setEgg(RAR[3]); pet.firstChild.src = TC.art("ollie"); tapHandler = null; root.querySelectorAll(".lineup").forEach((l) => l.remove()); rar.textContent = "PET HATCH"; },
+    idle() { pets.innerHTML = ""; setEgg(RAR[3]); pet.firstChild.src = TC.art("ollie"); tapHandler = null; tapme.classList.add("hidden"); root.querySelectorAll(".lineup").forEach((l) => l.remove()); rar.textContent = "PET HATCH"; },
     async play(api) {
       const G = api.G; pets.innerHTML = "";
       const items = G.items.slice().sort(() => Math.random() - 0.5).slice(0, TC.rounds(4)), got = [];
       const N = items.length + 1;
-      await TC.speak("Tap the egg! What's inside?");
+      await TC.speak("Go!");
       for (let i = 0; i < items.length; i++) {
+        if (api.aborted) return null;
         api.progress(i, N);
-        const it = items[i], L = api.level;
+        const it = items[i];
         const r = i === items.length - 1 ? RAR[3] : RAR[[0, 0, 1, 2][(Math.random() * 4) | 0]];
         setEgg(r); pet.firstChild.src = TC.art(it.img);
         rar.textContent = `${r.n} EGG!`; TC.sfx("whoosh");
         stage.animate([{ transform: "translateY(-60vh)" }, { transform: "translateY(0)" }], { duration: 650, easing: "cubic-bezier(.3,1.5,.5,1)" });
         await TC.sleep(700);
         await tapToCrack(); if (api.aborted) return null;
-        stage.classList.add("peek"); TC.sfx("drum");
-        const say = L === 1 ? cap(it.w) + "!" : L === 2 ? `It's ${it.art || "a"} ${it.w}.` : it.s3;
-        const keys = L === 3 ? [[it.w], it.k3] : [[it.w]];
+        // drum roll … the shell flies off and the pet is there, in full colour, with its rarity aura
+        egg.classList.remove("wob"); void egg.offsetWidth; egg.classList.add("shake"); TC.sfx("drum");
+        await TC.sleep(650); if (api.aborted) return null;
+        egg.classList.remove("shake"); stage.classList.add("pop"); aura.classList.add("on"); burst(22);
+        TC.sfx(r.n === "LEGENDARY" ? "fanfare" : "levelup"); TC.confetti(r.n === "LEGENDARY" ? 220 : 90, [r.egg, r.glow, "#fff"]);
+        rar.textContent = `★ ${r.n} ★`; rar.classList.add("low");
+        await TC.speak("Wow!"); if (api.aborted) return null;
+        // "What is it?" — the pet stays big and clear on the nest while the child answers
         const distractors = G.items.filter((x) => x.w !== it.w).map((x) => ({ w: x.w }));
-        const res = await api.ask({ teacher: G.teacher, tzh: "蛋裡是什麼動物？", say, zh: "", keys, word: it.w, distractors, hideKey: true,
-          onWrong: (w) => { egg.classList.remove("wob"); void egg.offsetWidth; egg.classList.add("wob"); TC.sfx("wrong"); TC.toast(`Not a ${w}! Look again! 再看看！`, 1800); } });
+        const res = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: it.say, zh: it.zh, keys: it.keys || [[it.w]], word: it.w, distractors, hideKey: true,
+          onWrong: (w) => { pet.firstChild.animate([{ transform: "rotate(-9deg)" }, { transform: "rotate(9deg)" }, { transform: "rotate(-6deg)" }, { transform: "rotate(0)" }], { duration: 450 }); TC.sfx("wrong");
+            TC.toast(`${cap(w)}? Look again! 再看一次！`, 1800); } });
         if (api.aborted) return null;
         TC.hideTalk();
-        stage.classList.remove("peek"); stage.classList.add("pop"); aura.classList.add("on"); burst(22);
-        TC.sfx(r.n === "LEGENDARY" ? "fanfare" : "levelup"); TC.confetti(r.n === "LEGENDARY" ? 220 : 90, [r.egg, r.glow, "#fff"]);
-        nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on"); rar.textContent = `★ ${r.n} ★`;
-        await TC.speak(`${it.art === "an" ? "An" : "A"} ${it.w}! ${it.fin3}`);
-        // advanced travellers describe their new pet
-        if (L === 3 && it.color && !TC.cfg.rounds) {
-          const COLS = Object.keys(TC_CONTENT.gates[2].colors);
-          const fr = await api.ask({ teacher: "What color is it?", tzh: "牠是什麼顏色？", say: `It is ${it.color}.`, zh: "說出牠的顏色", keys: [COLS], word: it.color });
+        nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on");
+        await TC.speak((res.ok ? "Yes! " : "") + it.say); if (api.aborted) return null;
+        // 中級 only: one more easy question — the pet grows huge or shrinks tiny next to Ollie
+        if (api.level === 2 && !TC.cfg.rounds) {
+          const Q = G.follow;
+          nameEl.classList.remove("on"); rar.classList.add("hidden"); ref.classList.add("on"); stage.classList.add(it.size); TC.sfx(it.size === "big" ? "boost" : "pop");
+          await TC.sleep(700); if (api.aborted) return null;
+          const fr = await api.ask({ teacher: Q.teacher, tzh: Q.zh, say: Q.say[it.size], keys: Q.keys, word: Q.word[it.size], hideKey: true });
           if (api.aborted) return null;
           TC.hideTalk();
-          const said = TC.pickHeard(fr.heard, COLS) || it.color;
-          await TC.speak(it.color.split(" and ").includes(said) ? `Yes! The ${it.w} is ${it.color}.` : `${cap(said)}? Cool! I think it is ${it.color}.`);
+          nameEl.textContent = cap(it.size) + "!"; nameEl.classList.add("on");
+          await TC.speak(Q.after[it.size]); if (api.aborted) return null;
+          stage.classList.remove("big", "small"); ref.classList.remove("on");
         }
         await TC.sleep(600);
         got.push({ it, r }); addCard(it, r);
       }
+      if (api.aborted) return null;
       api.progress(items.length, N);
       // finale: tap your favourite pet, then say it
       setEgg(RAR[3]); stage.className = "stage hidden"; rar.textContent = "MY PETS"; aura.classList.add("on");
       const line = TC.h("div", { class: "lineup" }); root.append(line);
+      const words = got.map((g) => g.it.w);
       let chosen = got[0];
       const cards = got.map((g) => { const c = addCard(g.it, g.r, line); c.onclick = () => { chosen = g; cards.forEach((x) => x.classList.remove("sel")); c.classList.add("sel"); TC.sfx("pop"); TC.model(g.it.w, g.it.w); if (TC.pending) TC.pending(); }; return c; });
       pets.innerHTML = "";
-      await TC.speak("Which one do you like? Tap it!");
-      await TC.waitAction(9000);
-      cards[got.indexOf(chosen)].classList.add("sel");
-      const F = G.finale, L = api.level, it = chosen.it;
-      const fill = (s) => s.replace("[Animal]", cap(it.w)).replace("[animal]", it.w).replace("[fin3]", it.fin3);
-      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: fill(F.say[L]), zh: "說出你最喜歡的寵物", keys: [got.map((g) => g.it.w)], word: it.w });
+      tapme.textContent = "👆 TAP! 點一下你最喜歡的寵物！"; tapme.classList.remove("hidden"); TC.sfx("levelup");
+      await TC.waitAction(12000);
+      tapme.classList.add("hidden");
       if (api.aborted) { line.remove(); return null; }
-      const pw = TC.pickHeard(r.heard, got.map((g) => g.it.w));
-      const fav = got.find((g) => g.it.w === pw) || chosen;
+      cards[got.indexOf(chosen)].classList.add("sel");
+      const F = G.finale, it = chosen.it;
+      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say.replace("[animal]", it.w), zh: "說出你最喜歡的寵物", keys: [words], word: it.w });
+      if (api.aborted) { line.remove(); return null; }
+      TC.hideTalk();
+      const fav = got.find((g) => g.it.w === TC.pickHeard(r.heard, words)) || chosen;
+      if (r.ok) TC.lastSay = F.say.replace("[animal]", fav.it.w); // the line everybody repeats is the pet the child really said
       cards.forEach((x) => x.classList.remove("sel")); const fc = cards[got.indexOf(fav)]; fc.classList.add("sel");
-      fc.animate([{ transform: "scale(1.15)" }, { transform: "scale(1.35) rotate(4deg)" }, { transform: "scale(1.15)" }], { duration: 500, iterations: 3 });
+      fc.animate([{ transform: "scale(1.12)" }, { transform: "scale(1.3) rotate(4deg)" }, { transform: "scale(1.12)" }], { duration: 500, iterations: 3 });
       TC.sfx("fanfare"); TC.confetti(180);
-      await TC.speak(`The ${fav.it.w}! ${fav.it.fin3}`);
+      await TC.speak(`Great! The ${fav.it.w}!`);
       await TC.sleep(1200); line.remove(); stage.className = "stage"; aura.classList.remove("on");
+      if (api.aborted) return null;
       api.progress(N, N);
       return { ok: true };
     }

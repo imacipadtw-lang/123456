@@ -26,7 +26,7 @@
   $("#scanOllie").innerHTML = TC.ollieSVG();
   // floating 3D items from this gate's content drift behind the attract screen
   const GATE_ART = { 1: ["bus", "train", "plane", "taxi", "bike", "boat", "kart"], 2: ["rainbow", "star", "medal", "apple", "lemon", "watermelon"], 3: ["mystegg", "tiger", "rabbit", "pig", "elephant", "lion", "duck"],
-    4: ["mic", "star", "ollie", "medal", "star", "mic"], 5: ["gift", "apple", "ice-cream", "pizza", "cake", "strawberry", "hamburger"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
+    4: ["body-head", "body-hands", "body-nose", "body-feet", "mic", "star"], 5: ["gift", "duck", "cat", "pig", "rabbit", "bird", "star"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
   const floaty = h("div", { class: "floaty" });
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
     if ((left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
@@ -71,7 +71,7 @@
   }
   $("#lvlBtns").addEventListener("click", (e) => {
     const l = +e.target.dataset.l; if (!l || !TC.kid) return;
-    TC.kid.level = l; setKidChip(TC.kid); TC.toast("難度：" + ["", "初級 Basic", "中級 Intermediate", "高級 Advanced"][l] + "（下一題生效）");
+    TC.kid.level = l; setKidChip(TC.kid); TC.toast("難度：" + ["", "初級 Basic（看字說）", "中級（填空說）"][l] + "（下一題生效）");
   });
 
   async function runQueue() {
@@ -101,7 +101,7 @@
       h("div", { class: "bpass" },
         h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, kid.name[0]),
         h("div", {}, h("div", { class: "k" }, kid.id === "99" ? "VIP BOARDING PASS · TUCHENG ENGLISH DAY" : "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, kid.id === "99" ? "Welcome, VIP Guest!" : `Welcome, ${kid.name}!`),
-          h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級 Intermediate", "高級 Advanced"][kid.level] + " · " + G.zh)),
+          h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級"][kid.level] + " · " + G.zh)),
         h("div", { style: "width:13rem;height:15rem", html: TC.ollieSVG("cheer") })));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
     // with sync on: show how many gates this traveller has already stamped
@@ -111,7 +111,7 @@
       const n = (k.gates || []).filter((g) => g !== gate).length;
       ov.querySelector(".bpass > div:nth-child(2)").append(h("div", { style: "font-size:2.2rem;font-weight:700;color:#e8a21a;margin-top:.4rem" }, `★ ${n} / 6 stamps · 已收集 ${n} 個印章`));
     });
-    await TC.speak(kid.id === "99" ? `Welcome to ${G.city}, our special guest!` : `Welcome to ${G.city}, ${kid.name}!`);
+    await TC.speak(kid.id === "99" ? "Welcome!" : `Welcome, ${kid.name}!`);
     await sleep(600); ov.remove();
     TC.log({ type: "start" });
     // 👋 warm-up chat with the teacher (standard mode)
@@ -120,7 +120,7 @@
       const age = ["", "seven", "eight", "nine", "ten", "eleven", "twelve"][kid.grade] || "ten"; // typical age for the grade
       const fill = (t) => t.replace("[Name]", kid.name).replace("[name]", kid.name.toLowerCase()).replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age);
       api.progress(-1, 0);
-      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say[L]), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill)), word: gr === TC_CONTENT.greetings.feel ? "happy" : "" });
+      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill)), word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
       TC.hideTalk();
       if (api.aborted) return;
     }
@@ -139,15 +139,20 @@
     }
     // 🧩 Sentence Builder with a passport sentence (skipped in quick mode)
     if (!TC.cfg.rounds) {
-      const pool = (TC_CONTENT.sentences[gate] || []).filter((x) => { const n = x.s.split(/\s+/).length; return kid.level === 1 ? n <= 4 : kid.level === 2 ? n <= 5 : n >= 4; });
+      const pool = TC_CONTENT.sentences[gate] || [];
       const pz = pool[(Math.random() * pool.length) | 0];
-      if (pz) await TC.sentencePuzzle(pz.s, pz.zh, kid.level === 3 ? pz.keys : pz.keys.slice(0, 1), api);
+      if (pz) await TC.sentencePuzzle(pz.s, pz.zh, pz.keys, api);
       if (api.aborted) return;
     }
     // 🛂 Passport Code: look the number up in the paper passport → secret letter
     await TC.passportCode(LETTER, api);
     if (api.aborted) return;
-    await showResult(kid, res || {});
+    // 🎟 scratch card: points to trade for prizes
+    const pts = TC.pointsFor(kid.id, gate);
+    await TC.scratchCard({ id: kid.id, name: kid.name, gate, city: G.city, points: pts });
+    if (api.aborted) return;
+    TC.log({ type: "points", points: pts });
+    await showResult(kid, Object.assign(res || {}, { points: pts }));
   }
 
   async function showResult(kid, res) {
@@ -163,7 +168,8 @@
       h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.artImg({ 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" }[gate], "art"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date} · ${kid.name}`))),
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
-      h("div", { class: "zh", style: "font-size:1.8rem" }, `把字母寫在護照卡的第 ${gate} 格！ Write it in box ${gate}!`),
+      h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
+      h("div", { class: "zh", style: "font-size:1.8rem" }, `把字母和點數寫在護照卡的第 ${gate} 格！ Write the letter and points in box ${gate}!`),
       h("div", { class: "res-actions" }, replay, next));
     document.body.append(ov);
     TC.sfx("stamp"); TC.ollie("cheer");
@@ -173,7 +179,7 @@
     letter.classList.remove("roll"); letter.textContent = LETTER; TC.sfx("levelup"); TC.confetti(200);
     TC.log({ type: "complete", stars, letter: LETTER, lines: TC.stats.lines });
     await sleep(500);
-    await TC.speak(`Great job, ${kid.name}! Your secret letter is ${LETTER}.`);
+    await TC.speak(`Great, ${kid.name}!`);
     await sleep(300);
     function playBlob() {
       if (!TC.stats.lastBlob) { TC.toast("這台沒有錄音（可在設定開啟）"); return Promise.resolve(); }
@@ -193,22 +199,14 @@
   $("#setBtn").onclick = () => TC.openSettings();
   // 📋 teacher script for this gate, generated from the same content the game uses
   $("#helpBtn").onclick = () => {
-    const cap = (w) => w[0].toUpperCase() + w.slice(1);
-    let rows = [];
-    if (G.key === "kart") rows = G.items.map((it) => [G.teacher, cap(it.w) + "!", `It's a${/^[aeiou]/.test(it.w) ? "n" : ""} ${it.w}.`, it.s3]);
-    if (G.key === "craft") rows = Object.keys(G.colors).map((c) => [G.teacher, cap(c) + "!", `I want ${c}.`, `I want ${c}, please.`]);
-    if (G.key === "hatch") rows = G.items.map((it) => [G.teacher, cap(it.w) + "!", `It's ${it.art || "a"} ${it.w}.`, it.s3]);
-    if (G.key === "beat") rows = [0, 1, 2, 3, 4].map((i) => [G.teacher, G.moves[1][i].say, G.moves[2][i].say, G.moves[3][i].say]);
-    if (G.key === "box") rows = G.items.map((it) => [it.clues.join(" "), cap(it.w) + "!", it.q2, it.s3]);
-    if (G.key === "obby") rows = G.moves.map((m) => [m.t, cap(m.w) + "!", m.s2, m.s3]);
-    rows.push(["★ " + G.finale.teacher, G.finale.say[1], G.finale.say[2], G.finale.say[3]]);
-    const gr = TC_CONTENT.greetings[TC_CONTENT.greetingOrder[gate]];
-    rows.unshift(["👋 " + gr.teacher, gr.say[1], gr.say[2], gr.say[3]]);
+    if (document.querySelector(".settings")) return; // one teacher dialog at a time
+    const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
+    const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "護照 " + r.no : ""].filter(Boolean).join(" · ")]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "老師說左欄，孩子說右邊三欄（依程度）。遊戲後會有「句子拼拼看」和「護照密碼」。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到掃描"),
+      h("p", { class: "zh" }, "老師問左欄，孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照密碼」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到掃描"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
-        h("tr", {}, ...["老師 Teacher", "初級", "中級", "高級"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
-        ...rows.map((r) => h("tr", {}, ...r.map((t) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" }, t))))),
+        h("tr", {}, ...["老師問 Teacher", "畫面上的句子", "答案字（說這個字）", "中文／護照編號"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
+        ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),
       h("div", { class: "row" }, h("button", { class: "save", onclick: () => wrap.remove() }, "關閉 Close")));
     const wrap = h("div", { class: "settings", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);
     document.body.append(wrap);
@@ -221,6 +219,8 @@
   TC.onKey = (e, burst) => {
     if (burst || e.repeat) return;
     const k = e.key;
+    // Esc first closes a teacher dialog (settings, script card, name picker) if one is open
+    if (k === "Escape") { const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
     if (k === "Enter" || k === " ") {
       e.preventDefault();
       if (resultOpen) resultOpen();

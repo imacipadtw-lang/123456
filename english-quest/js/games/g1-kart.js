@@ -1,4 +1,4 @@
-/* Gate 1 · Turbo Talk Kart — say the vehicle to get a turbo boost (passport L1 transport, L7 ordinals) */
+/* Gate 1 · Turbo Talk Kart — "What is it?" → say the vehicle to get a turbo boost (passport L1 transport) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
@@ -101,11 +101,11 @@
     // bubble with the vehicle picture
     if (S.bubble) {
       const b = S.bubble; b.t = Math.min(1, b.t + 0.06);
-      const r = H * 0.17 * easeOut(b.t), cx = W / 2, cy = H * 0.3;
+      const r = H * 0.19 * easeOut(b.t), cx = W / 2, cy = H * 0.43; // big, and clear of Ollie's subtitle (#cap, top centre) above and the talk bar below
       ctx.fillStyle = "rgba(255,255,255,.95)"; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
       ctx.lineWidth = H * 0.012; ctx.strokeStyle = "#4cc9ff"; ctx.stroke();
-      const im = IM[b.img]; if (im && im.complete) ctx.drawImage(im, cx - r * 0.7, cy - r * 0.7, r * 1.4, r * 1.4);
-      if (b.label) { ctx.font = `700 ${H * 0.06}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.strokeStyle = "#0a1633"; ctx.lineWidth = H * 0.012; ctx.strokeText(b.label, cx, cy + r + H * 0.07); ctx.fillText(b.label, cx, cy + r + H * 0.07); }
+      const im = IM[b.img]; if (im && im.complete) ctx.drawImage(im, cx - r * 0.8, cy - r * 0.8, r * 1.6, r * 1.6);
+      if (b.label) { ctx.font = `700 ${H * 0.06}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.strokeStyle = "#0a1633"; ctx.lineWidth = H * 0.012; ctx.strokeText(b.label, cx, cy + r + H * 0.06); ctx.fillText(b.label, cx, cy + r + H * 0.06); }
     }
     // place badge + speed
     ctx.font = `700 ${H * 0.07}px Fredoka, sans-serif`; ctx.textAlign = "left";
@@ -184,12 +184,12 @@
       for (let d = 1200; d < 3500 + items.length * 5200 + 4000; d += 420) { const near = S.signs.some((sg) => Math.abs(sg.d - d) < 900); if (!near) S.stars.push({ d, lane: Math.round(Math.sin(d / 1700) * 1.4), done: false }); }
       const N = items.length + 1;
       // start lights: three reds, then green
-      const lights = TC.h("div", { style: "position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:30;display:flex;gap:2vh;padding:2vh 3vh;border-radius:3vh;background:#14182b;box-shadow:0 2vh 4vh rgba(0,0,0,.5)" });
+      const lights = TC.h("div", { style: "position:fixed;left:50%;top:25%;transform:translateX(-50%);z-index:30;display:flex;gap:2vh;padding:2vh 3vh;border-radius:3vh;background:#14182b;box-shadow:0 2vh 4vh rgba(0,0,0,.5)" });
       const bulbs = [0, 1, 2].map(() => { const b = TC.h("div", { style: "width:10vh;height:10vh;border-radius:50%;background:#3a2030;box-shadow:inset 0 -1vh 2vh rgba(0,0,0,.5)" }); lights.append(b); return b; });
       document.body.append(lights);
       for (let i = 0; i < 3; i++) { await TC.sleep(650); bulbs[i].style.background = "radial-gradient(circle at 35% 30%,#ffb3b3,#ff2a2a 60%,#a00)"; bulbs[i].style.boxShadow = "0 0 4vh #ff3b3b"; TC.sfx("tick"); TC.sfx("pop"); }
       await TC.sleep(700); bulbs.forEach((b) => { b.style.background = "radial-gradient(circle at 35% 30%,#d6ffe0,#2ee66b 60%,#0a8a3a)"; b.style.boxShadow = "0 0 4vh #2ee66b"; });
-      TC.floatText("GO!", 50, 40, "#2ee66b"); TC.sfx("boost"); TC.speak("Go!");
+      TC.floatText("GO!", 50, 45, "#2ee66b"); TC.sfx("boost"); TC.speak("Go!");
       setTimeout(() => lights.remove(), 900);
       S.rivalSpeed = 420;
       for (let i = 0; i < items.length; i++) {
@@ -198,16 +198,16 @@
         await driveTo(sg.d, api); if (api.aborted) return null;
         S.rivalSpeed = 80;
         S.bubble = { img: it.img, t: 0, label: "" }; TC.sfx("pop");
-        const L = api.level;
-        const say = L === 1 ? cap(it.w) + "!" : L === 2 ? `It's ${art(it.w)} ${it.w}.` : it.s3;
-        const keys = [[it.w]];
-        const r = await api.ask({ teacher: G.teacher, tzh: "這是什麼？", say, zh: it.zh, keys, word: it.w, hideKey: true });
+        const r = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: it.say, zh: it.zh, keys: it.keys || [[it.w]], word: it.w, hideKey: true });
         if (api.aborted) return null;
         S.bubble.label = cap(it.w) + "!";
         TC.hideTalk();
-        if (r.ok) { TC.sfx("boost"); S.boost = 2.6; S.shake = 0.4; TC.floatText(r.by === "ai" ? "TURBO!" : "GO!", 50, 40, "#ffc83d"); }
+        if (r.ok) { TC.sfx("boost"); S.boost = 2.6; S.shake = 0.4; TC.floatText(r.by === "ai" ? "TURBO!" : "GO!", 82, 45, "#ffc83d"); } // beside the picture, not on it
+        const said = TC.speak(r.ok ? "Yes! " + it.say : it.say); // Ollie: "Yes! It's a bus."
         sg.done = true;
-        await TC.sleep(900); S.bubble = null;
+        await TC.sleep(1200); await Promise.race([said, TC.sleep(1800)]); // keep the picture up while Ollie says it
+        if (api.aborted) return null;
+        S.bubble = null; if (r.ok) S.boost = 2.2;
         S.target = 700; S.rivalSpeed = i < 2 ? 640 : 380;
         if (i === 2) { S.rival = Math.min(S.rival, S.pos - 400); }
       }
@@ -215,11 +215,17 @@
       api.progress(items.length, N);
       S.lane = 0; S.finishAt = S.pos + 5200; S.rival = Math.min(S.rival, S.pos - 900); S.rivalSpeed = 500;
       await driveTo(S.finishAt + 700, api); if (api.aborted) return null;
-      const F = G.finale, L = api.level;
-      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], keys: F.keys[L], word: "first" });
+      // the kart is over the line: Ollie stops behind, the trophy appears, then "Are you happy?" → "Yes!"
+      S.rivalSpeed = 0; S.rival = Math.min(S.rival, S.pos - 300);
+      TC.sfx("levelup"); TC.confetti(90); TC.floatText("YOU WIN!", 50, 45, "#ffc83d");
+      await TC.sleep(1100); if (api.aborted) return null;
+      S.bubble = { img: "trophy", t: 0, label: "" }; TC.sfx("pop");
+      const F = G.finale;
+      await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say, keys: F.keys, word: F.word });
       if (api.aborted) return null;
+      TC.hideTalk(); S.bubble = null;
       S.target = 900; S.boost = 2; TC.sfx("fanfare"); TC.confetti(220);
-      TC.floatText("1st PLACE!", 50, 35, "#ffc83d");
+      TC.floatText("YES!", 50, 40, "#ffc83d"); TC.speak("Great!");
       const tro = TC.artImg("trophy"); tro.style.cssText = "position:fixed;left:50%;top:44%;width:34vh;height:34vh;margin:-17vh;z-index:44;filter:drop-shadow(0 0 4vh #ffc83d)";
       document.body.append(tro); tro.animate([{ transform: "scale(.2) rotate(-30deg)", opacity: 0 }, { transform: "scale(1.15) rotate(6deg)", opacity: 1 }, { transform: "scale(1) rotate(0)" }], { duration: 800, easing: "cubic-bezier(.2,1.5,.4,1)" });
       await TC.sleep(2600); tro.remove(); S.target = 0; S.running = false;
@@ -227,6 +233,5 @@
       return { ok: true };
     }
   };
-  function art(w) { return /^[aeiou]/.test(w) ? "an" : "a"; }
   function cap(w) { return w[0].toUpperCase() + w.slice(1); }
 })();

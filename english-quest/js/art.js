@@ -375,7 +375,7 @@
     tower: [150, 40, 20, 8], eiffel: [150, 40, 20, 8], pyramids: [160, 60, 20, 8], palm: [160, 150, 20, 8], opera: [170, 40, 20, 8], mountains: [40, 44, 20, -8],
     "pose-stand": [100, 132, 11], "pose-sit": [100, 138, 11], "pose-clap": [100, 150, 11], "pose-raise": [100, 132, 11], "pose-jump": [100, 112, 11], "pose-dance": [100, 132, 11], "pose-sing": [100, 132, 11], "pose-run": [100, 128, 11],
   };
-  TC.seal = seal; TC.SEAL = SEAL;
+  TC.seal = seal; TC.SEAL = SEAL; TC.ArtCtx = Ctx; // other files can add pictures: TC.ART[name] = () => { const c = TC.ArtCtx(); ...; return c.out(svg); }
   function withSeal(name, svg) {
     const vb = (svg.match(/viewBox="([^"]+)"/) || [0, "0 0 200 200"])[1].split(/\s+/).map(Number);
     const p = SEAL[name] || [vb[0] + vb[2] - 34, vb[1] + vb[3] - 40, 19, -10];

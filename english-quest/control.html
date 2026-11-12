@@ -37,7 +37,10 @@
   .attract h2{font-size:3.8rem;margin:1.4rem 0 1rem}
   /* certificate */
   .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:#fffdf5;color:#0a1633;border-radius:1.6em;padding:3% 4%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5);border:1.2em solid #ffc83d;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
-  .cert .k1{font-size:1.8em;letter-spacing:.4em;color:#5a6aa8;font-weight:700}
+  .cert .k1{font-size:1.5em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
+  .cert .cert-emb{position:absolute;left:3.2%;top:3.5%;width:14em;height:14em}
+  .cert .cert-pts{display:inline-block;font-size:2.2em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;margin-top:.2em}
+  .cert .cert-pts b{font-size:1.5em;color:#d6337a}.cert .cert-pts .zh{font-size:1em}
   .cert h1{font-size:5.6em;margin:.1em 0 0;line-height:1}
   .cert .zh{font-size:2.4em}
   .cert .nm{font-size:8em;font-weight:700;color:#d6337a;margin:.18em 0 .05em;line-height:1}
@@ -74,6 +77,7 @@
 </style>
 </head>
 <body>
+<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2rem;color:#fff;letter-spacing:.06em;position:fixed;left:1.6rem;top:1.2rem;z-index:45;text-shadow:0 2px 6px rgba(0,0,0,.5)"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5rem;height:5rem;flex:none">南投縣草屯鎮土城國民小學</div>
 <div id="stage">
   <section class="view" id="vGate">
     <div class="route" id="route"></div>
@@ -126,6 +130,7 @@
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
 <script src="js/puzzles.js"></script>
+<script src="js/scratch.js"></script>
 <script src="js/control.js"></script>
 <script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
 </body>

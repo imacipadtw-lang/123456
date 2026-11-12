@@ -1,14 +1,102 @@
-/* Gate 6 · Sports Day Obby — say "I can jump / swim / climb…" and your runner clears each obstacle;
-   finish in the stadium with your favourite sport (passport L4/L6/L22 verbs, L19 sports, can) */
+/* Gate 6 · Sports Day Obby — the teacher asks "What can you do?", the child says "I can jump / swim / climb…"
+   (one word is enough), presses the giant action button and the runner clears the obstacle; trophy on the podium at the end
+   (passport L4/L6 verbs, can) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
+
+  /* ---------- action pictures art.js does not have yet: the same glossy chibi kid as pose-jump / pose-run ---------- */
+  const SKIN = "#ffd3a8", SHIRT = "#4cc9ff", PANTS = "#3d4a8a", HAIR = "#5a3518";
+  const limb = (pts, col, w = 13) => `<path d="M${pts.map((p) => p.join(" ")).join(" L")}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+  const hand = (c, x, y, r = 8) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.g(SKIN)}"/>`;
+  /** the kid's head (radius r) at x,y — hair, or a helmet / swim cap when a colour is given */
+  function head(c, x, y, r, hat, extra = "") {
+    const k = r / 32;
+    let s = c.sphere(100, 66, 32, SKIN, 0.6);
+    s += hat ? c.path("M66 62 Q64 28 100 28 Q136 28 136 62 Q100 47 66 62Z", hat) + c.hl(86, 40, 15, 6, -20, 0.6)
+      : c.path("M68 62 Q70 30 100 30 Q132 30 132 62 Q120 46 100 50 Q80 46 68 62Z", HAIR);
+    s += c.eyes(100, 68, 11, 5) + c.smile(100, 80, 6) + c.blush(100, 78, 20) + extra;
+    return `<g transform="translate(${x - 100 * k} ${y - 66 * k}) scale(${k})">${s}</g>`;
+  }
+  const drops = (pts, col = "#fff") => pts.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}"/>`).join("");
+  const NEW_ART = {
+    /* front crawl through the waves: goggles, one arm over, kicking feet */
+    "pose-swim"() {
+      const c = TC.ArtCtx();
+      const wave = (y, amp) => { let d = `M0 ${y}`; for (let x = 0; x < 200; x += 25) d += ` Q${x + 12.5} ${y - amp} ${x + 25} ${y}`; return d + " V200 H0Z"; };
+      const goggles = `<path d="M68 66 Q100 59 132 66" stroke="#26293a" stroke-width="4" fill="none"/>` +
+        [89, 111].map((x) => `<ellipse cx="${x}" cy="68" rx="10.5" ry="9" fill="#bfe6ff" fill-opacity=".45" stroke="#26293a" stroke-width="3"/>`).join("");
+      let s = `<path d="${wave(104, 9)}" fill="${c.v("#b5ebff", "#4a9bff")}"/>`;
+      let b = limb([[98, 106], [76, 62], [110, 40]], SKIN, 12) + hand(c, 112, 39) + drops([[126, 34, 4], [134, 46, 3], [98, 28, 3]], "#7fd3ff");
+      b += limb([[70, 120], [26, 104]], SKIN, 13) + limb([[70, 128], [30, 134]], SKIN, 13) + limb([[78, 123], [58, 121]], PANTS, 24);
+      b += `<rect x="60" y="102" width="68" height="40" rx="19" fill="${c.g("#ff7a3d")}" transform="rotate(-6 94 122)"/>`;
+      b += limb([[120, 116], [176, 110]], SKIN, 12) + hand(c, 180, 110);
+      b += head(c, 140, 90, 30, "#ffd21f", goggles);
+      s += `<g transform="translate(-14 -22) scale(1.14)">${b}</g>`;
+      s += `<path d="${wave(126, 8)}" fill="${c.v("#7fd3ff", "#2a6fe0")}" opacity=".52"/>`;
+      s += `<g stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"><path d="M14 148 q10 -7 20 0 t20 0 M92 166 q10 -7 20 0 t20 0 M30 184 q10 -7 20 0 t20 0"/></g>`;
+      s += drops([[10, 84, 7], [24, 70, 5], [4, 104, 4], [36, 86, 4], [14, 58, 3], [40, 66, 3], [196, 92, 4], [188, 82, 3]]);
+      return c.out(s);
+    },
+    /* up a climbing wall: helmet, rope, hands and feet on the colourful holds */
+    "pose-climb"() {
+      const c = TC.ArtCtx();
+      let s = c.shadow(100, 194, 80, 6) + `<path d="M46 4 H172 Q182 4 182 14 V194 H36 V14 Q36 4 46 4Z" fill="${c.v("#f3d9b0", "#c79a66")}"/><rect x="168" y="6" width="14" height="188" fill="#000" opacity=".1"/>`;
+      s += `<g stroke="#a87d4e" stroke-width="3" fill="none" stroke-linecap="round" opacity=".55"><path d="M48 84 l14 8 l-6 14 M166 34 l-12 10 l6 12 M150 178 l12 -8 M50 150 l10 4"/></g>`;
+      [[140, 18, "#9b6bff"], [168, 104, "#ff5fa2"], [50, 122, "#ff9a2e"], [168, 150, "#ffd21f"], [50, 60, "#35d35a"], [90, 14, "#3d8bff"]].forEach(([x, y, col]) => (s += c.sphere(x, y, 8, col)));
+      s += `<path d="M17 130 V66 m-11 13 l11 -13 l11 13" stroke="#2ee6b6" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+      let b = `<path d="M100 144 V-30" stroke="#ff5fa2" stroke-width="5"/>`; // rope
+      [[54, 34, "#ff4b55"], [148, 66, "#3d8bff"], [68, 194, "#9b6bff"], [137, 182, "#35d35a"]].forEach(([x, y, col]) => (b += c.sphere(x, y, 10, col)));
+      b += limb([[90, 150], [74, 170], [70, 190]], PANTS, 15) + limb([[110, 150], [138, 150], [136, 176]], PANTS, 15);
+      b += `<rect x="74" y="96" width="52" height="58" rx="18" fill="${c.g(SHIRT)}"/><rect x="74" y="138" width="52" height="9" rx="4" fill="#26293a"/><circle cx="100" cy="142" r="6" fill="${c.g("#ffc83d")}"/>`;
+      b += limb([[80, 104], [60, 86], [54, 40]], SHIRT) + hand(c, 54, 36) + limb([[120, 104], [144, 100], [148, 72]], SHIRT) + hand(c, 148, 68);
+      b += head(c, 100, 66, 32, "#ff4b55");
+      return c.out(s + `<g transform="translate(13 7) scale(.96)">${b}</g>`);
+    },
+    /* riding a bike: helmet, hands on the handlebar, feet on the pedals */
+    "pose-ride"() {
+      const c = TC.ArtCtx();
+      const wheel = (x) => `<circle cx="${x}" cy="154" r="30" fill="#fff" fill-opacity=".35" stroke="#26293a" stroke-width="9"/><circle cx="${x}" cy="154" r="23" fill="none" stroke="#c9d6ff" stroke-width="2"/>` +
+        `<path d="M${x - 22} 154 h44 M${x} 132 v44 M${x - 16} 138 l32 32 M${x + 16} 138 l-32 32" stroke="#c9d6ff" stroke-width="1.6"/><circle cx="${x}" cy="154" r="6" fill="#8a94b8"/>`;
+      let s = c.shadow(100, 190, 86, 7) + `<g stroke="#8a94b8" stroke-width="5" stroke-linecap="round" opacity=".8"><path d="M28 66 h-20 M36 88 h-30 M24 110 h-18"/></g>`;
+      s += limb([[88, 100], [102, 128], [90, 166]], "#2c3566", 14) + `<rect x="80" y="164" width="20" height="7" rx="3" fill="#26293a"/>`;
+      s += wheel(46) + wheel(154);
+      s += `<path d="M46 154 L80 108 L134 108 L100 154 Z M100 154 L80 108 M134 108 L154 154 M134 108 L130 84 L148 80" stroke="#ff4f7b" stroke-width="8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+      s += `<ellipse cx="82" cy="101" rx="16" ry="6" fill="${c.g("#26293a")}"/><path d="M100 154 L110 142 M100 154 L90 166" stroke="#8a94b8" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="154" r="9" fill="${c.g("#ffc83d")}"/>`;
+      s += `<rect x="66" y="50" width="42" height="54" rx="17" fill="${c.g(SHIRT)}" transform="rotate(16 86 100)"/>`;
+      s += limb([[88, 98], [118, 114], [112, 138]], PANTS, 15) + `<rect x="102" y="137" width="22" height="8" rx="4" fill="#26293a"/>`;
+      s += limb([[104, 66], [126, 82], [146, 82]], SHIRT, 12) + hand(c, 147, 81);
+      s += head(c, 110, 34, 27, "#ffc83d");
+      return c.out(s);
+    },
+    /* flying like a superhero: red cape, one fist up, above the clouds */
+    "pose-fly"() {
+      const c = TC.ArtCtx();
+      const cloud = (x, y, k) => c.sphere(x, y, 18 * k, "#ffffff", 0.3) + c.sphere(x + 22 * k, y + 4 * k, 14 * k, "#ffffff", 0.3) + c.sphere(x - 20 * k, y + 5 * k, 13 * k, "#ffffff", 0.3);
+      let s = cloud(150, 176, 1.1) + cloud(34, 40, 0.8) + cloud(64, 188, 0.7);
+      s += `<g stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"><path d="M22 176 l12 -17 M42 186 l10 -14 M8 152 l9 -13"/></g>`;
+      let b = c.path("M80 98 Q40 122 30 190 Q50 176 66 190 Q84 176 100 190 Q116 150 120 98Z", "#ff4b55");
+      b += limb([[92, 150], [88, 184]], PANTS, 15) + limb([[110, 150], [114, 184]], PANTS, 15) + `<ellipse cx="88" cy="188" rx="10" ry="7" fill="${c.g("#ff4b55")}"/><ellipse cx="114" cy="188" rx="10" ry="7" fill="${c.g("#ff4b55")}"/>`;
+      b += `<rect x="74" y="96" width="52" height="58" rx="18" fill="${c.g(SHIRT)}"/>`;
+      b += limb([[78, 104], [60, 120], [74, 136]], SHIRT) + hand(c, 76, 137);
+      b += head(c, 100, 66, 32);
+      b += limb([[124, 102], [131, 26]], SHIRT) + hand(c, 131, 20, 10);
+      s += `<g transform="rotate(35 100 110)">${b}</g>`;
+      s += `<path d="M180 22 l4 9 l9 4 l-9 4 l-4 9 l-4 -9 l-9 -4 l9 -4z" fill="${c.g("#ffd21f")}"/>`;
+      return c.out(s);
+    }
+  };
+  const NEW_SEAL = { "pose-swim": [166, 170, 15, -8], "pose-climb": [109, 129, 10.5], "pose-ride": [92, 80, 9, 16], "pose-fly": [91, 122, 11, 35] };
+  Object.keys(NEW_ART).forEach((n) => { if (!TC.ART[n]) { TC.ART[n] = NEW_ART[n]; TC.SEAL[n] = NEW_SEAL[n]; } }); // art.js wins if it gets these later
+  const actionArt = (w) => TC.art("pose-" + w);
+
   const PALM = TC.artImg("palm");
-  const IM = { basketball: TC.artImg("basketball"), baseball: TC.artImg("baseball"), tennis: TC.artImg("tennis"), trophy: TC.artImg("trophy"), bike: TC.artImg("bike"), cloud: TC.artImg("cloud") };
+  const IM = { trophy: TC.artImg("trophy"), bike: TC.artImg("bike"), cloud: TC.artImg("cloud") };
   let cv, ctx, W, H, k = 1, raf;
   const GY = 470; // ground line in base units (720 high)
+  const PODIUM = 60; // height of the winner's step
   const A = { x: 200, y: GY, pose: "idle", t: 0, color: "#ffc83d", name: "", glider: false, bike: false, rot: 0 };
-  let course = [], cam = 0, parts = [], flags = [], finishX = 0, ball = null, trophy = false;
+  let course = [], cam = 0, parts = [], flags = [], finishX = 0, trophy = false, demoRun = 0;
 
   function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); k = H / 720; }
   function tween(ms, fn) { return new Promise((res) => { const t0 = performance.now(); (function f() { const t = Math.min(1, (performance.now() - t0) / ms); fn(t); if (t < 1) requestAnimationFrame(f); else res(); })(); }); }
@@ -59,7 +147,6 @@
     // particles
     parts.forEach((p) => { p.x += p.vx; p.y += p.vy; p.vy += p.g; p.l -= 0.02; ctx.globalAlpha = Math.max(0, p.l); ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, p.s, p.s); });
     ctx.globalAlpha = 1; parts = parts.filter((p) => p.l > 0);
-    if (ball) { const b = ball; if (b.img.complete) ctx.drawImage(b.img, b.x - 30, b.y - 30, 60, 60); }
     ctx.restore();
   }
   function puff(x, y, c, n = 14, g = 0.2) { for (let i = 0; i < n; i++) parts.push({ x, y, vx: (Math.random() - 0.5) * 6, vy: -Math.random() * 6, g, l: 1, c, s: 8 + Math.random() * 8 }); }
@@ -94,9 +181,11 @@
     ctx.fillStyle = "#26293a"; ctx.fillRect(x, GY - 300, 12, 300); ctx.fillRect(x + 600, GY - 300, 12, 300);
     for (let i = 0; i < 20; i++) for (let j = 0; j < 2; j++) { ctx.fillStyle = (i + j) % 2 ? "#111" : "#fff"; ctx.fillRect(x + i * 30.6, GY - 300 + j * 26, 31, 26); }
     ctx.font = "700 44px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "#ffc83d"; ctx.fillText("STADIUM", x + 306, GY - 320);
-    // three sport corners
-    ctx.fillStyle = "#ff9a2e"; ctx.fillRect(x + 900, GY - 330, 12, 330); ctx.fillStyle = "#fff"; ctx.fillRect(x + 860, GY - 400, 120, 80); ctx.strokeStyle = "#ff5a5a"; ctx.lineWidth = 8; ctx.beginPath(); ctx.ellipse(x + 870, GY - 310, 40, 10, 0, 0, 7); ctx.stroke();
-    if (trophy && IM.trophy.complete) ctx.drawImage(IM.trophy, A.x - 70, A.y - 330, 140, 140);
+    // winners' podium
+    [[690, 40, "#c9d6ff", "2"], [800, PODIUM, "#ffc83d", "1"], [910, 28, "#e0915a", "3"]].forEach(([dx, hh, col, n]) => {
+      block3d(x + dx, GY - hh, 110, hh, col);
+      ctx.font = "700 30px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "rgba(10,22,51,.75)"; ctx.fillText(n, x + dx + 55, GY - hh / 2 + 11);
+    });
   }
   function drawAvatar() {
     const { x, y, pose, t, color } = A;
@@ -124,6 +213,7 @@
     ctx.restore();
     // name tag
     ctx.font = "600 24px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "rgba(10,22,51,.7)"; const tw = ctx.measureText(A.name).width + 20; ctx.fillRect(x - tw / 2, y - 205, tw, 32); ctx.fillStyle = "#fff"; ctx.fillText(A.name, x, y - 181);
+    if (trophy && IM.trophy.complete) { const s = 160 + Math.sin(t * 5) * 8; ctx.drawImage(IM.trophy, x + 170 - s / 2, y - 130 - s / 2 + Math.sin(t * 3) * 6, s, s); }
   }
 
   async function runTo(x, speed = 340) {
@@ -163,15 +253,26 @@
     A.pose = "idle"; A.rot = 0; A.y = GY;
   }
 
-  const BTN_CSS = `.actbtn{position:fixed;left:50%;top:58%;transform:translate(-50%,-50%);z-index:26;width:30vh;height:30vh;border-radius:50%;display:grid;place-items:center;
+  const CSS = `.actbtn{position:fixed;left:50%;top:58%;transform:translate(-50%,-50%);z-index:26;width:30vh;height:30vh;border-radius:50%;display:grid;place-items:center;
     font:700 6vh Fredoka,sans-serif;color:#fff;text-shadow:0 .5vh 0 rgba(0,0,0,.3);cursor:pointer;touch-action:manipulation;
-    background:radial-gradient(circle at 35% 28%,#ffe9a8,#ffb020 45%,#e06a00);box-shadow:0 2.2vh 0 #a84e00,0 3vh 5vh rgba(0,0,0,.4),0 0 0 1.4vh rgba(255,255,255,.35);animation:pulse .8s ease-in-out infinite}
-    .actbtn:active{transform:translate(-50%,-44%);box-shadow:0 .6vh 0 #a84e00}
-    .actbtn small{display:block;font-size:2.2vh;margin-top:-4vh}`;
-  let actBtn = null;
+    background:radial-gradient(circle at 35% 28%,#ffe9a8,#ffb020 45%,#e06a00);box-shadow:0 2.2vh 0 #a84e00,0 3vh 5vh rgba(0,0,0,.4),0 0 0 1.4vh rgba(255,255,255,.35);line-height:1;animation:g6pulse .8s ease-in-out infinite}
+    .actbtn:active{animation:none;transform:translate(-50%,-44%);box-shadow:0 .6vh 0 #a84e00}
+    .actbtn small{display:block;font-size:2.4vh;margin-top:1vh}
+    .g6card{position:fixed;right:4vw;top:12vh;z-index:24;width:44vh;height:44vh;border-radius:5vh;display:grid;place-items:center;pointer-events:none;
+    background:radial-gradient(circle at 30% 22%,#ffffff,#d9f1ff 55%,#9fd4ff);border:1vh solid #fff;box-shadow:0 1.6vh 0 rgba(10,22,51,.3),0 2.6vh 5vh rgba(0,0,0,.35);animation:pop .35s}
+    .g6card img{width:94%;height:94%;animation:g6bob 1.6s ease-in-out infinite}
+    .g6card.ok{border-color:#2ee6b6;box-shadow:0 1.6vh 0 rgba(10,22,51,.3),0 0 5vh #2ee6b6}
+    @media (max-aspect-ratio:3/2){.g6card{top:25vh;width:40vh;height:40vh}}
+    @keyframes g6bob{50%{transform:translateY(-3%) scale(1.03)}}
+    @keyframes g6pulse{50%{transform:translate(-50%,-50%) scale(1.12)}}`;
+  function css() { if (!document.getElementById("g6css")) document.head.append(TC.h("style", { id: "g6css" }, CSS)); }
+  let actBtn = null, card = null;
+  /** the big picture of the action (what the child can say), shown while the teacher asks */
+  function showCard(w) { hideCard(); css(); const im = new Image(); im.src = actionArt(w); im.alt = w; im.draggable = false; card = TC.h("div", { class: "g6card" }, im); document.body.append(card); }
+  function hideCard() { if (card) { card.remove(); card = null; } }
   function actionButton(word) {
     return new Promise((res) => {
-      if (!document.getElementById("g6css")) document.head.append(TC.h("style", { id: "g6css" }, BTN_CSS));
+      css();
       actBtn = TC.h("div", { class: "actbtn" }, TC.h("div", {}, word.toUpperCase() + "!", TC.h("small", { class: "zh" }, "👆 用力按！")));
       const go = () => { if (!actBtn) return; actBtn.remove(); actBtn = null; TC.pending = null; clearTimeout(t); TC.sfx("boost"); res(); };
       actBtn.addEventListener("pointerdown", go); document.body.append(actBtn); TC.pending = go;
@@ -181,50 +282,51 @@
 
   TC.games.obby = {
     mount(api) { cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d"); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
-    idle(api) { const G = (api && api.G) || TC_CONTENT.gates[6]; buildCourse(G.moves); Object.assign(A, { x: 200, y: GY, pose: "run", name: "", color: "#ffc83d", glider: false, bike: false }); trophy = false; ball = null; cam = 0;
-      (async function demo() { while (!TC.kid && A.name === "") { await runTo(A.x + 400, 260); if (A.x > course[0].x - 200) { A.x = 200; cam = 0; } } })(); },
+    idle(api) { const G = (api && api.G) || TC_CONTENT.gates[6]; hideCard(); buildCourse(G.moves); Object.assign(A, { x: 200, y: GY, pose: "run", name: "", color: "#ffc83d", glider: false, bike: false, rot: 0 }); trophy = false; cam = 0;
+      const me = ++demoRun;
+      (async function demo() { while (me === demoRun && !TC.kid && A.name === "") { await runTo(A.x + 400, 260); if (me === demoRun && A.x > course[0].x - 200) { A.x = 200; cam = 0; } } })(); },
     async play(api) {
       const G = api.G, kid = api.kid;
+      demoRun++;
       const must = G.moves.filter((m) => ["jump", "swim", "climb", "fly"].includes(m.w));
       const extra = G.moves.filter((m) => !must.includes(m)).sort(() => Math.random() - 0.5)[0];
-      const moves = [must[0], must[1], extra, must[2], must[3]].slice(0, TC.rounds(5));
-      buildCourse(moves); trophy = false; ball = null;
+      const moves = [must[0], must[1], extra, must[2], must[3]].filter(Boolean).slice(0, TC.rounds(5));
+      buildCourse(moves); trophy = false;
       Object.assign(A, { x: 200, y: GY, pose: "idle", color: kid.color, name: kid.name, glider: false, bike: false, rot: 0 }); cam = 0;
       const N = moves.length + 1;
-      await TC.speak("Ready? Let's run!");
+      await TC.speak("Go!");
       for (let i = 0; i < course.length; i++) {
         api.progress(i, N);
-        const o = course[i], m = o.m, L = api.level;
+        const o = course[i], m = o.m;
         await runTo(o.x - 70); if (api.aborted) return null;
-        const say = L === 1 ? cap(m.w) + "!" : L === 2 ? m.s2 : m.s3;
-        const keys = m.keys || [[m.w]];
-        const r = await api.ask({ teacher: m.t, tzh: `看看前面的障礙，你會做什麼？（${m.zh}）`, say, zh: m.zh, keys, word: m.w });
-        if (api.aborted) return null;
+        showCard(m.w);
+        const r = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: m.say, zh: m.zh, keys: m.keys || [[m.w]], word: m.w, hideKey: true });
+        if (api.aborted) { hideCard(); return null; }
         TC.hideTalk();
+        if (card && r.ok) card.classList.add("ok");
         await actionButton(m.w);
+        hideCard();
         if (api.aborted) return null;
-        TC.floatText(cap(m.w) + "!", 50, 30, "#ffc83d");
+        TC.floatText(cap(m.w) + "!", 50, 42, "#ffc83d");
+        TC.speak(m.say); // "I can jump!" while the runner does it
         await act(o); o.done = true;
         await runTo(flags[i].x + 30);
         TC.sfx("coin"); await tween(400, (t) => (flags[i].up = t));
+        if (api.aborted) return null;
       }
       api.progress(course.length, N);
-      await runTo(finishX + 760);
-      const F = G.finale, L = api.level, sports = Object.keys(G.sports);
-      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], zh: "籃球 basketball / 棒球 baseball / 網球 tennis", keys: [sports], word: "basketball" });
+      await runTo(finishX + 560); if (api.aborted) return null;
+      const F = G.finale;
+      await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say, keys: F.keys, word: F.word });
       if (api.aborted) return null;
-      const sp = TC.pickHeard(r.heard, sports) || "basketball";
       TC.hideTalk();
-      // shot!
-      ball = { img: IM[sp], x: A.x + 40, y: A.y - 120 };
-      const tx = sp === "basketball" ? finishX + 870 : A.x + 900, ty = sp === "basketball" ? GY - 320 : GY - 500;
-      const bx = ball.x, by = ball.y; TC.sfx("whoosh");
-      A.pose = "cheer";
-      await tween(1100, (t) => { ball.x = bx + (tx - bx) * t; ball.y = by + (ty - by) * t - Math.sin(t * Math.PI) * 260; });
-      TC.sfx("fanfare"); puff(ball.x, ball.y, "#ffc83d", 40, 0.15); TC.confetti(220);
-      TC.floatText(sp === "basketball" ? "SLAM DUNK!" : sp === "baseball" ? "HOME RUN!" : "ACE!", 50, 28, "#ffc83d");
-      ball = null; trophy = true;
-      await TC.speak(`${cap(sp)}! You are a sports star, ${kid.name}!`);
+      // still full of energy: hop onto the podium and lift the trophy
+      const x0 = A.x, x1 = finishX + 855; TC.sfx("pop"); A.pose = "run";
+      await tween(800, (t) => { A.x = x0 + (x1 - x0) * t; A.y = GY - PODIUM * t - Math.sin(t * Math.PI) * 150; });
+      A.y = GY - PODIUM; A.pose = "cheer"; trophy = true;
+      TC.sfx("fanfare"); puff(A.x + 170, A.y - 130, "#ffc83d", 40, 0.15); TC.confetti(220);
+      TC.floatText("WINNER!", 62, 50, "#ffc83d");
+      await TC.speak("Wow! Great!");
       await TC.sleep(1200); A.pose = "idle";
       api.progress(N, N);
       return { ok: true };

@@ -41,7 +41,7 @@
     if (!list || !list.length) return letter;
     // younger travellers get numbers from the first pages of the passport
     const lvl = (TC.kid && TC.kid.level) || 2;
-    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : lvl === 2 ? 13 : 25));
+    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : 10));
     const pool = easy.length ? easy : list;
     const e = pool[(Math.random() * pool.length) | 0];
     const ans = h("div", { class: "ans" }, "");
@@ -51,12 +51,12 @@
       h("div", { class: "num" }, "No.", h("b", {}, e.no)),
       ans);
     document.body.append(box); TC.sfx("levelup");
-    await TC.speak(`Open your passport. Find number ${e.no}.`);
-    const r = await TC.ask({ teacher: `What is word number ${e.no}?`, tzh: `護照第 ${e.no} 號是什麼？`, say: cap(e.w) + "!", zh: "", keys: [[e.w]], word: e.w, hideKey: true });
+    await TC.speak("Open your passport!", { human: "open" });
+    const r = await TC.ask({ teacher: `Number ${e.no}. What is it?`, tzh: `護照第 ${e.no} 號是什麼字？`, say: cap(e.w) + "!", zh: "", keys: [[e.w]], word: e.w, hideKey: true, hideAlways: true, guideKid: `翻護照找第 ${e.no} 號，把那個字說出來` });
     if (api && api.aborted) { box.remove(); return letter; }
     TC.hideTalk();
     ans.innerHTML = ""; ans.append(h("span", { class: "first" }, e.w[0].toUpperCase()), e.w.slice(1), h("span", { class: "zh", style: "font-size:2rem;margin-left:1rem" }, e.zh));
-    TC.sfx("coin"); await TC.speak(`${e.w}! ${e.w[0].toUpperCase()}!`);
+    TC.sfx("coin"); await TC.model(e.w, e.w);
     await sleep(700); box.remove();
     TC.log({ type: "code", say: e.w, heard: r.heard || "", by: r.by || "" });
     return e.w[0].toUpperCase();
@@ -90,11 +90,11 @@
     }
     render();
     TC.pending = () => { placed.length = 0; words.forEach((w) => placed.push(order.find((t) => t.w === w && !placed.includes(t)))); render(); check(); }; // teacher Enter = solve
-    await TC.speak("Make the sentence!");
+    await TC.speak("Go!");
     await Promise.race([finished, new Promise((r) => { const t = setInterval(() => { if (api && api.aborted) { clearInterval(t); r(); } }, 300); finished.then(() => clearInterval(t)); })]);
     TC.pending = null;
     if (api && api.aborted) { box.remove(); return; }
-    const r = await TC.ask({ teacher: "Read it to me!", tzh: "把句子唸出來！", say: sentence, zh: zh || "", keys, word: (keys && keys[0] && keys[0][0]) || "" });
+    const r = await TC.ask({ teacher: "Say it!", tzh: "把句子唸出來！", say: sentence, zh: zh || "", keys, word: (keys && keys[0] && keys[0][0]) || "" });
     box.remove(); TC.hideTalk();
     return r;
   };

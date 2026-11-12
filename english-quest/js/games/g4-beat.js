@@ -1,5 +1,5 @@
-/* Gate 4 · Beat Party — the child is the boss: shout the command, everyone in the room does it!
-   (passport L25 classroom English + L6/L22 verbs; finale "Say cheese!" group photo) */
+/* Gate 4 · Beat Party — "What's this?" → the child names the body part on the big card, and because
+   the boss said it, the whole party touches it to the beat (passport 第3關 身體部位; finale "Cheese!" photo) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
@@ -14,38 +14,49 @@
   .g4 .ball:before{content:"";position:absolute;left:50%;top:-20vh;width:.4vh;height:20vh;background:#c9d6ff}
   .g4 .floor i{border:1px solid rgba(255,255,255,.08);animation:tile 1.2s infinite}
   @keyframes tile{0%,100%{background:rgba(255,95,162,.15)}50%{background:rgba(76,201,255,.25)}}
-  .g4 .bot{position:absolute;left:50%;top:16%;width:26vh;height:30vh;margin-left:-13vh;transition:transform .2s}
-  .g4 .bot.jump{animation:pJump .45s ease-in-out infinite}
+  .g4 .bot{position:absolute;left:30%;top:16%;width:26vh;height:30vh;margin-left:-13vh;transition:transform .2s}
+  .g4 .bot.jump{animation:pJump .6s ease-in-out infinite}
   .g4 .bot.clap{animation:pClap .3s ease-in-out infinite}
   @keyframes pClap{50%{transform:scale(1.12,.9)}}
-  .g4 .bot.raise{animation:pRaise .6s ease-in-out infinite}
-  @keyframes pRaise{50%{transform:translateY(-14%) scale(.94,1.12) rotate(6deg)}}
+  .g4 .bot.nod{animation:pNod .6s ease-in-out infinite}
+  @keyframes pNod{50%{transform:translateY(8%) rotate(8deg)}}
+  .g4 .bot.peek{animation:pPeek .6s ease-in-out infinite}
+  @keyframes pPeek{50%{transform:scale(1.14,.82)}}
+  .g4 .bot.wiggle{animation:pWiggle .3s ease-in-out infinite}
+  @keyframes pWiggle{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+  .g4 .bot.boop{animation:pBoop .6s ease-in-out infinite}
+  @keyframes pBoop{50%{transform:scale(1.2)}}
   .g4 .bot.dance{animation:pDance .6s ease-in-out infinite}
   .g4 .bot.sing{animation:talk .25s ease-in-out infinite}
-  .g4 .bot.run{animation:pRun .2s linear infinite}
   .g4 .bot.stand{transform:scale(1.18) translateY(-6%)}
-  .g4 .bot.sit{transform:scaleY(.72) translateY(22%)}
   .g4 .pads{position:absolute;left:4%;right:4%;top:56%;height:13%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;opacity:0;pointer-events:none;transition:opacity .25s}
   .g4 .pads.on{opacity:1;pointer-events:auto}
   .g4 .pad{border-radius:1.6rem;display:grid;place-items:center;font-size:3rem;font-weight:700;color:#fff;touch-action:manipulation;cursor:pointer;
      background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--pc) 55%,#fff),var(--pc) 55%,color-mix(in srgb,var(--pc) 60%,#000));box-shadow:0 .7rem 0 color-mix(in srgb,var(--pc) 55%,#000),0 0 2rem var(--pc);text-shadow:0 .2rem 0 rgba(0,0,0,.3)}
-  .g4 .pad:active,.g4 .pad.hit{transform:translateY(.5rem);box-shadow:0 .2rem 0 color-mix(in srgb,var(--pc) 55%,#000),0 0 4rem var(--pc)}
+  .g4 .pad:active,.g4 .pad.down{transform:translateY(.5rem);box-shadow:0 .2rem 0 color-mix(in srgb,var(--pc) 55%,#000),0 0 4rem var(--pc)}
   .g4 .djhint{position:absolute;left:50%;top:50.5%;transform:translateX(-50%);font-size:2.4rem;font-weight:700;color:#ffc83d;opacity:0;transition:opacity .25s;white-space:nowrap}
   .g4 .djhint.on{opacity:1}
-  .g4 .ring{position:absolute;left:50%;top:32%;width:20vh;height:20vh;margin:-10vh;border-radius:50%;border:.6rem solid #ffc83d;pointer-events:none;animation:ring .6s ease-out forwards}
+  .g4 .ring{position:absolute;left:30%;top:32%;width:20vh;height:20vh;margin:-10vh;border-radius:50%;border:.6rem solid #ffc83d;pointer-events:none;animation:ring .6s ease-out forwards}
+  .g4 .ring.oncard{left:auto;right:calc(9% + 20vh);top:calc(12.5% + 20vh)}
   @keyframes ring{from{transform:scale(.4);opacity:1}to{transform:scale(2.6);opacity:0}}
   @keyframes pJump{50%{transform:translateY(-28%)}}
   @keyframes pDance{0%,100%{transform:rotate(-12deg) translateX(-10%)}50%{transform:rotate(12deg) translateX(10%)}}
-  @keyframes pRun{50%{transform:translateY(-6%) rotate(3deg)}}
   .g4 .lane{position:absolute;left:4%;right:4%;top:56%;height:13%;border-radius:2rem;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.2)}
   .g4 .hit{position:absolute;left:3%;top:50%;width:11vh;height:11vh;margin-top:-5.5vh;border-radius:50%;border:.5rem solid #fff;box-shadow:0 0 2rem #ff5fa2}
   .g4 .hit.pulse{animation:hitp .6s infinite}
   @keyframes hitp{50%{transform:scale(1.15);box-shadow:0 0 4rem #ff5fa2}}
   .g4 .cmd{position:absolute;top:50%;transform:translateY(-50%);left:100%;white-space:nowrap;background:linear-gradient(90deg,#ff5fa2,#9b6bff);padding:.4rem 2rem .4rem .6rem;border-radius:2rem;font-size:3.6rem;font-weight:700;box-shadow:0 0 2rem rgba(255,95,162,.6);display:flex;align-items:center;gap:1rem}
   .g4 .cmd img{width:9vh;height:9vh;margin:-2vh 0;filter:drop-shadow(0 .6vh .6vh rgba(0,0,0,.3))}
-  .g4 .posecard{position:absolute;right:10%;top:14%;width:26vh;height:26vh;border-radius:3vh;background:radial-gradient(circle at 40% 30%,#fff,#e6ecff);box-shadow:0 1.6vh 0 #9b6bff,0 2.4vh 4vh rgba(0,0,0,.4);display:grid;place-items:center;opacity:0;transform:scale(.6) rotate(-8deg);transition:all .4s cubic-bezier(.2,1.5,.4,1)}
-  .g4 .posecard.on{opacity:1;transform:scale(1) rotate(-4deg)}
-  .g4 .posecard img{width:90%;height:90%}
+  .g4 .posecard{position:absolute;right:9%;top:12.5%;width:40vh;height:40vh;border-radius:3.6vh;background:radial-gradient(circle at 40% 30%,#fff,#e6ecff);box-shadow:0 1.4vh 0 #9b6bff,0 2.4vh 4vh rgba(0,0,0,.4);display:grid;place-items:center;opacity:0;transform:scale(.6) rotate(-8deg);transition:all .4s cubic-bezier(.2,1.5,.4,1)}
+  .g4 .posecard.on{opacity:1;transform:scale(1) rotate(-2deg)}
+  .g4 .posecard.beat{box-shadow:0 1.4vh 0 #ffc83d,0 0 5vh #ffc83d,0 2.4vh 4vh rgba(0,0,0,.4)}
+  .g4 .posecard img{width:96%;height:96%}
+  .g4 .party{position:absolute;left:0;right:0;top:71.5%;height:25%;display:flex;align-items:center;justify-content:center;gap:1.6vh;opacity:0;pointer-events:none;transition:opacity .3s}
+  .g4 .party.on{opacity:1}
+  .g4 .party img{width:17vh;height:17vh;flex:0 0 auto;filter:drop-shadow(0 1vh 1vh rgba(0,0,0,.45))}
+  .g4 .party .say{margin:0 1.6vh;text-align:center;font-size:5.4rem;font-weight:700;line-height:1.05;color:#fff;text-shadow:0 .35rem 0 #9b6bff,0 0 2rem rgba(255,95,162,.8);white-space:nowrap}
+  .g4 .party .say b{color:#ffc83d}
+  .g4 .party .say span{display:block;margin-top:.8rem;font-size:2.2rem;color:#ffc83d;text-shadow:0 .2rem 0 rgba(0,0,0,.4)}
   .g4 .power{position:absolute;right:2.5%;top:14%;width:4.5vh;height:32%;border-radius:2vh;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid rgba(255,255,255,.3)}
   .g4 .power i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#2ee6b6,#ffc83d,#ff5fa2)}
   .g4 .power-l{position:absolute;right:1%;top:47%;width:9vh;text-align:center;font-size:1.3rem;font-weight:700}
@@ -57,7 +68,7 @@
   .g4 .photo div{position:absolute;left:0;right:0;bottom:1.5vh;text-align:center;color:#0a1633;font-size:2.6vh;font-weight:700}
   .g4 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:8}
   `;
-  let duck = false, root, bot, lane, hit, powerBar, combo, flash, beatOn = false, nextBeat = 0, step = 0, peak = 0;
+  let duck = false, root, bot, lane, hit, powerBar, combo, flash, card, party, beatOn = false, clock = null, nextBeat = 0, step = 0, peak = 0, partyOn = false;
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g4" });
@@ -69,25 +80,32 @@
     const power = TC.h("div", { class: "power" }); powerBar = TC.h("i"); power.append(powerBar);
     combo = TC.h("div", { class: "combo" });
     flash = TC.h("div", { class: "flash" });
-    root.append(bot, lane, power, TC.h("div", { class: "power-l zh" }, "聲音能量 VOICE"), combo, flash);
+    card = TC.h("div", { class: "posecard" }); party = TC.h("div", { class: "party" });
+    root.append(bot, lane, card, power, TC.h("div", { class: "power-l zh" }, "聲音能量 VOICE"), combo, party, flash);
     buildPads();
     api.stage.append(root);
     (function meter() { const l = TC.Mic.level || 0; peak = Math.max(peak, l); powerBar.style.height = Math.min(100, l * 130) + "%"; requestAnimationFrame(meter); })();
   }
-  // simple drum machine on the WebAudio clock
+  // simple drum machine on the WebAudio clock (or the page clock when audio is not running)
   function beatLoop() {
     if (!beatOn) return;
-    const c = TC.ac(); if (!c) return;
     const spb = 60 / 100 / 2; // eighth notes at 100 BPM
-    while (nextBeat < c.currentTime + 0.12) {
-      const s = step % 8, delay = Math.max(0, (nextBeat - c.currentTime) * 1000);
-      setTimeout(() => { if (!beatOn) return; if (duck) { if (s % 2 === 0) TC.sfx("hat"); return; } if (s === 0 || s === 4) TC.sfx("kick"); if (s === 2 || s === 6) TC.sfx("snare"); TC.sfx("hat"); if (s === 0) hit.animate([{ transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 250 }); }, delay);
+    while (nextBeat < clock() + 0.12) {
+      const s = step % 8, delay = Math.max(0, (nextBeat - clock()) * 1000);
+      setTimeout(() => { if (!beatOn) return; if (duck) { if (s % 2 === 0) TC.sfx("hat"); return; } if (s === 0 || s === 4) TC.sfx("kick"); if (s === 2 || s === 6) TC.sfx("snare"); TC.sfx("hat"); if (s === 0) hit.animate([{ transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 250 }); if (partyOn && s % 2 === 0) thump(s / 2); }, delay);
       nextBeat += spb; step++;
     }
     setTimeout(beatLoop, 40);
   }
-  function startBeat() { const c = TC.ac(); if (!c || beatOn) return; beatOn = true; nextBeat = c.currentTime + 0.05; step = 0; beatLoop(); }
+  function startBeat() { if (beatOn) return; const c = TC.ac(); clock = c && c.state === "running" ? () => c.currentTime : () => performance.now() / 1000; beatOn = true; nextBeat = clock() + 0.05; step = 0; beatLoop(); }
   function stopBeat() { beatOn = false; }
+  /** every beat of the party: the picture thumps and the crowd hops (odd and even kids take turns) */
+  function thump(q) {
+    const im = card.querySelector("img"); if (im) im.animate([{ transform: "scale(1.13)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
+    party.querySelectorAll("img").forEach((k, i) => { if (i % 2 === q % 2) k.animate([{ transform: "translateY(0)" }, { transform: "translateY(-24%) scale(1.06)" }, { transform: "translateY(0)" }], { duration: 420, easing: "ease-out" }); });
+    if (q === 0) ringFx("#ffc83d", " oncard");
+  }
+  function ringFx(col, where = "") { const r = TC.h("div", { class: "ring" + where, style: `border-color:${col}` }); root.append(r); setTimeout(() => r.remove(), 700); }
   function pose(p) { bot.className = "bot " + (p || ""); }
   function notes(n = 6) { for (let i = 0; i < n; i++) { const d = TC.artImg("star", "note"); d.style.cssText = `left:${25 + Math.random() * 50}%;top:${28 + Math.random() * 22}%;animation-delay:${i * 0.1}s`; root.append(d); setTimeout(() => d.remove(), 2000); } }
   /** DJ time: the child taps the pads while everyone does the move */
@@ -96,21 +114,32 @@
   function buildPads() {
     pads = TC.h("div", { class: "pads" }); djhint = TC.h("div", { class: "djhint zh" }, "👆 DJ TIME! 打節奏！");
     PADS.forEach(([c, s, t]) => { const p = TC.h("div", { class: "pad", style: `--pc:${c}` }, t);
-      p.addEventListener("pointerdown", () => { TC.sfx(s); p.classList.add("hit"); setTimeout(() => p.classList.remove("hit"), 120); notes(2); root.append(Object.assign(TC.h("div", { class: "ring" }), { style: `border-color:${c}` })); setTimeout(() => root.querySelector(".ring") && root.querySelector(".ring").remove(), 700); bot.animate([{ transform: "scale(1)" }, { transform: "scale(1.1,.9)" }, { transform: "scale(1)" }], { duration: 200 }); });
+      p.addEventListener("pointerdown", () => { TC.sfx(s); p.classList.add("down"); setTimeout(() => p.classList.remove("down"), 120); notes(2); ringFx(c); bot.animate([{ transform: "scale(1)" }, { transform: "scale(1.1,.9)" }, { transform: "scale(1)" }], { duration: 200 }); });
       pads.append(p); });
     root.append(pads, djhint);
   }
   function djTime(on) { pads.classList.toggle("on", on); djhint.classList.toggle("on", on); lane.style.opacity = on ? 0 : 1; }
-  let poseCard;
-  async function slideIn(text, pose) {
+  /** what Ollie does for each body part while everyone touches it */
+  const MOVE = { head: "nod", eyes: "peek", ears: "wiggle", nose: "boop", mouth: "sing", hands: "clap", feet: "jump" };
+  /** a new round: the big picture card pops up and its beat note slides along the lane to the hit ring */
+  async function showPart(p, question) {
     lane.querySelectorAll(".cmd").forEach((c) => c.remove());
-    const c = TC.h("div", { class: "cmd" }, TC.artImg("pose-" + pose), text); lane.append(c);
-    if (!poseCard) { poseCard = TC.h("div", { class: "posecard" }); root.append(poseCard); }
-    poseCard.innerHTML = ""; poseCard.append(TC.artImg("pose-" + pose)); poseCard.classList.add("on");
+    card.innerHTML = ""; card.append(TC.artImg(p.img, "", p.zh)); card.classList.add("on"); TC.sfx("pop");
+    const c = TC.h("div", { class: "cmd" }, TC.artImg(p.img, "", p.zh), question); lane.append(c);
     const lw = lane.clientWidth;
-    await c.animate([{ left: "100%" }, { left: (hit.offsetLeft + hit.offsetWidth + 20) / lw * 100 + "%" }], { duration: 1500, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" }).finished;
-    hit.classList.add("pulse"); return c;
+    await c.animate([{ left: "100%" }, { left: (hit.offsetLeft + hit.offsetWidth + 20) / lw * 100 + "%" }], { duration: 1100, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" }).finished.catch(() => {});
+    hit.classList.add("pulse");
   }
+  /** the boss said it: the crowd shows up, the sentence is on screen and everything moves to the beat */
+  function partyTime(p) {
+    partyOn = !!p; card.classList.toggle("beat", partyOn); party.classList.toggle("on", partyOn);
+    if (!p) { pose(""); return; }
+    const kid = () => TC.artImg(p.img, "", p.zh), i = p.say.toLowerCase().lastIndexOf(p.w);
+    const say = TC.h("div", { class: "say" }, ...(i < 0 ? [p.say] : [p.say.slice(0, i), TC.h("b", {}, p.say.slice(i, i + p.w.length)), p.say.slice(i + p.w.length)]), TC.h("span", { class: "zh" }, `大家一起摸摸${p.zh}！`));
+    party.innerHTML = ""; party.append(kid(), kid(), say, kid(), kid());
+    pose(MOVE[p.w] || "dance");
+  }
+  function clearRound() { partyTime(null); djTime(false); card.classList.remove("on"); hit.classList.remove("pulse"); lane.querySelectorAll(".cmd").forEach((c) => c.remove()); }
   async function snapshot() {
     flash.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600 }); TC.sfx("click");
     const cvs = document.createElement("canvas"); cvs.width = 960; cvs.height = 720; const ctx = cvs.getContext("2d");
@@ -126,7 +155,7 @@
       const g = ctx.createLinearGradient(0, 0, 960, 720); g.addColorStop(0, "#ff5fa2"); g.addColorStop(1, "#9b6bff"); ctx.fillStyle = g; ctx.fillRect(0, 0, 960, 720);
       const o = new Image(); o.src = TC.art("ollie"); await new Promise((r) => { o.onload = r; o.onerror = r; setTimeout(r, 800); });
       try { ctx.drawImage(o, 330, 90, 300, 348); } catch (e) {}
-      ctx.font = "700 110px Fredoka"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText("SAY CHEESE!", 480, 560); }
+      ctx.font = "700 110px Fredoka"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText("CHEESE!", 480, 560); }
     ctx.fillStyle = "rgba(10,22,51,.55)"; ctx.fillRect(0, 640, 960, 80); ctx.fillStyle = "#ffc83d"; ctx.font = "700 40px Fredoka"; ctx.textAlign = "center";
     ctx.fillText("TUCHENG ENGLISH DAY · GATE 4 BEAT PARTY", 480, 695);
     return cvs;
@@ -134,46 +163,57 @@
 
   TC.games.beat = {
     mount(api) { build(api); },
-    idle() { stopBeat(); pose("dance"); combo.textContent = ""; lane.querySelectorAll(".cmd").forEach((c) => c.remove()); root.querySelectorAll(".photo").forEach((p) => p.remove()); },
+    idle() { stopBeat(); clearRound(); pose("dance"); combo.textContent = ""; root.querySelectorAll(".photo").forEach((p) => p.remove()); },
     async play(api) {
       const G = api.G; let streak = 0;
+      const cap = (w) => w[0].toUpperCase() + w.slice(1);
+      const wait = async (ms) => { const end = Date.now() + ms; while (Date.now() < end && !api.aborted) await TC.sleep(100); };
+      const quit = () => { stopBeat(); clearRound(); return null; };
       root.querySelectorAll(".photo").forEach((p) => p.remove());
-      pose(""); startBeat();
-      await TC.speak("You are the boss! Tell everyone what to do!");
-      const L0 = api.level, moves = G.moves[L0].slice(0, TC.rounds(5));
-      const N = moves.length + 1;
-      for (let i = 0; i < moves.length; i++) {
+      clearRound(); combo.textContent = ""; startBeat();
+      TC.floatText("YOU ARE THE BOSS!", 44, 30, "#ffc83d");
+      await TC.speak("Go!");
+      // body parts for this child: random, no repeats
+      const pool = G.parts.slice(), parts = [];
+      for (let n = Math.min(TC.rounds(5), pool.length); n > 0; n--) parts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+      const N = parts.length + 1;
+      for (let i = 0; i < parts.length; i++) {
         api.progress(i, N);
-        const m = moves[i];
-        await slideIn(m.say, m.pose);
+        const p = parts[i];
+        await showPart(p, G.teacher);
+        if (api.aborted) return quit();
         peak = 0; duck = true; // keep the music soft while the AI listens
         const t0 = Date.now();
-        const r = await api.ask({ teacher: G.teacher, tzh: "你是老大！大聲叫大家做動作！", say: m.say, zh: "老師和家長要跟著做喔！", keys: m.keys, word: m.keys[0][0] });
+        const r = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: p.say, zh: p.zh, keys: p.keys || [[p.w]], word: p.w, hideKey: true });
         duck = false;
-        if (api.aborted) { stopBeat(); return null; }
+        if (api.aborted) return quit();
         hit.classList.remove("pulse");
         const fast = Date.now() - t0 < 5000, loud = peak > 0.45;
         streak = r.ok ? streak + 1 : 0;
         combo.textContent = streak > 1 ? `COMBO ×${streak}` : "";
-        TC.floatText(loud ? "LOUD & PROUD!" : fast ? "PERFECT!" : "GREAT!", 50, 30, loud ? "#ff5fa2" : "#2ee6b6");
-        TC.confetti(loud ? 160 : 70);
-        pose(m.pose); notes(loud ? 10 : 5); TC.hideTalk(); djTime(true);
-        await TC.sleep(4200); djTime(false); pose(""); poseCard && poseCard.classList.remove("on");
+        if (r.ok) { TC.floatText(loud ? "LOUD & PROUD!" : fast ? "PERFECT!" : "GREAT!", 44, 30, loud ? "#ff5fa2" : "#2ee6b6"); TC.confetti(loud ? 160 : 70); }
+        // the boss said it → everyone touches it to the beat while the child plays the DJ pads
+        TC.hideTalk(); partyTime(p); notes(loud ? 10 : 5); djTime(true);
+        TC.speak(r.ok ? `${loud ? "Wow" : "Great"}! ${cap(p.w)}!` : `${cap(p.w)}!`);
+        await wait(r.ok ? 4200 : 2800);
+        if (api.aborted) return quit();
+        clearRound();
       }
-      api.progress(moves.length, N);
-      const F = G.finale, L = api.level;
+      api.progress(parts.length, N);
+      const F = G.finale;
       pose("stand");
-      await TC.speak("Photo time! Everybody, smile!");
       duck = true;
-      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say[L], zh: "說完就拍照！", keys: F.keys[L], word: "cheese" });
+      await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say, keys: F.keys, word: F.word });
       duck = false;
-      if (api.aborted) { stopBeat(); return null; }
-      TC.hideTalk(); lane.querySelectorAll(".cmd").forEach((c) => c.remove()); hit.classList.remove("pulse"); poseCard && poseCard.classList.remove("on");
+      if (api.aborted) return quit();
+      TC.hideTalk();
       const cvs = await snapshot();
-      const ph = TC.h("div", { class: "photo" }, cvs, TC.h("div", {}, `${api.kid.name} & friends · Say cheese!`));
+      if (api.aborted) return quit();
+      const ph = TC.h("div", { class: "photo" }, cvs, TC.h("div", {}, `${api.kid.name} & friends · ${F.say}`));
       root.append(ph); TC.sfx("fanfare"); TC.confetti(200); pose("dance");
-      await TC.sleep(5500);
+      await wait(5500);
       ph.remove(); stopBeat(); pose("");
+      if (api.aborted) return null;
       api.progress(N, N);
       return { ok: true };
     }

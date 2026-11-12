@@ -32,8 +32,9 @@
 <div class="hero">
   <div class="o" id="o"></div>
   <div>
+    <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.4rem;color:#ffe58a;letter-spacing:.06em;margin-bottom:.6rem"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.4rem;height:5.4rem;flex:none">南投縣草屯鎮土城國民小學</div>
     <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 英語護照闖關</span></h1>
-    <p class="zh">6 間教室 × 6 個遊戲關卡 · 掃護照 QR → 和老師用英文對話 → AI 聽懂就過關 → 收集秘密字母 → 終點登機門解碼拿獎狀</p>
+    <p class="zh">6 間教室 × 6 個遊戲關卡 · 掃護照 QR → 老師問、孩子看圖說一個英文字 → AI 聽懂就過關 → 收集秘密字母和刮刮卡點數 → 終點登機門解碼拿獎狀、換獎品</p>
   </div>
 </div>
 <div class="grid" id="gates"></div>
@@ -49,12 +50,14 @@
   <a class="card" href="credits.html"><span class="n">🔊</span><h2>Credits · 發音來源</h2><div class="zh">真人發音的錄音者、授權與下載時間</div></a>
 </div>
 <footer class="zh">
-  所有單字與句型取自《土城國小英語護照》700 字。語音辨識使用瀏覽器內建 Web Speech API（Chrome / Edge，需要網路）；沒有網路時由老師按 ✓ 判定，遊戲照常進行。
+  題目是低、中年級課本的程度，孩子每一題只要說一個字。單字主要取自《土城國小英語護照》第 1–10 關；顏色是第 19 關，jump、swim、like 在後面的關卡。分兩級：初級（1–2 年級）直接顯示答案字，中級（3–6 年級）是填空。
+  歐力說的英文預設都是 Wikimedia Commons 的真人錄音（來源見 <a href="credits.html">Credits</a>）；電腦語音預設關閉。語音辨識使用瀏覽器內建 Web Speech API（Chrome / Edge，需要網路）；沒有網路時由老師按 ✓ 判定，遊戲照常進行。
   名單、錄音與照片只存在各台電腦，不上傳（除非你自行設定 Google 試算表同步，且同步內容不含錄音與照片）。
 </footer>
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
+<script src="js/art-body.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
   const icons = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };

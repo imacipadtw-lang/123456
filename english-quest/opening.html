@@ -38,10 +38,11 @@
 </style>
 </head>
 <body>
+<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.2rem;color:#fff;letter-spacing:.06em;position:fixed;left:2rem;top:1.6rem;z-index:20;text-shadow:0 2px 6px rgba(0,0,0,.5)"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.2rem;height:5.2rem;flex:none">南投縣草屯鎮土城國民小學</div>
 <div id="scenes"></div>
 <div class="dots" id="dots"></div>
 <div class="ctrl"><button id="prev">◀</button><button id="play">▶ 自動播放</button><button id="next">▶▶</button></div>
-<div class="tag zh">按空白鍵或點畫面換下一頁 · 歐力的聲音為電腦語音</div>
+<div class="tag zh">按空白鍵或點畫面換下一頁 · 歐力說的每個英文字都是真人錄音</div>
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
@@ -49,18 +50,18 @@
   const { h, sleep } = TC;
   const G = TC_CONTENT.gates, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const S = [
-    { say: "Hello, Tucheng! I'm Ollie-Bot!", build: () => [h("div", { class: "ollie-wrap flyin", html: TC.ollieSVG("cheer") }), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
-    { say: "Bring your passport. Scan your QR card at every gate!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🛂 PASSPORT"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▣ QR"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Hello, Amy!")),
+    { say: "Hello! Welcome!", build: () => [h("div", { class: "ollie-wrap flyin", html: TC.ollieSVG("cheer") }), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
+    { say: "Open your passport!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🛂 PASSPORT"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▣ QR"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Hello, Amy!")),
         h("div", { class: "en" }, "Bring your passport. Scan your QR card!"), h("div", { class: "zh2" }, "帶著護照，在每一關掃描你的 QR 登機卡！")] },
-    { say: "Six gates. Six cities. Six games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.artImg(EMB[n]), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),
+    { say: "Six gates! Six games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.artImg(EMB[n]), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),
         h("div", { class: "en" }, "6 gates · 6 cities · 6 games!"), h("div", { class: "zh2" }, "六關、六座城市、六個遊戲！")] },
-    { say: "Talk with your teacher in English. The AI is listening!", build: () => { const cv = h("canvas", { class: "wave", width: 1200, height: 200 }); waveDemo(cv);
+    { say: "Listen! Say it!", build: () => { const cv = h("canvas", { class: "wave", width: 1200, height: 200 }); waveDemo(cv);
         return [h("div", { class: "row" }, h("div", { class: "ollie-wrap", html: TC.ollieSVG("talk") }), cv), h("div", { class: "badge pop", style: "animation-delay:1.2s" }, "🤖 AI 聽懂了！ “It's a tiger.”"), h("div", { class: "en" }, "Talk with your teacher. AI is listening!"), h("div", { class: "zh2" }, "用英文和老師對話，AI 正在聽！")]; } },
-    { say: "Solve the Passport Code! Find the word, say it, and get a secret letter.", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "No. 26"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.4s" }, "father"), h("div", { class: "arrow" }, "➜"), h("div", { class: "slot on", style: "animation-delay:.8s" }, "F")),
+    { say: "Find the word. Say it!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "No. 26"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.4s" }, "father"), h("div", { class: "arrow" }, "➜"), h("div", { class: "slot on", style: "animation-delay:.8s" }, "F")),
         h("div", { class: "en" }, "Solve the Passport Code!"), h("div", { class: "zh2" }, "翻護照找到編號單字，說出來，得到秘密字母！")] },
-    { say: "Collect six letters. Crack the code at the Final Gate!", build: () => { const sl = "??????".split("").map(() => h("div", { class: "slot" }, "?")); setTimeout(async () => { for (let i = 0; i < 6; i++) { await sleep(450); sl[i].textContent = "FRIEND"[i]; sl[i].classList.add("on"); TC.sfx("coin"); } }, 900);
+    { say: "Six letters!", build: () => { const sl = "??????".split("").map(() => h("div", { class: "slot" }, "?")); setTimeout(async () => { for (let i = 0; i < 6; i++) { await sleep(450); sl[i].textContent = "FRIEND"[i]; sl[i].classList.add("on"); TC.sfx("coin"); } }, 900);
         return [h("div", { class: "slots" }, ...sl), h("div", { class: "en" }, "Crack the code at the Final Gate!"), h("div", { class: "zh2" }, "集滿六個字母，到終點登機門解開密碼！")]; } },
-    { say: "Are you ready? Three, two, one. Let's go!", build: () => { const c = h("div", { class: "count" }, "3"); setTimeout(async () => { for (const t of ["3", "2", "1", "GO!"]) { c.textContent = t; c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop"); TC.sfx(t === "GO!" ? "fanfare" : "tick"); await sleep(900); } TC.confetti(300); }, 1800);
+    { say: "Are you ready? Three, two, one. Go!", build: () => { const c = h("div", { class: "count" }, "3"); setTimeout(async () => { for (const t of ["3", "2", "1", "GO!"]) { c.textContent = t; c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop"); TC.sfx(t === "GO!" ? "fanfare" : "tick"); await sleep(900); } TC.confetti(300); }, 1800);
         return [h("div", { class: "en" }, "Are you ready?"), c, h("div", { class: "zh2" }, "準備好了嗎？出發！Let's go!")]; } }
   ];
   function waveDemo(cv) { const g = cv.getContext("2d"); let t = 0, started = false; requestAnimationFrame(function f() { if (!cv.isConnected) { if (!started) return requestAnimationFrame(f); return; } started = true; t += 0.08; g.clearRect(0, 0, 1200, 200); const gr = g.createLinearGradient(0, 0, 1200, 0); gr.addColorStop(0, "#2ee6b6"); gr.addColorStop(0.5, "#ffc83d"); gr.addColorStop(1, "#ff5fa2"); g.strokeStyle = gr; g.lineWidth = 8; g.beginPath(); for (let x = 0; x < 1200; x += 6) { const y = 100 + Math.sin(x / 40 + t * 3) * 60 * Math.sin(t + x / 300) * Math.exp(-Math.pow((x - 600) / 450, 2)); x ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); requestAnimationFrame(f); }); }

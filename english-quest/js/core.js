@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false };
+  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, voiceMode: "human", fairPoints: true };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -38,7 +38,7 @@
   /* ---------------- kids & passport QR ----------------
      QR text format:  TCES-07-3-Amy   (number - grade - English name)  */
   const AV_COLORS = ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e", "#7ee36b", "#ff7a7a"];
-  TC.levelFromGrade = (g) => (g <= 2 ? 1 : g <= 4 ? 2 : 3);
+  TC.levelFromGrade = (g) => (g <= 2 ? 1 : 2); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
   TC.parseKid = function (raw) {
     if (!raw) return null;
     const s = String(raw).trim();
@@ -146,6 +146,60 @@
       au.play().catch(() => { TC.quiet(false); res(false); });
     });
   };
+  /* ----- human voice first: every English word the TV says is a real person's recording (Wikimedia Commons) -----
+     Sentences are read word by word from those recordings, each word lighting up as it is heard.
+     The browser's computer voice is used only if a teacher switches it on in ⚙ (voiceMode "tts"), and is labelled. */
+  const clipKey = (k) => { const A = window.TC_AUDIO || {}; return A[k] ? k : A[k.replace(/ /g, "-")] ? k.replace(/ /g, "-") : null; };
+  const normTok = (w) => String(w).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9' -]/g, "").replace(/^['-]+|['-]+$/g, "");
+  /** split a line into playable pieces: [{t: text as written, clip: key in TC_AUDIO or null}] (longest phrase first: "ice cream") */
+  TC.voiceTokens = function (text) {
+    const words = String(text || "").replace(/\[[^\]]*\]/g, " ").split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)), out = [];
+    for (let i = 0; i < words.length;) {
+      let hit = null;
+      for (let n = Math.min(3, words.length - i); n >= 1 && !hit; n--) { const k = clipKey(words.slice(i, i + n).map(normTok).join(" ")); if (k) hit = { t: words.slice(i, i + n).join(" "), clip: k, n }; }
+      if (!hit) hit = { t: words[i], clip: null, n: 1 };
+      out.push(hit); i += hit.n;
+    }
+    return out;
+  };
+  const isName = (t) => TC.kid && normTok(t) === normTok(TC.kid.name);
+  /** true when every word of the line (apart from the child's name) has a human recording */
+  TC.canSayHuman = (text) => { const t = TC.voiceTokens(text); return t.length > 0 && t.every((x) => x.clip || isName(x.t)); };
+  const clipCache = {};
+  function playClip(key) {
+    const a = (window.TC_AUDIO || {})[key]; if (!a) return Promise.resolve(false);
+    return new Promise((res) => {
+      const au = clipCache[key] || (clipCache[key] = new Audio(TC.audioBase + a.file));
+      let fin = false; const done = (ok) => { if (!fin) { fin = true; res(ok); } };
+      try { au.currentTime = 0; } catch (e) {}
+      au.volume = TC.cfg.volume; au.onended = () => done(true); au.onerror = () => done(false);
+      const p = au.play(); if (p && p.catch) p.catch(() => done(false));
+      setTimeout(() => done(false), 4000);
+    });
+  }
+  TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && window.TC_AUDIO[k]; if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
+  /** play a line word by word with human clips; onWord(i, token) fires as each word starts. Resolves true if anything was played. */
+  TC.sayHuman = async function (text, onWord) {
+    const toks = TC.voiceTokens(text); let any = false;
+    TC.quiet(true);
+    try {
+      for (let i = 0; i < toks.length; i++) {
+        onWord && onWord(i, toks[i]);
+        if (toks[i].clip) { any = (await playClip(toks[i].clip)) || any; await sleep(45); } else await sleep(260);
+      }
+    } finally { TC.quiet(false); onWord && onWord(-1, null); }
+    return any;
+  };
+  /* subtitle for what Ollie says (the words light up as they are spoken) */
+  let capT = null;
+  TC.caption = function (text, active = -1, toks = null) {
+    let c = $("#cap"); if (!c) { c = h("div", { id: "cap" }); document.body.append(c); }
+    clearTimeout(capT);
+    if (!text) { c.classList.remove("show"); return; }
+    c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`);
+    c.classList.add("show");
+    capT = setTimeout(() => c.classList.remove("show"), 2600 + text.length * 40);
+  };
   let voices = [];
   function loadVoices() { voices = (window.speechSynthesis && speechSynthesis.getVoices()) || []; }
   if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
@@ -157,36 +211,59 @@
     for (const p of pref) { const v = us.find((x) => p.test(x.name)); if (v) return v; }
     return us[0] || voices.find((v) => /^en/i.test(v.lang)) || null;
   };
-  TC.speak = function (text, opt = {}) {
+  function ttsSpeak(text, opt = {}) {
     if (!window.speechSynthesis || !text) return Promise.resolve();
     return new Promise((res) => {
       try { speechSynthesis.cancel(); } catch (e) {}
       const u = new SpeechSynthesisUtterance(text);
       const v = TC.pickVoice(); if (v) u.voice = v;
-      u.lang = "en-US"; u.rate = opt.rate || 0.92; u.pitch = opt.pitch || 1.18; u.volume = TC.cfg.volume; // Ollie's voice: a little higher
-
+      u.lang = "en-US"; u.rate = opt.rate || 0.92; u.pitch = opt.pitch || 1.18; u.volume = TC.cfg.volume;
       let done = false; const fin = () => { if (!done) { done = true; TC.quiet(false); TC.ollie && TC.ollie("idle"); res(); } };
       TC.quiet(true);
       u.onend = fin; u.onerror = fin; setTimeout(fin, 1500 + text.length * 120);
       TC.ollie && TC.ollie("talk");
       speechSynthesis.speak(u);
     });
+  }
+  /**
+   * Ollie says a line. The text always appears as a subtitle. With the default human voice:
+   *  · if every word has a human recording, the whole line is read word by word;
+   *  · otherwise only opt.human (a short line that does have recordings) or the first recorded word is heard.
+   */
+  TC.speak = async function (text, opt = {}) {
+    if (!text) return;
+    if (TC.cfg.voiceMode === "tts") { TC.caption(text); return ttsSpeak(text, opt); }
+    let line = opt.human != null ? opt.human : text;
+    if (!TC.canSayHuman(line)) { const first = TC.voiceTokens(line).find((t) => t.clip); line = first ? first.t : ""; }
+    const full = line === text, toks = TC.voiceTokens(text);
+    TC.caption(text, -1, toks);
+    if (!line) { await sleep(Math.min(1800, 700 + text.length * 30)); return; }
+    TC.ollie && TC.ollie("talk");
+    await TC.sayHuman(line, full ? (i) => i >= 0 && TC.caption(text, i, toks) : null);
+    TC.ollie && TC.ollie("idle");
   };
-  /** Model a word/sentence: human clip for single passport words, labelled TTS for sentences. */
+  /** number of points, said with human recordings ("twenty points") */
+  TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 25: "twenty five", 30: "thirty", 40: "forty", 50: "fifty", 100: "one hundred" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`) : Promise.resolve(); };
+  /** Model the answer for the child: the sentence word by word (human recordings), or just the key word if a word of the sentence has no recording. */
   TC.model = async function (sentence, word) {
-    const words = String(sentence || "").replace(/[^a-zA-Z' ]/g, " ").trim().split(/\s+/).filter(Boolean);
-    const single = words.length <= 2 && word && TC.hasHuman(word);
-    if (single) { showSrc("human", word); await TC.playHuman(word); return "human"; }
-    if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); await sleep(250); }
-    showSrc("tts"); await TC.speak(sentence, { rate: 0.85, pitch: 1.0 }); // model sentences: natural pitch
-    return "tts";
+    const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
+    const light = (i, tok) => { spans.forEach((sp) => sp.classList.remove("saying")); if (tok) tok.t.split(/\s+/).forEach((w) => { const sp = spans.find((x) => x.dataset.n === TC.norm(w)[0] && !x.classList.contains("said-now")); if (sp) sp.classList.add("saying"); }); };
+    if (TC.cfg.voiceMode === "tts") {
+      const words = String(sentence || "").replace(/[^a-zA-Z' ]/g, " ").trim().split(/\s+/).filter(Boolean);
+      if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); if (words.length <= 2) return "human"; await sleep(250); }
+      showSrc("tts"); await ttsSpeak(sentence, { rate: 0.85, pitch: 1.0 }); return "tts";
+    }
+    if (sentence && TC.canSayHuman(sentence)) { showSrc("human", word || ""); await TC.sayHuman(sentence, light); return "human"; }
+    if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); return "human"; }
+    showSrc("none"); return "none";
   };
   function showSrc(kind, word) {
     const t = $("#srcTag"); if (!t) return;
     if (kind === "human") {
-      const a = window.TC_AUDIO[String(word).toLowerCase()];
-      t.className = "src-tag human"; t.textContent = "真人發音"; t.title = `${a.file} · ${a.speaker} · ${a.licence}`;
-    } else { t.className = "src-tag"; t.textContent = "電腦語音"; t.title = "Computer voice (text-to-speech)"; }
+      const a = (window.TC_AUDIO || {})[String(word).toLowerCase()];
+      t.className = "src-tag human"; t.textContent = "真人發音"; t.title = a ? `${a.file} · ${a.speaker} · ${a.licence}` : "Human recordings (Wikimedia Commons)";
+    } else if (kind === "none") { t.className = "src-tag"; t.textContent = "請老師示範"; t.title = "No human recording for this line — the teacher models it"; }
+    else { t.className = "src-tag"; t.textContent = "電腦語音"; t.title = "Computer voice (text-to-speech)"; }
   }
 
   /* While the TV itself is talking, ignore what the recogniser hears (prevents the
@@ -358,10 +435,11 @@
       const sayWords = String(spec.say || "").split(/\s+/).filter(Boolean);
       $("#kLine").innerHTML = sayWords.map((w, i) => {
         const n = TC.norm(w)[0] || ""; const isKey = [...keyWords].some((k) => TC.wordMatch(n, k));
-        const hide = spec.hideKey && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
+        const hide = spec.hideKey && (spec.hideAlways || !(TC.kid && TC.kid.level === 1)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
-      $("#heard").innerHTML = "&nbsp;";
+      // a one-line guide for the child and the gate host until something is heard
+      $("#heard").innerHTML = `<span class="guide">👦 ${esc(spec.guideKid || (spec.hideKey ? "看圖片，說出「?」的那個字" : "說出亮黃色的字就可以"))}　👩‍🏫 ${esc(spec.guideTeacher || "AI 沒反應時按 ✓（Enter）· 🔊 聽示範（H）")}</span>`;
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
@@ -515,6 +593,7 @@
   }, true);
 
   TC.cameraScan = async function () {
+    if (document.querySelector(".cam")) return; // already open
     const wrap = h("div", { class: "cam" });
     const video = h("video", { playsinline: "", muted: "" });
     const close = h("button", { class: "icon-btn close", onclick: () => stop() }, "✕");
@@ -547,6 +626,7 @@
   };
 
   TC.manualPick = function () {
+    document.querySelectorAll(".picker").forEach((e) => e.remove()); // never stack two pickers
     const roster = TC.roster(); let grade = 3;
     const ids = Object.keys(roster).length ? Object.keys(roster).sort() : Array.from({ length: 28 }, (_, i) => String(i + 1).padStart(2, "0"));
     const card = h("div", { class: "card" });
@@ -608,6 +688,7 @@
 
   /* ---------------- settings panel ---------------- */
   TC.openSettings = function () {
+    if (document.querySelector(".settings")) return; // already open
     const vs = TC.voices();
     const card = h("div", { class: "card" });
     const wrap = h("div", { class: "settings" }, card);
@@ -615,9 +696,11 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（電腦語音先問一次）</option></select></label>
+      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力用真人錄音先唸一次；沒有錄音的字會略過）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
-      <label><span>電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
+      <label><span>歐力的聲音</span><select id="sVMode"><option value="human">真人發音（建議）：只播放真人錄音，句子逐字唸</option><option value="tts">電腦語音：用瀏覽器的電腦語音唸整句</option></select></label>
+      <label><span>刮刮卡點數</span><select id="sFair"><option value="1">公平模式：每人六關合計 100 點</option><option value="0">驚喜模式：每張 10／20／30／50 點</option></select></label>
+      <label><span>電腦語音 Voice（選電腦語音時才用）</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
       <label><span>幾秒後提示（秒）</span><input id="sHint" type="text" value="${TC.cfg.hintAfter}" style="max-width:6rem"></label>
       <label><span>同步網址 Google Apps Script（可空白）</span><input id="sSync" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(TC.cfg.syncUrl)}"></label>
@@ -625,12 +708,12 @@
       <p><small>快捷鍵：Enter/空白鍵＝老師判定通過 ✓ · H＝聽示範 · N＝跳過 · C＝相機掃描 · M＝手動選擇 · Esc＝回到掃描畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sRec").value = TC.cfg.record ? "1" : "0";
+    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.voiceMode === "tts" ? "tts" : "human"; $("#sFair").value = TC.cfg.fairPoints === false ? "0" : "1"; $("#sRec").value = TC.cfg.record ? "1" : "0";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", voiceMode: $("#sVMode").value, fairPoints: $("#sFair").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

@@ -92,7 +92,7 @@
     if (typed.join("") === SECRET) { const cb = solvedCb; solvedCb = null; renderSlots(); cb && cb(); return; }
     const bad = typed.map((c, i) => (c !== SECRET[i] ? i : -1)).filter((i) => i >= 0);
     TC.sfx("wrong"); renderSlots(bad);
-    await TC.speak("Almost! Check your letters.");
+    await TC.speak("No!", { human: "no" });
     bad.forEach((i) => (typed[i] = null)); renderSlots();
   }
   TC.onKey = (e) => {
@@ -113,7 +113,7 @@
     $("#attract").classList.add("hidden"); $("#dec").classList.remove("hidden"); document.body.classList.add("decoding");
     typed = new Array(SECRET.length).fill(null); renderSlots();
     $("#decTitle").textContent = `Hi, ${kid.name}! What's the secret word?`;
-    TC.sfx("fanfare"); TC.speak(`Hi, ${kid.name}! What's the secret word?`);
+    TC.sfx("fanfare"); TC.speak(`Hello, ${kid.name}!`);
     // the child may also just say the word
     TC.ASR.start((alts) => { if (TC.isQuiet()) return; if (solvedCb && alts.some((a) => TC.norm(a).some((t) => TC.wordMatch(t, SECRET.toLowerCase())))) { typed = SECRET.split(""); const cb = solvedCb; solvedCb = null; renderSlots(); cb(); } });
     await new Promise((r) => (solvedCb = r));
@@ -124,9 +124,9 @@
     await sleep(900);
     // twist: the secret word is itself a passport word
     $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是護照第 111 號單字 friend！翻開第 8 頁看看 → “She is my friend.”</span>`;
-    await TC.speak(`${SECRET}! It is passport word number 111. She is my friend.`);
+    await TC.speak("Friend!");
     await sleep(600);
-    await TC.speak("Who are we?");
+    await TC.speak("We are…");
     const F = TC_CONTENT.finalLine;
     await TC.ask({ teacher: "Who are we? We are…", tzh: "我們是什麼？", say: F.say, keys: F.keys, word: "friend", zh: "我們是好朋友！" });
     TC.hideTalk();
@@ -157,12 +157,18 @@
   async function certificate(kid) {
     const d = new Date(), date = `${d.getFullYear()} / ${d.getMonth() + 1} / ${d.getDate()}`;
     const photo = await takePhoto();
+    // scratch-card points: the six cards of this child (worked out from the child's number, the same on every TV);
+    // if the live board has synced data, only the gates really finished are counted
+    const sk = TC.cfg.syncUrl && state && state.kids && state.kids[kid.id];
+    const done = (sk && sk.gates && sk.gates.length) ? sk.gates.map(Number) : [1, 2, 3, 4, 5, 6];
+    const points = TC.pointsTotal(kid.id, done.filter((g) => g >= 1 && g <= 6));
     const next = h("button", { class: "big-btn go" }, "NEXT ▶");
     const ov = h("div", { class: "overlay" },
       h("div", { class: "cert" },
         h("div", { class: "ow", html: TC.ollieSVG() }),
         photo ? h("img", { class: "ph", src: photo, alt: kid.name }) : h("div", { class: "ph ph-o", html: TC.ollieSVG() }),
-        h("div", { class: "k1" }, "TUCHENG ELEMENTARY SCHOOL · ENGLISH DAY"),
+        h("img", { class: "cert-emb", src: "assets/img/tucheng-emblem.svg", alt: "土城國小校徽" }),
+        h("div", { class: "k1" }, "南投縣草屯鎮土城國民小學 · TUCHENG ELEMENTARY SCHOOL · ENGLISH DAY"),
         h("h1", {}, "World English Traveler"),
         h("div", { class: "zh" }, "環遊世界英語小達人"),
         h("div", { class: "nm" }, kid.name),
@@ -170,10 +176,11 @@
         h("p", { class: "zh" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
         h("div", { class: "st" }, ...GATES.map((g) => h("div", { style: `--c:${g.color}` }, g.city.toUpperCase(), h("br"), `GATE ${g.n}`))),
         h("p", { style: "font-size:2.6rem;font-weight:700;color:#d6337a" }, "“We are friends!”"),
+        h("div", { class: "cert-pts" }, "🎟 ", h("b", {}, String(points)), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學"), h("span", {}, "Ollie-Bot ✈"))),
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");
-    await TC.speak(`Congratulations, ${kid.name}! We are friends! You are a World English Traveler!`);
+    await TC.speak(`Great, ${kid.name}! We are friends!`);
     await new Promise((r) => { next.onclick = r; TC.pending = r; });
     ov.remove(); TC.ollie("idle");
   }

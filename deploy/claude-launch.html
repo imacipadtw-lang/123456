@@ -33,7 +33,8 @@ h2 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 
 
 <div class="wrap">
   <header>
-    <h1>土城國小 運動會英語日</h1>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:84px;height:84px;flex:none">
+    <div><div style="font-weight:700;letter-spacing:.08em;color:var(--muted)">南投縣草屯鎮土城國民小學</div><h1>運動會英語日 English Day</h1></div></div>
     <p class="lead">六間教室各開一關。點下面的關卡，在該教室的大螢幕上按全螢幕（F11）就能開始。</p>
   </header>
 
@@ -81,12 +82,12 @@ h2 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 
   if (route()) return;
 
   var G = [
-    [1, "Turbo Talk Kart", "極速英語賽車 · Tokyo", "#4cc9ff", "kart"],
-    [2, "Pixel Craft", "方塊創造家 · Sydney", "#2ee6b6", "rainbow"],
-    [3, "Pet Hatch", "英語寵物孵蛋 · Paris", "#e0a800", "mystegg"],
-    [4, "Beat Party", "英語節奏派對 · Cairo", "#ff5fa2", "mic"],
-    [5, "Mystery Box", "神秘盲盒 · Vancouver", "#9b6bff", "gift"],
-    [6, "Sports Day Obby", "運動會障礙跑酷 · San Diego", "#ff9a2e", "trophy"]
+    [1, "Turbo Talk Kart", "極速英語賽車 · What is it?", "#4cc9ff", "kart"],
+    [2, "Pixel Craft", "方塊創造家 · What color is it?", "#2ee6b6", "rainbow"],
+    [3, "Pet Hatch", "英語寵物孵蛋 · What is it?", "#e0a800", "mystegg"],
+    [4, "Beat Party", "英語節奏派對 · What's this?", "#ff5fa2", "mic"],
+    [5, "Mystery Box", "神秘盲盒 · How many?", "#9b6bff", "gift"],
+    [6, "Sports Day Obby", "運動會障礙跑酷 · What can you do?", "#ff9a2e", "trophy"]
   ];
   var box = document.getElementById("gates");
   G.forEach(function (g) {

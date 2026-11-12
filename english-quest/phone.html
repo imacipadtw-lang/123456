@@ -28,6 +28,7 @@
 </style>
 </head>
 <body>
+<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:40px;height:40px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>📱 老師手機蓋章 Teacher Stamp</h1>
 <small>選你的關卡 → 開相機 → 掃孩子護照卡上的 QR Code，就會自動登記並顯示秘密字母。</small>
 <div class="gates" id="gates" style="margin-top:12px"></div>
@@ -44,6 +45,7 @@
 <script src="js/passport-code.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
+<script src="js/scratch.js"></script>
 <script>
   const $ = (s) => document.querySelector(s);
   let gate = +localStorage.getItem("tc_phone_gate") || 1;
@@ -61,13 +63,14 @@
     if (seen[key] && Date.now() - seen[key] < 8000) return;
     seen[key] = Date.now();
     TC.gate = gate; TC.kid = kid;
-    TC.log({ type: "complete", by: "phone", letter: SECRET[gate - 1], stars: "" });
+    const pts = TC.pointsFor(kid.id, gate);
+    TC.log({ type: "complete", by: "phone", letter: SECRET[gate - 1], stars: "" }); TC.log({ type: "points", by: "phone", points: pts });
     TC.kid = null;
     TC.sfx("coin"); if (navigator.vibrate) navigator.vibrate(120);
     const G = TC_CONTENT.gates[gate];
     const L = SECRET[gate - 1], pc = (window.TC_PASSCODE || {})[L] || [], e = pc[(Math.random() * pc.length) | 0];
-    $("#out").prepend(TC.h("div", { class: "res" }, TC.h("div", { class: "L" }, L), TC.h("div", {}, TC.h("b", {}, `✓ ${kid.name}`), TC.h("div", {}, `Gate ${gate} · ${G.city} 已登記`),
-      TC.h("small", {}, e ? `護照密碼：請孩子翻到第${e.level}關（第${e.page}頁）找第 ${e.no} 號「${e.w}」，第一個字母 ${L} 寫在第 ${gate} 格` : `請孩子把字母寫在第 ${gate} 格`))));
+    $("#out").prepend(TC.h("div", { class: "res" }, TC.h("div", { class: "L" }, L), TC.h("div", {}, TC.h("b", {}, `✓ ${kid.name}`), TC.h("div", {}, `Gate ${gate} · ${G.city} 已登記 · 🎟 刮刮卡 ${pts} 點`),
+      TC.h("small", {}, e ? `護照密碼：請孩子翻到第${e.level}關（第${e.page}頁）找第 ${e.no} 號「${e.w}」，第一個字母 ${L} 和點數 ${pts} 寫在第 ${gate} 格` : `請孩子把字母 ${L} 和點數 ${pts} 寫在第 ${gate} 格`))));
   }
   $("#start").onclick = async () => {
     TC.ac();
