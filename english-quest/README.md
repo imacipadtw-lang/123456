@@ -36,7 +36,7 @@
 - 隱私：名單、錄音、照片只留在各台電腦；QR 只有座號、年級、英文名字。
 
 ## 上線（GitHub Pages）
-Settings → Pages → Source 選 **GitHub Actions**。推到 main 分支就會自動部署（`.github/workflows/pages.yml`）。使用 https 網址，瀏覽器才會允許麥克風與相機。
+每次推送都會由 `.github/workflows/pages.yml` 自動把網站發佈到 `gh-pages` 分支（網址：https://imacipadtw-lang.github.io/123456/english-quest/）。若第一次沒有自動開啟：Settings → Pages → Deploy from a branch → `gh-pages` / (root)。使用 https 網址，瀏覽器才會允許麥克風與相機。
 
 ## 測試紀錄（Playwright／Chromium）
 - 六關從掃描到印章完整跑完（含 1366×768、1600×900、3840×2160 版面與觸控模擬）

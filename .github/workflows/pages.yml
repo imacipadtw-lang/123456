@@ -1,28 +1,46 @@
-# Publishes the site to GitHub Pages on every push (or when run manually). The app lives in english-quest/.
-# One-time setup: repository Settings → Pages → Build and deployment → Source: "GitHub Actions".
-name: Deploy to GitHub Pages
+# Publishes the site on every push: the repository contents are copied to the `gh-pages` branch,
+# which GitHub Pages serves (Settings → Pages → Source: "Deploy from a branch", branch gh-pages / root).
+# Site: https://imacipadtw-lang.github.io/123456/  (the app is in english-quest/)
+name: Publish site (gh-pages)
 on:
   push:
     branches: [main, master, claude/elementary-english-game-stations-jdh5fp]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
-  id-token: write
 concurrency:
-  group: pages
+  group: publish-gh-pages
   cancel-in-progress: true
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Copy site to gh-pages
+        run: |
+          set -e
+          out="$RUNNER_TEMP/site"
+          mkdir -p "$out"
+          git archive HEAD | tar -x -C "$out"
+          rm -rf "$out/.github"
+          touch "$out/.nojekyll"   # serve files as-is (no Jekyll processing)
+          cd "$out"
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publish ${GITHUB_SHA::7} from ${GITHUB_REF_NAME}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+      - name: Turn on GitHub Pages from gh-pages (if not on yet)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${GITHUB_REPOSITORY}/pages" >/dev/null 2>&1; then
+            echo "Pages already on"
+          else
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" -f "source[branch]=gh-pages" -f "source[path]=/" \
+              && echo "Pages turned on" \
+              || echo "::warning::Could not turn Pages on automatically. Settings → Pages → Deploy from a branch → gh-pages / (root)."
+          fi

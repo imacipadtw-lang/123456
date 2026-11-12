@@ -143,7 +143,7 @@
 
 <h2 id="tech">10. 上線方式</h2>
 <ol>
-  <li><b>GitHub Pages（建議）</b>：在 GitHub 專案的 Settings → Pages，Source 選 <b>GitHub Actions</b>；本專案已附自動部署設定，之後每次更新都會自動上線。網址為 <code>https://imacipadtw-lang.github.io/123456/english-quest/</code>。使用 https 網址，瀏覽器才會允許麥克風與相機。</li>
+  <li><b>GitHub Pages（建議）</b>：本專案已附自動發佈設定：每次推送到 GitHub，網站會自動更新到 <code>gh-pages</code> 分支並上線（若第一次未自動開啟，到 Settings → Pages 選 Deploy from a branch → <b>gh-pages</b> /(root) 即可）。網址為 <code>https://imacipadtw-lang.github.io/123456/english-quest/</code>。使用 https 網址，瀏覽器才會允許麥克風與相機。</li>
   <li><b>斷網也能玩</b>：每台電腦活動前先用 https 網址開過一次所有要用的頁面，程式會自動把頁面、圖案、發音存在電腦裡；當天網路斷掉，遊戲照常（只有 AI 語音辨識需要網路，改由老師按 ✓）。程式更新後，請把頁面重新整理兩次。</li>
   <li><b>離線備份</b>：下載整個專案 ZIP，解壓後用 Chrome 開 <code>index.html</code> 也能玩（AI 辨識仍需要網路）。</li>
   <li><b>六間教室匯整（選用）</b>：照 <code>apps-script/Code.gs</code> 檔頭說明建立 Google Apps Script，把網址貼到每台電腦的 ⚙「同步網址」。</li>
