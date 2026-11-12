@@ -32,7 +32,7 @@
 <main>
 <h1>Tucheng English Day 活動手冊</h1>
 <p class="lead">運動會英語日 · 《土城國小英語護照》闖關 · 6 間教室 × 6 個遊戲 × AI 聽你說英文</p>
-<p class="toc"><a href="#idea">設計理念</a><a href="#flow">孩子的旅程</a><a href="#time">時間表</a><a href="#room">教室設備</a><a href="#scripts">各關台詞</a><a href="#parents">家長參與</a><a href="#vip">部長參訪</a><a href="#planb">備援</a><a href="#privacy">隱私</a><a href="#tech">上線</a></p>
+<p class="toc"><a href="#idea">設計理念</a><a href="#flow">孩子的旅程</a><a href="#time">時間表</a><a href="#room">教室設備</a><a href="#scripts">各關台詞</a><a href="#parents">家長參與</a><a href="#vip">部長參訪</a><a href="#planb">備援</a><a href="#privacy">隱私</a><a href="#tech">上線</a><a href="#links">網址總表</a></p>
 
 <h2 id="idea">1. 設計理念：一本護照，飛遍六座城市</h2>
 <p>護照本身就是「登機證」。每個孩子拿到一張貼在護照裡的 <b>QR 登機卡</b>，六間教室是六個「登機門」，城市名稱取自護照第 39 頁中級集點卡上的城市（Tokyo、Sydney、Paris、Cairo、Vancouver、San Diego）。導遊就是護照裡的 <b>機器貓頭鷹歐力 Ollie-Bot</b>。</p>
@@ -126,6 +126,7 @@
 <h2 id="planb">8. 備援方案</h2>
 <table><tr><th>狀況</th><th>處理</th></tr>
 <tr><td>沒有網路／AI 沒反應</td><td>右上角顯示「老師判定」。孩子說完，老師按 ✓ 或 Enter，遊戲照常。</td></tr>
+<tr><td>主網址（GitHub）打不開</td><td>改開同一關的<b>備用網址</b>（Claude，需登入老師的 claude.ai 帳號）。遊戲內容相同；備用網址沒有麥克風與相機，孩子說完老師按 ✓／Enter。兩個網址見 <a href="links.html">網址總表</a> 與關主一頁卡。</td></tr>
 <tr><td>掃描機不能用</td><td>按「📷 相機掃描」用 webcam 掃，或「👆 手動選擇」點座號。</td></tr>
 <tr><td>電視當機</td><td>重新整理頁面即可；孩子的進度在 QR 卡的字母上，不會遺失。</td></tr>
 <tr><td>教室電視都不能用</td><td>老師開 <a href="phone.html">phone.html</a>，用手機掃孩子 QR，手機直接顯示秘密字母並登記。</td></tr>
@@ -149,8 +150,20 @@
   <li><b>六間教室匯整（選用）</b>：照 <code>apps-script/Code.gs</code> 檔頭說明建立 Google Apps Script，把網址貼到每台電腦的 ⚙「同步網址」。</li>
 </ol>
 <p>發音來源與授權：<a href="credits.html">credits.html</a>。</p>
+
+<h2 id="links">11. 網址總表（每個畫面兩個網址）</h2>
+<p>主網址＝GitHub（功能完整）；備用網址＝Claude（主網址出狀況時用）。可列印的版本：<a href="links.html">links.html</a>。</p>
+<table id="linktable"><tr><th>畫面</th><th>主網址（GitHub）</th><th>備用網址（Claude）</th></tr></table>
 </main>
 <script src="js/content.js"></script>
+<script src="js/links.js"></script>
+<script>
+  (function () {
+    const t = document.getElementById("linktable"), N = { final: "終點解碼關", opening: "開場動畫", home: "入口" };
+    const a = (u) => `<a href="${u}" target="_blank" rel="noopener" style="word-break:break-all">${u}</a>`;
+    TC_LINKS.list().forEach((r) => t.insertAdjacentHTML("beforeend", `<tr><td>${r.gate ? "第 " + r.gate + " 關 " + TC_CONTENT.gates[r.gate].zh : N[r.key]}</td><td>${a(r.github)}</td><td>${a(r.claude)}</td></tr>`));
+  })();
+</script>
 <script>
   const C = TC_CONTENT, esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const cap = (w) => w[0].toUpperCase() + w.slice(1);

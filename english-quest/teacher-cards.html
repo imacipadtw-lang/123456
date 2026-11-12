@@ -25,6 +25,7 @@
   table.compact{font-size:2.9mm} table.compact th,table.compact td{padding:.6mm 1.4mm}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
   .box{border:.4mm solid #c9d3ef;border-radius:3mm;padding:2.4mm 3.4mm;font-size:3.35mm;line-height:1.42}
+  .url code{font-size:3.3mm;word-break:break-all}
   .kbd{display:inline-block;border:.3mm solid #889;border-radius:1mm;padding:0 1.5mm;font-family:Fredoka,sans-serif;font-weight:700;background:#f3f5fb}
   @media print{body{background:#fff}.bar{display:none}.page{box-shadow:none;margin:0}@page{size:A4;margin:0}}
 </style>
@@ -35,6 +36,7 @@
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
+<script src="js/links.js"></script>
 <script>
   const C = TC_CONTENT, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -55,9 +57,10 @@
     const pg = document.createElement("div"); pg.className = "page"; pg.style.setProperty("--c", G.color);
     pg.innerHTML = `<div class="hd"><div class="n">${g}</div><div><h1>${esc(G.title)} · ${esc(G.zh)}</h1><div class="s">Gate ${g} · ${esc(G.city)} · ${esc(G.genre)} · 護照：${esc(G.passport)}</div></div><img src="${TC.art(EMB[g])}" alt=""></div>
       <div class="grid2" style="margin-top:4mm">
-        <div class="box"><b>開機</b><br>1. Chrome／Edge 開 <code>station.html?gate=${g}</code>，按 F11 全螢幕<br>2. 允許麥克風 → 右上 ⚙「測試麥克風」<br>3. 刷老師測試卡玩一回合，右上角出現綠燈「AI 正在聽」<br>4. 關閉螢幕保護、音量調大</div>
+        <div class="box"><b>開機</b><br>1. Chrome／Edge 開主網址，按 F11 全螢幕<br>2. 允許麥克風 → 右上 ⚙「測試麥克風」<br>3. 刷老師測試卡玩一回合，右上角出現綠燈「AI 正在聽」<br>4. 關閉螢幕保護、音量調大</div>
         <div class="box"><b>老師按鍵</b><br><span class="kbd">Enter</span>/<span class="kbd">空白</span> 說得好 ✓（AI 沒聽到時）　<span class="kbd">H</span> 聽示範<br><span class="kbd">N</span> 跳過　<span class="kbd">Esc</span> 回到掃描畫面　📋 本關台詞<br>⭐ 貴賓體驗：不用 QR 卡直接玩<br>上方 初級/中級/高級 可隨時切換難度</div>
       </div>
+      <div class="box url" style="margin-top:3mm"><b>主網址</b>（GitHub）<code>${esc(TC_LINKS.gate(g).github)}</code><br><b>備用網址</b>（Claude，需登入老師帳號；主網址打不開時用）<code>${esc(TC_LINKS.gate(g).claude)}</code></div>
       <h2>每位孩子的流程（約 4–5 分鐘；⚙ 快速模式約 2 分鐘）</h2>
       <ol><li>刷 QR（同組可先全部刷好排隊）→ 按 START</li><li>👋 暖身：老師問 <b>${esc(gr.teacher)}</b> → 孩子 ${esc(gr.say[2].replace("[Name]", "Amy").replace("[age]", "nine"))}</li>
       <li>🎮 遊戲回合：老師說左欄、孩子說右欄（依程度）。${esc(TOUCH[G.key])}</li><li>🎉 全班一起說最後一句（越大聲煙火越多）</li>

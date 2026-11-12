@@ -38,6 +38,8 @@
 ## 上線（GitHub Pages）
 每次推送都會由 `.github/workflows/pages.yml` 自動把網站發佈到 `gh-pages` 分支（網址：https://imacipadtw-lang.github.io/123456/english-quest/）。若第一次沒有自動開啟：Settings → Pages → Deploy from a branch → `gh-pages` / (root)。使用 https 網址，瀏覽器才會允許麥克風與相機。
 
+**備用網址（Claude）**：https://claude.ai/artifact/EGDBXGnMnVbkMtdUMgWxjn（每關加 `#gate-1`…`#gate-6`、`#final`、`#opening`）。主網址打不開時使用；需登入老師的 claude.ai 帳號，沒有麥克風／相機／列印。所有網址見 `links.html`。
+
 ## 測試紀錄（Playwright／Chromium）
 - 六關從掃描到印章完整跑完（含 1366×768、1600×900、3840×2160 版面與觸控模擬）
 - 隨機點擊／按鍵／中途掃描／Esc 的壓力測試：六關皆無錯誤
