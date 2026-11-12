@@ -3,7 +3,8 @@
   "use strict";
   const { h, $, sleep } = TC;
   const qs = new URLSearchParams(location.search);
-  let gate = +qs.get("gate") || +localStorage.getItem("tc_gate") || 1;
+  const hashGate = (location.hash.match(/gate-?(\d)/) || [])[1]; // e.g. station.html#gate-3 (hosts that drop ?query)
+  let gate = +qs.get("gate") || +hashGate || +(() => { try { return localStorage.getItem("tc_gate"); } catch (e) { return 0; } })() || 1;
   if (!(gate >= 1 && gate <= 6)) gate = 1;
   try { localStorage.setItem("tc_gate", gate); } catch (e) {}
   TC.gate = gate;

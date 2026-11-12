@@ -633,7 +633,7 @@
       Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
-      if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g;
+      if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
     };
   };
 })();
