@@ -172,7 +172,7 @@
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:1.8rem" }, `把字母和點數寫在護照卡的第 ${gate} 格！ Write the letter and points in box ${gate}!`),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母和點數寫在護照卡第 ${gate} 格！`),
       h("div", { class: "res-actions" }, replay, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);

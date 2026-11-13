@@ -260,3 +260,64 @@ img{-webkit-user-drag:none}
 .overlay .res-badge{position:absolute;left:1.2vw;top:50%;width:min(20vw,48vh);height:min(22.8vw,55vh);transform:translateY(-50%);pointer-events:none}
 .overlay .stamp-wrap{width:min(36rem,40vh);height:min(36rem,40vh)}
 body:has(.overlay .stamp) #cap,body:has(.overlay.welcome) #cap{left:auto;right:2rem;transform:none;top:9rem}
+
+/* =====================================================================
+   BIG TYPE — simple, clear, bold (read from the back of a classroom)
+   ===================================================================== */
+/* sticker-style display headings: white letters, thick navy outline, hard shadow in the gate colour */
+.big-type, #scan h1{font-weight:700;color:#fff;background:none;-webkit-text-fill-color:#fff;-webkit-text-stroke:.55rem #0a1633;paint-order:stroke fill;
+  text-shadow:.45rem .55rem 0 var(--gate),.9rem 1.1rem 0 rgba(0,0,0,.35);letter-spacing:.01em;filter:none}
+
+/* ---------- scan screen: badge on the left, everything else large and centred in the space beside it ---------- */
+#scan{padding-left:max(24vw,calc(52vh*412/470 + 3vw));gap:1.6rem}
+#scan .genre,#scan #passportRef{display:none}
+.scan-top{gap:1.6rem}
+#scanOllie{width:9.5rem!important;height:10.8rem!important}
+.school-row{padding:.8rem 2.4rem;border-width:3px}
+.school-row b{font-size:3.4rem;letter-spacing:.1em}
+.school-row span{font-size:1.6rem}
+#scan h1{font-size:min(9.6rem,6.2vw);line-height:1.02;transform:rotate(-2deg);margin:.6rem 0 .4rem}
+#scan .sub{font-size:3.4rem;font-weight:700;color:#0a1633;background:var(--gate);padding:.3rem 2.2rem;border-radius:3rem;box-shadow:0 .4rem 0 rgba(0,0,0,.35)}
+#scan .sub .zh{font-size:inherit}
+.scan-box{font-size:3.2rem;padding:1.2rem 3rem;border-width:.4rem}
+.scan-box .qr{font-size:5rem}
+.scan-actions{gap:1.2rem}
+.scan-actions .big-btn{font-size:2.3rem;padding:1.1rem 2.4rem}
+.scan-actions .go{font-size:3rem;padding:1.1rem 3.6rem}
+
+/* ---------- HUD ---------- */
+.gate-badge .t0{font-size:1.25rem}
+.gate-badge .t1{font-size:2.5rem}
+.gate-badge .t2{font-size:1.45rem}
+.gate-badge .num{width:4.4rem;height:4.4rem;font-size:2.8rem}
+.kid-chip{font-size:2.3rem}
+.ai-pill{font-size:1.4rem}
+
+/* ---------- talk bar: the question and the answer word are the biggest things on screen ---------- */
+.talk-main{padding:.9rem 1.8rem 1rem}
+.who{font-size:1.4rem;padding:.25rem .9rem;margin-top:.55rem}
+.t-line{font-size:3.1rem;font-weight:700;color:#fff;line-height:1.15}
+.t-line .t-zh{font-size:2rem;color:var(--ink2);font-weight:600}
+.k-line{font-size:5.8rem;line-height:1.08}
+.k-line .t-zh{font-size:2.4rem;color:var(--sun);font-weight:700}
+.k-line .w.blank{border-width:.35rem;min-width:3.2em}
+.heard{font-size:1.75rem;margin-top:.35rem;min-height:2.2rem}
+#talk{grid-template-columns:minmax(0,1fr) 17rem}
+.talk-side .big-btn{font-size:2.1rem;padding:.8rem .6rem}
+
+/* ---------- Ollie's subtitle ---------- */
+#cap{font-size:3.3rem;padding:.6rem 2.4rem .6rem .8rem}
+#cap img{width:4.8rem;height:5.4rem}
+
+/* ---------- result + scratch card ---------- */
+.code-reveal{font-size:3rem}
+.overlay .res-actions .big-btn{font-size:2.3rem;padding:1.1rem 2.6rem}
+.pts-chip{font-size:2.8rem}.pts-chip b{font-size:4rem}
+.sc-title{font-size:6.2rem!important}
+.sc-sub{font-size:2.4rem!important}
+.sc-head b{font-size:2.8rem!important}
+.bpass .k{font-size:1.8rem}
+.bpass .rt{font-size:3.6rem}
+.who{font-size:1.75rem;padding:.3rem 1rem;margin-top:.4rem;border-radius:1.2rem}
+.talk-main{border:3px solid var(--gate);box-shadow:0 0 0 .35rem rgba(0,0,0,.25),0 0 2.4rem color-mix(in srgb,var(--gate) 40%,transparent)}
+.k-line .w.blank{box-shadow:0 0 1.6rem rgba(255,200,61,.35)}
