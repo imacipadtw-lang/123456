@@ -1,5 +1,5 @@
 /* Gate 3 · Pet Hatch — tap the egg three times, a pet hatches with a rarity glow, then "What is it?" → say the animal
-   (egg-hatching / pet-collecting loop, as in today's most-played kids' games; passport L1 animals + L9 big / small) */
+   (egg-hatching / pet-collecting loop, as in today's most-played kids' games; passport 第1關 animals · 第6關 can / fly · 第4關 want) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
@@ -32,16 +32,26 @@
   .g3 .pet{position:absolute;left:8%;right:8%;top:6%;bottom:8%;opacity:0;transform-origin:50% 100%;transform:scale(.6) translateY(20%);transition:transform .7s cubic-bezier(.2,1.6,.4,1),opacity .3s}
   .g3 .pet img{width:100%;height:100%}
   .g3 .pop .pet{opacity:1;filter:drop-shadow(0 2vh 2vh rgba(0,0,0,.3));transform:none}
-  .g3 .pop.big .pet{transform:translateY(15%) scale(1.26)}
-  .g3 .pop.small .pet{transform:scale(.38)}
-  .g3 .ref{position:absolute;left:calc(50% - 47vh);top:47%;width:21vh;height:23vh;opacity:0;transform:scale(.3);transform-origin:50% 100%;transition:transform .5s cubic-bezier(.2,1.6,.4,1),opacity .3s;pointer-events:none}
-  .g3 .ref.on{opacity:1;transform:none}
-  .g3 .ref img{width:100%;height:100%;filter:drop-shadow(0 1vh 1vh rgba(0,0,0,.3))}
   .g3 .pet img{transform-origin:50% 100%}
   .g3 .pop .pet img{animation:petjoy .8s ease-in-out infinite}
-  .g3 .pop.big .pet img{animation-name:petbig}
   @keyframes petjoy{50%{transform:translateY(-4%) scale(1.04,.96)}}
-  @keyframes petbig{50%{transform:scale(1.03,.97)}}
+  /* "Can it fly?" — a flyer flaps up with wing / whoosh lines and hovers; a non-flyer hops, tries, plops and shrugs "?" */
+  .g3 .wind{position:absolute;inset:-6% -24% -10%;width:148%;height:116%;overflow:visible;pointer-events:none;opacity:0;transition:opacity .2s}
+  .g3 .wind path{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 0 3px #0a1633)}
+  .g3 .wind .wl{transform-origin:68px 92px;animation:wing .14s ease-in-out infinite alternate}
+  .g3 .wind .wr{transform-origin:228px 92px;animation:wing .14s ease-in-out infinite alternate-reverse}
+  .g3 .wind .sp{opacity:0;transition:opacity .2s}
+  @keyframes wing{from{transform:scaleY(.55) rotate(-8deg)}to{transform:scaleY(1.1) rotate(8deg)}}
+  .g3 .flap .wind,.g3 .hover .wind{opacity:1}
+  .g3 .flap .wind .sp{opacity:1}
+  .g3 .pop.flap .pet img{animation:petflap .14s ease-in-out infinite alternate}
+  @keyframes petflap{to{transform:scale(1.05,.94)}}
+  .g3 .pop.hover .pet{transform:translateY(-8%)}
+  .g3 .pop.hover .pet img{animation:pethov 1s ease-in-out infinite}
+  .g3 .hover .wind .wl,.g3 .hover .wind .wr{animation-duration:.3s}
+  @keyframes pethov{50%{transform:translateY(-5%)}}
+  .g3 .huh{position:absolute;right:-24%;top:4%;font-size:14vh;font-weight:700;line-height:1;color:#ffd23d;text-shadow:0 .5vh 0 #0a1633,0 0 2vh #0a1633;opacity:0;transform:scale(.2) rotate(-20deg);transition:transform .35s cubic-bezier(.2,1.8,.4,1),opacity .2s;pointer-events:none}
+  .g3 .pop.shrug .huh{opacity:1;transform:rotate(12deg);animation:float 1.2s ease-in-out infinite}
   .g3 .tapme{position:absolute;left:0;right:0;top:84%;text-align:center;font-size:3.4rem;font-weight:700;color:#fff;text-shadow:0 .3rem 0 #0a1633,0 0 1.5rem #0a1633;white-space:nowrap;animation:float 1s ease-in-out infinite}
   .g3 .rar{position:absolute;left:50%;top:72.5%;transform:translateX(-50%);font-size:3.6rem;font-weight:700;letter-spacing:.15em;color:#fff;text-shadow:0 0 1.5rem var(--glow),0 .3rem 0 #0a1633;white-space:nowrap}
   .g3 .rar.low{top:62.5%;font-size:3rem;animation:rarpop .45s cubic-bezier(.2,1.6,.4,1)}
@@ -56,7 +66,7 @@
   .g3 .pcard .cn{display:inline;margin-left:.5rem;font-size:1.2rem;font-weight:600;color:#5a6aa8}
   .g3 .lineup .pcard .cn{display:block;margin:0;font-size:2rem}
   .g3 .lineup .pcard small{font-size:1.1rem}
-  .g3 .lineup{position:absolute;inset:14.6rem 2rem 24vh;display:flex;align-items:center;justify-content:center;gap:2.4rem;z-index:7}
+  .g3 .lineup{position:absolute;inset:14.6rem 2rem 34vh;display:flex;align-items:center;justify-content:center;gap:2.4rem;z-index:7}
   .g3 .lineup .pcard{width:22rem;padding:.5rem;transform:scale(1);transition:transform .2s}
   .g3 .lineup .pcard img{width:13.5rem;height:13.5rem}
   .g3 .lineup .pcard b{font-size:3rem;line-height:normal}
@@ -67,7 +77,11 @@
                { n: "EPIC", egg: "#ff5fa2", glow: "#ff9ac2", aura: "rgba(255,120,180,.6)", rc: "#ff3d8a" },
                { n: "LEGENDARY", egg: "#ffc83d", glow: "#ffe58a", aura: "rgba(255,210,80,.75)", rc: "#e8a21a" }];
   const CRACKS = ["M100 70 l-14 18 l12 10 l-10 16", "M100 70 l14 14 l-8 14 l14 12", "M60 100 l16 6 l6 -14 l18 8", "M140 104 l-18 4 l-4 -14 l-16 10", "M52 96 Q100 84 148 96"];
-  let root, stage, egg, eggTop, eggBot, cracks, pet, aura, rar, nameEl, tapme, pets, ref;
+  // wing strokes either side of the pet + speed lines under it (viewBox matches .wind: pet box widened 24% each side)
+  const WIND = `<svg class="wind" viewBox="0 0 296 232" preserveAspectRatio="none"><g class="wl"><path d="M58 70 Q30 82 26 108"/><path d="M66 90 Q42 100 40 122"/><path d="M74 110 Q56 118 56 134"/></g>` +
+    `<g class="wr"><path d="M238 70 Q266 82 270 108"/><path d="M230 90 Q254 100 256 122"/><path d="M222 110 Q240 118 240 134"/></g>` +
+    `<g class="sp"><path d="M118 206 L114 228"/><path d="M148 210 L148 232"/><path d="M178 206 L182 228"/></g></svg>`;
+  let root, stage, egg, eggTop, eggBot, cracks, pet, aura, rar, nameEl, tapme, pets;
 
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
@@ -78,7 +92,7 @@
     [[8, 12, 16], [62, 6, 20]].forEach(([x, y, w]) => { const c = TC.artImg("cloud", "deco"); c.style.cssText = `left:${x}%;top:${y}%;width:${w}vh;opacity:.9;animation:float ${4 + x / 20}s ease-in-out infinite`; root.append(c); });
     aura = TC.h("div", { class: "aura" });
     stage = TC.h("div", { class: "stage" });
-    pet = TC.h("div", { class: "pet" }, TC.h("img", { alt: "" }));
+    pet = TC.h("div", { class: "pet", html: `<img alt="">${WIND}<div class="huh">?</div>` });
     eggTop = TC.h("div", { class: "top" }, TC.h("img", { alt: "" }));
     eggBot = TC.h("div", { class: "bot" }, TC.h("img", { alt: "" }));
     cracks = TC.h("div", { class: "cracks", html: `<svg viewBox="0 0 200 200" width="100%" height="100%">${CRACKS.map((d) => `<path d="${d}"/>`).join("")}</svg>` });
@@ -86,8 +100,7 @@
     stage.append(egg);
     rar = TC.h("div", { class: "rar" }); nameEl = TC.h("div", { class: "name" }); tapme = TC.h("div", { class: "tapme hidden zh" });
     pets = TC.h("div", { class: "pets" });
-    ref = TC.h("div", { class: "ref" }, TC.artImg("ollie")); // size reference for "Big or small?"
-    root.append(aura, TC.h("div", { class: "nest" }), ref, stage, rar, nameEl, tapme, pets);
+    root.append(aura, TC.h("div", { class: "nest" }), stage, rar, nameEl, tapme, pets);
     api.stage.append(root);
     stage.addEventListener("pointerdown", () => tapHandler && tapHandler());
   }
@@ -97,7 +110,7 @@
     const src = TC.art("mystegg", r.egg);
     eggTop.firstChild.src = src; eggBot.firstChild.src = src;
     cracks.querySelectorAll("path").forEach((p) => p.classList.remove("on"));
-    stage.className = "stage"; egg.className = "egg idle"; aura.classList.remove("on"); nameEl.classList.remove("on"); ref.classList.remove("on"); rar.className = "rar";
+    stage.className = "stage"; egg.className = "egg idle"; aura.classList.remove("on"); nameEl.classList.remove("on"); rar.className = "rar";
   }
   function burst(n = 18) {
     const r = stage.getBoundingClientRect();
@@ -123,6 +136,23 @@
       const t = setTimeout(() => { if (taps < 3) TC.pending && TC.pending(); }, 15000);
     });
   }
+  /** "Can it fly?" visual (≤ 2 s): flyers flap up into the sky and float back to a hover; the others hop, try, plop and shrug */
+  async function flyShow(it) {
+    if (it.fly) {
+      stage.classList.add("flap"); TC.sfx("whoosh"); setTimeout(() => TC.sfx("sparkle"), 450);
+      await pet.animate([{ transform: "none" }, { transform: "translateY(5%) scale(1.12,.86)", offset: 0.12 }, { transform: "translateY(-46%) rotate(-7deg)", offset: 0.42 },
+        { transform: "translateY(-40%) rotate(7deg)", offset: 0.6 }, { transform: "translateY(-44%) rotate(-4deg)", offset: 0.75 }, { transform: "translateY(-8%)" }],
+        { duration: 1700, easing: "ease-in-out" }).finished.catch(() => {});
+      stage.classList.remove("flap"); stage.classList.add("hover");
+    } else {
+      [0, 260, 600].forEach((ms) => setTimeout(() => TC.sfx("pop"), ms)); setTimeout(() => TC.sfx("kick"), 900);
+      await pet.animate([{ transform: "none" }, { transform: "translateY(-12%)", offset: 0.1 }, { transform: "none", offset: 0.2 }, { transform: "translateY(-12%)", offset: 0.3 },
+        { transform: "none", offset: 0.4 }, { transform: "translateY(4%) scale(1.14,.84)", offset: 0.5 }, { transform: "translateY(-24%) scale(.94,1.08)", offset: 0.66 },
+        { transform: "translateY(5%) scale(1.22,.76)", offset: 0.8 }, { transform: "none" }], { duration: 1150, easing: "ease-in-out" }).finished.catch(() => {});
+      stage.classList.add("shrug"); TC.sfx("tick");
+      await pet.animate([{ transform: "rotate(0)" }, { transform: "rotate(-8deg)" }, { transform: "rotate(8deg)" }, { transform: "rotate(0)" }], { duration: 600 }).finished.catch(() => {});
+    }
+  }
   function addCard(it, r, parent = pets) {
     const c = TC.h("div", { class: "pcard", style: `--rc:${r.rc}` }, TC.artImg(it.img), TC.h("b", {}, cap(it.w)), TC.h("small", {}, "★ " + r.n), TC.h("div", { class: "cn zh" }, it.zh));
     parent.append(c); return c;
@@ -133,7 +163,9 @@
     idle() { pets.innerHTML = ""; setEgg(RAR[3]); pet.firstChild.src = TC.art("ollie"); tapHandler = null; tapme.classList.add("hidden"); root.querySelectorAll(".lineup").forEach((l) => l.remove()); rar.textContent = "PET HATCH"; },
     async play(api) {
       const G = api.G; pets.innerHTML = "";
+      // shuffle, but make sure one pet that can fly (duck / bird) is among them, so 中級 sees both answers of "Can it fly?"
       const items = G.items.slice().sort(() => Math.random() - 0.5).slice(0, TC.rounds(4)), got = [];
+      if (!items.some((x) => x.fly)) { const fl = G.items.filter((x) => x.fly); items[(Math.random() * items.length) | 0] = fl[(Math.random() * fl.length) | 0]; }
       const N = items.length + 1;
       await TC.speak("Go!");
       for (let i = 0; i < items.length; i++) {
@@ -153,7 +185,7 @@
         TC.sfx(r.n === "LEGENDARY" ? "fanfare" : "levelup"); TC.confetti(r.n === "LEGENDARY" ? 220 : 90, [r.egg, r.glow, "#fff"]);
         rar.textContent = `★ ${r.n} ★`; rar.classList.add("low");
         await TC.speak("Wow!"); if (api.aborted) return null;
-        // "What is it?" — the pet stays big and clear on the nest while the child answers
+        // "What is it?" — the pet stays large and clear on the nest while the child answers
         const distractors = G.items.filter((x) => x.w !== it.w).map((x) => ({ w: x.w }));
         const res = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: it.say, zh: it.zh, keys: it.keys || [[it.w]], word: it.w, distractors, hideKey: true,
           onWrong: (w) => { pet.firstChild.animate([{ transform: "rotate(-9deg)" }, { transform: "rotate(9deg)" }, { transform: "rotate(-6deg)" }, { transform: "rotate(0)" }], { duration: 450 }); TC.sfx("wrong");
@@ -162,45 +194,46 @@
         TC.hideTalk();
         nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on");
         await TC.speak((res.ok ? "Yes! " : "") + it.say); if (api.aborted) return null;
-        // 中級 only: one more easy question — the pet grows huge or shrinks tiny next to Ollie
+        // 中級 only: one more easy question "Can it fly?" — the pet shows it: flies up (yes) or hops and plops down (no)
         if (api.level === 2 && !TC.cfg.rounds) {
-          const Q = G.follow;
-          nameEl.classList.remove("on"); rar.classList.add("hidden"); ref.classList.add("on"); stage.classList.add(it.size); TC.sfx(it.size === "big" ? "boost" : "pop");
-          await TC.sleep(700); if (api.aborted) return null;
-          const fr = await api.ask({ teacher: Q.teacher, tzh: Q.zh, say: Q.say[it.size], keys: Q.keys, word: Q.word[it.size], hideKey: true });
+          const Q = G.follow, k = it.fly ? "yes" : "no";
+          nameEl.classList.remove("on"); rar.classList.add("hidden");
+          await flyShow(it); if (api.aborted) return null;
+          await api.ask({ teacher: Q.teacher, tzh: Q.zh, say: Q.say[k], keys: Q.keys, word: Q.word[k], hideKey: true });
           if (api.aborted) return null;
           TC.hideTalk();
-          nameEl.textContent = cap(it.size) + "!"; nameEl.classList.add("on");
-          await TC.speak(Q.after[it.size]); if (api.aborted) return null;
-          stage.classList.remove("big", "small"); ref.classList.remove("on");
+          nameEl.textContent = Q.after[k]; nameEl.classList.add("on");
+          // "It can't fly." has no human clip for "can't": Ollie then says just "Yes!" / "No!" (the full line is the subtitle)
+          await TC.speak(Q.after[k], TC.canSayHuman(Q.after[k]) ? {} : { human: Q.say[k] }); if (api.aborted) return null;
+          stage.classList.remove("flap", "hover", "shrug");
         }
         await TC.sleep(600);
         got.push({ it, r }); addCard(it, r);
       }
       if (api.aborted) return null;
       api.progress(items.length, N);
-      // finale: tap your favourite pet, then say it
+      // finale: "Which one do you want?" — tap the pet you want, then say it
       setEgg(RAR[3]); stage.className = "stage hidden"; rar.textContent = "MY PETS"; aura.classList.add("on");
       const line = TC.h("div", { class: "lineup" }); root.append(line);
       const words = got.map((g) => g.it.w);
       let chosen = got[0];
       const cards = got.map((g) => { const c = addCard(g.it, g.r, line); c.onclick = () => { chosen = g; cards.forEach((x) => x.classList.remove("sel")); c.classList.add("sel"); TC.sfx("pop"); TC.model(g.it.w, g.it.w); if (TC.pending) TC.pending(); }; return c; });
       pets.innerHTML = "";
-      tapme.textContent = "👆 TAP! 點一下你最喜歡的寵物！"; tapme.classList.remove("hidden"); TC.sfx("levelup");
+      tapme.textContent = "👆 TAP! 點一下你想要的寵物！"; tapme.classList.remove("hidden"); TC.sfx("levelup");
       await TC.waitAction(12000);
       tapme.classList.add("hidden");
       if (api.aborted) { line.remove(); return null; }
       cards[got.indexOf(chosen)].classList.add("sel");
       const F = G.finale, it = chosen.it;
-      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say.replace("[animal]", it.w), zh: "說出你最喜歡的寵物", keys: [words], word: it.w });
+      const r = await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say.replace("[animal]", it.w), zh: "說出你想要的寵物", keys: [words], word: it.w, hideKey: true });
       if (api.aborted) { line.remove(); return null; }
       TC.hideTalk();
-      const fav = got.find((g) => g.it.w === TC.pickHeard(r.heard, words)) || chosen;
-      if (r.ok) TC.lastSay = F.say.replace("[animal]", fav.it.w); // the line everybody repeats is the pet the child really said
-      cards.forEach((x) => x.classList.remove("sel")); const fc = cards[got.indexOf(fav)]; fc.classList.add("sel");
+      const want = got.find((g) => g.it.w === TC.pickHeard(r.heard, words)) || chosen;
+      if (r.ok) TC.lastSay = F.say.replace("[animal]", want.it.w); // the line everybody repeats is the pet the child really said
+      cards.forEach((x) => x.classList.remove("sel")); const fc = cards[got.indexOf(want)]; fc.classList.add("sel");
       fc.animate([{ transform: "scale(1.12)" }, { transform: "scale(1.3) rotate(4deg)" }, { transform: "scale(1.12)" }], { duration: 500, iterations: 3 });
       TC.sfx("fanfare"); TC.confetti(180);
-      await TC.speak(`Great! The ${fav.it.w}!`);
+      await TC.speak(`Great! The ${want.it.w}!`);
       await TC.sleep(1200); line.remove(); stage.className = "stage"; aura.classList.remove("on");
       if (api.aborted) return null;
       api.progress(N, N);

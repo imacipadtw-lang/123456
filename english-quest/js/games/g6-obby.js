@@ -1,15 +1,16 @@
-/* Gate 6 · Sports Day Obby — the teacher asks "What can you do?", the child says "I can jump / swim / climb…"
-   (one word is enough), presses the giant action button and the runner clears the obstacle; trophy on the podium at the end
-   (passport L4/L6 verbs, can) */
+/* Gate 6 · Sports Day Obby — the teacher asks "What can you do?", the child says "I can walk / climb / run / ride / fly"
+   (one word is enough), presses the giant action button and the runner clears the obstacle: walks over the rope bridge,
+   climbs the wall, sprints down the track, rides the bike lane and flies over the cliff. At the finish: "Are you thirsty?"
+   → "Yes!", a big gulp from a water bottle on the podium, then the trophy (passport L4/L6 verbs, can · L3 thirsty) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
 
-  /* ---------- action pictures art.js does not have yet: the same glossy chibi kid as pose-jump / pose-run ---------- */
+  /* ---------- action pictures art.js does not have yet: the same glossy chibi kid as pose-run ---------- */
   const SKIN = "#ffd3a8", SHIRT = "#4cc9ff", PANTS = "#3d4a8a", HAIR = "#5a3518";
   const limb = (pts, col, w = 13) => `<path d="M${pts.map((p) => p.join(" ")).join(" L")}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
   const hand = (c, x, y, r = 8) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.g(SKIN)}"/>`;
-  /** the kid's head (radius r) at x,y — hair, or a helmet / swim cap when a colour is given */
+  /** the kid's head (radius r) at x,y — hair, or a helmet when a colour is given */
   function head(c, x, y, r, hat, extra = "") {
     const k = r / 32;
     let s = c.sphere(100, 66, 32, SKIN, 0.6);
@@ -18,24 +19,30 @@
     s += c.eyes(100, 68, 11, 5) + c.smile(100, 80, 6) + c.blush(100, 78, 20) + extra;
     return `<g transform="translate(${x - 100 * k} ${y - 66 * k}) scale(${k})">${s}</g>`;
   }
-  const drops = (pts, col = "#fff") => pts.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}"/>`).join("");
   const NEW_ART = {
-    /* front crawl through the waves: goggles, one arm over, kicking feet */
-    "pose-swim"() {
+    /* walking over a little plank bridge: arms swinging, one foot forward, a stream below */
+    "pose-walk"() {
       const c = TC.ArtCtx();
       const wave = (y, amp) => { let d = `M0 ${y}`; for (let x = 0; x < 200; x += 25) d += ` Q${x + 12.5} ${y - amp} ${x + 25} ${y}`; return d + " V200 H0Z"; };
-      const goggles = `<path d="M68 66 Q100 59 132 66" stroke="#26293a" stroke-width="4" fill="none"/>` +
-        [89, 111].map((x) => `<ellipse cx="${x}" cy="68" rx="10.5" ry="9" fill="#bfe6ff" fill-opacity=".45" stroke="#26293a" stroke-width="3"/>`).join("");
-      let s = `<path d="${wave(104, 9)}" fill="${c.v("#b5ebff", "#4a9bff")}"/>`;
-      let b = limb([[98, 106], [76, 62], [110, 40]], SKIN, 12) + hand(c, 112, 39) + drops([[126, 34, 4], [134, 46, 3], [98, 28, 3]], "#7fd3ff");
-      b += limb([[70, 120], [26, 104]], SKIN, 13) + limb([[70, 128], [30, 134]], SKIN, 13) + limb([[78, 123], [58, 121]], PANTS, 24);
-      b += `<rect x="60" y="102" width="68" height="40" rx="19" fill="${c.g("#ff7a3d")}" transform="rotate(-6 94 122)"/>`;
-      b += limb([[120, 116], [176, 110]], SKIN, 12) + hand(c, 180, 110);
-      b += head(c, 140, 90, 30, "#ffd21f", goggles);
-      s += `<g transform="translate(-14 -22) scale(1.14)">${b}</g>`;
-      s += `<path d="${wave(126, 8)}" fill="${c.v("#7fd3ff", "#2a6fe0")}" opacity=".52"/>`;
-      s += `<g stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"><path d="M14 148 q10 -7 20 0 t20 0 M92 166 q10 -7 20 0 t20 0 M30 184 q10 -7 20 0 t20 0"/></g>`;
-      s += drops([[10, 84, 7], [24, 70, 5], [4, 104, 4], [36, 86, 4], [14, 58, 3], [40, 66, 3], [196, 92, 4], [188, 82, 3]]);
+      let s = `<path d="${wave(150, 7)}" fill="${c.v("#b5ebff", "#3d8bff")}"/>`;
+      s += `<g stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".8"><path d="M14 186 q8 -5 16 0 t16 0 M84 192 q8 -5 16 0 t16 0 M150 184 q8 -5 16 0 t16 0"/></g>`;
+      // posts + sagging rope rail behind the kid
+      [14, 186].forEach((x) => (s += `<rect x="${x - 6}" y="98" width="12" height="82" rx="5" fill="${c.g("#9a6236")}"/>` + c.sphere(x, 98, 8, "#b5773f", 0.5)));
+      s += `<path d="M14 104 Q100 134 186 104" stroke="#e2bd84" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+      // plank deck (slight sag)
+      s += `<path d="M0 158 Q100 170 200 158 L200 171 Q100 183 0 171Z" fill="${c.v("#e0a868", "#8a5530")}"/>`;
+      for (let x = 20; x < 200; x += 20) { const y = 158 + 12 * 4 * (x / 200) * (1 - x / 200) * 0.5; s += `<path d="M${x} ${y + 1} v12" stroke="#6e4122" stroke-width="2.4" opacity=".55"/>`; }
+      s += c.hl(56, 161, 30, 3, 3, 0.6) + `<path d="M0 171 Q100 183 200 171" stroke="#5a3518" stroke-width="2" fill="none" opacity=".5"/>` + c.shadow(100, 166, 44, 5);
+      // the kid, walking to the right: back leg pushing off (heel up), front leg reaching forward, arms swinging
+      let b = limb([[93, 134], [82, 152], [68, 160]], PANTS, 15) + `<ellipse cx="64" cy="162" rx="11" ry="6.5" fill="${c.g("#ff4b55")}" transform="rotate(-24 64 162)"/>`;
+      b += limb([[80, 94], [64, 108], [54, 122]], SHIRT) + hand(c, 52, 124);
+      b += `<rect x="74" y="84" width="52" height="56" rx="18" fill="${c.g(SHIRT)}"/>`;
+      b += limb([[107, 134], [122, 150], [134, 164]], PANTS, 15) + `<ellipse cx="140" cy="166" rx="12" ry="6.5" fill="${c.g("#ff4b55")}" transform="rotate(8 140 166)"/>`;
+      b += limb([[120, 94], [136, 106], [146, 122]], SHIRT) + hand(c, 148, 124);
+      b += head(c, 100, 54, 30);
+      s += b;
+      s += `<g stroke="#8a94b8" stroke-width="5" stroke-linecap="round" opacity=".8"><path d="M46 70 h-16 M42 86 h-22"/></g>`;
+      s += `<path d="M156 54 h24 m-9 -9 l9 9 l-9 9" stroke="#2ee6b6" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
       return c.out(s);
     },
     /* up a climbing wall: helmet, rope, hands and feet on the colourful holds */
@@ -86,7 +93,7 @@
       return c.out(s);
     }
   };
-  const NEW_SEAL = { "pose-swim": [166, 170, 15, -8], "pose-climb": [109, 129, 10.5], "pose-ride": [92, 80, 9, 16], "pose-fly": [91, 122, 11, 35] };
+  const NEW_SEAL = { "pose-walk": [100, 116, 10.5], "pose-climb": [109, 129, 10.5], "pose-ride": [92, 80, 9, 16], "pose-fly": [91, 122, 11, 35] };
   Object.keys(NEW_ART).forEach((n) => { if (!TC.ART[n]) { TC.ART[n] = NEW_ART[n]; TC.SEAL[n] = NEW_SEAL[n]; } }); // art.js wins if it gets these later
   const actionArt = (w) => TC.art("pose-" + w);
 
@@ -95,8 +102,10 @@
   let cv, ctx, W, H, k = 1, raf;
   const GY = 470; // ground line in base units (720 high)
   const PODIUM = 60; // height of the winner's step
-  const A = { x: 200, y: GY, pose: "idle", t: 0, color: "#ffc83d", name: "", glider: false, bike: false, rot: 0 };
+  const A = { x: 200, y: GY, pose: "idle", t: 0, color: "#ffc83d", name: "", glider: false, bike: false, rot: 0, onBridge: null };
   let course = [], cam = 0, parts = [], flags = [], finishX = 0, trophy = false, demoRun = 0;
+  let drink = null; // the big water bottle at the finish: { s: scale, r: tilt, lvl: water left 0..1, nx, ny: where the cap is }
+  let fish = null; // a little fish that hops out of the river while the runner is on the bridge
 
   function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); k = H / 720; }
   function tween(ms, fn) { return new Promise((res) => { const t0 = performance.now(); (function f() { const t = Math.min(1, (performance.now() - t0) / ms); fn(t); if (t < 1) requestAnimationFrame(f); else res(); })(); }); }
@@ -105,7 +114,7 @@
   function buildCourse(moves) {
     course = []; flags = []; let x = 700;
     moves.forEach((m) => {
-      const w = { hurdle: 140, river: 420, wall: 120, track: 700, bikeLane: 640, cliff: 560 }[m.obstacle];
+      const w = { river: 420, wall: 120, track: 700, bikeLane: 640, cliff: 560 }[m.obstacle];
       course.push({ m, x, w, type: m.obstacle, done: false });
       flags.push({ x: x + w + 140, up: 0 });
       x += w + 520;
@@ -113,6 +122,13 @@
     finishX = x + 200;
   }
   function groundAt(x) { for (const o of course) if ((o.type === "river" || o.type === "cliff") && x > o.x && x < o.x + o.w) return null; return GY; }
+  /** top of the rope bridge's planks at world x: a gentle sag, a little deeper under the runner's feet */
+  function bridgeY(o, X) {
+    const x0 = o.x - 24, len = o.w + 48, u = (X - x0) / len;
+    if (u <= 0 || u >= 1) return GY;
+    const dip = A.onBridge === o ? 12 * Math.exp(-Math.pow((X - A.x) / 90, 2)) : 0;
+    return GY + (16 + dip) * Math.sin(u * Math.PI);
+  }
 
   function draw() {
     raf = requestAnimationFrame(draw);
@@ -153,8 +169,16 @@
 
   function drawObstacle(o) {
     const { x, w } = o;
-    if (o.type === "hurdle") { block3d(x + 50, GY - 110, 40, 110, "#ff5a5a"); ctx.fillStyle = "rgba(255,255,255,.9)"; for (let i = 0; i < 3; i++) ctx.fillRect(x + 50, GY - 100 + i * 36, 40, 12); }
-    if (o.type === "river") { const t = A.t; const wg = ctx.createLinearGradient(0, GY + 20, 0, 720); wg.addColorStop(0, "#7fd3ff"); wg.addColorStop(0.3, "#3d8bff"); wg.addColorStop(1, "#1b4fb8"); ctx.fillStyle = wg; ctx.fillRect(x, GY + 20, w, 720 - GY); ctx.fillStyle = "rgba(255,255,255,.5)"; for (let i = 0; i < w; i += 60) ctx.fillRect(x + i + Math.sin(t * 3 + i) * 10, GY + 30, 30, 6); }
+    if (o.type === "river") {
+      const t = A.t;
+      const wg = ctx.createLinearGradient(0, GY, 0, 720); wg.addColorStop(0, "#9fe0ff"); wg.addColorStop(0.25, "#3d8bff"); wg.addColorStop(1, "#1b4fb8"); ctx.fillStyle = wg; ctx.fillRect(x, GY + 6, w, 720 - GY);
+      ctx.fillStyle = "rgba(255,255,255,.55)"; for (let i = 0; i < w; i += 60) ctx.fillRect(x + i + Math.sin(t * 3 + i) * 10, GY + 52 + (i % 120 ? 0 : 30), 30, 6);
+      // muddy banks on both sides
+      ctx.fillStyle = "#8a5a32"; ctx.beginPath(); ctx.moveTo(x, GY); ctx.lineTo(x + 22, GY + 40); ctx.lineTo(x + 8, GY + 110); ctx.lineTo(x, GY + 150); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x + w, GY); ctx.lineTo(x + w - 20, GY + 50); ctx.lineTo(x + w - 6, GY + 120); ctx.lineTo(x + w, GY + 150); ctx.fill();
+      if (fish) drawFish();
+      drawBridge(o);
+    }
     if (o.type === "wall") { for (let r = 0; r < 5; r++) for (let c = 0; c < 2; c++) block3d(x + c * 60, GY - 60 - r * 60, 60, 60, (r + c) % 2 ? "#9b6bff" : "#7d55d9"); }
     if (o.type === "track") { ctx.fillStyle = "#e0523f"; ctx.fillRect(x, GY - 6, w, 14); ctx.fillStyle = "#fff"; for (let i = 20; i < w; i += 90) { ctx.beginPath(); ctx.moveTo(x + i, GY - 30); ctx.lineTo(x + i + 30, GY - 18); ctx.lineTo(x + i, GY - 6); ctx.fill(); } }
     if (o.type === "bikeLane") { ctx.fillStyle = "#4cc9ff"; ctx.fillRect(x, GY - 6, w, 14); if (!o.done && !A.bike && IM.bike.complete) ctx.drawImage(IM.bike, x - 30, GY - 90, 90, 90); }
@@ -166,6 +190,66 @@
       ctx.fillStyle = "#ffc83d"; ctx.beginPath(); ctx.moveTo(sx, sy - 50); ctx.lineTo(sx + 48, sy + 34); ctx.lineTo(sx - 48, sy + 34); ctx.closePath(); ctx.fill();
       ctx.strokeStyle = "#26293a"; ctx.lineWidth = 6; ctx.stroke(); ctx.fillStyle = "#26293a"; ctx.font = "700 54px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillText("!", sx, sy + 26);
       ctx.fillStyle = "#26293a"; ctx.strokeStyle = "rgba(255,255,255,.6)"; ctx.lineWidth = 4; for (let i = 0; i < 5; i++) { const yy = GY - 200 + i * 40; ctx.beginPath(); ctx.moveTo(x + 40 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.lineTo(x + 100 + ((A.t * 200 + i * 80) % (w - 80)), yy); ctx.stroke(); } }
+  }
+  /** wooden posts, two sagging rope rails and a row of planks over the river */
+  function drawBridge(o) {
+    const x0 = o.x - 24, x1 = o.x + o.w + 24;
+    [x0 - 6, x1 - 10].forEach((px) => { // posts
+      const pg = ctx.createLinearGradient(px, 0, px + 16, 0); pg.addColorStop(0, "#c8874a"); pg.addColorStop(1, "#6e4122");
+      ctx.fillStyle = pg; ctx.fillRect(px, GY - 92, 16, 130);
+      ctx.fillStyle = "#b5773f"; ctx.beginPath(); ctx.arc(px + 8, GY - 92, 11, 0, 7); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.beginPath(); ctx.arc(px + 4, GY - 96, 4, 0, 7); ctx.fill();
+    });
+    ctx.lineCap = "round";
+    // hanger ropes, then the hand rail (it sags with the deck)
+    ctx.strokeStyle = "rgba(170,120,60,.8)"; ctx.lineWidth = 3;
+    for (let X = x0 + 40; X < x1 - 20; X += 48) { ctx.beginPath(); ctx.moveTo(X, bridgeY(o, X) - 66 + 6 * Math.sin(((X - x0) / (x1 - x0)) * Math.PI)); ctx.lineTo(X, bridgeY(o, X)); ctx.stroke(); }
+    ctx.strokeStyle = "#e2bd84"; ctx.lineWidth = 6; ctx.beginPath();
+    for (let X = x0; X <= x1; X += 12) { const Y = bridgeY(o, X) - 76 + 6 * Math.sin(((X - x0) / (x1 - x0)) * Math.PI); X === x0 ? ctx.moveTo(X + 2, Y) : ctx.lineTo(X, Y); }
+    ctx.stroke();
+    // planks
+    for (let X = x0, i = 0; X < x1; X += 26, i++) {
+      const Y = bridgeY(o, X + 12);
+      const pg = ctx.createLinearGradient(0, Y, 0, Y + 16); pg.addColorStop(0, i % 2 ? "#e6ad6c" : "#d89c58"); pg.addColorStop(1, "#7a4826");
+      ctx.fillStyle = pg; ctx.fillRect(X, Y, 23, 16);
+      ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.fillRect(X + 2, Y + 2, 12, 3);
+    }
+    ctx.strokeStyle = "#7a4826"; ctx.lineWidth = 4; ctx.beginPath(); // rope under the planks
+    for (let X = x0; X <= x1; X += 12) { const Y = bridgeY(o, X) + 15; X === x0 ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y); }
+    ctx.stroke(); ctx.lineCap = "butt";
+  }
+  /** an orange fish hopping out of the river in an arc (and a splash where it lands) */
+  function drawFish() {
+    const u = (performance.now() - fish.t0) / 1300; if (u >= 1) { fish = null; return; }
+    const fx = fish.x - 160 * u, fy = GY + 60 - Math.sin(u * Math.PI) * 190;
+    ctx.save(); ctx.translate(fx, fy); ctx.rotate(Math.atan2(Math.cos(u * Math.PI) * 190 * Math.PI, 160)); // nose (drawn on the left) along the flight path
+    const fg = ctx.createLinearGradient(0, -16, 0, 16); fg.addColorStop(0, "#ffd27a"); fg.addColorStop(1, "#ff7a1f"); ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.ellipse(0, 0, 30, 16, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(46, -16); ctx.lineTo(46, 16); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(-16, -4, 6, 0, 7); ctx.fill(); ctx.fillStyle = "#1b1d33"; ctx.beginPath(); ctx.arc(-17, -4, 3, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+  /** the big water bottle in the runner's hand (drawn in the runner's own coordinates; the cap is at nx, ny) */
+  function drawBottle() {
+    const d = drink;
+    ctx.save(); ctx.translate(d.nx, d.ny); ctx.rotate(d.r); ctx.scale(d.s, d.s);
+    const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
+    // the plastic: neck + body
+    ctx.fillStyle = "rgba(215,240,255,.85)"; rr(-9, 6, 18, 16, 4); ctx.fill(); rr(-24, 18, 48, 88, 16); ctx.fill();
+    // the water inside (it sits at the cap end while the bottle is tipped up)
+    const lv = Math.max(0, Math.min(1, d.lvl));
+    if (lv > 0) {
+      ctx.save(); rr(-24, 18, 48, 88, 16); ctx.clip();
+      const wg = ctx.createLinearGradient(-24, 0, 24, 0); wg.addColorStop(0, "#7fd3ff"); wg.addColorStop(0.5, "#3d8bff"); wg.addColorStop(1, "#2a6fe0"); ctx.fillStyle = wg;
+      if (d.r < -1.2) ctx.fillRect(-24, 18, 48, 88 * lv); else ctx.fillRect(-24, 106 - 88 * lv, 48, 88 * lv);
+      ctx.restore();
+    }
+    ctx.strokeStyle = "#7fc6ff"; ctx.lineWidth = 3; rr(-24, 18, 48, 88, 16); ctx.stroke();
+    ctx.fillStyle = "#fff"; ctx.fillRect(-24, 50, 48, 24); // label with a water drop
+    ctx.fillStyle = "#3d8bff"; ctx.beginPath(); ctx.moveTo(0, 54); ctx.quadraticCurveTo(9, 64, 0, 70); ctx.quadraticCurveTo(-9, 64, 0, 54); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.fillRect(-17, 26, 6, 70); // shine
+    const cg = ctx.createLinearGradient(-11, 0, 11, 0); cg.addColorStop(0, "#ff8fbf"); cg.addColorStop(1, "#d83a7c"); ctx.fillStyle = cg; rr(-11, -6, 22, 14, 4); ctx.fill(); // cap
+    ctx.restore();
   }
   /** a glossy obby block with a top face and side shading */
   function block3d(x, y, w, h, col) {
@@ -190,7 +274,7 @@
   function drawAvatar() {
     const { x, y, pose, t, color } = A;
     ctx.save(); ctx.translate(x, y); ctx.rotate(A.rot);
-    const sw = pose === "run" ? Math.sin(t * 18) : pose === "swim" ? Math.sin(t * 8) : pose === "climb" ? Math.sin(t * 10) : 0;
+    const sw = pose === "run" ? Math.sin(t * 18) : pose === "walk" ? Math.sin(t * 9) * 0.7 : pose === "climb" ? Math.sin(t * 10) : 0;
     if (A.bike && IM.bike.complete) ctx.drawImage(IM.bike, -55, -80, 110, 110);
     // legs
     ctx.fillStyle = "#3d4a8a";
@@ -201,18 +285,24 @@
     ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.font = "700 26px Fredoka"; ctx.textAlign = "center"; ctx.fillText(A.name ? A.name[0] : "", 0, -70);
     // arms
     ctx.fillStyle = "#ffd3a8";
-    const armA = pose === "fly" ? -2.6 : pose === "climb" ? -2.8 + sw * 0.4 : pose === "swim" ? -1.5 + sw * 1.4 : pose === "cheer" ? -2.7 : sw * 0.8;
+    const wob = Math.sin(t * 4) * 0.16; // see-saw of the arms held out for balance on the bridge
+    const armA = pose === "fly" ? -2.6 : pose === "climb" ? -2.8 + sw * 0.4 : pose === "walk" ? 1.45 + wob : pose === "cheer" ? -2.7 : pose === "drink" ? 0.25 : sw * 0.8;
+    let armB = pose === "fly" || pose === "cheer" ? 2.6 : pose === "climb" ? 2.8 - sw * 0.4 : pose === "walk" ? -1.45 + wob : -armA;
+    if (drink) { const hx = drink.nx + Math.sin(-drink.r) * 52 * drink.s, hy = drink.ny + Math.cos(drink.r) * 52 * drink.s; armB = Math.atan2(-(hx - 30), hy + 104); } // hand on the bottle
     ctx.save(); ctx.translate(-30, -104); ctx.rotate(armA); ctx.fillRect(-8, 0, 16, 50); ctx.restore();
-    ctx.save(); ctx.translate(30, -104); ctx.rotate(pose === "fly" || pose === "cheer" ? 2.6 : pose === "climb" ? 2.8 - sw * 0.4 : -armA); ctx.fillRect(-8, 0, 16, 50); ctx.restore();
+    ctx.save(); ctx.translate(30, -104); ctx.rotate(armB); ctx.fillRect(-8, 0, 16, 50); ctx.restore();
     // head
     const hg = ctx.createLinearGradient(-24, -158, 24, -110); hg.addColorStop(0, "#ffe6cc"); hg.addColorStop(1, "#e8a878"); ctx.fillStyle = hg; ctx.fillRect(-24, -158, 48, 48);
     ctx.fillStyle = "rgba(255,255,255,.45)"; ctx.fillRect(-18, -152, 12, 6);
-    ctx.fillStyle = "#0a1633"; ctx.fillRect(-12, -140, 7, 9); ctx.fillRect(6, -140, 7, 9); ctx.fillRect(-8, -124, 16, 4);
+    ctx.fillStyle = "#0a1633"; ctx.fillRect(-12, -140, 7, 9); ctx.fillRect(6, -140, 7, 9);
+    if (pose === "drink") ctx.fillRect(-5, -127, 10, 9); else ctx.fillRect(-8, -124, 16, 4);
     ctx.fillStyle = color; ctx.fillRect(-26, -164, 52, 14);
+    if (drink) drawBottle();
     if (A.glider) { ctx.fillStyle = "#ff5fa2"; ctx.beginPath(); ctx.moveTo(-110, -150); ctx.quadraticCurveTo(0, -230, 110, -150); ctx.lineTo(0, -170); ctx.fill(); }
     ctx.restore();
     // name tag
-    ctx.font = "600 24px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "rgba(10,22,51,.7)"; const tw = ctx.measureText(A.name).width + 20; ctx.fillRect(x - tw / 2, y - 205, tw, 32); ctx.fillStyle = "#fff"; ctx.fillText(A.name, x, y - 181);
+    const ty = drink ? y - 270 : y - 205; // lifted out of the way of the water bottle
+    ctx.font = "600 24px Fredoka, sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "rgba(10,22,51,.7)"; const tw = ctx.measureText(A.name).width + 20; ctx.fillRect(x - tw / 2, ty, tw, 32); ctx.fillStyle = "#fff"; ctx.fillText(A.name, x, ty + 24);
     if (trophy && IM.trophy.complete) { const s = 160 + Math.sin(t * 5) * 8; ctx.drawImage(IM.trophy, x + 170 - s / 2, y - 130 - s / 2 + Math.sin(t * 3) * 6, s, s); }
   }
 
@@ -223,15 +313,16 @@
   }
   async function act(o) {
     const { x, w } = o;
-    if (o.type === "hurdle") {
-      TC.sfx("pop"); A.pose = "run"; const x0 = A.x, x1 = x + w + 60;
-      await tween(900, (t) => { A.x = x0 + (x1 - x0) * t; A.y = GY - Math.sin(t * Math.PI) * 190; A.rot = Math.sin(t * Math.PI * 2) * 0.2; });
-      A.y = GY; A.rot = 0; puff(A.x, GY, "#fff");
-    } else if (o.type === "river") {
-      A.pose = "swim"; const x0 = A.x;
-      await tween(500, (t) => { A.x = x0 + 70 * t; A.y = GY + 60 * t; }); TC.sfx("whoosh"); puff(A.x, GY + 40, "#bfe3ff", 24, 0.25);
-      await tween(2200, (t) => { A.x = x0 + 70 + (w - 70) * t; A.y = GY + 60 + Math.sin(t * 20) * 6; A.rot = 0.9; if (Math.random() < 0.3) puff(A.x - 30, GY + 30, "#bfe3ff", 2, 0.2); });
-      A.rot = 0; await tween(400, (t) => { A.x = x0 + w + 40 * t; A.y = GY + 60 * (1 - t); });
+    if (o.type === "river") {
+      // careful steps over the rope bridge, arms out for balance; a fish hops out halfway
+      const x0 = A.x, x1 = x + w + 60; let step = -1;
+      A.pose = "walk"; A.onBridge = o;
+      await tween(3600, (t) => {
+        A.x = x0 + (x1 - x0) * t; A.y = bridgeY(o, A.x); A.rot = Math.sin(A.t * 4) * 0.07;
+        const st = Math.floor(t * 12); if (st !== step) { step = st; TC.sfx("tick"); }
+        if (!fish && !o.fished && t > 0.38) { o.fished = true; fish = { x: x + w * 0.85, t0: performance.now() }; TC.sfx("pop"); puff(x + w * 0.85, GY + 50, "#bfe3ff", 14, 0.25); }
+      });
+      A.onBridge = null;
     } else if (o.type === "wall") {
       A.pose = "climb"; const x0 = A.x;
       await tween(300, (t) => (A.x = x0 + (x - 30 - x0) * t));
@@ -282,17 +373,19 @@
 
   TC.games.obby = {
     mount(api) { cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d"); resize(); addEventListener("resize", resize); raf = requestAnimationFrame(draw); this.idle(api); },
-    idle(api) { const G = (api && api.G) || TC_CONTENT.gates[6]; hideCard(); buildCourse(G.moves); Object.assign(A, { x: 200, y: GY, pose: "run", name: "", color: "#ffc83d", glider: false, bike: false, rot: 0 }); trophy = false; cam = 0;
+    idle(api) { const G = (api && api.G) || TC_CONTENT.gates[6]; hideCard(); buildCourse(G.moves); Object.assign(A, { x: 200, y: GY, pose: "run", name: "", color: "#ffc83d", glider: false, bike: false, rot: 0, onBridge: null }); trophy = false; drink = null; fish = null; cam = 0;
       const me = ++demoRun;
       (async function demo() { while (me === demoRun && !TC.kid && A.name === "") { await runTo(A.x + 400, 260); if (me === demoRun && A.x > course[0].x - 200) { A.x = 200; cam = 0; } } })(); },
     async play(api) {
       const G = api.G, kid = api.kid;
       demoRun++;
-      const must = G.moves.filter((m) => ["jump", "swim", "climb", "fly"].includes(m.w));
-      const extra = G.moves.filter((m) => !must.includes(m)).sort(() => Math.random() - 0.5)[0];
-      const moves = [must[0], must[1], extra, must[2], must[3]].filter(Boolean).slice(0, TC.rounds(5));
-      buildCourse(moves); trophy = false;
-      Object.assign(A, { x: 200, y: GY, pose: "idle", color: kid.color, name: kid.name, glider: false, bike: false, rot: 0 }); cam = 0;
+      // always the same order: walk → climb → run → ride → fly; fewer rounds keep the order and still end with fly
+      const ORDER = ["walk", "climb", "run", "ride", "fly"];
+      const all = ORDER.map((w) => G.moves.find((m) => m.w === w)).filter(Boolean).concat(G.moves.filter((m) => !ORDER.includes(m.w)));
+      const n = Math.max(1, TC.rounds(all.length));
+      const moves = n >= all.length ? all : all.slice(0, n - 1).concat(all[all.length - 1]);
+      buildCourse(moves); trophy = false; drink = null; fish = null;
+      Object.assign(A, { x: 200, y: GY, pose: "idle", color: kid.color, name: kid.name, glider: false, bike: false, rot: 0, onBridge: null }); cam = 0;
       const N = moves.length + 1;
       await TC.speak("Go!");
       for (let i = 0; i < course.length; i++) {
@@ -308,7 +401,7 @@
         hideCard();
         if (api.aborted) return null;
         TC.floatText(cap(m.w) + "!", 50, 42, "#ffc83d");
-        TC.speak(m.say); // "I can jump!" while the runner does it
+        TC.speak(m.say, TC.canSayHuman(m.say) ? {} : { human: "" }); // "I can climb!" while the runner does it (caption only if a word has no recording)
         await act(o); o.done = true;
         await runTo(flags[i].x + 30);
         TC.sfx("coin"); await tween(400, (t) => (flags[i].up = t));
@@ -320,10 +413,14 @@
       await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say, keys: F.keys, word: F.word });
       if (api.aborted) return null;
       TC.hideTalk();
-      // still full of energy: hop onto the podium and lift the trophy
+      // hop onto the podium …
       const x0 = A.x, x1 = finishX + 855; TC.sfx("pop"); A.pose = "run";
       await tween(800, (t) => { A.x = x0 + (x1 - x0) * t; A.y = GY - PODIUM * t - Math.sin(t * Math.PI) * 150; });
-      A.y = GY - PODIUM; A.pose = "cheer"; trophy = true;
+      A.y = GY - PODIUM; A.pose = "idle";
+      if (api.aborted) return null;
+      await gulp(); if (api.aborted) return null;
+      // … and lift the trophy
+      A.pose = "cheer"; trophy = true;
       TC.sfx("fanfare"); puff(A.x + 170, A.y - 130, "#ffc83d", 40, 0.15); TC.confetti(220);
       TC.floatText("WINNER!", 62, 50, "#ffc83d");
       await TC.speak("Wow! Great!");
@@ -333,4 +430,24 @@
     }
   };
   function cap(w) { return w[0].toUpperCase() + w.slice(1); }
+  /** "Yes!" → a giant water bottle pops into the runner's hand: tip it up, gulp it all down, "Ahh!" */
+  async function gulp() {
+    const lerp = (a, b, t) => a + (b - a) * t;
+    drink = { s: 0, r: 0, lvl: 1, nx: 44, ny: -150 };
+    TC.sfx("pop"); puff(A.x + 44, A.y - 120, "#7fd3ff", 18, 0.1);
+    await tween(380, (t) => (drink.s = t < 0.7 ? (1.4 * t) / 0.7 : 1.4 - (0.2 * (t - 0.7)) / 0.3)); // pop in with a little bounce
+    await TC.sleep(250);
+    A.pose = "drink";
+    await tween(500, (t) => { const e = ease(t); drink.r = lerp(0, -2.25, e); drink.nx = lerp(44, 8, e); drink.ny = lerp(-150, -126, e); A.rot = -0.08 * e; });
+    let g = -1;
+    await tween(1900, (t) => {
+      drink.lvl = 1 - 0.95 * t;
+      const k = Math.floor(t * 5); if (k !== g) { g = k; TC.sfx("kick"); puff(A.x + 6, A.y - 128, "#7fd3ff", 3, 0.15); }
+    });
+    TC.floatText("Ahh!", 50, 36, "#7fd3ff"); TC.sfx("sparkle");
+    await tween(400, (t) => { const e = ease(t); drink.r = lerp(-2.25, 0, e); drink.nx = lerp(8, 44, e); drink.ny = lerp(-126, -150, e); A.rot = -0.08 * (1 - e); });
+    A.pose = "idle"; A.rot = 0;
+    await tween(300, (t) => (drink.s = 1.2 * (1 - t)));
+    puff(A.x + 44, A.y - 110, "#ffffff", 16, 0.1); drink = null;
+  }
 })();

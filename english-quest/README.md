@@ -2,25 +2,27 @@
 
 南投縣草屯鎮土城國民小學。六間教室 × 六個大螢幕觸控遊戲，再加一個「終點登機門」。孩子帶著紙本《土城國小英語護照》、掃描貼在護照裡的 QR 登機卡，和老師用英文對話；瀏覽器的 AI 語音辨識聽懂了，遊戲就往前推進。
 
-題目刻意簡單（低、中年級課本程度）。每一題都一樣：老師問一句短問題 → 螢幕上有答案的圖片和一句短句 → 孩子**只要說出一個字**（答案字）。每關結束得到全息印章、一個秘密字母和一張刮刮卡；六個字母拼成 **FRIEND**（剛好是護照第 111 號單字），到「終點登機門」說出 *“We are friends!”* 領取獎狀，獎狀上印有刮刮卡總點數，可兌換獎品。
+題目刻意簡單（低、中年級課本程度；只有第 5 關的 How's the weather? 例外，見下方）。每一題都一樣：老師問一句短問題 → 螢幕上有答案的圖片和一句短句 → 孩子**只要說出一個字**（答案字）。每關結束得到全息印章、一個秘密字母和一張刮刮卡；六個字母拼成 **FRIEND**（剛好是護照第 111 號單字），到「終點登機門」說出 *“We are friends!”* 領取獎狀，獎狀上印有刮刮卡總點數，可兌換獎品。
 
 | 關卡 | 遊戲 | 參考的熱門玩法 | 觸控 | 老師問 → 孩子說的答案字 | 最後一題 | 護照內容 |
 |---|---|---|---|---|---|---|
-| 1 Tokyo | Turbo Talk Kart 極速英語賽車 | 賽車 | 點左右換車道吃星星 | What is it? → bus（It's a bus.） | Are you happy? → Yes! | 第1關 交通工具 |
-| 2 Sydney | Pixel Craft 方塊創造家 | 方塊建造 | 點選顏色、點方塊讓它跳 | What color is it? → red（It's red.） | What color do you like? → 任何一個顏色 | 第19關 顏色 |
-| 3 Paris | Pet Hatch 英語寵物孵蛋 | 孵蛋收集寵物 | 點蛋三下敲裂、點選最愛寵物 | What is it? → tiger（It's a tiger.）；中級加問 Is it big? → Yes／No | What do you like? → 孵出的任何一隻動物 | 第1關 動物、第9關 big／small |
+| 1 Tokyo | Turbo Talk Kart 極速英語賽車 | 賽車 | 點左右換車道吃星星 | What is it? → bus（It's a bus.） | Are you hot? → Yes! | 第1關 交通工具、第5關 hot |
+| 2 Sydney | Pixel Craft 方塊創造家 | 方塊建造 | 點發亮的方塊，蓋出家人的像素頭像 | Who is he? ／ Who is she? → father（He's my father.）；father、mother、grandpa、grandma、brother、sister | Is this your family? → Yes! | 第2關 家人 |
+| 3 Paris | Pet Hatch 英語寵物孵蛋 | 孵蛋收集寵物 | 點蛋三下敲裂、點選最愛寵物 | What is it? → tiger（It's a tiger.）；中級加問 Can it fly? → Yes!／No!（bird、duck 會飛；說哪個都過關） | Which one do you want? → I want the cat. | 第1關 動物、第6關 can／fly、第4關 want |
 | 4 Cairo | Beat Party 英語節奏派對 | 節奏舞蹈 | DJ 鼓墊 | What's this? → nose（Touch your nose!） | Photo time! → Cheese! | 第3關 身體部位 |
-| 5 Vancouver | Mystery Box 神秘盲盒 | 開箱盲盒 | 點開 3D 盲盒，動物跳出來 | How many? → three（初級 1–5，有數字可以數；中級 1–10） | Are you hungry? → Yes! | 第7關 數字、第1關 動物 |
-| 6 San Diego | Sports Day Obby 運動會障礙跑酷 | 障礙跑酷 | 按大按鈕過障礙 | What can you do? → jump／swim／climb／run／ride／fly（I can jump!） | Are you tired? → No! | 第4、6關 動詞、can |
+| 5 Vancouver | Mystery Box 神秘盲盒 | 開箱盲盒 | 點開 3D 盲盒，天氣衝出來 | How's the weather? → sunny（It's sunny.）；sunny、rainy、cloudy、windy、snowy | Are you hungry? → Yes! | 第5關 天氣、第3關 hungry |
+| 6 San Diego | Sports Day Obby 運動會障礙跑酷 | 障礙跑酷 | 按大按鈕過障礙（依序：走過河上的橋、爬牆、跑道、自行車道、懸崖） | What can you do? → walk／climb／run／ride／fly（I can walk!） | Are you thirsty? → Yes! | 第4、6關 動詞、can、第3關 thirsty |
 
-暖身問題依關卡輪流：What's your name?（第 1、4 關）／How old are you?（第 2、5 關）／How are you?（第 3、6 關）。
+暖身問題每一關都是 What's your name? → I'm Amy.（How old are you? 和 How are you? 已拿掉：數字是護照第 7 關，fine／happy 是第 10 關。）
 
 ## 分級與單字來源
 - 只有兩級。**初級**（1–2 年級）：答案字直接印在句子裡。**中級**（3–6 年級）：答案字是空格「?」，提示時間到或按 🔊 才出現。提示時間在 ⚙「幾秒後提示」設定，預設 9 秒（看圖填空的題目會多等四成，約 13 秒）。老師可隨時在畫面上切換。
-- 單字主要取自護照第 1–10 關。例外：顏色是護照第 19 關（保留，因為 What color is it? 是老師指定的基本句型）；第 6 關的 jump（607 號）和 swim（394 號）來自後面的關卡；第 2、3 關最後一題 I like … 的 like（604 號）編號也在第 10 關之後。
+- 老師決定：孩子要說的答案字全部取自護照第 1–6 關，孩子活動前只要複習這六關。第 4 關的 Cheese! 只是拍照口號，不是護照單字。
+- 唯一高於中年級的句型是第 5 關的 How's the weather?：依我們找到的一份彰化縣課程計畫，翰林版五年級（五上 Unit 1）才教。孩子只要看著圖片說出一個天氣的字。
+- 複習建議（護照 → 遊戲）：第1關 → 第1關（交通工具）、第3關（動物）；第2關 → 第2關（家人）；第3關 → 第4關（身體部位）＋ hungry、thirsty；第4關 → want、run（第6關）；第5關 → 第5關（天氣）＋ hot；第6關 → 第6關的動作 walk、climb、ride、fly ＋ can／can't。
 
 ## 每位孩子在一關裡的流程
-掃 QR（來賓按 ⭐ 貴賓體驗）→ 👋 暖身問題 → 🎮 遊戲 4–6 題加最後一題（老師問、孩子說一個字、AI 聽）→ 🎉 全班一起說 → 🧩 句子拼拼看（點 2–3 張單字卡排出短句再唸）→ 🛂 護照密碼（翻紙本護照找編號單字，只用第 1–10 關的字；第一個字母就是這一關的秘密字母）→ 🎟 刮刮卡 → 全息印章＋播放孩子的英文原聲。
+掃 QR（來賓按 ⭐ 貴賓體驗）→ 👋 暖身問題 → 🎮 遊戲 4–6 題加最後一題（老師問、孩子說一個字、AI 聽）→ 🎉 全班一起說 → 🧩 句子拼拼看（點 2–3 張單字卡排出短句再唸，例如 He's my father.、It's sunny.、I can walk.）→ 🛂 護照密碼（翻紙本護照找編號單字，只用第 1–6 關的字，初級只用第 1–3 關；第一個字母就是這一關的秘密字母）→ 🎟 刮刮卡 → 全息印章＋播放孩子的英文原聲。
 
 快速模式（⚙ 每位孩子回合數：快速 3 回合）略過暖身、全班一起說和句子拼拼看。
 
@@ -50,8 +52,8 @@
 - 語音辨識：Web Speech API（en-US），對兒童口音寬鬆比對（含常見近音字）；聽到答案字就過關，聽不到時老師按 ✓（或 Enter）。電視自己播放示範時，不會把喇叭的聲音當成孩子的答案。
 - 老師按鍵：Enter／空白鍵＝✓、H＝聽示範、N＝跳過、Esc＝回到掃描畫面。
 - QR：USB／藍牙 2D 掃描機（鍵盤模式，中文輸入法開著也能讀）、webcam（jsQR）、手動選擇，或 ⭐ 貴賓按鈕。
-- 發音：電視說的每個英文字，預設都是 Wikimedia Commons 的真人錄音（179 個）。句子用這些錄音一個字一個字唸，唸到的字會亮起來；歐力的台詞同時出現在字幕上。來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。pink、rainy 找不到美式錄音，用英式錄音。瀏覽器的電腦語音預設關閉，可在 ⚙「歐力的聲音」改成「電腦語音」，使用時會標示。
-- 發音正確性檢查（都是程式做的）：每個檔案的 SHA-1 與 Commons 公布的一致；每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音（或慣用檔名 `En-us-單字.ogg`）；自動語音辨識程式（CMU PocketSphinx）聽過全部 179 個，172 個辨識為該單字。7 個很短的字（an、big、hi、is、it's、the、touch）機器沒有確認。**AI 這一邊沒有人用耳朵聽過**，請老師活動前在 `credits.html` 聽一次這 7 個字。
+- 發音：電視說的每個英文字，預設都是 Wikimedia Commons 的真人錄音（196 個）。句子用這些錄音一個字一個字唸，唸到的字會亮起來；歐力的台詞同時出現在字幕上。來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。windy 找不到美式錄音，用澳洲英語錄音；rainy、pink（遊戲已不用）是英式錄音。瀏覽器的電腦語音預設關閉，可在 ⚙「歐力的聲音」改成「電腦語音」，使用時會標示。
+- 發音正確性檢查（都是程式做的）：每個檔案的 SHA-1 與 Commons 公布的一致；每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音（或慣用檔名 `En-us-單字.ogg`）；自動語音辨識程式（CMU PocketSphinx）聽過全部 196 個，182 個辨識為該單字。遊戲裡會唸、但機器沒有確認的有 10 個字：an、are、grandpa、i、is、it's、pig、snowy、the、touch；grandpa 被聽成 grandma，再比對一次聲音的形狀比較像 grandpa。**AI 這一邊沒有人用耳朵聽過**，請老師活動前在 `credits.html` 聽一次這 10 個字（特別是 grandpa）。
 - 學校識別：每個畫面都有校名「南投縣草屯鎮土城國民小學」和校徽。校徽依學校自己的校徽圖檔重新描繪成 3D 向量圖，設計沒有更動。每個角色、交通工具、物品的圖案上都別著一個小小的「土城」徽章。
 - 圖案：全部為本專案原創、以程式繪製的 3D 亮面公仔風格圖（`js/art.js`），沒有使用第三方圖庫或遊戲角色。
 - 選用同步：`apps-script/Code.gs`（Google Apps Script + 試算表）匯整六間教室進度到即時看板。

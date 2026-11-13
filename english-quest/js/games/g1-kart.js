@@ -215,7 +215,7 @@
       api.progress(items.length, N);
       S.lane = 0; S.finishAt = S.pos + 5200; S.rival = Math.min(S.rival, S.pos - 900); S.rivalSpeed = 500;
       await driveTo(S.finishAt + 700, api); if (api.aborted) return null;
-      // the kart is over the line: Ollie stops behind, the trophy appears, then "Are you happy?" → "Yes!"
+      // the kart is over the line: Ollie stops behind, the trophy appears, then "Are you hot?" → "Yes!"
       S.rivalSpeed = 0; S.rival = Math.min(S.rival, S.pos - 300);
       TC.sfx("levelup"); TC.confetti(90); TC.floatText("YOU WIN!", 50, 45, "#ffc83d");
       await TC.sleep(1100); if (api.aborted) return null;

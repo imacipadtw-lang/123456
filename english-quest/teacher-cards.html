@@ -47,8 +47,8 @@
   const C = TC_CONTENT, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
-  const TOUCH = { kart: "孩子點螢幕左半／右半換車道吃星星。", craft: "孩子點左邊想要的顏色方塊，顏色會放大，再回答它是什麼顏色。", hatch: "孩子點蛋三下把蛋敲裂，寵物孵出來後說出牠是什麼；最後點選最喜歡的寵物。",
-    beat: "孩子說出身體部位後，全場跟著節奏摸那個部位；孩子可點四個 DJ 鼓墊打節奏。最後喊 Cheese! 拍合照。", box: "孩子點箱子打開，動物一隻一隻跳出來，數一數有幾隻。", obby: "孩子說出動作後，用力按畫面中央的大按鈕過障礙。" };
+  const TOUCH = { kart: "孩子點螢幕左半／右半換車道吃星星。", craft: "孩子點發光的方塊，像素畫一格一格拼出一位家人，再說出他／她是誰。", hatch: "孩子點蛋三下把蛋敲裂，寵物孵出來後說出牠是什麼；中級再問牠會不會飛；最後點選想要的寵物。",
+    beat: "孩子說出身體部位後，全場跟著節奏摸那個部位；孩子可點四個 DJ 鼓墊打節奏。最後喊 Cheese! 拍合照。", box: "孩子點箱子打開，天氣（太陽、雨、雲、風、雪）從箱子裡跑出來，說出是什麼天氣。", obby: "孩子說出動作（walk、climb、run、ride、fly）後，用力按畫面中央的大按鈕過障礙。" };
   const out = document.getElementById("pages");
   for (let g = 1; g <= 6; g++) {
     const G = C.gates[g], gr = C.greetings[C.greetingOrder[g]], r = TC_SCRIPT(g).filter((x) => x.kind !== "hello"), MARK = { q: "", extra: "＋ ", last: "★ " };

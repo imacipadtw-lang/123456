@@ -41,7 +41,7 @@
     if (!list || !list.length) return letter;
     // younger travellers get numbers from the first pages of the passport
     const lvl = (TC.kid && TC.kid.level) || 2;
-    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : 10));
+    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : 6));
     const pool = easy.length ? easy : list;
     const e = pool[(Math.random() * pool.length) | 0];
     const ans = h("div", { class: "ans" }, "");

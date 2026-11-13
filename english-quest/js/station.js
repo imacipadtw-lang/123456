@@ -25,8 +25,8 @@
   $("#passportRef").textContent = "護照對應：" + G.passport;
   $("#scanOllie").innerHTML = TC.ollieSVG();
   // floating 3D items from this gate's content drift behind the attract screen
-  const GATE_ART = { 1: ["bus", "train", "plane", "taxi", "bike", "boat", "kart"], 2: ["rainbow", "star", "medal", "apple", "lemon", "watermelon"], 3: ["mystegg", "tiger", "rabbit", "pig", "elephant", "lion", "duck"],
-    4: ["body-head", "body-hands", "body-nose", "body-feet", "mic", "star"], 5: ["gift", "duck", "cat", "pig", "rabbit", "bird", "star"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
+  const GATE_ART = { 1: ["bus", "train", "plane", "taxi", "bike", "boat", "kart"], 2: ["star", "rainbow", "medal", "star", "rainbow", "medal"], 3: ["mystegg", "tiger", "rabbit", "pig", "elephant", "lion", "duck"],
+    4: ["body-head", "body-hands", "body-nose", "body-feet", "mic", "star"], 5: ["gift", "wx-sunny", "wx-rainy", "wx-cloudy", "wx-windy", "wx-snowy", "star"], 6: ["trophy", "medal", "bike", "star", "trophy", "medal"] };
   const floaty = h("div", { class: "floaty" });
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
     if ((left < 31 && top > 10 && top < 90) || (left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });

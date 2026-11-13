@@ -1,6 +1,7 @@
 # Game rules after the "simple questions" redesign (read before editing a game)
 
 Audience: grades 1–6 in a small rural school; the questions must be so easy nobody gets stuck in front of visitors.
+**Every answer word must come from passport levels 1–6** (the teacher reviews those six levels with the children before the day).
 
 1. **One word answers.** Every question is `api.ask({ teacher, tzh, say, zh, keys, word, hideKey: true })` where
    `say` is the short sentence from `js/content.js` (e.g. "It's a bus."), `keys` is `item.keys || [[item.w]]`
@@ -8,7 +9,7 @@ Audience: grades 1–6 in a small rural school; the questions must be so easy no
    中級 (level 2) and prints it for 初級 (level 1) by itself — games must not branch on the level for wording.
    `api.level` is only ever 1 or 2.
 2. **Picture of the answer on screen** while the question is asked (large, clear, not a silhouette).
-3. **No removed fields**: `s2 s3 k3 fin3 q2 clues like sports moves[L] say[L] keys[L] color` no longer exist in content.js.
+3. **No removed fields**: `s2 s3 k3 fin3 q2 clues like sports moves[L] say[L] keys[L] color colors numbers pool size` no longer exist in content.js.
 4. **Ollie's spoken lines** (`TC.speak("...")`) are played with human word recordings, so keep them to at most
    four words made only of: yes, no, great, good, go, wow, hello, ok, it's, a, an, the, i, like, can, you,
    big, small, the numbers one–ten, and the item word itself. (Longer encouragement can be shown as on-screen text.)

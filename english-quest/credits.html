@@ -21,16 +21,16 @@
 <body>
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
-<p class="note">遊戲中電視說的每個英文字，預設都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 4 個 Lingua Libre 錄音），依原授權使用。句子是用這些單字錄音一個字一個字唸出來的，唸到的字會亮起來。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。沒有真人錄音的字，電視不唸，畫面顯示「請老師示範」。瀏覽器的電腦語音預設關閉；老師在 ⚙「歐力的聲音」改成「電腦語音」時才會使用，並標示「電腦語音」。</p>
+<p class="note">遊戲中電視說的每個英文字，預設都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 6 個 Lingua Libre 錄音），依原授權使用。句子是用這些單字錄音一個字一個字唸出來的，唸到的字會亮起來。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。沒有真人錄音的字，電視不唸，畫面顯示「請老師示範」。瀏覽器的電腦語音預設關閉；老師在 ⚙「歐力的聲音」改成「電腦語音」時才會使用，並標示「電腦語音」。</p>
 <div id="sum" class="note"></div>
-<p class="note">口音：<b>pink</b>、<b>rainy</b> 兩個字找不到美式英語的真人錄音，使用的是英式英語錄音；其餘都標示為美式英語（見下表「口音」欄）。</p>
-<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把 179 個檔案聽過一遍，172 個辨識出來就是該單字。有 7 個很短的字機器沒有確認：<b>an、big、hi、is、it's、the、touch</b>（機器聽成發音相近的字，例如把 an 聽成 can）。</p>
-<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 7 個字在下表各按 ▶ 聽一次，確認發音正確。</p>
+<p class="note">口音：<b>windy</b> 找不到美式英語的真人錄音，使用的是澳洲英語錄音；<b>rainy</b> 和 <b>pink</b>（遊戲已經不用）是英式英語錄音；其餘都標示為美式英語（見下表「口音」欄）。</p>
+<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把 196 個檔案聽過一遍，182 個辨識出來就是該單字。遊戲裡電視會唸、但機器沒有確認的有 10 個字：<b>an、are、grandpa、i、is、it's、pig、snowy、the、touch</b>（機器聽成別的字，例如把 an 聽成 hand）。其中 <b>grandpa</b> 被聽成 grandma；再比對一次聲音的形狀，比較像 grandpa，但還沒有人用耳朵聽過。</p>
+<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 10 個字在下表各按 ▶ 聽一次（特別是 grandpa），確認發音正確。</p>
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2>其他素材</h2>
 <ul>
-  <li>所有動物、交通工具、食物、彩蛋、獎盃、身體部位小人、動作小人與機器貓頭鷹歐力的 3D 圖案，都是為本活動以程式原創繪製（js/art.js、js/art-body.js、各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
+  <li>所有動物、交通工具、家人像素頭像、天氣、食物、彩蛋、獎盃、身體部位小人、動作小人與機器貓頭鷹歐力的 3D 圖案，都是為本活動以程式原創繪製（js/art.js、js/art-body.js、各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
   <li>六關各自的可愛校徽造型（賽車、彩色方塊、小雞蛋殼帽、DJ 耳機、禮物盒、金牌）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
   <li>校徽：依學校提供的校徽圖檔（土城校徽.jpg）逐色描繪成向量圖，圖形與文字不變，只加上立體金邊與光影（assets/img/tucheng-emblem.svg；描繪程式 tools/emblem_trace.py）。</li>
   <li>字型：<a href="https://fonts.google.com/specimen/Fredoka">Fredoka</a>（SIL Open Font License 1.1，見 fonts/Fredoka-OFL.txt）。</li>
