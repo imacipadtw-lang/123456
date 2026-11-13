@@ -21,6 +21,7 @@
   a.card .zh{color:var(--ink2);font-size:1.1rem}
   a.card .g{font-size:1rem;color:var(--ink2);margin-top:.6rem}
   a.card img{position:absolute;right:.8rem;top:.6rem;width:6.4rem;height:6.4rem;filter:drop-shadow(0 .6rem .8rem rgba(0,0,0,.4));transition:transform .2s}
+  a.card .bdg{position:absolute;right:.4rem;top:-.6rem;width:9.6rem;height:11rem;line-height:0;transition:transform .2s}a.card .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .6rem .8rem rgba(0,0,0,.4))}a.card:hover .bdg{transform:scale(1.08) rotate(-4deg)}
   a.card:hover img{transform:scale(1.12) rotate(-6deg)}
   h3{max-width:90rem;margin:2.4rem auto .8rem;font-size:1.4rem;color:var(--sun)}
   .tools a.card{--c:#ffc83d}
@@ -57,6 +58,7 @@
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
 <script src="js/art-body.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
@@ -64,7 +66,7 @@
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><img src="${TC.art(icons[n])}" alt=""><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : `<img src="${TC.art(icons[n])}" alt="">`}</div><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
   });
 </script>
 <script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>

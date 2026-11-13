@@ -29,8 +29,11 @@
     4: ["body-head", "body-hands", "body-nose", "body-feet", "mic", "star"], 5: ["gift", "duck", "cat", "pig", "rabbit", "bird", "star"], 6: ["basketball", "baseball", "tennis", "trophy", "medal", "bike"] };
   const floaty = h("div", { class: "floaty" });
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
-    if ((left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
+    if ((left < 31 && top > 10 && top < 90) || (left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
   $("#scan").prepend(floaty);
+  // the big cute 土城 badge of this gate (a different design at every gate) on the scan screen, and a small one in the HUD
+  $("#scan").append(TC.badgeEl(gate, "scan-badge bob"));
+  const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.replaceWith(TC.badgeEl(gate, "emb"));
   TC.setAIPill();
 
   const queue = [];
@@ -102,7 +105,7 @@
         h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, kid.name[0]),
         h("div", {}, h("div", { class: "k" }, kid.id === "99" ? "VIP BOARDING PASS · TUCHENG ENGLISH DAY" : "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, kid.id === "99" ? "Welcome, VIP Guest!" : `Welcome, ${kid.name}!`),
           h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級"][kid.level] + " · " + G.zh)),
-        h("div", { style: "width:13rem;height:15rem", html: TC.ollieSVG("cheer") })));
+        TC.badgeEl(gate, "bp-badge bob")));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
     // with sync on: show how many gates this traveller has already stamped
     TC.fetchState().then((st) => {
@@ -165,12 +168,13 @@
     const replay = h("button", { class: "big-btn", onclick: () => playBlob() }, "🔊 ", h("span", { class: "zh" }, `聽 ${kid.name} 說英文`));
     const next = h("button", { class: "big-btn go" }, queue.length ? `NEXT: ${queue[0].name} ▶` : "DONE ✓");
     const ov = h("div", { class: "overlay" },
-      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.artImg({ 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" }[gate], "art"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date} · ${kid.name}`))),
+      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date} · ${kid.name}`))),
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
       h("div", { class: "zh", style: "font-size:1.8rem" }, `把字母和點數寫在護照卡的第 ${gate} 格！ Write the letter and points in box ${gate}!`),
       h("div", { class: "res-actions" }, replay, next));
+    ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
     TC.sfx("stamp"); TC.ollie("cheer");
     // rolling decoder

@@ -248,3 +248,15 @@ img{-webkit-user-drag:none}
 .pts-chip{display:inline-flex;align-items:center;gap:.8rem;background:linear-gradient(180deg,#fff7d6,#ffd96b);color:#14213d;border-radius:3rem;padding:.4rem 2rem .4rem .8rem;font-size:2.2rem;font-weight:700;box-shadow:0 .5rem 0 #e0a21a}
 .pts-chip img{width:4rem;height:4rem}.pts-chip b{font-size:3.2rem}
 .heard .guide{color:#ffe58a;font-weight:600}
+
+/* ---------- the gate's own cute 土城 badge (js/emblem.js) ---------- */
+#scan .scan-badge{position:absolute!important;left:1.4vw;top:52%;width:min(22.6vw,52vh);height:min(25.8vw,59vh);transform:translateY(-50%);z-index:2!important;pointer-events:none}
+.gate-badge .tc-badge.emb{width:6.2rem;height:7.1rem;margin:-1rem -.2rem -1.2rem -.6rem;flex:none}
+.gate-badge .tc-badge.emb svg{filter:drop-shadow(0 .2rem .4rem rgba(0,0,0,.5))}
+.bpass .bp-badge{width:15rem;height:17rem;flex:none}
+.stamp .st-badge{width:13rem;height:14.8rem;margin:-.4rem 0 -.6rem}
+.sc-head .sc-badge{width:9.5rem;height:10.8rem;margin:-2.4rem 0 -1rem}
+@media (max-aspect-ratio:4/3){#scan .scan-badge{width:22vw;height:25vw;top:auto;bottom:12vh;transform:none}}
+.overlay .res-badge{position:absolute;left:1.2vw;top:50%;width:min(20vw,48vh);height:min(22.8vw,55vh);transform:translateY(-50%);pointer-events:none}
+.overlay .stamp-wrap{width:min(36rem,40vh);height:min(36rem,40vh)}
+body:has(.overlay .stamp) #cap,body:has(.overlay.welcome) #cap{left:auto;right:2rem;transform:none;top:9rem}
