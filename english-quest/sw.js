@@ -1,6 +1,6 @@
 /* Offline cache for event day: after the first visit every page, script, sound and font
    is served from the cache (and refreshed in the background when online). */
-const CACHE = "tces-english-day-v9";
+const CACHE = "tces-english-day-v10";
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
