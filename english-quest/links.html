@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>Gate Links 網址總表</title>
+<style>
+  body{margin:0;background:#eef2fb;color:#14213d;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;line-height:1.55}
+  main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+  h1{margin:0 0 6px;font-size:28px}
+  p.lead{margin:0 0 18px;color:#445}
+  .wrap{overflow-x:auto;background:#fff;border:1px solid #d5dcf3;border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{padding:10px 12px;border-bottom:1px solid #e3e8f6;text-align:left;vertical-align:top}
+  th{background:#152a63;color:#fff;font-weight:700}
+  td.n{font-weight:700;white-space:nowrap}
+  td.n i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  a{color:#1a5fd6;word-break:break-all}
+  button{margin-left:6px;border:1px solid #b9c4e6;background:#f3f6ff;border-radius:6px;padding:2px 8px;font-size:13px;cursor:pointer}
+  .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px;margin-right:6px}
+  .main{background:#dff6ea;color:#0d6b3c}.bak{background:#fff1d6;color:#8a5a00}
+  .box{background:#fff;border:1px solid #d5dcf3;border-left:6px solid #ffb020;border-radius:10px;padding:12px 16px;margin:18px 0 0}
+  @media print{body{background:#fff}button{display:none}.wrap{border:0}}
+</style>
+</head>
+<body>
+<main>
+<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:#152a63;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
+<h1>網址總表（每個畫面兩個網址）</h1>
+<p class="lead"><span class="tag main">主網址</span>GitHub：功能完整（AI 聽說、相機、列印、斷網可用），不用登入。<span class="tag bak">備用</span>Claude：主網址打不開時用，需登入老師的 claude.ai 帳號。</p>
+<div class="wrap"><table id="t"><tr><th>畫面</th><th>主網址（GitHub）</th><th>備用網址（Claude）</th></tr></table></div>
+<div class="box"><b>什麼時候用備用網址？</b> 主網址打不開、顯示 404，或學校網路擋住 github.io 時。備用網址在 claude.ai 上：沒有麥克風與相機（孩子說完由老師按 ✓／Enter 過關；QR 用 USB 掃描機或點名字），也不能列印，其餘遊戲內容完全相同。兩個網址每次更新都會一起更新。</div>
+</main>
+<script src="js/content.js"></script>
+<script src="js/links.js"></script>
+<script>
+  const C = TC_CONTENT, t = document.getElementById("t");
+  const name = (r) => r.gate ? `第 ${r.gate} 關 ${C.gates[r.gate].zh}` : { final: "終點解碼關＋家長看板", opening: "開場動畫（大廳）", home: "入口（全部）" }[r.key];
+  const cell = (u) => { const td = document.createElement("td"); const a = document.createElement("a"); a.href = u; a.target = "_blank"; a.rel = "noopener"; a.textContent = u; const b = document.createElement("button"); b.textContent = "複製"; b.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(u).then(() => { b.textContent = "已複製"; setTimeout(() => (b.textContent = "複製"), 1500); }, () => {}); }; td.append(a, b); return td; };
+  TC_LINKS.list().forEach((r) => {
+    const tr = document.createElement("tr"); const n = document.createElement("td"); n.className = "n";
+    n.innerHTML = r.gate ? `<i style="background:${C.gates[r.gate].color}"></i>` : "";
+    n.append(name(r)); tr.append(n, cell(r.github), cell(r.claude)); t.append(tr);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>Gate Host Cards</title>
+<link rel="stylesheet" href="css/core.css">
+<style>
+  html{font-size:16px} html,body{overflow:auto;height:auto}
+  body{background:#e9eefc;color:#14213d;user-select:text;-webkit-user-select:text;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",Fredoka,sans-serif}
+  .bar{max-width:210mm;margin:16px auto;display:flex;gap:10px;align-items:center}
+  .bar button{background:#152a63;color:#fff;border-radius:10px;padding:10px 18px;font-size:16px;font-weight:700}
+  .page{width:210mm;height:297mm;overflow:hidden;margin:0 auto 10mm;background:#fff;padding:10mm 12mm;box-shadow:0 4px 20px rgba(0,0,0,.15);position:relative;break-after:page}
+  .hd{display:flex;align-items:center;gap:5mm;border-bottom:1.2mm solid var(--c);padding-bottom:4mm}
+  .hd .n{width:20mm;height:20mm;border-radius:5mm;background:var(--c);display:grid;place-items:center;font:700 13mm Fredoka,sans-serif;color:#0a1633}
+  .hd h1{margin:0;font:700 9mm Fredoka,sans-serif}
+  .hd .s{font-size:4.2mm;color:#445}
+  .hd img{width:24mm;height:24mm;margin-left:auto}
+  .hd .bdg{width:26mm;height:30mm;margin-left:auto;flex:none;line-height:0}.hd .bdg svg{width:100%;height:100%;overflow:visible}
+  .hd .sch{font-weight:700;color:#152a63;display:flex;align-items:center;gap:1.5mm;margin-top:1mm}.hd .sch img{width:7mm;height:7mm;margin:0}
+  h2{font-size:4.4mm;margin:3.4mm 0 1.6mm;color:#152a63}
+  ol,ul{margin:0;padding-left:6mm;font-size:3.5mm;line-height:1.42}
+  table{width:100%;border-collapse:collapse;font-size:3.6mm}
+  th,td{border:.3mm solid #c9d3ef;padding:1.4mm 2mm;text-align:left;vertical-align:top}
+  th{background:#152a63;color:#fff}
+  td.en{font-family:Fredoka,sans-serif;font-weight:600}
+  table.compact{font-size:2.9mm} table.compact th,table.compact td{padding:.6mm 1.4mm}
+  table.xs{font-size:2.6mm} table.xs th,table.xs td{padding:.3mm 1.2mm}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+  .box{border:.4mm solid #c9d3ef;border-radius:3mm;padding:2.4mm 3.4mm;font-size:3.35mm;line-height:1.42}
+  .url code{font-size:3.3mm;word-break:break-all}
+  .kbd{display:inline-block;border:.3mm solid #889;border-radius:1mm;padding:0 1.5mm;font-family:Fredoka,sans-serif;font-weight:700;background:#f3f5fb}
+  @media print{body{background:#fff}.bar{display:none}.page{box-shadow:none;margin:0}@page{size:A4;margin:0}}
+</style>
+</head>
+<body>
+<div class="bar"><button onclick="print()">🖨 列印全部（6 張 A4）</button><span>每間教室貼一張在電視旁。內容由遊戲內容自動產生，永遠和遊戲一致。</span></div>
+<div id="pages"></div>
+<script src="js/content.js"></script>
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
+<script src="js/art-body.js"></script>
+<script src="js/links.js"></script>
+<script>
+  const C = TC_CONTENT, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const cap = (w) => w[0].toUpperCase() + w.slice(1);
+  const TOUCH = { kart: "孩子點螢幕左半／右半換車道吃星星。", craft: "孩子點發光的方塊，像素畫一格一格拼出一位家人，再說出他／她是誰。", hatch: "孩子點蛋三下把蛋敲裂，寵物孵出來後說出牠是什麼；中級再問牠會不會飛；最後點選想要的寵物。",
+    beat: "孩子說出身體部位後，全場跟著節奏摸那個部位；孩子可點四個 DJ 鼓墊打節奏。最後喊 Cheese! 拍合照。", box: "孩子點箱子打開，天氣（太陽、雨、雲、風、雪）從箱子裡跑出來，說出是什麼天氣。", obby: "孩子說出動作（walk、climb、run、ride、fly）後，用力按畫面中央的大按鈕過障礙。" };
+  const out = document.getElementById("pages");
+  for (let g = 1; g <= 6; g++) {
+    const G = C.gates[g], gr = C.greetings[C.greetingOrder[g]], r = TC_SCRIPT(g).filter((x) => x.kind !== "hello"), MARK = { q: "", extra: "＋ ", last: "★ " };
+    const pg = document.createElement("div"); pg.className = "page"; pg.style.setProperty("--c", G.color);
+    pg.innerHTML = `<div class="hd"><div class="n">${g}</div><div><h1>${esc(G.title)} · ${esc(G.zh)}</h1><div class="s">Gate ${g} · ${esc(G.city)} · ${esc(G.genre)} · 護照：${esc(G.passport)}</div><div class="s sch"><img src="assets/img/tucheng-emblem.svg" alt="">南投縣草屯鎮土城國民小學 · 運動會英語日</div></div><div class="bdg">${TC.badgeSVG(g)}</div></div>
+      <div class="grid2" style="margin-top:4mm">
+        <div class="box"><b>開機</b><br>1. Chrome／Edge 開主網址，按 F11 全螢幕<br>2. 允許麥克風 → 右上 ⚙「測試麥克風」<br>3. 刷老師測試卡玩一回合，右上角出現綠燈「AI 正在聽」<br>4. 關閉螢幕保護、音量調大</div>
+        <div class="box"><b>老師按鍵</b><br><span class="kbd">Enter</span>/<span class="kbd">空白</span> 說得好 ✓（AI 沒聽到時）　<span class="kbd">H</span> 聽示範<br><span class="kbd">N</span> 跳過　<span class="kbd">Esc</span> 回到掃描畫面　📋 本關台詞<br>⭐ 貴賓體驗：不用 QR 卡直接玩<br>上方 初級/中級 可隨時切換（初級直接顯示答案字）</div>
+      </div>
+      <div class="box url" style="margin-top:3mm"><b>主網址</b>（GitHub）<code>${esc(TC_LINKS.gate(g).github)}</code><br><b>備用網址</b>（Claude，需登入老師帳號；主網址打不開時用）<code>${esc(TC_LINKS.gate(g).claude)}</code></div>
+      <h2>每位孩子的流程（估計約 3–4 分鐘；⚙ 快速模式約 2 分鐘）</h2>
+      <ol><li>刷 QR（同組可先全部刷好排隊）→ 按 START</li><li>👋 暖身：老師問 <b>${esc(gr.teacher)}</b> → 孩子 ${esc(gr.say.replace("[Name]", "Amy").replace("[age]", "nine"))}</li>
+      <li>🎮 遊戲回合：畫面出現圖片，老師問左欄，孩子<b>只要說出答案字</b>（初級畫面直接有字，中級是填空）。${esc(TOUCH[G.key])}</li><li>🎉 全班一起說最後一句（越大聲煙火越多）</li>
+      <li>🧩 句子拼拼看：孩子點單字卡排好護照例句，再唸出來</li><li>🛂 護照密碼：孩子翻紙本護照找到畫面上的編號單字並說出來 → 第一個字母寫進 QR 卡第 <b>${g}</b> 格（本關字母：<b>${C.secret[g - 1]}</b>）</li>
+      <li>🎟 刮刮卡：孩子用手指刮開銀色區塊，露出點數 → 把點數也寫在第 <b>${g}</b> 格下面（終點可兌換獎品）</li>
+      <li>全息印章＋播放孩子的英文原聲 → 按 NEXT 換下一位</li></ol>
+      <h2>台詞（老師問 → 孩子只要說出答案字。★ = 最後一題，＋ = 中級加問）</h2>
+      <table class="${r.length > 13 ? "compact xs" : r.length > 9 ? "compact" : ""}"><tr><th style="width:27%">老師問 Teacher</th><th style="width:30%">畫面上的句子</th><th style="width:20%">答案字</th><th>中文</th></tr>
+      ${r.map((x) => `<tr><td>${MARK[x.kind]}${esc(x.t)}</td><td class="en">${esc(x.say)}</td><td class="en"><b>${esc(x.word.split(" ").join(" / "))}</b></td><td>${esc(x.zh)}</td></tr>`).join("")}</table>
+      <h2>狀況處理</h2>
+      <ul><li>AI 沒反應／沒網路 → 孩子說完老師按 ✓（Enter）</li><li>掃描機不能用 → 📷 相機掃描或 👆 手動選擇</li><li>畫面卡住 → 重新整理（孩子的字母寫在卡上，不會遺失）</li><li>孩子害羞 → 按 🔊 聽真人示範，跟著說；初級只要說一個字</li></ul>`;
+    out.append(pg);
+  }
+</script>
+</body>
+</html>
