@@ -163,8 +163,6 @@
     return out;
   };
   const isName = (t) => TC.kid && normTok(t) === normTok(TC.kid.name);
-  /** true when every word of the line (apart from the child's name) has a human recording */
-  TC.canSayHuman = (text) => { const t = TC.voiceTokens(text); return t.length > 0 && t.every((x) => x.clip || isName(x.t)); };
   const clipCache = {};
   function playClip(key) {
     const a = (window.TC_AUDIO || {})[key]; if (!a) return Promise.resolve(false);
@@ -178,16 +176,21 @@
     });
   }
   TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && window.TC_AUDIO[k]; if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
-  /** play a line word by word with human clips; onWord(i, token) fires as each word starts. Resolves true if anything was played. */
-  TC.sayHuman = async function (text, onWord) {
-    const toks = TC.voiceTokens(text); let any = false;
+  /** The TV never glues separate word recordings into a sentence (that sounds unnatural: no weak forms, no linking).
+      A line is cut at its punctuation; a piece is spoken only when ONE human recording covers the whole piece
+      ("Yes!", "Tiger!", "Good morning!"). Anything longer is shown as a subtitle and left to the teacher's own voice. */
+  TC.voicePieces = function (text) {
+    return String(text || "").replace(/\[[^\]]*\]/g, " ").split(/[.!?…,;:]+/).map((x) => x.trim()).filter(Boolean)
+      .map((seg) => { const t = TC.voiceTokens(seg); return { text: seg, clip: t.length === 1 && t[0].clip ? t[0].clip : null }; });
+  };
+  /** true when every piece of the line (apart from the child's name) is one human recording */
+  TC.canSayHuman = (text) => { const p = TC.voicePieces(text); return p.length > 0 && p.every((x) => x.clip || isName(x.text)); };
+  /** play the pieces of a line that have a recording; onPiece(piece) fires as each starts. Resolves true if anything was played. */
+  TC.sayHuman = async function (text, onPiece) {
+    const pieces = TC.voicePieces(text).filter((x) => x.clip); let any = false;
     TC.quiet(true);
-    try {
-      for (let i = 0; i < toks.length; i++) {
-        onWord && onWord(i, toks[i]);
-        if (toks[i].clip) { any = (await playClip(toks[i].clip)) || any; await sleep(45); } else await sleep(260);
-      }
-    } finally { TC.quiet(false); onWord && onWord(-1, null); }
+    try { for (const pc of pieces) { onPiece && onPiece(pc); any = (await playClip(pc.clip)) || any; await sleep(140); } }
+    finally { TC.quiet(false); onPiece && onPiece(null); }
     return any;
   };
   /* subtitle for what Ollie says (the words light up as they are spoken) */
@@ -226,36 +229,33 @@
     });
   }
   /**
-   * Ollie says a line. The text always appears as a subtitle. With the default human voice:
-   *  · if every word has a human recording, the whole line is read word by word;
-   *  · otherwise only opt.human (a short line that does have recordings) or the first recorded word is heard.
+   * Ollie says a line. The text always appears as a subtitle. With the default human voice only the pieces that are
+   * one whole recording are heard ("Yes!", "Seven!", "Good morning!"); opt.human can name what to say instead.
+   * With the computer voice switched on in ⚙ the whole line is read by the browser's voice.
    */
   TC.speak = async function (text, opt = {}) {
     if (!text) return;
     if (TC.cfg.voiceMode === "tts") { TC.caption(text); return ttsSpeak(text, opt); }
-    let line = opt.human != null ? opt.human : text;
-    if (!TC.canSayHuman(line)) { const first = TC.voiceTokens(line).find((t) => t.clip); line = first ? first.t : ""; }
-    const full = line === text, toks = TC.voiceTokens(text);
+    const line = opt.human != null ? opt.human : text, toks = TC.voiceTokens(text);
     TC.caption(text, -1, toks);
-    if (!line) { await sleep(Math.min(1800, 700 + text.length * 30)); return; }
+    if (!TC.voicePieces(line).some((x) => x.clip)) { await sleep(Math.min(1600, 600 + text.length * 30)); return; }
     TC.ollie && TC.ollie("talk");
-    await TC.sayHuman(line, full ? (i) => i >= 0 && TC.caption(text, i, toks) : null);
+    await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks); });
     TC.ollie && TC.ollie("idle");
   };
-  /** number of points, said with human recordings ("twenty points") */
-  TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 25: "twenty five", 30: "thirty", 40: "forty", 50: "fifty", 100: "one hundred" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`) : Promise.resolve(); };
-  /** Model the answer for the child: the sentence word by word (human recordings), or just the key word if a word of the sentence has no recording. */
+  /** number of points on the scratch card: the number word is a human recording */
+  TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
+  /** Model the answer: one human recording — the whole line if a recording of it exists ("Good morning!"), otherwise the answer word.
+      (With the computer voice switched on, the browser reads the whole sentence after the word.) */
   TC.model = async function (sentence, word) {
     const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
-    const light = (i, tok) => { spans.forEach((sp) => sp.classList.remove("saying")); if (tok) tok.t.split(/\s+/).forEach((w) => { const sp = spans.find((x) => x.dataset.n === TC.norm(w)[0] && !x.classList.contains("said-now")); if (sp) sp.classList.add("saying"); }); };
-    if (TC.cfg.voiceMode === "tts") {
-      const words = String(sentence || "").replace(/[^a-zA-Z' ]/g, " ").trim().split(/\s+/).filter(Boolean);
-      if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); if (words.length <= 2) return "human"; await sleep(250); }
-      showSrc("tts"); await ttsSpeak(sentence, { rate: 0.85, pitch: 1.0 }); return "tts";
-    }
-    if (sentence && TC.canSayHuman(sentence)) { showSrc("human", word || ""); await TC.sayHuman(sentence, light); return "human"; }
-    if (word && TC.hasHuman(word)) { showSrc("human", word); await TC.playHuman(word); return "human"; }
-    showSrc("none"); return "none";
+    const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
+    const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
+    const key = one || (word && clipKey(normTok(word)));
+    if (key) { showSrc("human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
+    if (TC.cfg.voiceMode === "tts" && !one && sentence) { if (key) await sleep(250); showSrc("tts"); await ttsSpeak(sentence, { rate: 0.85, pitch: 1.0 }); return "tts"; }
+    if (!key) { showSrc("none"); return "none"; }
+    return "human";
   };
   function showSrc(kind, word) {
     const t = $("#srcTag"); if (!t) return;
@@ -696,9 +696,9 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力用真人錄音先唸一次；沒有錄音的字會略過）</option></select></label>
+      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（選了電腦語音時，歐力會先把問題唸一次）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
-      <label><span>歐力的聲音</span><select id="sVMode"><option value="human">真人發音（建議）：只播放真人錄音，句子逐字唸</option><option value="tts">電腦語音：用瀏覽器的電腦語音唸整句</option></select></label>
+      <label><span>歐力的聲音</span><select id="sVMode"><option value="human">真人發音（建議）：電視只說單字和短語的真人錄音，整句由老師親口示範</option><option value="tts">加上電腦語音：聽示範時，電腦語音再把整句唸一次</option></select></label>
       <label><span>刮刮卡點數</span><select id="sFair"><option value="1">公平模式：每人六關合計 100 點</option><option value="0">驚喜模式：每張 10／20／30／50 點</option></select></label>
       <label><span>電腦語音 Voice（選電腦語音時才用）</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>

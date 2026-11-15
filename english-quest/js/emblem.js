@@ -20,7 +20,11 @@
   let uid = 0;
   const FONT = "'Noto Sans TC','Microsoft JhengHei','PingFang TC','Heiti TC',sans-serif";
 
-  function make(gate) {
+  // the design follows the gate's GAME (kart, blocks, chick, DJ, gift box, medal), wherever the teacher puts that game
+  const BY_ENGINE = { kart: 1, craft: 2, hatch: 3, beat: 4, box: 5, obby: 6 };
+  function make(gateNo) {
+    const GC = window.TC_CONTENT && window.TC_CONTENT.gates && window.TC_CONTENT.gates[gateNo];
+    const gate = (GC && BY_ENGINE[GC.key]) || gateNo;
     const id = "tb" + uid++ + "_";
     const g = (name, stops, x2 = 0, y2 = 1) => `<linearGradient id="${id}${name}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join("")}</linearGradient>`;
     const rg = (name, stops, cx = 0.35, cy = 0.3) => `<radialGradient id="${id}${name}" cx="${cx}" cy="${cy}" r=".8">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join("")}</radialGradient>`;
@@ -108,8 +112,8 @@
     const rib = `<g transform="translate(200 ${ribY})"><path d="M${-ribW - 34} -6L${-ribW + 6} -6L${-ribW + 6} 46L${-ribW - 34} 46L${-ribW - 18} 20Z" fill="${T.c2}"/><path d="M${ribW + 34} -6L${ribW - 6} -6L${ribW - 6} 46L${ribW + 34} 46L${ribW + 18} 20Z" fill="${T.c2}"/><path d="M${-ribW + 6} 34L${-ribW + 6} 46L${-ribW - 6} 34Z M${ribW - 6} 34L${ribW - 6} 46L${ribW + 6} 34Z" fill="#000" opacity=".35"/>
       <path d="M${-ribW} -30Q0 -44 ${ribW} -30L${ribW} 34Q0 20 ${-ribW} 34Z" fill="${u("rib")}" stroke="#fff" stroke-width="4"/>
       <text x="0" y="4" text-anchor="middle" font-family="${FONT}" font-weight="900" font-size="38" fill="#fff" stroke="${T.c2}" stroke-width="7" paint-order="stroke" letter-spacing="4">土城國小</text>
-      <text x="0" y="25" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="15" fill="#fff" letter-spacing="2.5">${T.sub}</text></g>`;
-    return `<svg class="tc-badge-svg" viewBox="-6 -14 412 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="土城國小校徽 · Gate ${gate}"><defs>${defs}</defs>${back}${emb}${front}${rib}</svg>`;
+      <text x="0" y="25" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="15" fill="#fff" letter-spacing="2.5">${(GC && GC.title ? GC.title : T.sub).toUpperCase()}</text></g>`;
+    return `<svg class="tc-badge-svg" viewBox="-6 -14 412 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="土城國小校徽 · Gate ${gateNo}"><defs>${defs}</defs>${back}${emb}${front}${rib}</svg>`;
   }
 
   TC.badgeSVG = make;

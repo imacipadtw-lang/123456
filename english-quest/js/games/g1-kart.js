@@ -1,12 +1,12 @@
-/* Gate 1 · Turbo Talk Kart — "What is it?" → say the vehicle to get a turbo boost (passport L1 transport) */
+/* Turbo Talk Kart (engine "kart", used by the NUMBERS gate) — "How many?" → count the stars on the board, say the number, get a turbo boost (passport 第7關 數字 1–10) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
   const OLLIE = TC.artImg("ollie"), TOWER = TC.artImg("tower");
-  const IM = {}; ["bus", "train", "taxi", "plane", "bike", "boat", "truck", "scooter", "tree", "star", "trophy"].forEach((n) => (IM[n] = TC.artImg(n)));
+  const IM = {}; ["tree", "star", "trophy"].forEach((n) => (IM[n] = TC.artImg(n)));
 
   let cv, ctx, W, H, raf = 0;
-  const S = { lane: 0, laneX: 0, stars: [], got: 0, hint: 0, pos: 0, speed: 0, target: 0, boost: 0, curveX: 0, signs: [], finishAt: 0, rival: 0, rivalSpeed: 0, bubble: null, shake: 0, kidColor: "#ffc83d", kidName: "", place: 2, running: false, finished: false };
+  const S = { lane: 0, laneX: 0, stars: [], got: 0, hint: 0, pos: 0, speed: 0, target: 0, boost: 0, curveX: 0, signs: [], finishAt: 0, rival: 0, rivalSpeed: 0, bubble: null, board: null, run: 0, shake: 0, kidColor: "#ffc83d", kidName: "", place: 2, running: false, finished: false };
   const SEG = 220; // world units per stripe pair
 
   function curve(d) { return Math.sin(d / 1300) * 0.9 + Math.sin(d / 520 + 1) * 0.45; }
@@ -94,18 +94,19 @@
     if (S.running) {
       ctx.font = `700 ${H * 0.055}px Fredoka, sans-serif`; ctx.textAlign = "right"; ctx.lineWidth = H * 0.01; ctx.strokeStyle = "#0a1633"; ctx.fillStyle = "#ffc83d";
       ctx.strokeText(`★ ${S.got}`, W * 0.97, H * 0.2); ctx.fillText(`★ ${S.got}`, W * 0.97, H * 0.2);
-      if (S.hint > 0 && !S.bubble) { S.hint -= dt; ctx.globalAlpha = Math.min(1, S.hint); ctx.textAlign = "center"; ctx.font = `700 ${H * 0.045}px Fredoka, "Microsoft JhengHei", sans-serif`; ctx.fillStyle = "#fff";
+      if (S.hint > 0 && !S.bubble && !S.board) { S.hint -= dt; ctx.globalAlpha = Math.min(1, S.hint); ctx.textAlign = "center"; ctx.font = `700 ${H * 0.045}px Fredoka, "Microsoft JhengHei", sans-serif`; ctx.fillStyle = "#fff";
         ctx.strokeText("👈 點左右換車道，收集星星！ 👉", W / 2, H * 0.62); ctx.fillText("👈 點左右換車道，收集星星！ 👉", W / 2, H * 0.62); ctx.globalAlpha = 1; }
     }
     if (S.boost > 0 || S.speed > 900) speedLines();
-    // bubble with the vehicle picture
+    // star board: n big stars to count ("How many?")
+    if (S.board) drawBoard(performance.now());
+    // bubble with the trophy (finale)
     if (S.bubble) {
       const b = S.bubble; b.t = Math.min(1, b.t + 0.06);
       const r = H * 0.19 * easeOut(b.t), cx = W / 2, cy = H * 0.43; // big, and clear of Ollie's subtitle (#cap, top centre) above and the talk bar below
       ctx.fillStyle = "rgba(255,255,255,.95)"; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
       ctx.lineWidth = H * 0.012; ctx.strokeStyle = "#4cc9ff"; ctx.stroke();
       const im = IM[b.img]; if (im && im.complete) ctx.drawImage(im, cx - r * 0.8, cy - r * 0.8, r * 1.6, r * 1.6);
-      if (b.label) { ctx.font = `700 ${H * 0.06}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.strokeStyle = "#0a1633"; ctx.lineWidth = H * 0.012; ctx.strokeText(b.label, cx, cy + r + H * 0.06); ctx.fillText(b.label, cx, cy + r + H * 0.06); }
     }
     // place badge + speed
     ctx.font = `700 ${H * 0.07}px Fredoka, sans-serif`; ctx.textAlign = "left";
@@ -114,6 +115,57 @@
     ctx.restore();
   }
   const easeOut = (t) => 1 - Math.pow(1 - t, 3) + Math.sin(t * Math.PI) * 0.15;
+
+  /* ---- star board: rows of up to five big stars, between Ollie's subtitle (#cap, top centre) and the talk bar ----
+     A number line sits under each row: from the start when b.digits (初級), otherwise the board grows downwards to make
+     room for it once the answer is in (the talk bar has slid away by then), so the stars can be as big as possible. */
+  function boardLayout(b, now) {
+    const k = W / innerWidth, rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 12;
+    const capEl = document.getElementById("cap"), talk = document.getElementById("talk");
+    const top = Math.max((8.2 * rem + Math.max(capEl ? capEl.offsetHeight : 0, 6.8 * rem) + 0.8 * rem) * k, H * 0.225); // also clear of "1st" and "★ 12"
+    const bottom = (innerHeight - 1.2 * rem - Math.max(talk ? talk.offsetHeight : 0, 19 * rem) - 0.8 * rem) * k;
+    const cols = Math.min(5, b.n), rows = Math.ceil(b.n / 5), pad = H * 0.02, zh = bottom - top, ROW = 1.08, NUM = 0.34;
+    const s = Math.max(H * 0.08, Math.min((zh - pad * 2) / (rows * (ROW + (b.digits ? NUM : 0))), (W * 0.84 - pad * 2) / (cols * 1.1))); // star size
+    const g = b.digits ? 1 : b.growT ? Math.min(1, (now - b.growT) / 300) : 0;
+    const cw = s * 1.1, pw = cols * cw + pad * 2, ph0 = rows * s * (ROW + (b.digits ? NUM : 0)) + pad * 2, rh = s * (ROW + NUM * g);
+    return { s, cw, rh, pad, pw, ph: rows * rh + pad * 2, px: W / 2 - pw / 2, py: top + (zh - ph0) / 2 };
+  }
+  function drawBoard(now) {
+    const b = S.board, L = boardLayout(b, now), s = L.s;
+    const a = b.out ? Math.max(0, 1 - (now - b.out) / 400) : Math.min(1, (now - b.t0) / 220);
+    ctx.save(); ctx.globalAlpha = a;
+    ctx.fillStyle = "rgba(14,22,60,.92)"; roundRect(L.px, L.py, L.pw, L.ph, H * 0.035); ctx.fill();
+    ctx.lineWidth = H * 0.009; ctx.strokeStyle = "#ffc83d"; ctx.stroke();
+    ctx.restore();
+    const tx = W * 0.9, ty = H * 0.18; // the kart's star counter
+    const digit = (txt, x, y, px, fill) => { ctx.font = `700 ${px}px Fredoka, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineJoin = "round"; ctx.lineWidth = px * 0.2; ctx.strokeStyle = "#0a1633"; ctx.strokeText(txt, x, y); ctx.fillStyle = fill; ctx.fillText(txt, x, y); ctx.textBaseline = "alphabetic"; };
+    let big = null;
+    b.stars.forEach((st, i) => {
+      if (!st.t || st.done) return;
+      const cx = L.px + L.pad + ((i % 5) + 0.5) * L.cw, cy = L.py + L.pad + Math.floor(i / 5) * L.rh + s * 0.52;
+      let x = cx, y = cy, k = easeOut(Math.min(1, (now - st.t) / 320));
+      const u = st.c ? (now - st.c) / 420 : 2; // count-up pulse
+      if (u < 1) k *= 1 + 0.22 * Math.sin(u * Math.PI);
+      const f = st.f ? (now - st.f) / 480 : -1; // flight to the counter
+      if (f >= 1) { st.done = true; S.got++; TC.sfx("coin"); return; }
+      if (f > 0) { const e = f * f; x = cx + (tx - cx) * e; y = cy + (ty - cy) * e - Math.sin(f * Math.PI) * H * 0.07; k *= 1 - 0.7 * e; }
+      const d = s * 1.16 * k; // the star fills about 84% of its picture: draw the picture a little larger than the cell
+      if (IM.star.complete) ctx.drawImage(IM.star, x - d / 2, y - d * 0.465, d, d);
+      if (f > 0 || !(b.digits || st.c)) return;
+      if (u < 1) big = { n: i + 1, x: cx, y: cy + s * 0.7, px: s * (0.34 + 0.3 * Math.sin(u * Math.PI)) };
+      else digit(i + 1, cx, cy + s * 0.74, s * 0.34, st.c ? "#ffc83d" : "#fff");
+    });
+    if (big) digit(big.n, big.x, big.y, big.px, "#ffe066"); // the number being counted, on top
+    if (b.label && !b.out) { // answer plate under the board (the talk bar has slid away): ⑤ Five!
+      const t = Math.min(1, (now - b.labelT) / 260), fh = H * 0.075 * (0.6 + 0.4 * easeOut(t));
+      ctx.font = `700 ${fh}px Fredoka, sans-serif`;
+      const tw = ctx.measureText(b.label).width, r = fh * 0.72, w = tw + r * 2 + fh * 1.3, x0 = W / 2 - w / 2, y0 = Math.min(L.py + L.ph + H * 0.018, H * 0.985 - r * 2);
+      ctx.fillStyle = "rgba(255,255,255,.97)"; roundRect(x0, y0, w, r * 2, r); ctx.fill(); ctx.lineWidth = H * 0.008; ctx.strokeStyle = "#4cc9ff"; ctx.stroke();
+      ctx.fillStyle = "#ffc83d"; ctx.beginPath(); ctx.arc(x0 + r, y0 + r, r * 0.8, 0, 7); ctx.fill();
+      ctx.textBaseline = "middle"; ctx.textAlign = "center"; ctx.fillStyle = "#0a1633"; ctx.fillText(b.n, x0 + r, y0 + r + fh * 0.04);
+      ctx.textAlign = "left"; ctx.fillText(b.label, x0 + r * 2 + fh * 0.25, y0 + r + fh * 0.04); ctx.textBaseline = "alphabetic";
+    }
+  }
 
   function speedLines() {
     ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = H * 0.004;
@@ -157,12 +209,12 @@
     ctx.restore();
   }
 
-  async function driveTo(d, api) {
+  async function driveTo(d, dead) {
     // drive until the sign is just ahead, then brake
     S.target = 700;
-    while (S.pos < d - 1400) { if (api.aborted) return; await TC.sleep(50); }
+    while (S.pos < d - 1400) { if (dead()) return; await TC.sleep(50); }
     S.target = 160;
-    while (S.pos < d - 520) { if (api.aborted) return; await TC.sleep(40); }
+    while (S.pos < d - 520) { if (dead()) return; await TC.sleep(40); }
     S.target = 0;
     await TC.sleep(500);
   }
@@ -170,65 +222,89 @@
   TC.games.kart = {
     mount(api) {
       cv = TC.h("canvas", { class: "game" }); api.stage.append(cv); ctx = cv.getContext("2d");
-      cv.addEventListener("pointerdown", (e) => { if (!S.running || S.bubble) return; const r = cv.getBoundingClientRect(); S.lane = Math.max(-1, Math.min(1, S.lane + (e.clientX - r.left < r.width / 2 ? -1 : 1))); TC.sfx("whoosh"); });
+      cv.addEventListener("pointerdown", (e) => { if (!S.running || S.bubble || S.board) return; const r = cv.getBoundingClientRect(); S.lane = Math.max(-1, Math.min(1, S.lane + (e.clientX - r.left < r.width / 2 ? -1 : 1))); TC.sfx("whoosh"); });
       resize(); addEventListener("resize", resize);
       raf = requestAnimationFrame(draw);
     },
-    idle() { S.running = false; S.bubble = null; S.target = 300; S.rivalSpeed = 0; S.signs = []; S.finishAt = 0; S.kidName = ""; S.kidColor = "#ffc83d"; },
+    idle() { S.run++; S.running = false; S.bubble = null; S.board = null; S.target = 300; S.rivalSpeed = 0; S.signs = []; S.finishAt = 0; S.kidName = ""; S.kidColor = "#ffc83d"; },
     async play(api) {
-      const G = api.G, kid = api.kid;
-      Object.assign(S, { pos: 0, speed: 0, target: 0, boost: 0, rival: 1500, rivalSpeed: 0, signs: [], finishAt: 0, bubble: null, kidColor: kid.color, kidName: kid.name, running: true, lane: 0, laneX: 0, stars: [], got: 0, hint: 6 });
-      const items = G.items.slice().sort(() => Math.random() - 0.5).slice(0, TC.rounds(5));
-      items.forEach((it, i) => S.signs.push({ d: 3500 + i * 5200, it }));
+      const G = api.G, kid = api.kid, run = ++S.run;
+      const dead = () => api.aborted || run !== S.run; // Esc, or a newer game has started
+      Object.assign(S, { pos: 0, speed: 0, target: 0, boost: 0, rival: 1500, rivalSpeed: 0, signs: [], finishAt: 0, bubble: null, board: null, kidColor: kid.color, kidName: kid.name, running: true, lane: 0, laneX: 0, stars: [], got: 0, hint: 6 });
+      const rounds = TC.rounds(5), used = [];
+      for (let i = 0; i < rounds; i++) S.signs.push({ d: 3500 + i * 5200 });
       // star trails between the signs, weaving across the three lanes
-      for (let d = 1200; d < 3500 + items.length * 5200 + 4000; d += 420) { const near = S.signs.some((sg) => Math.abs(sg.d - d) < 900); if (!near) S.stars.push({ d, lane: Math.round(Math.sin(d / 1700) * 1.4), done: false }); }
-      const N = items.length + 1;
+      for (let d = 1200; d < 3500 + rounds * 5200 + 4000; d += 420) { const near = S.signs.some((sg) => Math.abs(sg.d - d) < 900); if (!near) S.stars.push({ d, lane: Math.round(Math.sin(d / 1700) * 1.4), done: false }); }
+      TC.preloadClips && TC.preloadClips(Object.values(G.numbers).map((v) => v.w).concat(["yes", "go", "great"]));
+      const N = rounds + 1;
       // start lights: three reds, then green
       const lights = TC.h("div", { style: "position:fixed;left:50%;top:25%;transform:translateX(-50%);z-index:30;display:flex;gap:2vh;padding:2vh 3vh;border-radius:3vh;background:#14182b;box-shadow:0 2vh 4vh rgba(0,0,0,.5)" });
       const bulbs = [0, 1, 2].map(() => { const b = TC.h("div", { style: "width:10vh;height:10vh;border-radius:50%;background:#3a2030;box-shadow:inset 0 -1vh 2vh rgba(0,0,0,.5)" }); lights.append(b); return b; });
       document.body.append(lights);
-      for (let i = 0; i < 3; i++) { await TC.sleep(650); bulbs[i].style.background = "radial-gradient(circle at 35% 30%,#ffb3b3,#ff2a2a 60%,#a00)"; bulbs[i].style.boxShadow = "0 0 4vh #ff3b3b"; TC.sfx("tick"); TC.sfx("pop"); }
-      await TC.sleep(700); bulbs.forEach((b) => { b.style.background = "radial-gradient(circle at 35% 30%,#d6ffe0,#2ee66b 60%,#0a8a3a)"; b.style.boxShadow = "0 0 4vh #2ee66b"; });
+      for (let i = 0; i < 3; i++) { await TC.sleep(650); if (dead()) { lights.remove(); return null; } bulbs[i].style.background = "radial-gradient(circle at 35% 30%,#ffb3b3,#ff2a2a 60%,#a00)"; bulbs[i].style.boxShadow = "0 0 4vh #ff3b3b"; TC.sfx("tick"); TC.sfx("pop"); }
+      await TC.sleep(700); if (dead()) { lights.remove(); return null; }
+      bulbs.forEach((b) => { b.style.background = "radial-gradient(circle at 35% 30%,#d6ffe0,#2ee66b 60%,#0a8a3a)"; b.style.boxShadow = "0 0 4vh #2ee66b"; });
       TC.floatText("GO!", 50, 45, "#2ee66b"); TC.sfx("boost"); TC.speak("Go!");
       setTimeout(() => lights.remove(), 900);
       S.rivalSpeed = 420;
-      for (let i = 0; i < items.length; i++) {
+      for (let i = 0; i < rounds; i++) {
         api.progress(i, N);
-        const sg = S.signs[i], it = sg.it;
-        await driveTo(sg.d, api); if (api.aborted) return null;
+        const sg = S.signs[i];
+        await driveTo(sg.d, dead); if (dead()) return null;
         S.rivalSpeed = 80;
-        S.bubble = { img: it.img, t: 0, label: "" }; TC.sfx("pop");
-        const r = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: it.say, zh: it.zh, keys: it.keys || [[it.w]], word: it.w, hideKey: true });
-        if (api.aborted) return null;
-        S.bubble.label = cap(it.w) + "!";
-        TC.hideTalk();
-        if (r.ok) { TC.sfx("boost"); S.boost = 2.6; S.shake = 0.4; TC.floatText(r.by === "ai" ? "TURBO!" : "GO!", 82, 45, "#ffc83d"); } // beside the picture, not on it
-        const said = TC.speak(r.ok ? "Yes! " + it.say : it.say); // Ollie: "Yes! It's a bus."
+        // how many stars? 初級: 1–5 with a little running number under each star; 中級: 1–10, numbers only after the answer
+        const easy = api.level === 1, max = easy ? 5 : 10;
+        const all = Object.keys(G.numbers).map(Number).filter((x) => x <= max);
+        const fresh = all.filter((x) => !used.includes(x));
+        const n = fresh.length ? fresh[(Math.random() * fresh.length) | 0] : used.filter((x) => x <= max)[0] || all[0]; // never twice in a game (unless the level was lowered mid-game and 1–5 ran out)
+        if (used.includes(n)) used.splice(used.indexOf(n), 1);
+        used.push(n);
+        const word = G.numbers[n].w, Word = cap(word);
+        const b = (S.board = { n, digits: easy, t0: performance.now(), stars: Array.from({ length: n }, () => ({ t: 0, c: 0, f: 0, done: false })), growT: 0, label: "", labelT: 0, out: 0 });
+        await TC.sleep(250);
+        for (let j = 0; j < n; j++) { if (dead()) return null; b.stars[j].t = performance.now(); TC.sfx("pop"); await TC.sleep(n > 5 ? 200 : 260); }
+        await TC.sleep(200); if (dead()) return null;
+        const r = await api.ask({ teacher: G.teacher, tzh: G.tzh, say: Word + "!", zh: "數數看有幾顆星星", keys: [[word, String(n)]], word, hideKey: true });
+        if (dead()) return null;
+        TC.hideTalk(); b.growT = performance.now();
+        // count-up: each star pulses in turn with its number
+        await TC.sleep(450);
+        for (let j = 0; j < n; j++) { if (dead()) return null; b.stars[j].c = performance.now(); TC.sfx("click"); await TC.sleep(n > 5 ? 230 : 300); }
+        await TC.sleep(250); if (dead()) return null;
+        b.label = Word + "!"; b.labelT = performance.now();
+        const said = TC.speak(r.ok ? "Yes! " + Word + "!" : Word + "!"); // Ollie: "Yes! Five!"
         sg.done = true;
-        await TC.sleep(1200); await Promise.race([said, TC.sleep(1800)]); // keep the picture up while Ollie says it
-        if (api.aborted) return null;
-        S.bubble = null; if (r.ok) S.boost = 2.2;
+        await TC.sleep(900); await Promise.race([said, TC.sleep(2200)]); // keep the stars up while Ollie says it
+        if (dead()) return null;
+        // the stars fly into the kart's star counter, then the turbo fires
+        const t = performance.now(); b.out = t; b.stars.forEach((st, j) => (st.f = t + j * 80));
+        TC.sfx("whoosh");
+        await TC.sleep(n * 80 + 560); if (dead()) return null;
+        b.stars.forEach((st) => { if (!st.done) { st.done = true; S.got++; } }); // (a frame was skipped)
+        S.board = null;
+        if (r.ok) { TC.sfx("boost"); S.boost = 2.6; S.shake = 0.4; TC.floatText(r.by === "ai" ? "TURBO!" : "GO!", 50, 45, "#ffc83d"); }
         S.target = 700; S.rivalSpeed = i < 2 ? 640 : 380;
         if (i === 2) { S.rival = Math.min(S.rival, S.pos - 400); }
       }
       // finish
-      api.progress(items.length, N);
+      api.progress(rounds, N);
       S.lane = 0; S.finishAt = S.pos + 5200; S.rival = Math.min(S.rival, S.pos - 900); S.rivalSpeed = 500;
-      await driveTo(S.finishAt + 700, api); if (api.aborted) return null;
-      // the kart is over the line: Ollie stops behind, the trophy appears, then "Are you hot?" → "Yes!"
+      await driveTo(S.finishAt + 700, dead); if (dead()) return null;
+      // the kart is over the line: Ollie stops behind, the trophy appears, then "Are you tired?" → "No!"
       S.rivalSpeed = 0; S.rival = Math.min(S.rival, S.pos - 300);
       TC.sfx("levelup"); TC.confetti(90); TC.floatText("YOU WIN!", 50, 45, "#ffc83d");
-      await TC.sleep(1100); if (api.aborted) return null;
-      S.bubble = { img: "trophy", t: 0, label: "" }; TC.sfx("pop");
+      await TC.sleep(1100); if (dead()) return null;
+      S.bubble = { img: "trophy", t: 0 }; TC.sfx("pop");
       const F = G.finale;
       await api.ask({ teacher: F.teacher, tzh: F.zh, say: F.say, keys: F.keys, word: F.word });
-      if (api.aborted) return null;
+      if (dead()) return null;
       TC.hideTalk(); S.bubble = null;
       S.target = 900; S.boost = 2; TC.sfx("fanfare"); TC.confetti(220);
-      TC.floatText("YES!", 50, 40, "#ffc83d"); TC.speak("Great!");
+      TC.floatText("GREAT!", 50, 40, "#ffc83d"); TC.speak("Great!");
       const tro = TC.artImg("trophy"); tro.style.cssText = "position:fixed;left:50%;top:44%;width:34vh;height:34vh;margin:-17vh;z-index:44;filter:drop-shadow(0 0 4vh #ffc83d)";
       document.body.append(tro); tro.animate([{ transform: "scale(.2) rotate(-30deg)", opacity: 0 }, { transform: "scale(1.15) rotate(6deg)", opacity: 1 }, { transform: "scale(1) rotate(0)" }], { duration: 800, easing: "cubic-bezier(.2,1.5,.4,1)" });
-      await TC.sleep(2600); tro.remove(); S.target = 0; S.running = false;
+      await TC.sleep(2600); tro.remove(); if (dead()) return null;
+      S.target = 0; S.running = false;
       api.progress(N, N);
       return { ok: true };
     }

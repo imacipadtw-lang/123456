@@ -193,7 +193,7 @@
         if (api.aborted) return null;
         TC.hideTalk();
         nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on");
-        await TC.speak((res.ok ? "Yes! " : "") + it.say); if (api.aborted) return null;
+        await TC.speak((res.ok ? "Yes! " : "") + it.w[0].toUpperCase() + it.w.slice(1) + "!"); // "Yes! Tiger!" — whole recordings only if (api.aborted) return null;
         // 中級 only: one more easy question "Can it fly?" — the pet shows it: flies up (yes) or hops and plops down (no)
         if (api.level === 2 && !TC.cfg.rounds) {
           const Q = G.follow, k = it.fly ? "yes" : "no";
@@ -204,7 +204,7 @@
           TC.hideTalk();
           nameEl.textContent = Q.after[k]; nameEl.classList.add("on");
           // "It can't fly." has no human clip for "can't": Ollie then says just "Yes!" / "No!" (the full line is the subtitle)
-          await TC.speak(Q.after[k], TC.canSayHuman(Q.after[k]) ? {} : { human: Q.say[k] }); if (api.aborted) return null;
+          await TC.speak(Q.after[k], { human: Q.say[k] }); if (api.aborted) return null;
           stage.classList.remove("flap", "hover", "shrug");
         }
         await TC.sleep(600);
@@ -233,7 +233,7 @@
       cards.forEach((x) => x.classList.remove("sel")); const fc = cards[got.indexOf(want)]; fc.classList.add("sel");
       fc.animate([{ transform: "scale(1.12)" }, { transform: "scale(1.3) rotate(4deg)" }, { transform: "scale(1.12)" }], { duration: 500, iterations: 3 });
       TC.sfx("fanfare"); TC.confetti(180);
-      await TC.speak(`Great! The ${want.it.w}!`);
+      await TC.speak(`Great! ${want.it.w[0].toUpperCase() + want.it.w.slice(1)}!`);
       await TC.sleep(1200); line.remove(); stage.className = "stage"; aura.classList.remove("on");
       if (api.aborted) return null;
       api.progress(N, N);

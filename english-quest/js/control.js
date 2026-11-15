@@ -180,7 +180,7 @@
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學"), h("span", {}, "Ollie-Bot ✈"))),
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");
-    await TC.speak(`Great, ${kid.name}! We are friends!`);
+    await TC.speak(`Great, ${kid.name}! Friends!`);
     await new Promise((r) => { next.onclick = r; TC.pending = r; });
     ov.remove(); TC.ollie("idle");
   }

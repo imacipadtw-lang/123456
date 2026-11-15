@@ -310,7 +310,7 @@
         // 4 · the word, big, and the weather cheers
         labelEl.textContent = cap(x.w) + "!"; labelEl.classList.add("on"); wxpic.classList.add("cheer");
         TC.sfx(last ? "fanfare" : "levelup"); TC.confetti(last ? 200 : 100, colors);
-        await TC.speak(r.ok ? "Yes! " + x.say : x.say);
+        await TC.speak((r.ok ? "Yes! " : "") + x.w[0].toUpperCase() + x.w.slice(1) + "!"); // "Yes! Sunny!"
         await TC.sleep(600);
         if (api.aborted) return null;
         // 5 · the weather goes into the collection; the sky clears for the next box

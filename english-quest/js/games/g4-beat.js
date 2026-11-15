@@ -1,5 +1,6 @@
-/* Gate 4 · Beat Party — "What's this?" → the child names the body part on the big card, and because
-   the boss said it, the whole party touches it to the beat (passport 第3關 身體部位; finale "Cheese!" photo) */
+/* Beat Party (the "beat" engine, used by the FEELINGS gate) — "How are you?" → the child names the feeling on the
+   big face card ("I'm happy."), and because the boss said it, Ollie and the whole party act that feeling out to the
+   beat while the child plays the DJ pads (passport 第10關 心情; finale "Photo time!" → "Cheese!" photo) */
 (function () {
   "use strict";
   TC.games = TC.games || {};
@@ -16,18 +17,17 @@
   @keyframes tile{0%,100%{background:rgba(255,95,162,.15)}50%{background:rgba(76,201,255,.25)}}
   .g4 .bot{position:absolute;left:30%;top:16%;width:26vh;height:30vh;margin-left:-13vh;transition:transform .2s}
   .g4 .bot.jump{animation:pJump .6s ease-in-out infinite}
-  .g4 .bot.clap{animation:pClap .3s ease-in-out infinite}
-  @keyframes pClap{50%{transform:scale(1.12,.9)}}
-  .g4 .bot.nod{animation:pNod .6s ease-in-out infinite}
-  @keyframes pNod{50%{transform:translateY(8%) rotate(8deg)}}
-  .g4 .bot.peek{animation:pPeek .6s ease-in-out infinite}
-  @keyframes pPeek{50%{transform:scale(1.14,.82)}}
-  .g4 .bot.wiggle{animation:pWiggle .3s ease-in-out infinite}
-  @keyframes pWiggle{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
-  .g4 .bot.boop{animation:pBoop .6s ease-in-out infinite}
-  @keyframes pBoop{50%{transform:scale(1.2)}}
+  .g4 .bot.sway{animation:pSway 1.2s ease-in-out infinite}
+  @keyframes pSway{0%,100%{transform:translateY(7%) rotate(-9deg)}50%{transform:translateY(7%) rotate(9deg)}}
+  .g4 .bot.stomp{animation:pStomp .6s ease-in infinite}
+  @keyframes pStomp{0%,100%{transform:translateY(0)}35%{transform:translateY(-14%) rotate(-4deg)}60%{transform:translateY(5%) scale(1.14,.84)}80%{transform:translateY(0) rotate(3deg)}}
+  .g4 .bot.yawn{animation:pYawn 1.2s ease-in-out infinite}
+  @keyframes pYawn{0%,100%{transform:translateY(6%) scale(1.06,.92) rotate(6deg)}50%{transform:translateY(-8%) scale(.9,1.16)}}
+  .g4 .bot.rub{animation:pRub .6s linear infinite}
+  @keyframes pRub{0%,100%{transform:translate(0,0)}25%{transform:translate(5%,3%) rotate(5deg)}50%{transform:translate(0,6%) scale(1.06,.96)}75%{transform:translate(-5%,3%) rotate(-5deg)}}
+  .g4 .bot.shiver{animation:pShiver .12s linear infinite}
+  @keyframes pShiver{0%,100%{transform:translateX(-3%) scale(.94)}50%{transform:translateX(3%) scale(.94)}}
   .g4 .bot.dance{animation:pDance .6s ease-in-out infinite}
-  .g4 .bot.sing{animation:talk .25s ease-in-out infinite}
   .g4 .bot.stand{transform:scale(1.18) translateY(-6%)}
   .g4 .pads{position:absolute;left:4%;right:4%;top:56%;height:13%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;opacity:0;pointer-events:none;transition:opacity .25s}
   .g4 .pads.on{opacity:1;pointer-events:auto}
@@ -67,8 +67,10 @@
   .g4 .photo canvas{display:block;width:60vh;height:45vh;object-fit:cover}
   .g4 .photo div{position:absolute;left:0;right:0;bottom:1.5vh;text-align:center;color:#0a1633;font-size:2.6vh;font-weight:700}
   .g4 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:8}
+  .g4 .mood{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .5s,background .5s;mix-blend-mode:screen}
+  .g4 .mood.on{opacity:.3}
   `;
-  let duck = false, root, bot, lane, hit, powerBar, combo, flash, card, party, beatOn = false, clock = null, nextBeat = 0, step = 0, peak = 0, partyOn = false;
+  let duck = false, root, bot, lane, hit, powerBar, combo, flash, mood, card, party, beatOn = false, clock = null, nextBeat = 0, step = 0, peak = 0, partyOn = false, move = null;
   function build(api) {
     api.stage.append(TC.h("style", {}, css));
     root = TC.h("div", { class: "g4" });
@@ -79,9 +81,9 @@
     lane = TC.h("div", { class: "lane" }); hit = TC.h("div", { class: "hit" }); lane.append(hit);
     const power = TC.h("div", { class: "power" }); powerBar = TC.h("i"); power.append(powerBar);
     combo = TC.h("div", { class: "combo" });
-    flash = TC.h("div", { class: "flash" });
+    flash = TC.h("div", { class: "flash" }); mood = TC.h("div", { class: "mood" });
     card = TC.h("div", { class: "posecard" }); party = TC.h("div", { class: "party" });
-    root.append(bot, lane, card, power, TC.h("div", { class: "power-l zh" }, "聲音能量 VOICE"), combo, party, flash);
+    root.append(mood, bot, lane, card, power, TC.h("div", { class: "power-l zh" }, "聲音能量 VOICE"), combo, party, flash);
     buildPads();
     api.stage.append(root);
     (function meter() { const l = TC.Mic.level || 0; peak = Math.max(peak, l); powerBar.style.height = Math.min(100, l * 130) + "%"; requestAnimationFrame(meter); })();
@@ -99,10 +101,11 @@
   }
   function startBeat() { if (beatOn) return; const c = TC.ac(); clock = c && c.state === "running" ? () => c.currentTime : () => performance.now() / 1000; beatOn = true; nextBeat = clock() + 0.05; step = 0; beatLoop(); }
   function stopBeat() { beatOn = false; }
-  /** every beat of the party: the picture thumps and the crowd hops (odd and even kids take turns) */
+  /** every beat of the party: the picture thumps and the crowd acts the feeling out (see MOVE) */
   function thump(q) {
     const im = card.querySelector("img"); if (im) im.animate([{ transform: "scale(1.13)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
-    party.querySelectorAll("img").forEach((k, i) => { if (i % 2 === q % 2) k.animate([{ transform: "translateY(0)" }, { transform: "translateY(-24%) scale(1.06)" }, { transform: "translateY(0)" }], { duration: 420, easing: "ease-out" }); });
+    const m = move || MOVE.happy;
+    party.querySelectorAll("img").forEach((k, i) => { if (m.all || i % 2 === q % 2) k.animate(m.kf(q, i).map((t) => ({ transform: t })), { duration: m.ms, easing: m.ease || "ease-out" }); });
     if (q === 0) ringFx("#ffc83d", " oncard");
   }
   function ringFx(col, where = "") { const r = TC.h("div", { class: "ring" + where, style: `border-color:${col}` }); root.append(r); setTimeout(() => r.remove(), 700); }
@@ -119,10 +122,19 @@
     root.append(pads, djhint);
   }
   function djTime(on) { pads.classList.toggle("on", on); djhint.classList.toggle("on", on); lane.style.opacity = on ? 0 : 1; }
-  /** what Ollie does for each body part while everyone touches it */
-  const MOVE = { head: "nod", eyes: "peek", ears: "wiggle", nose: "boop", mouth: "sing", hands: "clap", feet: "jump" };
-  /** a new round: the big picture card pops up and its beat note slides along the lane to the hit ring */
-  async function showPart(p, question) {
+  /** how the party acts each feeling out: bot = Ollie's move (CSS class), kf(q, i) = what kid i of the crowd does on
+      beat q (all: every kid on every beat; otherwise odd and even kids take turns), light = colour of the mood light */
+  const O = "translate(0,0)";
+  const MOVE = {
+    happy: { bot: "jump", zh: "大家一起開心跳跳跳！", light: "#ffc83d", ms: 420, kf: () => [O, "translateY(-24%) scale(1.06)", O] },
+    sad: { bot: "sway", zh: "大家一起慢慢搖…嗚嗚～", light: "#3d6bff", ms: 600, all: true, ease: "ease-in-out", kf: (q) => [O, `translateY(6%) rotate(${q % 2 ? 9 : -9}deg)`, O] },
+    angry: { bot: "stomp", zh: "大家一起用力跺跺腳！", light: "#ff3b30", ms: 400, ease: "ease-in", kf: () => [O, "translateY(-12%)", "translateY(7%) scale(1.12,.84)", O] },
+    tired: { bot: "yawn", zh: "大家一起伸懶腰、打哈欠～", light: "#9b6bff", ms: 600, all: true, ease: "ease-in-out", kf: (q) => [O, q % 2 ? "translateY(6%) scale(1.07,.9) rotate(6deg)" : "translateY(-7%) scale(.93,1.15)", O] },
+    hungry: { bot: "rub", zh: "大家一起摸摸肚子，咕嚕咕嚕！", light: "#ff9a2e", ms: 600, all: true, ease: "linear", kf: (q, i) => { const d = (q + i) % 2 ? 1 : -1; return [O, `translate(${5 * d}%,3%) rotate(${5 * d}deg)`, "translate(0,6%) scale(1.06,.96)", `translate(${-5 * d}%,3%) rotate(${-5 * d}deg)`, O]; } },
+    scared: { bot: "shiver", zh: "大家一起發抖抖抖抖！", light: "#2ee6b6", ms: 480, all: true, ease: "linear", kf: () => [O, "translateX(-6%) scale(.95)", "translateX(6%) scale(.95)", "translateX(-5%) scale(.95)", "translateX(5%) scale(.95)", "translateX(-4%)", "translateX(4%)", O] }
+  };
+  /** a new round: the big feeling card pops up and its beat note slides along the lane to the hit ring */
+  async function showFeeling(p, question) {
     lane.querySelectorAll(".cmd").forEach((c) => c.remove());
     card.innerHTML = ""; card.append(TC.artImg(p.img, "", p.zh)); card.classList.add("on"); TC.sfx("pop");
     const c = TC.h("div", { class: "cmd" }, TC.artImg(p.img, "", p.zh), question); lane.append(c);
@@ -130,17 +142,19 @@
     await c.animate([{ left: "100%" }, { left: (hit.offsetLeft + hit.offsetWidth + 20) / lw * 100 + "%" }], { duration: 1100, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" }).finished.catch(() => {});
     hit.classList.add("pulse");
   }
-  /** the boss said it: the crowd shows up, the sentence is on screen and everything moves to the beat */
+  /** the boss said it: the crowd shows up with the same face, the sentence is on screen and everybody acts the feeling out to the beat */
   function partyTime(p) {
-    partyOn = !!p; card.classList.toggle("beat", partyOn); party.classList.toggle("on", partyOn);
-    if (!p) { pose(""); return; }
+    partyOn = !!p; card.classList.toggle("beat", partyOn); party.classList.toggle("on", partyOn); mood.classList.toggle("on", partyOn);
+    if (!p) { move = null; pose(""); return; }
+    move = MOVE[p.w] || { bot: "dance", zh: `大家一起${p.zh}！`, light: "#ff5fa2", ms: 420, kf: MOVE.happy.kf };
     const kid = () => TC.artImg(p.img, "", p.zh), i = p.say.toLowerCase().lastIndexOf(p.w);
-    const say = TC.h("div", { class: "say" }, ...(i < 0 ? [p.say] : [p.say.slice(0, i), TC.h("b", {}, p.say.slice(i, i + p.w.length)), p.say.slice(i + p.w.length)]), TC.h("span", { class: "zh" }, `大家一起摸摸${p.zh}！`));
+    const say = TC.h("div", { class: "say" }, ...(i < 0 ? [p.say] : [p.say.slice(0, i), TC.h("b", {}, p.say.slice(i, i + p.w.length)), p.say.slice(i + p.w.length)]), TC.h("span", { class: "zh" }, move.zh));
     party.innerHTML = ""; party.append(kid(), kid(), say, kid(), kid());
-    pose(MOVE[p.w] || "dance");
+    mood.style.background = `radial-gradient(80% 70% at 50% 45%,${move.light},transparent)`;
+    pose(move.bot);
   }
   function clearRound() { partyTime(null); djTime(false); card.classList.remove("on"); hit.classList.remove("pulse"); lane.querySelectorAll(".cmd").forEach((c) => c.remove()); }
-  async function snapshot() {
+  async function snapshot(gate) {
     flash.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600 }); TC.sfx("click");
     const cvs = document.createElement("canvas"); cvs.width = 960; cvs.height = 720; const ctx = cvs.getContext("2d");
     let ok = false;
@@ -157,7 +171,7 @@
       try { ctx.drawImage(o, 330, 90, 300, 348); } catch (e) {}
       ctx.font = "700 110px Fredoka"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText("CHEESE!", 480, 560); }
     ctx.fillStyle = "rgba(10,22,51,.55)"; ctx.fillRect(0, 640, 960, 80); ctx.fillStyle = "#ffc83d"; ctx.font = "700 40px Fredoka"; ctx.textAlign = "center";
-    ctx.fillText("TUCHENG ENGLISH DAY · GATE 4 BEAT PARTY", 480, 695);
+    ctx.fillText(`TUCHENG ENGLISH DAY · GATE ${gate} BEAT PARTY`, 480, 695);
     return cvs;
   }
 
@@ -173,14 +187,14 @@
       clearRound(); combo.textContent = ""; startBeat();
       TC.floatText("YOU ARE THE BOSS!", 44, 30, "#ffc83d");
       await TC.speak("Go!");
-      // body parts for this child: random, no repeats
-      const pool = G.parts.slice(), parts = [];
-      for (let n = Math.min(TC.rounds(5), pool.length); n > 0; n--) parts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
-      const N = parts.length + 1;
-      for (let i = 0; i < parts.length; i++) {
+      // feelings for this child: random, no repeats
+      const pool = G.feelings.slice(), feels = [];
+      for (let n = Math.min(TC.rounds(5), pool.length); n > 0; n--) feels.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+      const N = feels.length + 1;
+      for (let i = 0; i < feels.length; i++) {
         api.progress(i, N);
-        const p = parts[i];
-        await showPart(p, G.teacher);
+        const p = feels[i];
+        await showFeeling(p, G.teacher);
         if (api.aborted) return quit();
         peak = 0; duck = true; // keep the music soft while the AI listens
         const t0 = Date.now();
@@ -192,14 +206,14 @@
         streak = r.ok ? streak + 1 : 0;
         combo.textContent = streak > 1 ? `COMBO ×${streak}` : "";
         if (r.ok) { TC.floatText(loud ? "LOUD & PROUD!" : fast ? "PERFECT!" : "GREAT!", 44, 30, loud ? "#ff5fa2" : "#2ee6b6"); TC.confetti(loud ? 160 : 70); }
-        // the boss said it → everyone touches it to the beat while the child plays the DJ pads
+        // the boss said it → everyone acts the feeling out to the beat while the child plays the DJ pads
         TC.hideTalk(); partyTime(p); notes(loud ? 10 : 5); djTime(true);
-        TC.speak(r.ok ? `${loud ? "Wow" : "Great"}! ${cap(p.w)}!` : `${cap(p.w)}!`);
+        TC.speak(r.ok ? `Yes! ${cap(p.w)}!` : `${cap(p.w)}!`);
         await wait(r.ok ? 4200 : 2800);
         if (api.aborted) return quit();
         clearRound();
       }
-      api.progress(parts.length, N);
+      api.progress(feels.length, N);
       const F = G.finale;
       pose("stand");
       duck = true;
@@ -207,7 +221,7 @@
       duck = false;
       if (api.aborted) return quit();
       TC.hideTalk();
-      const cvs = await snapshot();
+      const cvs = await snapshot(api.gate);
       if (api.aborted) return quit();
       const ph = TC.h("div", { class: "photo" }, cvs, TC.h("div", {}, `${api.kid.name} & friends · ${F.say}`));
       root.append(ph); TC.sfx("fanfare"); TC.confetti(200); pose("dance");
