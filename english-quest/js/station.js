@@ -226,7 +226,7 @@
     if (burst || e.repeat) return;
     const k = e.key;
     // Esc first closes a teacher dialog (settings, script card, name picker) if one is open
-    if (k === "Escape") { const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
+    if (k === "Escape") { const cam = document.querySelector(".cam .close"); if (cam) { cam.click(); return; } const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
     if (k === "Enter" || k === " ") {
       e.preventDefault();
       if (resultOpen) resultOpen();

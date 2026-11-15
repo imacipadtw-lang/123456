@@ -21,17 +21,19 @@
 <body>
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
-<p class="note">遊戲中電視說的每個英文字，預設都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 6 個 Lingua Libre 錄音），依原授權使用。句子是用這些單字錄音一個字一個字唸出來的，唸到的字會亮起來。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。沒有真人錄音的字，電視不唸，畫面顯示「請老師示範」。瀏覽器的電腦語音預設關閉；老師在 ⚙「歐力的聲音」改成「電腦語音」時才會使用，並標示「電腦語音」。</p>
+<p class="note">遊戲中電視說的單字和短語，都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。</p>
+<p class="note"><b>電視不把單字錄音接成句子。</b>單字、短語（例如 Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），播的是下表的真人錄音。完整的句子（例如 It's a tiger.）沒有真人錄音，預設由那台電視瀏覽器的電腦語音一次唸完，畫面標示「電腦語音」。按 🔊 聽示範時，先播真人錄音的答案字，再由電腦語音唸整句。老師想親口示範整句時，在 ⚙「整句怎麼唸」選「只播真人錄音的單字，整句由老師親口示範」。電視沒有真人錄音、也沒有電腦語音可用時，畫面顯示「請老師示範」。</p>
 <div id="sum" class="note"></div>
-<p class="note">口音：<b>windy</b> 找不到美式英語的真人錄音，使用的是澳洲英語錄音；<b>rainy</b> 和 <b>pink</b>（遊戲已經不用）是英式英語錄音；其餘都標示為美式英語（見下表「口音」欄）。</p>
-<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把 196 個檔案聽過一遍，182 個辨識出來就是該單字。遊戲裡電視會唸、但機器沒有確認的有 10 個字：<b>an、are、grandpa、i、is、it's、pig、snowy、the、touch</b>（機器聽成別的字，例如把 an 聽成 hand）。其中 <b>grandpa</b> 被聽成 grandma；再比對一次聲音的形狀，比較像 grandpa，但還沒有人用耳朵聽過。</p>
-<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 10 個字在下表各按 ▶ 聽一次（特別是 grandpa），確認發音正確。</p>
+<p class="note">這次新增 7 個錄音：<b>good morning、good night、thank you、sorry、sad、angry、scared</b>，都標示為美式英語。good morning、good night、thank you 各是一段完整的錄音，不是兩個字接起來的。</p>
+<p class="note">口音：遊戲會唸、但不是美式英語的有三個字。<b>windy</b> 找不到美式英語的真人錄音，使用的是澳洲英語錄音；<b>rainy</b> 和 <b>pink</b> 是英式英語錄音。其餘都標示為美式英語（見下表「口音」欄）。</p>
+<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字（這次新增的 7 個錄音都在其中），另外 14 個機器聽成別的字。遊戲裡電視會唸、但機器沒有確認的，現在有 4 個字：<b>is、pig、pink、snowy</b>（機器聽成別的字）。is 只會在護照密碼出現（護照第 138 號）。以前列出的其他字（an、are、grandpa、i、it's、the、touch），遊戲已經不唸了。</p>
+<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 4 個字（is、pig、pink、snowy）和新增的 7 個錄音，在下表各按 ▶ 聽一次，確認發音正確。</p>
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2>其他素材</h2>
 <ul>
-  <li>所有動物、交通工具、家人像素頭像、天氣、食物、彩蛋、獎盃、身體部位小人、動作小人與機器貓頭鷹歐力的 3D 圖案，都是為本活動以程式原創繪製（js/art.js、js/art-body.js、各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
-  <li>六關各自的可愛校徽造型（賽車、彩色方塊、小雞蛋殼帽、DJ 耳機、禮物盒、金牌）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
+  <li>遊戲裡的所有圖案（動物、打招呼的情境、星星、天氣、心情的臉、彩蛋、獎盃與機器貓頭鷹歐力），都是為本活動以程式原創繪製（js/art.js、js/art-body.js、各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
+  <li>六關各自的可愛校徽造型，跟著那一關的遊戲（依關卡順序：金牌、賽車、像素方塊圈、禮物盒、DJ 耳機、小雞蛋殼帽）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
   <li>校徽：依學校提供的校徽圖檔（土城校徽.jpg）逐色描繪成向量圖，圖形與文字不變，只加上立體金邊與光影（assets/img/tucheng-emblem.svg；描繪程式 tools/emblem_trace.py）。</li>
   <li>字型：<a href="https://fonts.google.com/specimen/Fredoka">Fredoka</a>（SIL Open Font License 1.1，見 fonts/Fredoka-OFL.txt）。</li>
   <li>QR 掃描：<a href="https://github.com/cozmo/jsQR">jsQR</a> 1.4.0（Apache-2.0）；QR 產生：<a href="https://github.com/kazuhikoarase/qrcode-generator">qrcode-generator</a> 1.4.4（MIT）。</li>

@@ -52,7 +52,7 @@
       ans);
     document.body.append(box); TC.sfx("levelup");
     await TC.speak("Open your passport!", { human: "open" });
-    const r = await TC.ask({ teacher: `Number ${e.no}. What is it?`, tzh: `護照第 ${e.no} 號是什麼字？`, say: cap(e.w) + "!", zh: "", keys: [[e.w]], word: e.w, hideKey: true, hideAlways: true, guideKid: `翻護照找第 ${e.no} 號，把那個字說出來` });
+    const r = await TC.ask({ teacher: `Number ${e.no}! Say the word!`, tzh: `護照第 ${e.no} 號是什麼字？`, say: cap(e.w) + "!", zh: "", keys: [[e.w]], word: e.w, hideKey: true, hideAlways: true, guideKid: `翻護照找第 ${e.no} 號，把那個字說出來` });
     if (api && api.aborted) { box.remove(); return letter; }
     TC.hideTalk();
     ans.innerHTML = ""; ans.append(h("span", { class: "first" }, e.w[0].toUpperCase()), e.w.slice(1), h("span", { class: "zh", style: "font-size:2rem;margin-left:1rem" }, e.zh));

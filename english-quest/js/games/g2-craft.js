@@ -275,7 +275,7 @@
         palette.find((p) => p.name === name).done = true; picked = null; last = name;
         popHero();
         TC.floatText(cap(name) + "!", 55, 54, C[name].hex);
-        await Promise.all([drop(name), TC.speak((r.ok ? "Yes! " : "") + name[0].toUpperCase() + name.slice(1) + "!")]);
+        await Promise.all([drop(name), TC.sayAnswer(r.ok, C[name].say, name)]);
         if (api.aborted) return null;
       }
       const rest = palette.filter((p) => !p.done);

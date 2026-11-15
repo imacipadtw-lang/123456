@@ -8,6 +8,12 @@ const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3
   for (const g of gates) for (const L of levels) {
     const p = await b.newPage({ viewport: { width: 1366, height: 768 } }); const errs = [], asked = [];
     p.on("pageerror", (e) => errs.push(e.message)); p.on("console", (m) => m.type() === "error" && !/favicon|ERR_|Failed to load resource/.test(m.text()) && errs.push("console: " + m.text().slice(0, 120)));
+    // FAKE_TTS=1: pretend this screen has a US-English computer voice, and record every line it is asked to read
+    if (process.env.FAKE_TTS) await p.addInitScript(() => {
+      window.__tts = []; window.SpeechSynthesisUtterance = function (t) { this.text = t; };
+      const v = [{ name: "Fake US English", lang: "en-US" }];
+      Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => v, cancel() {}, speak(u) { window.__tts.push(u.text); setTimeout(() => u.onend && u.onend(), 500); } } });
+    });
     await p.goto(`${base}/station.html?gate=${g}`); await p.waitForTimeout(900);
     await p.click("#vipBtn"); await p.waitForTimeout(700);
     await p.click(`#lvlBtns button[data-l="${L}"]`).catch(() => {});
@@ -23,6 +29,7 @@ const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3
     const ok = done && scratch && !errs.length; if (!ok) fail++;
     console.log(`${ok ? "PASS" : "FAIL"} gate ${g} level ${L}: ${Math.round((Date.now() - t0) / 1000)}s, ${asked.length} questions, scratch ${scratch}, points ${pts}${errs.length ? " | " + errs.slice(0, 3).join(" | ") : ""}`);
     if (process.env.VERBOSE) asked.forEach((a) => console.log("     " + a));
+    if (process.env.FAKE_TTS) { const said = await p.evaluate(() => [...new Set(window.__tts || [])]); console.log("     computer voice read " + said.length + " different lines: " + said.join(" | ")); }
     await p.close();
   }
   await b.close(); process.exit(fail ? 1 : 0);

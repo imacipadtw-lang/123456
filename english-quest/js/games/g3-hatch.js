@@ -193,7 +193,7 @@
         if (api.aborted) return null;
         TC.hideTalk();
         nameEl.textContent = cap(it.w) + "!"; nameEl.classList.add("on");
-        await TC.speak((res.ok ? "Yes! " : "") + it.w[0].toUpperCase() + it.w.slice(1) + "!"); // "Yes! Tiger!" — whole recordings only if (api.aborted) return null;
+        await TC.sayAnswer(res.ok, it.say, it.w); if (api.aborted) return null; // "Yes! It's a tiger."
         // 中級 only: one more easy question "Can it fly?" — the pet shows it: flies up (yes) or hops and plops down (no)
         if (api.level === 2 && !TC.cfg.rounds) {
           const Q = G.follow, k = it.fly ? "yes" : "no";

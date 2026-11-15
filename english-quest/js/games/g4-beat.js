@@ -208,7 +208,7 @@
         if (r.ok) { TC.floatText(loud ? "LOUD & PROUD!" : fast ? "PERFECT!" : "GREAT!", 44, 30, loud ? "#ff5fa2" : "#2ee6b6"); TC.confetti(loud ? 160 : 70); }
         // the boss said it → everyone acts the feeling out to the beat while the child plays the DJ pads
         TC.hideTalk(); partyTime(p); notes(loud ? 10 : 5); djTime(true);
-        TC.speak(r.ok ? `Yes! ${cap(p.w)}!` : `${cap(p.w)}!`);
+        TC.sayAnswer(r.ok, p.say, p.w); // "Yes! I'm happy."
         await wait(r.ok ? 4200 : 2800);
         if (api.aborted) return quit();
         clearRound();

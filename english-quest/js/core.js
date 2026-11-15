@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, voiceMode: "human", fairPoints: true };
+  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", fairPoints: true };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -147,8 +147,9 @@
     });
   };
   /* ----- human voice first: every English word the TV says is a real person's recording (Wikimedia Commons) -----
-     Sentences are read word by word from those recordings, each word lighting up as it is heard.
-     The browser's computer voice is used only if a teacher switches it on in ⚙ (voiceMode "tts"), and is labelled. */
+     A whole sentence is never glued together from single-word recordings (that loses the weak forms and the linking:
+     "It's a tiger" must have the weak /ə/). A sentence is read in one go by the computer voice, labelled 電腦語音,
+     unless a teacher switches that off in ⚙ (cfg.sentence "off": the teacher then says the sentences). */
   const clipKey = (k) => { const A = window.TC_AUDIO || {}; return A[k] ? k : A[k.replace(/ /g, "-")] ? k.replace(/ /g, "-") : null; };
   const normTok = (w) => String(w).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9' -]/g, "").replace(/^['-]+|['-]+$/g, "");
   /** split a line into playable pieces: [{t: text as written, clip: key in TC_AUDIO or null}] (longest phrase first: "ice cream") */
@@ -177,8 +178,8 @@
   }
   TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && window.TC_AUDIO[k]; if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
   /** The TV never glues separate word recordings into a sentence (that sounds unnatural: no weak forms, no linking).
-      A line is cut at its punctuation; a piece is spoken only when ONE human recording covers the whole piece
-      ("Yes!", "Tiger!", "Good morning!"). Anything longer is shown as a subtitle and left to the teacher's own voice. */
+      A line is cut at its punctuation; a piece is a human recording only when ONE recording covers the whole piece
+      ("Yes!", "Tiger!", "Good morning!"). Anything longer is a sentence: see TC.speak. */
   TC.voicePieces = function (text) {
     return String(text || "").replace(/\[[^\]]*\]/g, " ").split(/[.!?…,;:]+/).map((x) => x.trim()).filter(Boolean)
       .map((seg) => { const t = TC.voiceTokens(seg); return { text: seg, clip: t.length === 1 && t[0].clip ? t[0].clip : null }; });
@@ -199,7 +200,8 @@
     let c = $("#cap"); if (!c) { c = h("div", { id: "cap" }); document.body.append(c); }
     clearTimeout(capT);
     if (!text) { c.classList.remove("show"); return; }
-    c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`);
+    c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`)
+      + (active === "tts" ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
     c.classList.add("show");
     capT = setTimeout(() => c.classList.remove("show"), 2600 + text.length * 40);
   };
@@ -220,7 +222,7 @@
       try { speechSynthesis.cancel(); } catch (e) {}
       const u = new SpeechSynthesisUtterance(text);
       const v = TC.pickVoice(); if (v) u.voice = v;
-      u.lang = "en-US"; u.rate = opt.rate || 0.92; u.pitch = opt.pitch || 1.18; u.volume = TC.cfg.volume;
+      u.lang = "en-US"; u.rate = opt.rate || 0.9; u.pitch = opt.pitch || 1; u.volume = TC.cfg.volume;
       let done = false; const fin = () => { if (!done) { done = true; TC.quiet(false); TC.ollie && TC.ollie("idle"); res(); } };
       TC.quiet(true);
       u.onend = fin; u.onerror = fin; setTimeout(fin, 1500 + text.length * 120);
@@ -228,14 +230,20 @@
       speechSynthesis.speak(u);
     });
   }
+  /** can this screen read a whole sentence aloud? (a US-English computer voice exists and the teacher has not switched it off) */
+  TC.canSentence = () => TC.cfg.sentence !== "off" && !!window.speechSynthesis && !!TC.pickVoice();
   /**
-   * Ollie says a line. The text always appears as a subtitle. With the default human voice only the pieces that are
-   * one whole recording are heard ("Yes!", "Seven!", "Good morning!"); opt.human can name what to say instead.
-   * With the computer voice switched on in ⚙ the whole line is read by the browser's voice.
+   * Ollie says a line; the text always appears as a subtitle.
+   *  - a line made only of whole human recordings ("Yes! Tiger!", "Good morning!") is played from those recordings;
+   *  - any line with a real sentence in it ("Yes! It's a tiger.") is read in ONE go by the computer voice (natural weak
+   *    forms and linking), labelled 電腦語音;
+   *  - with the sentence voice off, or no English voice on this screen, only the human pieces are heard
+   *    (opt.human can name what to say then) and the teacher says the sentence.
    */
   TC.speak = async function (text, opt = {}) {
     if (!text) return;
-    if (TC.cfg.voiceMode === "tts") { TC.caption(text); return ttsSpeak(text, opt); }
+    const spoken = String(text).replace(/\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim();
+    if (!TC.canSayHuman(text) && TC.canSentence()) { TC.caption(text, "tts"); return ttsSpeak(spoken, opt); }
     const line = opt.human != null ? opt.human : text, toks = TC.voiceTokens(text);
     TC.caption(text, -1, toks);
     if (!TC.voicePieces(line).some((x) => x.clip)) { await sleep(Math.min(1600, 600 + text.length * 30)); return; }
@@ -243,17 +251,20 @@
     await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks); });
     TC.ollie && TC.ollie("idle");
   };
+  /** after an answer: the whole model sentence, "Yes! It's a tiger." (one voice, in one go); on a screen without the sentence
+      voice the human recordings "Yes! Tiger!" are heard instead and the sentence stays on screen for the teacher. */
+  TC.sayAnswer = (ok, sentence, word) => { const W = String(word || ""), y = ok ? "Yes! " : ""; return TC.speak(y + (sentence || W), { human: y + W.charAt(0).toUpperCase() + W.slice(1) + "!" }); };
   /** number of points on the scratch card: the number word is a human recording */
   TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
-  /** Model the answer: one human recording — the whole line if a recording of it exists ("Good morning!"), otherwise the answer word.
-      (With the computer voice switched on, the browser reads the whole sentence after the word.) */
+  /** Model the answer: first the answer word (or the whole phrase, "Good morning!") from its human recording,
+      then — when the answer is a sentence — the whole sentence read in one go by the computer voice. */
   TC.model = async function (sentence, word) {
     const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
     const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
     const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
     const key = one || (word && clipKey(normTok(word)));
     if (key) { showSrc("human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
-    if (TC.cfg.voiceMode === "tts" && !one && sentence) { if (key) await sleep(250); showSrc("tts"); await ttsSpeak(sentence, { rate: 0.85, pitch: 1.0 }); return "tts"; }
+    if (!one && sentence && TC.canSentence()) { if (key) await sleep(300); showSrc("tts"); spans.forEach((sp) => sp.classList.add("saying")); await ttsSpeak(String(sentence).replace(/\[[^\]]*\]/g, " "), { rate: 0.85 }); light(false); return key ? "human+tts" : "tts"; }
     if (!key) { showSrc("none"); return "none"; }
     return "human";
   };
@@ -263,7 +274,7 @@
       const a = (window.TC_AUDIO || {})[String(word).toLowerCase()];
       t.className = "src-tag human"; t.textContent = "真人發音"; t.title = a ? `${a.file} · ${a.speaker} · ${a.licence}` : "Human recordings (Wikimedia Commons)";
     } else if (kind === "none") { t.className = "src-tag"; t.textContent = "請老師示範"; t.title = "No human recording for this line — the teacher models it"; }
-    else { t.className = "src-tag"; t.textContent = "電腦語音"; t.title = "Computer voice (text-to-speech)"; }
+    else { t.className = "src-tag"; t.textContent = "整句：電腦語音"; t.title = "The whole sentence is read by the computer voice of this screen (text-to-speech); single words are human recordings"; }
   }
 
   /* While the TV itself is talking, ignore what the recogniser hears (prevents the
@@ -696,11 +707,11 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（選了電腦語音時，歐力會先把問題唸一次）</option></select></label>
+      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力先用電腦語音把問題整句唸一次）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
-      <label><span>歐力的聲音</span><select id="sVMode"><option value="human">真人發音（建議）：電視只說單字和短語的真人錄音，整句由老師親口示範</option><option value="tts">加上電腦語音：聽示範時，電腦語音再把整句唸一次</option></select></label>
+      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">單字用真人錄音，整句由電腦語音一次唸完（建議）</option><option value="off">只播真人錄音的單字，整句由老師親口示範</option></select></label>
       <label><span>刮刮卡點數</span><select id="sFair"><option value="1">公平模式：每人六關合計 100 點</option><option value="0">驚喜模式：每張 10／20／30／50 點</option></select></label>
-      <label><span>電腦語音 Voice（選電腦語音時才用）</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
+      <label><span>唸整句的電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
       <label><span>幾秒後提示（秒）</span><input id="sHint" type="text" value="${TC.cfg.hintAfter}" style="max-width:6rem"></label>
       <label><span>同步網址 Google Apps Script（可空白）</span><input id="sSync" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(TC.cfg.syncUrl)}"></label>
@@ -708,12 +719,12 @@
       <p><small>快捷鍵：Enter/空白鍵＝老師判定通過 ✓ · H＝聽示範 · N＝跳過 · C＝相機掃描 · M＝手動選擇 · Esc＝回到掃描畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.voiceMode === "tts" ? "tts" : "human"; $("#sFair").value = TC.cfg.fairPoints === false ? "0" : "1"; $("#sRec").value = TC.cfg.record ? "1" : "0";
+    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sFair").value = TC.cfg.fairPoints === false ? "0" : "1"; $("#sRec").value = TC.cfg.record ? "1" : "0";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", voiceMode: $("#sVMode").value, fairPoints: $("#sFair").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, fairPoints: $("#sFair").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
