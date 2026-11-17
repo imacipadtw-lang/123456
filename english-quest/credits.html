@@ -22,13 +22,19 @@
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
 <p class="note">遊戲中電視說的單字和短語，都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。</p>
-<p class="note"><b>電視不把單字錄音接成句子。</b>單字、短語（例如 Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），播的是下表的真人錄音。完整的句子（例如 It's a tiger.）沒有真人錄音，預設由那台電視瀏覽器的電腦語音一次唸完，畫面標示「電腦語音」。按 🔊 聽示範時，先播真人錄音的答案字，再由電腦語音唸整句。老師想親口示範整句時，在 ⚙「整句怎麼唸」選「只播真人錄音的單字，整句由老師親口示範」。電視沒有真人錄音、也沒有電腦語音可用時，畫面顯示「請老師示範」。</p>
+<p class="note"><b>電視不把單字錄音接成句子。</b>單字、短語（例如 Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），播的是下表的真人錄音。完整的句子（例如 It's a tiger.）找不到真人錄音，改用 <b>ElevenLabs 的 AI 語音</b>整句一次唸完（見最下面「整句 AI 語音」表），畫面標示「AI 語音」。表上沒有的句子（例如帶孩子名字的句子），由那台電視瀏覽器的電腦語音唸，標示「電腦語音」。老師可在 ⚙「整句怎麼唸」改成「只播真人錄音的單字，整句由老師親口示範」。</p>
 <div id="sum" class="note"></div>
 <p class="note">這次新增 7 個錄音：<b>good morning、good night、thank you、sorry、sad、angry、scared</b>，都標示為美式英語。good morning、good night、thank you 各是一段完整的錄音，不是兩個字接起來的。</p>
 <p class="note">口音：遊戲會唸、但不是美式英語的有三個字。<b>windy</b> 找不到美式英語的真人錄音，使用的是澳洲英語錄音；<b>rainy</b> 和 <b>pink</b> 是英式英語錄音。其餘都標示為美式英語（見下表「口音」欄）。</p>
 <p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字（這次新增的 7 個錄音都在其中），另外 14 個機器聽成別的字。遊戲裡電視會唸、但機器沒有確認的，現在有 4 個字：<b>is、pig、pink、snowy</b>（機器聽成別的字）。is 只會在護照密碼出現（護照第 138 號）。以前列出的其他字（an、are、grandpa、i、it's、the、touch），遊戲已經不唸了。</p>
 <p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 4 個字（is、pig、pink、snowy）和新增的 7 個錄音，在下表各按 ▶ 聽一次，確認發音正確。</p>
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
+
+<h2 id="ai">整句 AI 語音（ElevenLabs，不是真人錄音）</h2>
+<p class="note">下面 <span id="aiN"></span> 句是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。每批句子之間加 1 秒停頓一起產生，再從停頓處切成一句一檔，轉成 MP3 並統一音量。</p>
+<p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/ai-sentences.json；② 自動語音辨識程式（CMU PocketSphinx）在全部句子中選，69 句中 68 句辨識成它自己那一句；③ 沒通過的 I like red. 機器有時聽成 green，另用共振峰量測比對：這句的母音（F2 約 1640 Hz、F3 約 2200 Hz）和機器每次都辨識正確的 It's red.（F2 約 1540、F3 約 2140）一致，和 green（F2 約 2410）不同；④ It's a pig. 曾被聽成 peg，量測 pig 的母音 F1 約 480–560 Hz，接近同一聲音的 /ɪ/（it's、fifteen 約 410–470），遠低於 /ɛ/（ten、friends 約 810–880）。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前至少聽一次 I like red. 和 It's a pig.</b></p>
+<p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
+<table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>
 
 <h2>其他素材</h2>
 <ul>
@@ -41,6 +47,7 @@
   <li>音效與節奏全部由程式即時合成，沒有使用外部音檔。</li>
 </ul>
 <script src="assets/audio/credits.js"></script>
+<script src="assets/audio/ai-sentences.js"></script>
 <script>
   const A = window.TC_AUDIO || {}, rows = document.getElementById("rows");
   const words = Object.keys(A).sort();
@@ -52,7 +59,10 @@
       <td><a href="${esc(a.page)}" target="_blank" rel="noopener">${esc(a.source)}</a></td><td>${esc(a.speaker)}</td><td>${esc(a.accent || "")}</td>
       <td>${a.licenceUrl ? `<a href="${esc(a.licenceUrl)}" target="_blank" rel="noopener">${esc(a.licence)}</a>` : esc(a.licence)}</td><td>${esc(a.recorded)}</td><td>${esc(a.downloaded)}</td></tr>`);
   });
-  rows.addEventListener("click", (e) => { const f = e.target.dataset.f; if (f) new Audio("assets/audio/" + f).play(); });
+  const AI = window.TC_AI_AUDIO || {}, airows = document.getElementById("airows");
+  document.getElementById("aiN").textContent = Object.keys(AI).length;
+  Object.values(AI).forEach((a) => airows.insertAdjacentHTML("beforeend", `<tr><td><b>${esc(a.text)}</b></td><td><button class="play" data-f="${esc(a.file)}">▶</button></td><td>${esc(a.voice)}</td><td>${esc(a.model)}</td><td>${esc(a.generated)}</td><td>${esc(a.downloaded)}</td></tr>`));
+  [rows, airows].forEach((t) => t.addEventListener("click", (e) => { const f = e.target.dataset.f; if (f) new Audio("assets/audio/" + f).play(); }));
 </script>
 </body>
 </html>

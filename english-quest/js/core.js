@@ -150,14 +150,17 @@
      A whole sentence is never glued together from single-word recordings (that loses the weak forms and the linking:
      "It's a tiger" must have the weak /ə/). A sentence is read in one go by the computer voice, labelled 電腦語音,
      unless a teacher switches that off in ⚙ (cfg.sentence "off": the teacher then says the sentences). */
-  const clipKey = (k) => { const A = window.TC_AUDIO || {}; return A[k] ? k : A[k.replace(/ /g, "-")] ? k.replace(/ /g, "-") : null; };
+  /** a clip by key: human recordings (TC_AUDIO) first, then whole-sentence AI clips (TC_AI_AUDIO, ElevenLabs, labelled AI 語音) */
+  const clipOf = (k) => (window.TC_AUDIO || {})[k] || (TC.cfg.sentence !== "off" && (window.TC_AI_AUDIO || {})[k]) || null; // "off": human recordings only
+  TC.clipOf = clipOf;
+  const clipKey = (k) => clipOf(k) ? k : clipOf(k.replace(/ /g, "-")) ? k.replace(/ /g, "-") : null;
   const normTok = (w) => String(w).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9' -]/g, "").replace(/^['-]+|['-]+$/g, "");
   /** split a line into playable pieces: [{t: text as written, clip: key in TC_AUDIO or null}] (longest phrase first: "ice cream") */
   TC.voiceTokens = function (text) {
     const words = String(text || "").replace(/\[[^\]]*\]/g, " ").split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)), out = [];
     for (let i = 0; i < words.length;) {
       let hit = null;
-      for (let n = Math.min(3, words.length - i); n >= 1 && !hit; n--) { const k = clipKey(words.slice(i, i + n).map(normTok).join(" ")); if (k) hit = { t: words.slice(i, i + n).join(" "), clip: k, n }; }
+      for (let n = Math.min(5, words.length - i); n >= 1 && !hit; n--) { const k = clipKey(words.slice(i, i + n).map(normTok).join(" ")); if (k) hit = { t: words.slice(i, i + n).join(" "), clip: k, n }; }
       if (!hit) hit = { t: words[i], clip: null, n: 1 };
       out.push(hit); i += hit.n;
     }
@@ -166,7 +169,7 @@
   const isName = (t) => TC.kid && normTok(t) === normTok(TC.kid.name);
   const clipCache = {};
   function playClip(key) {
-    const a = (window.TC_AUDIO || {})[key]; if (!a) return Promise.resolve(false);
+    const a = clipOf(key); if (!a) return Promise.resolve(false);
     return new Promise((res) => {
       const au = clipCache[key] || (clipCache[key] = new Audio(TC.audioBase + a.file));
       let fin = false; const done = (ok) => { if (!fin) { fin = true; res(ok); } };
@@ -176,7 +179,7 @@
       setTimeout(() => done(false), 4000);
     });
   }
-  TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && window.TC_AUDIO[k]; if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
+  TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && clipOf(k); if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
   /** The TV never glues separate word recordings into a sentence (that sounds unnatural: no weak forms, no linking).
       A line is cut at its punctuation; a piece is a human recording only when ONE recording covers the whole piece
       ("Yes!", "Tiger!", "Good morning!"). Anything longer is a sentence: see TC.speak. */
@@ -196,12 +199,12 @@
   };
   /* subtitle for what Ollie says (the words light up as they are spoken) */
   let capT = null;
-  TC.caption = function (text, active = -1, toks = null) {
+  TC.caption = function (text, active = -1, toks = null, tag = "") {
     let c = $("#cap"); if (!c) { c = h("div", { id: "cap" }); document.body.append(c); }
     clearTimeout(capT);
     if (!text) { c.classList.remove("show"); return; }
     c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`)
-      + (active === "tts" ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
+      + (tag ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">${esc(tag)}</i>` : active === "tts" ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
     c.classList.add("show");
     capT = setTimeout(() => c.classList.remove("show"), 2600 + text.length * 40);
   };
@@ -244,11 +247,12 @@
     if (!text) return;
     const spoken = String(text).replace(/\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim();
     if (!TC.canSayHuman(text) && TC.canSentence()) { TC.caption(text, "tts"); return ttsSpeak(spoken, opt); }
-    const line = opt.human != null ? opt.human : text, toks = TC.voiceTokens(text);
-    TC.caption(text, -1, toks);
+    const line = opt.human != null && !TC.canSayHuman(text) ? opt.human : text, toks = TC.voiceTokens(text);
+    const tag = TC.voicePieces(line).some((x) => x.clip && clipOf(x.clip).ai) ? "AI 語音" : "";
+    TC.caption(text, -1, toks, tag);
     if (!TC.voicePieces(line).some((x) => x.clip)) { await sleep(Math.min(1600, 600 + text.length * 30)); return; }
     TC.ollie && TC.ollie("talk");
-    await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks); });
+    await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks, tag); });
     TC.ollie && TC.ollie("idle");
   };
   /** after an answer: the whole model sentence, "Yes! It's a tiger." (one voice, in one go); on a screen without the sentence
@@ -262,7 +266,14 @@
     const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
     const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
     const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
-    const key = one || (word && clipKey(normTok(word)));
+    const wordKey = word && clipKey(normTok(word)), humanWord = wordKey && !clipOf(wordKey).ai ? wordKey : null;
+    if (one && clipOf(one).ai) {
+      // a whole-sentence AI clip: the answer word from its human recording first, then the sentence in one go
+      if (humanWord) { showSrc("human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); await sleep(300); }
+      showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false);
+      return humanWord ? "human+ai" : "ai";
+    }
+    const key = one || wordKey;
     if (key) { showSrc("human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
     if (!one && sentence && TC.canSentence()) { if (key) await sleep(300); showSrc("tts"); spans.forEach((sp) => sp.classList.add("saying")); await ttsSpeak(String(sentence).replace(/\[[^\]]*\]/g, " "), { rate: 0.85 }); light(false); return key ? "human+tts" : "tts"; }
     if (!key) { showSrc("none"); return "none"; }
@@ -270,8 +281,9 @@
   };
   function showSrc(kind, word) {
     const t = $("#srcTag"); if (!t) return;
+    if (kind === "ai") { const a = clipOf(word) || {}; t.className = "src-tag"; t.textContent = "整句：AI 語音"; t.title = `ElevenLabs text-to-speech (AI voice, not a human recording) · ${a.voice || ""}`; return; }
     if (kind === "human") {
-      const a = (window.TC_AUDIO || {})[String(word).toLowerCase()];
+      const a = clipOf(String(word).toLowerCase());
       t.className = "src-tag human"; t.textContent = "真人發音"; t.title = a ? `${a.file} · ${a.speaker} · ${a.licence}` : "Human recordings (Wikimedia Commons)";
     } else if (kind === "none") { t.className = "src-tag"; t.textContent = "請老師示範"; t.title = "No human recording for this line — the teacher models it"; }
     else { t.className = "src-tag"; t.textContent = "整句：電腦語音"; t.title = "The whole sentence is read by the computer voice of this screen (text-to-speech); single words are human recordings"; }
@@ -709,7 +721,7 @@
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
       <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力先用電腦語音把問題整句唸一次）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
-      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">單字用真人錄音，整句由電腦語音一次唸完（建議）</option><option value="off">只播真人錄音的單字，整句由老師親口示範</option></select></label>
+      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">單字用真人錄音，整句用 AI 語音（ElevenLabs）一次唸完（建議）</option><option value="off">只播真人錄音的單字，整句由老師親口示範</option></select></label>
       <label><span>刮刮卡點數</span><select id="sFair"><option value="1">公平模式：每人六關合計 100 點</option><option value="0">驚喜模式：每張 10／20／30／50 點</option></select></label>
       <label><span>唸整句的電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
