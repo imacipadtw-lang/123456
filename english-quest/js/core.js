@@ -1,6 +1,6 @@
 /* =====================================================================
    Tucheng English Day — shared engine for every gate
-   - passport QR scan (USB/Bluetooth scanner, camera, or tap)
+   - one big START button per screen (no passport scanning), level 初級 / 中級
    - AI speech recognition (Web Speech API) + teacher override
    - human pronunciation clips (Wikimedia Commons) / labelled computer voice
    - voice recording replay, stamps, secret-code letters, optional Google Sheet sync
@@ -28,15 +28,15 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", fairPoints: true };
+  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
   /** rounds per child: standard, or capped in quick mode */
   TC.rounds = (d) => (TC.cfg.rounds ? Math.min(d, TC.cfg.rounds) : d);
 
-  /* ---------------- kids & passport QR ----------------
-     QR text format:  TCES-07-3-Amy   (number - grade - English name)  */
+  /* ---------------- players (kept for the Live Board colours; passport scanning was removed) ----------------
+     (a new player id is made each time START is pressed)  */
   const AV_COLORS = ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e", "#7ee36b", "#ff7a7a"];
   TC.levelFromGrade = (g) => (g <= 2 ? 1 : 2); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
   TC.parseKid = function (raw) {
@@ -577,97 +577,12 @@
     document.querySelectorAll("svg.ollie,.ollie3d").forEach((o) => { o.classList.remove("talk", "cheer"); if (state === "talk" || state === "cheer") o.classList.add(state); });
   };
 
-  /* ---------------- passport scanning ---------------- */
-  const KEYMAP = { Minus: ["-", "_"], Period: [".", ">"], Space: [" ", " "], Slash: ["/", "?"], Equal: ["=", "+"] };
-  let scanBuf = "", scanLast = 0, scanCb = null;
-  TC.onScan = (cb) => (scanCb = cb);
-  TC.handleScan = (kid) => scanCb && scanCb(kid);
-  function handleScanText(text) {
-    const kid = TC.parseKid(text);
-    if (kid && scanCb) scanCb(kid); else if (text.length > 3) TC.toast("看不懂這個 QR：" + text);
-  }
-  TC.handleScanText = handleScanText;
-  // A passport scan always starts with "TCES". While the typed text is still a prefix of that
-  // (or starts with it), every key belongs to the scanner and never triggers a teacher shortcut —
-  // this works for fast USB scanners and slower Bluetooth ones alike.
-  const isScanPrefix = (b) => { b = b.toLowerCase(); return b.length <= 4 ? "tces".startsWith(b) : b.startsWith("tces"); };
+  /* ---------------- keys (passport scanning was removed: the teacher presses START) ---------------- */
   document.addEventListener("keydown", (e) => {
-    const inField = /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || "");
-    if (inField) return;
-    const now = performance.now();
-    if (now - scanLast > 1500) scanBuf = "";
-    let ch = null;
-    // e.code works even when a Chinese IME is active (scanner keystrokes then arrive as "Process")
-    if (/^Key[A-Z]$/.test(e.code)) ch = e.shiftKey ? e.code[3] : e.code[3].toLowerCase();
-    else if (/^Digit\d$/.test(e.code) && !e.shiftKey) ch = e.code[5];
-    else if (/^Numpad\d$/.test(e.code)) ch = e.code[6];
-    else if (KEYMAP[e.code]) ch = KEYMAP[e.code][e.shiftKey ? 1 : 0];
-    if (/^(Shift|Control|Alt|Meta|CapsLock)/.test(e.code)) return;
-    if (e.code === "Enter" || e.code === "NumpadEnter" || (e.code === "Tab" && scanBuf.length >= 6)) { // some scanners end with Tab
-      const t = scanBuf; scanBuf = "";
-      if (t.length >= 6 && /^tces/i.test(t)) { e.preventDefault(); e.stopPropagation(); handleScanText(t); return; }
-      if (t) { e.preventDefault(); return; } // half a scan: swallow the Enter
-    } else if (ch && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      if (isScanPrefix(scanBuf + ch)) { scanBuf += ch; scanLast = now; e.preventDefault(); return; }
-      scanBuf = "";
-      if (isScanPrefix(ch)) { scanBuf = ch; scanLast = now; e.preventDefault(); return; }
-    }
+    if (/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || "")) return;
+    if (/^(Shift|Control|Alt|Meta|CapsLock)/.test(e.code || "")) return;
     TC.onKey && TC.onKey(e, false);
   }, true);
-
-  TC.cameraScan = async function () {
-    if (document.querySelector(".cam")) return; // already open
-    const wrap = h("div", { class: "cam" });
-    const video = h("video", { playsinline: "", muted: "" });
-    const close = h("button", { class: "icon-btn close", onclick: () => stop() }, "✕");
-    wrap.append(video, h("div", { class: "frame" }), close, h("div", { class: "hint", style: "position:absolute;bottom:3rem;font-size:2rem" }, "把護照 QR Code 對準鏡頭 Show your passport QR code"));
-    document.body.append(wrap);
-    let stream, alive = true;
-    const stop = () => { alive = false; stream && stream.getTracks().forEach((t) => t.stop()); wrap.remove(); };
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 } } });
-      video.srcObject = stream; await video.play();
-    } catch (e) { stop(); TC.toast("找不到相機 No camera"); return; }
-    const cv = document.createElement("canvas"), ctx = cv.getContext("2d", { willReadFrequently: true });
-    const det = "BarcodeDetector" in window ? new window.BarcodeDetector({ formats: ["qr_code"] }) : null;
-    while (alive) {
-      await sleep(180);
-      if (!video.videoWidth) continue;
-      let text = null;
-      try {
-        if (det) { const r = await det.detect(video); if (r[0]) text = r[0].rawValue; }
-        if (!text && window.jsQR) {
-          cv.width = video.videoWidth >> 1; cv.height = video.videoHeight >> 1;
-          ctx.drawImage(video, 0, 0, cv.width, cv.height);
-          const img = ctx.getImageData(0, 0, cv.width, cv.height);
-          const q = window.jsQR(img.data, img.width, img.height, { inversionAttempts: "attemptBoth" });
-          if (q) text = q.data;
-        }
-      } catch (e) {}
-      if (text && TC.parseKid(text)) { TC.sfx("coin"); stop(); handleScanText(text); return; }
-    }
-  };
-
-  TC.manualPick = function () {
-    document.querySelectorAll(".picker").forEach((e) => e.remove()); // never stack two pickers
-    const roster = TC.roster(); let grade = 3;
-    const ids = Object.keys(roster).length ? Object.keys(roster).sort() : Array.from({ length: 28 }, (_, i) => String(i + 1).padStart(2, "0"));
-    const card = h("div", { class: "card" });
-    const wrap = h("div", { class: "picker", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);
-    card.append(h("h2", { class: "zh" }, "手動選擇旅客（沒有掃描機時使用）"));
-    if (!Object.keys(roster).length) {
-      const gr = h("div", { class: "grade-row" }, h("span", { class: "zh", style: "font-size:1.4rem;align-self:center" }, "年級："));
-      for (let g = 1; g <= 6; g++) gr.append(h("button", { class: g === grade ? "on" : "", onclick: (e) => { grade = g; gr.querySelectorAll("button").forEach((b) => b.classList.remove("on")); e.target.classList.add("on"); } }, g + ""));
-      card.append(gr);
-    }
-    const grid = h("div", { class: "grid-nums" });
-    ids.forEach((id) => {
-      const r = roster[id];
-      grid.append(h("button", { onclick: () => { wrap.remove(); TC.sfx("coin"); scanCb && scanCb(mkKid(id, r ? r.name : "Traveler " + id, r ? r.grade : grade)); } }, id, r ? h("small", {}, r.name) : null));
-    });
-    card.append(grid, h("p", { class: "hint zh" }, "名單可在 ⚙ 設定貼上（只存在這台電腦）。"));
-    document.body.append(wrap);
-  };
 
   /* ---------------- event log + optional Google Sheet sync ---------------- */
   TC.gate = 0; TC.kid = null;
@@ -722,21 +637,20 @@
       <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力先用電腦語音把問題整句唸一次）</option></select></label>
       <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
       <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">單字用真人錄音，整句用 AI 語音（ElevenLabs）一次唸完（建議）</option><option value="off">只播真人錄音的單字，整句由老師親口示範</option></select></label>
-      <label><span>刮刮卡點數</span><select id="sFair"><option value="1">公平模式：每人六關合計 100 點</option><option value="0">驚喜模式：每張 10／20／30／50 點</option></select></label>
+
       <label><span>唸整句的電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
       <label><span>幾秒後提示（秒）</span><input id="sHint" type="text" value="${TC.cfg.hintAfter}" style="max-width:6rem"></label>
       <label><span>同步網址 Google Apps Script（可空白）</span><input id="sSync" type="text" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(TC.cfg.syncUrl)}"></label>
-      <label style="align-items:flex-start"><span>名單 Roster（手動選擇用）<br><small>每行：座號 英文名 年級<br>例：07 Amy 3</small></span><textarea id="sRoster">${esc(TC.cfg.roster)}</textarea></label>
-      <p><small>快捷鍵：Enter/空白鍵＝老師判定通過 ✓ · H＝聽示範 · N＝跳過 · C＝相機掃描 · M＝手動選擇 · Esc＝回到掃描畫面</small></p>
+      <p><small>快捷鍵：Enter/空白鍵＝START／老師判定通過 ✓ · H＝聽示範 · N＝跳過 · Esc＝回到開始畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sFair").value = TC.cfg.fairPoints === false ? "0" : "1"; $("#sRec").value = TC.cfg.record ? "1" : "0";
+    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sRec").value = TC.cfg.record ? "1" : "0";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, fairPoints: $("#sFair").value === "1", syncUrl: $("#sSync").value.trim(), roster: $("#sRoster").value });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

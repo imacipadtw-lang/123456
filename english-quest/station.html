@@ -15,7 +15,7 @@
   <div class="kid-chip hidden" id="kidChip"><div class="av" id="kAv">A</div><span id="kName">Amy</span>
     <div class="lvl" id="lvlBtns"><button data-l="1" class="zh">初級</button><button data-l="2" class="zh">中級</button></div></div>
   <div class="pips" id="pips"></div>
-  <div class="ai-pill" id="clock" title="這位孩子已玩的時間 · 排隊人數">⏱ 0:00</div>
+  <div class="ai-pill" id="clock" title="這位孩子已玩的時間">⏱ 0:00</div>
   <div class="ai-pill" id="aiPill"><i></i>AI</div>
   <button class="icon-btn" id="helpBtn" title="Teacher script">📋</button>
   <button class="icon-btn" id="setBtn" title="Settings">⚙</button>
@@ -42,18 +42,11 @@
   <div class="genre zh" id="scanGenre"></div>
   <h1 id="scanTitle">Gate</h1>
   <div class="sub zh" id="scanSub"></div>
-  <div class="scan-box"><span class="qr">🛂</span><span>Scan your passport! <span class="zh">請掃描護照</span></span></div>
-  <div class="queue" id="queue"></div>
-  <div class="scan-actions">
-    <button class="big-btn" id="camBtn">📷 <span class="zh">相機掃描</span></button>
-    <button class="big-btn" id="manBtn">👆 <span class="zh">手動選擇</span></button>
-    <button class="big-btn" id="vipBtn">⭐ <span class="zh">貴賓體驗 Guest</span></button>
-    <button class="big-btn go hidden" id="goBtn">START ▶</button>
-  </div>
+  <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始遊戲</i></span></button>
+  <div class="lvl-pick" id="lvlPick"><button data-l="1"><b class="zh">初級</b><i class="zh">1–2 年級 · 看字說</i></button><button data-l="2"><b class="zh">中級</b><i class="zh">3–6 年級 · 填空說</i></button></div>
   <div class="hint zh" id="passportRef"></div>
 </section>
 
-<script src="js/vendor/jsQR.js"></script>
 <script src="js/content.js"></script>
 <script src="assets/audio/credits.js"></script>
 <script src="assets/audio/ai-sentences.js"></script>

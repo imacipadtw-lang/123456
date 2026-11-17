@@ -321,3 +321,75 @@ body:has(.overlay .stamp) #cap,body:has(.overlay.welcome) #cap{left:auto;right:2
 .who{font-size:1.75rem;padding:.3rem 1rem;margin-top:.4rem;border-radius:1.2rem}
 .talk-main{border:3px solid var(--gate);box-shadow:0 0 0 .35rem rgba(0,0,0,.25),0 0 2.4rem color-mix(in srgb,var(--gate) 40%,transparent)}
 .k-line .w.blank{box-shadow:0 0 1.6rem rgba(255,200,61,.35)}
+
+/* =====================================================================
+   3D layer (v3): one giant START button, a 3D level switch, big 3D
+   teacher buttons, extruded titles and a gentle parallax on the start
+   screen. Everything here only restyles; the game logic is unchanged.
+   ===================================================================== */
+:root{--btn-depth:1.1rem}
+/* --- shared 3D button recipe: top light, colour body, darker "side" underneath --- */
+.big-btn,.icon-btn,.lvl button,.lvl-pick button,.start3d{position:relative;transform:translateY(0);transition:transform .09s ease,box-shadow .09s ease,filter .2s}
+.big-btn{background-image:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 46%,rgba(0,0,0,.14));
+  box-shadow:0 .7rem 0 rgba(0,0,0,.42),0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .25rem 0 rgba(255,255,255,.35),inset 0 -.25rem 0 rgba(0,0,0,.18)}
+.big-btn:active,.big-btn.pressed{transform:translateY(.55rem);box-shadow:0 .15rem 0 rgba(0,0,0,.42),0 .4rem 1rem rgba(0,0,0,.3),inset 0 .25rem 0 rgba(255,255,255,.3)}
+
+/* --- START: the only control on the start screen --- */
+.start3d{display:flex;align-items:center;gap:2.4rem;margin-top:1.2rem;padding:2rem 5.6rem 2rem 2.2rem;border-radius:99rem;color:#3a2300;
+  background:linear-gradient(180deg,#fff6b8 0%,#ffd84a 32%,#ffb11f 70%,#ff8f1f 100%);
+  box-shadow:0 var(--btn-depth) 0 #c25a00,0 calc(var(--btn-depth) + .2rem) 0 #7a3600,0 2.6rem 5rem rgba(0,0,0,.55),
+    inset 0 .5rem 0 rgba(255,255,255,.75),inset 0 -.6rem 1rem rgba(160,70,0,.35),0 0 0 .5rem rgba(255,255,255,.9),0 0 6rem rgba(255,200,61,.55);
+  animation:startBreath 2.4s ease-in-out infinite;overflow:hidden;isolation:isolate}
+.start3d::after{content:"";position:absolute;top:-30%;bottom:-30%;width:28%;left:-40%;z-index:-1;transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:startShine 3.2s ease-in-out infinite}
+.start3d .ic{width:10rem;height:10rem;border-radius:50%;display:grid;place-items:center;font-size:5.2rem;color:#fff;padding-left:.6rem;
+  background:radial-gradient(circle at 35% 30%,#ff9ec9,#ff3f8e 55%,#c2185b);box-shadow:inset 0 .5rem 0 rgba(255,255,255,.45),inset 0 -.6rem 0 rgba(0,0,0,.25),0 .6rem 0 #8a0f45;
+  text-shadow:0 .3rem 0 rgba(0,0,0,.25)}
+.start3d .tx{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+.start3d b{font-size:9.6rem;letter-spacing:.04em;color:#fff;-webkit-text-stroke:.5rem #7a3600;paint-order:stroke fill;
+  text-shadow:0 .25rem 0 #c25a00,0 .5rem 0 #a34a00,0 .75rem 0 #7a3600,0 1.4rem 1.6rem rgba(0,0,0,.35)}
+.start3d i{font-style:normal;font-size:3.4rem;font-weight:700;margin-top:.4rem;color:#5a2d00}
+.start3d:hover{filter:brightness(1.05)}
+.start3d:active,.start3d.pressed{transform:translateY(var(--btn-depth));box-shadow:0 .15rem 0 #c25a00,0 .3rem 0 #7a3600,0 1rem 2rem rgba(0,0,0,.45),
+  inset 0 .5rem 0 rgba(255,255,255,.6),0 0 0 .5rem rgba(255,255,255,.9),0 0 4rem rgba(255,200,61,.5)}
+@keyframes startBreath{0%,100%{scale:1}50%{scale:1.045}}
+@keyframes startShine{0%,55%{left:-40%}100%{left:130%}}
+
+/* --- level switch under START (初級 / 中級) --- */
+.lvl-pick{display:flex;gap:1.4rem;margin-top:2.2rem;padding:.8rem;border-radius:3rem;background:rgba(5,12,30,.55);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.5)}
+.lvl-pick button{display:flex;flex-direction:column;align-items:center;min-width:20rem;padding:1rem 2.4rem;border-radius:2.4rem;line-height:1.1;
+  background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;box-shadow:0 .6rem 0 #121c42,inset 0 .2rem 0 rgba(255,255,255,.25)}
+.lvl-pick button b{font-size:3.4rem}
+.lvl-pick button i{font-style:normal;font-size:1.7rem;opacity:.85;margin-top:.3rem}
+.lvl-pick button.on{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 .6rem 0 #0b7a5c,0 0 2.4rem rgba(46,230,182,.55),inset 0 .25rem 0 rgba(255,255,255,.6)}
+.lvl-pick button.on b::before{content:"✓ "}
+.lvl-pick button:active{transform:translateY(.45rem);box-shadow:0 .15rem 0 #121c42}
+
+/* --- start screen: extruded 3D title, depth layers --- */
+#scan{perspective:140rem}
+#scan h1{text-shadow:0 .3rem 0 #0a1633,0 .6rem 0 #0a1633,0 .9rem 0 color-mix(in srgb,var(--gate) 55%,#0a1633),0 1.2rem 0 color-mix(in srgb,var(--gate) 40%,#0a1633),0 2.4rem 2.4rem rgba(0,0,0,.45)}
+/* "4D": the art floats at different depths and the badge turns gently with the teacher's finger / mouse */
+#scan .floaty img{translate:calc(var(--mx,0) * var(--z,1) * 2.4rem) calc(var(--my,0) * var(--z,1) * 2.4rem);transition:translate .4s ease-out}
+#scan .scan-badge{rotate:y calc(var(--mx,0) * 14deg);transition:rotate .4s ease-out;transform-style:preserve-3d}
+#scanOllie{display:none}
+
+/* --- teacher controls during play: bigger, 3D --- */
+#talk{grid-template-columns:minmax(0,1fr) 23rem}
+.talk-side{gap:1rem}
+.talk-side .big-btn{font-size:2.8rem;padding:1.2rem .8rem;border-radius:1.8rem}
+.btn-ok{background-color:#35e07a;box-shadow:0 .8rem 0 #148a42,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.5)!important}
+.btn-hear{background-color:#3a5bd0;box-shadow:0 .8rem 0 #1b2f78,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.35)!important}
+.btn-skip{background-color:#4a557c;box-shadow:0 .7rem 0 #252c45,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.25)!important;font-size:2.2rem!important}
+.btn-ok:active,.btn-hear:active,.btn-skip:active{transform:translateY(.6rem)}
+.icon-btn{width:5.8rem;height:5.8rem;border-radius:1.6rem;font-size:2.8rem;background:linear-gradient(180deg,#2c3f80,#18245a);border:0;
+  box-shadow:0 .55rem 0 #0b1233,0 1rem 1.6rem rgba(0,0,0,.35),inset 0 .2rem 0 rgba(255,255,255,.25)}
+.icon-btn:active{transform:translateY(.45rem);box-shadow:0 .1rem 0 #0b1233}
+.kid-chip{font-size:2.2rem;padding:.5rem 1.6rem .5rem .5rem}
+.kid-chip .av{width:4.4rem;height:4.4rem;font-size:2.4rem}
+.lvl button{font-size:1.8rem;padding:.5rem 1.4rem;border-radius:1.2rem;box-shadow:0 .35rem 0 rgba(0,0,0,.45)}
+.lvl button.on{box-shadow:0 .35rem 0 #a3740b,0 0 1.2rem rgba(255,200,61,.5)}
+.overlay .res-actions .big-btn{font-size:3rem;padding:1.4rem 3.2rem}
+.overlay .res-actions .go,.sc-next{font-size:3.4rem!important;padding:1.4rem 4rem!important;background-color:#ffc83d;color:#3a2300;box-shadow:0 .9rem 0 #b87a00,0 1.4rem 2.4rem rgba(0,0,0,.4),inset 0 .3rem 0 rgba(255,255,255,.6)!important}
+@media (prefers-reduced-motion:reduce){.start3d,.start3d::after{animation:none}}
+/* start screen: the timer and AI pills only matter while a child is playing */
+body:not(.playing) #clock,body:not(.playing) #aiPill{display:none}

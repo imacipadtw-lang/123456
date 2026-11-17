@@ -1,4 +1,5 @@
-/* Station flow: scan passports → welcome → play → stamp + secret letter → next traveler */
+/* Station flow: the teacher presses START → welcome → play → scratch card (10/20/30 points) → stamp + secret letter → back to START.
+   No passport scanning and no names: one child plays at a time, the teacher hands out a points sticker for the passport. */
 (function () {
   "use strict";
   const { h, $, sleep } = TC;
@@ -33,12 +34,16 @@
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
     if ((left < 31 && top > 10 && top < 90) || (left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
   $("#scan").prepend(floaty);
+  floaty.querySelectorAll("img").forEach((im, i) => im.style.setProperty("--z", String(0.4 + ((i * 7) % 10) / 6)));
+  // "4D" parallax: the start screen leans with the pointer (and drifts slowly on its own when nobody touches it)
+  const scanEl = $("#scan"); let lastMove = 0;
+  scanEl.addEventListener("pointermove", (e) => { lastMove = Date.now(); scanEl.style.setProperty("--mx", ((e.clientX / innerWidth) * 2 - 1).toFixed(3)); scanEl.style.setProperty("--my", ((e.clientY / innerHeight) * 2 - 1).toFixed(3)); });
+  setInterval(() => { if (Date.now() - lastMove < 4000 || scanEl.classList.contains("hidden")) return; const t = Date.now() / 3000; scanEl.style.setProperty("--mx", (Math.sin(t) * 0.6).toFixed(3)); scanEl.style.setProperty("--my", (Math.cos(t * 0.8) * 0.4).toFixed(3)); }, 400);
   // the big cute 土城 badge of this gate (a different design at every gate) on the scan screen, and a small one in the HUD
   $("#scan").append(TC.badgeEl(gate, "scan-badge bob"));
   const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.replaceWith(TC.badgeEl(gate, "emb"));
   TC.setAIPill();
 
-  const queue = [];
   let running = false, resultOpen = null;
   const api = {
     G, gate, stage: $("#stage"), aborted: false,
@@ -53,59 +58,50 @@
   TC.api = api;
   game.mount && game.mount(api);
 
-  function renderQueue() {
-    const q = $("#queue"); q.innerHTML = "";
-    queue.forEach((k, i) => q.append(h("div", { class: "q-kid" },
-      h("div", { class: "av", style: `background:${k.color}` }, k.name[0]),
-      h("span", {}, k.name), h("span", { class: "x zh", onclick: () => { queue.splice(i, 1); renderQueue(); } }, "移除 ✕"))));
-    $("#goBtn").classList.toggle("hidden", !queue.length || running);
-  }
-  TC.onScan((kid) => {
-    TC.ac();
-    if (queue.some((k) => k.id === kid.id) || (TC.kid && running && TC.kid.id === kid.id)) { TC.toast(`${kid.name} 已經在隊伍裡了`); return; }
-    queue.push(kid); renderQueue(); TC.sfx("coin");
-    if (running) TC.toast(`✈ ${kid.name} 已排隊，下一位！`);
-    else TC.speak(`Hello, ${kid.name}!`);
-  });
+  // level for the next player (初級 grades 1–2 / 中級 grades 3–6), remembered on this screen
+  let nextLevel = TC.cfg.level === 2 ? 2 : 1;
+  function showLevel() { $("#lvlPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === nextLevel)); }
+  $("#lvlPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); nextLevel = +b.dataset.l; TC.cfg.level = nextLevel; TC.saveCfg(); showLevel(); });
+  showLevel();
+  let players = 0;
+  function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: nextLevel === 1 ? 2 : 4, color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }
 
   function setKidChip(kid) {
     $("#kidChip").classList.remove("hidden");
-    $("#kAv").textContent = kid.name[0]; $("#kAv").style.background = kid.color;
-    $("#kName").textContent = kid.name;
+    $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color;
+    $("#kName").textContent = "PLAYER";
     $("#lvlBtns").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === kid.level));
   }
   $("#lvlBtns").addEventListener("click", (e) => {
     const l = +e.target.dataset.l; if (!l || !TC.kid) return;
-    TC.kid.level = l; setKidChip(TC.kid); TC.toast("難度：" + ["", "初級 Basic（看字說）", "中級（填空說）"][l] + "（下一題生效）");
+    TC.kid.level = l; nextLevel = l; showLevel(); setKidChip(TC.kid); TC.toast("難度：" + ["", "初級 Basic（看字說）", "中級（填空說）"][l] + "（下一題生效）");
   });
 
-  async function runQueue() {
-    if (running || !queue.length) return;
-    running = true; renderQueue();
+  async function start() {
+    if (running) return;
+    TC.ac(); running = true; TC.sfx("whoosh");
+    $("#startBtn").classList.add("pressed");
     await TC.Mic.init();
-    $("#scan").classList.add("hidden");
-    while (queue.length) {
-      const kid = queue.shift(); renderQueue();
-      await playKid(kid);
-      if (api.aborted) break;
-    }
+    $("#scan").classList.add("hidden"); $("#startBtn").classList.remove("pressed");
+    document.body.classList.add("playing");
+    await playKid(newPlayer());
     api.aborted = false; running = false; TC.kid = null;
     $("#kidChip").classList.add("hidden"); $("#pips").innerHTML = "";
-    $("#scan").classList.remove("hidden"); renderQueue();
+    $("#scan").classList.remove("hidden"); document.body.classList.remove("playing");
     game.idle && game.idle(api);
   }
 
   let kidStart = 0;
-  setInterval(() => { const c = $("#clock"); if (!c) return; if (!running || !kidStart) { c.textContent = `⏱ 排隊 ${queue.length}`; c.style.color = ""; return; }
-    const s = ((Date.now() - kidStart) / 1000) | 0; c.textContent = `⏱ ${(s / 60) | 0}:${String(s % 60).padStart(2, "0")} · 排隊 ${queue.length}`; c.style.color = s > 300 ? "#ff8a8a" : ""; }, 1000);
+  setInterval(() => { const c = $("#clock"); if (!c) return; if (!running || !kidStart) { c.textContent = `⏱ 0:00`; c.style.color = ""; return; }
+    const s = ((Date.now() - kidStart) / 1000) | 0; c.textContent = `⏱ ${(s / 60) | 0}:${String(s % 60).padStart(2, "0")}`; c.style.color = s > 300 ? "#ff8a8a" : ""; }, 1000);
   async function playKid(kid) {
     TC.kid = kid; api.aborted = false; kidStart = Date.now();
     TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null }; TC.lastSay = "";
     setKidChip(kid);
     const ov = h("div", { class: "overlay welcome" },
       h("div", { class: "bpass" },
-        h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, kid.name[0]),
-        h("div", {}, h("div", { class: "k" }, kid.id === "99" ? "VIP BOARDING PASS · TUCHENG ENGLISH DAY" : "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, kid.id === "99" ? "Welcome, VIP Guest!" : `Welcome, ${kid.name}!`),
+        h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, "★"),
+        h("div", {}, h("div", { class: "k" }, "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, "Welcome!"),
           h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級"][kid.level] + " · " + G.zh)),
         TC.badgeEl(gate, "bp-badge bob")));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
@@ -116,16 +112,16 @@
       const n = (k.gates || []).filter((g) => g !== gate).length;
       ov.querySelector(".bpass > div:nth-child(2)").append(h("div", { style: "font-size:2.2rem;font-weight:700;color:#e8a21a;margin-top:.4rem" }, `★ ${n} / 6 stamps · 已收集 ${n} 個印章`));
     });
-    await TC.speak(kid.id === "99" ? "Welcome!" : `Welcome, ${kid.name}!`);
+    await TC.speak("Welcome!");
     await sleep(600); ov.remove();
     TC.log({ type: "start" });
     // 👋 warm-up chat with the teacher (standard mode)
     if (!TC.cfg.rounds) {
       const gr = TC_CONTENT.greetings[TC_CONTENT.greetingOrder[gate]], L = kid.level;
       const age = ["", "seven", "eight", "nine", "ten", "eleven", "twelve"][kid.grade] || "ten"; // typical age for the grade
-      const fill = (t) => t.replace("[Name]", kid.name).replace("[name]", kid.name.toLowerCase()).replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age);
+      const fill = (t) => t.replace(/\[Name\]/g, "___").replace(/\[name\]/g, "").replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age); // no names: the child says their own
       api.progress(-1, 0);
-      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill)), word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
+      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
       TC.hideTalk();
       if (api.aborted) return;
     }
@@ -154,7 +150,7 @@
     if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
     const pts = TC.pointsFor(kid.id, gate);
-    await TC.scratchCard({ id: kid.id, name: kid.name, gate, city: G.city, points: pts });
+    await TC.scratchCard({ id: kid.id, name: "", gate, city: G.city, points: pts });
     if (api.aborted) return;
     TC.log({ type: "points", points: pts });
     await showResult(kid, Object.assign(res || {}, { points: pts }));
@@ -167,14 +163,14 @@
     const date = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
     const boxes = h("div", { class: "boxes" }, ...SECRET.split("").map((c, i) => h("span", { class: i === gate - 1 ? "me" : "" }, i === gate - 1 ? c : i + 1 + "")));
     const letter = h("div", { class: "code-letter roll" }, "?");
-    const replay = h("button", { class: "big-btn", onclick: () => playBlob() }, "🔊 ", h("span", { class: "zh" }, `聽 ${kid.name} 說英文`));
-    const next = h("button", { class: "big-btn go" }, queue.length ? `NEXT: ${queue[0].name} ▶` : "DONE ✓");
+    const replay = h("button", { class: "big-btn", onclick: () => playBlob() }, "🔊 ", h("span", { class: "zh" }, "聽自己說英文"));
+    const next = h("button", { class: "big-btn go" }, "DONE ✓");
     const ov = h("div", { class: "overlay" },
-      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date} · ${kid.name}`))),
+      h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date}`))),
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母和點數寫在護照卡第 ${gate} 格！`),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母寫在護照第 ${gate} 格，老師會發 ${res.points || 0} 點貼紙給你！`),
       h("div", { class: "res-actions" }, replay, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
@@ -185,23 +181,19 @@
     letter.classList.remove("roll"); letter.textContent = LETTER; TC.sfx("levelup"); TC.confetti(200);
     TC.log({ type: "complete", stars, letter: LETTER, lines: TC.stats.lines });
     await sleep(500);
-    await TC.speak(`Great, ${kid.name}!`);
+    await TC.speak("Great!");
     await sleep(300);
     function playBlob() {
       if (!TC.stats.lastBlob) { TC.toast("這台沒有錄音（可在設定開啟）"); return Promise.resolve(); }
       return new Promise((r) => { const a = new Audio(URL.createObjectURL(TC.stats.lastBlob)); a.volume = 1; a.onended = r; a.onerror = r; a.play().catch(r); });
     }
-    if (TC.stats.lastBlob) { TC.floatText(`🎤 ${kid.name}!`, 50, 30, "#2ee6b6"); await playBlob(); }
+    if (TC.stats.lastBlob) { TC.floatText("🎤", 50, 30, "#2ee6b6"); await playBlob(); }
     await new Promise((r) => { resultOpen = r; next.onclick = r; });
     resultOpen = null; ov.remove(); TC.ollie("idle");
   }
 
   /* buttons + keys */
-  $("#goBtn").onclick = runQueue;
-  $("#camBtn").onclick = () => { TC.ac(); TC.cameraScan(); };
-  $("#manBtn").onclick = () => { TC.ac(); TC.manualPick(); };
-  // one tap for visitors (e.g. the minister): a guest traveller at the intermediate level
-  $("#vipBtn").onclick = () => { TC.ac(); const g = TC.mkKid("99", "Guest", 3); g.color = "#ffc83d"; TC.handleScan ? TC.handleScan(g) : null; };
+  $("#startBtn").onclick = start;
   $("#setBtn").onclick = () => TC.openSettings();
   // 📋 teacher script for this gate, generated from the same content the game uses
   $("#helpBtn").onclick = () => {
@@ -209,7 +201,7 @@
     const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
     const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "護照 " + r.no : ""].filter(Boolean).join(" · ")]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "老師問左欄，孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照密碼」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到掃描"),
+      h("p", { class: "zh" }, "老師問左欄，孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照密碼」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
         h("tr", {}, ...["老師問 Teacher", "畫面上的句子", "答案字（說這個字）", "中文／護照編號"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
         ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),
@@ -226,18 +218,16 @@
     if (burst || e.repeat) return;
     const k = e.key;
     // Esc first closes a teacher dialog (settings, script card, name picker) if one is open
-    if (k === "Escape") { const cam = document.querySelector(".cam .close"); if (cam) { cam.click(); return; } const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
+    if (k === "Escape") { const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
     if (k === "Enter" || k === " ") {
       e.preventDefault();
       if (resultOpen) resultOpen();
-      else if (!running && queue.length) runQueue();
+      else if (!running) start();
       else TC.teacherOK();
     } else if (k === "h" || k === "H") TC.hearModel();
     else if (k === "n" || k === "N" || k === "ArrowRight") TC.skipTurn();
     else if (k === "Escape") { if (running) { api.aborted = true; TC.skipTurn(); TC.ASR.stop(); document.querySelectorAll(".overlay,.pz,.actbtn,.lineup,.chorus").forEach((o) => o.remove()); if (TC.pending) { const p = TC.pending; TC.pending = null; p(); } if (resultOpen) resultOpen(); } }
     else if ((k === "s" || k === "S") && !running) TC.openSettings();
-    else if ((k === "c" || k === "C") && !running) TC.cameraScan();
-    else if ((k === "m" || k === "M") && !running) TC.manualPick();
   };
   game.idle && game.idle(api);
 })();

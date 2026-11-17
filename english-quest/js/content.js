@@ -157,7 +157,7 @@ window.TC_CONTENT.greetingOrder = { 1: "name", 2: "name", 3: "name", 4: "name", 
 window.TC_SCRIPT = function (gate) {
   const C = window.TC_CONTENT, G = C.gates[gate], gr = C.greetings[C.greetingOrder[gate]], rows = [];
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
-  rows.push({ kind: "hello", t: gr.teacher, tzh: gr.tzh, say: gr.say.replace("[Name]", "Amy").replace("[age]", "nine"), word: gr.word || "", zh: "", no: (gr.no || []).join("、") });
+  rows.push({ kind: "hello", t: gr.teacher, tzh: gr.tzh, say: gr.say.replace("[Name]", "___").replace("[age]", "nine"), word: gr.word || "", zh: "", no: (gr.no || []).join("、") });
   const q = (it, say, w) => rows.push({ kind: "q", t: G.teacher, tzh: G.tzh, say, word: w, zh: it.zh || "", no: it.no });
   if (G.key === "obby") G.scenes.forEach((x) => q(x, x.say, x.w));
   if (G.key === "kart") Object.entries(G.numbers).forEach(([n, v]) => q({ zh: n + " 顆星星", no: v.no }, cap(v.w) + "!", v.w));

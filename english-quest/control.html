@@ -34,7 +34,10 @@
   .keys .wide{grid-column:span 2;background:#5a2b4f}
   body.decoding .stats{display:none}
   .attract{position:absolute;left:0;right:0;top:54%;text-align:center}
-  .attract h2{font-size:3.8rem;margin:1.4rem 0 1rem}
+  .attract h2{font-size:3.8rem;margin:.6rem 0 .6rem}
+  .attract .start3d{display:inline-flex;margin:.4rem auto 0;padding:1.4rem 4.4rem 1.4rem 1.6rem}
+  .attract .start3d b{font-size:7rem}.attract .start3d .ic{width:7.6rem;height:7.6rem;font-size:4rem}.attract .start3d i{font-size:2.6rem}
+  .attract{top:50%!important}
   /* certificate */
   .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:#fffdf5;color:#0a1633;border-radius:1.6em;padding:3% 4%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5);border:1.2em solid #ffc83d;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
   .cert .k1{font-size:1.5em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
@@ -44,6 +47,8 @@
   .cert h1{font-size:5.6em;margin:.1em 0 0;line-height:1}
   .cert .zh{font-size:2.4em}
   .cert .nm{font-size:8em;font-weight:700;color:#d6337a;margin:.18em 0 .05em;line-height:1}
+  .cert .nm-line{width:55%;height:1.05em;border-bottom:.08em dashed #d6337a;margin:.1em 0 .1em}
+  .cert .pts-line{display:inline-block;width:3.6em;border-bottom:.1em dashed #d6337a;margin:0 .2em}
   .cert p{font-size:2em;margin:.2em 0}
   .cert .st{display:flex;gap:1.4em;margin:1.6em 0}
   .cert .st div{width:6.4em;height:6.4em;border-radius:50%;border:.35em double var(--c);color:var(--c);display:grid;place-items:center;font-weight:700;font-size:1.4em;transform:rotate(-10deg);line-height:1.1}
@@ -77,15 +82,13 @@
 </style>
 </head>
 <body>
-<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2rem;color:#fff;letter-spacing:.06em;position:fixed;left:1.6rem;top:1.2rem;z-index:45;text-shadow:0 2px 6px rgba(0,0,0,.5)"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5rem;height:5rem;flex:none">南投縣草屯鎮土城國民小學</div>
 <div id="stage">
   <section class="view" id="vGate">
     <div class="route" id="route"></div>
     <div class="stats"><div class="stat"><b id="sKids">0</b><span class="zh">完成環遊的小旅客</span></div><div class="stat"><b id="sLines">0</b><span class="zh">今天說出的英文句子</span></div><div class="stat"><b id="sStamps">0</b><span class="zh">已蓋的關卡印章</span></div></div>
     <div class="attract" id="attract">
-      <div class="scan-box" style="display:inline-flex"><span class="qr">🛂</span><span>Final Gate: scan your passport! <span class="zh">終點登機門：請掃描護照</span></span></div>
       <h2 class="zh">集滿 6 個秘密字母，解開密碼就能登機！</h2>
-      <div class="scan-actions" style="justify-content:center"><button class="big-btn" id="camBtn">📷 <span class="zh">相機掃描</span></button><button class="big-btn" id="manBtn">👆 <span class="zh">手動選擇</span></button><button class="big-btn" id="vipBtn">⭐ <span class="zh">貴賓體驗 Guest</span></button></div>
+      <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始解碼</i></span></button>
     </div>
     <div class="dec hidden" id="dec">
       <h2 id="decTitle">What's the secret word?</h2>
@@ -101,7 +104,7 @@
 </div>
 
 <header id="hud">
-  <div class="gate-badge"><div class="num">★</div><div><div class="t1">Final Gate</div><div class="t2"><span class="zh">終點登機門</span> · Mission Control</div></div></div>
+  <div class="gate-badge"><img class="emb" src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="num">★</div><div><div class="t0 zh">南投縣草屯鎮土城國民小學</div><div class="t1">Final Gate</div><div class="t2"><span class="zh">終點登機門</span> · Mission Control</div></div></div>
   <div class="kid-chip hidden" id="kidChip"><div class="av" id="kAv">A</div><span id="kName">Amy</span></div>
   <div class="tabs" style="margin-left:auto"><button class="on" data-v="vGate">🏁 Final Gate</button><button data-v="vBoard">📊 Live Board</button></div>
   <div class="ai-pill" id="aiPill"><i></i>AI</div>
@@ -123,7 +126,6 @@
   </div>
 </section>
 
-<script src="js/vendor/jsQR.js"></script>
 <script src="js/content.js"></script>
 <script src="assets/audio/credits.js"></script>
 <script src="assets/audio/ai-sentences.js"></script>

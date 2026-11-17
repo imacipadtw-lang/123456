@@ -51,8 +51,8 @@
   const G = TC_CONTENT.gates, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const S = [
     { say: "Hello! Welcome!", build: () => [h("div", { class: "ollie-wrap flyin", html: TC.ollieSVG("cheer") }), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
-    { say: "Passport!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🛂 PASSPORT"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▣ QR"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Hello, Amy!")),
-        h("div", { class: "en" }, "Bring your passport. Scan your QR card!"), h("div", { class: "zh2" }, "帶著護照，在每一關掃描你的 QR 登機卡！")] },
+    { say: "Passport!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🛂 PASSPORT"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▶ START"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Welcome!")),
+        h("div", { class: "en" }, "Bring your passport to every gate!"), h("div", { class: "zh2" }, "帶著護照到每一關，老師按 START 就開始！")] },
     { say: "Six! Games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.artImg(EMB[n]), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),
         h("div", { class: "en" }, "6 gates · 6 cities · 6 games!"), h("div", { class: "zh2" }, "六關、六座城市、六個遊戲！")] },
     { say: "Listen!", build: () => { const cv = h("canvas", { class: "wave", width: 1200, height: 200 }); waveDemo(cv);

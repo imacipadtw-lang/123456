@@ -15,8 +15,7 @@ const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3
       Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => v, cancel() {}, speak(u) { window.__tts.push(u.text); setTimeout(() => u.onend && u.onend(), 500); } } });
     });
     await p.goto(`${base}/station.html?gate=${g}`); await p.waitForTimeout(900);
-    await p.click("#vipBtn"); await p.waitForTimeout(700);
-    await p.click(`#lvlBtns button[data-l="${L}"]`).catch(() => {});
+    await p.click(`#lvlPick button[data-l="${L}"]`); await p.click("#startBtn", { force: true }); await p.waitForTimeout(700);
     const t0 = Date.now(); let done = false, scratch = false, last = "";
     while (Date.now() - t0 < 170000) {
       const st = await p.evaluate(() => ({ stamp: !!document.querySelector(".overlay .stamp"), sc: !!document.querySelector(".sc-ov"), k: (document.querySelector("#talk.show #kLine") || {}).innerText || "", t: (document.querySelector("#talk.show #tLine") || {}).innerText || "" }));

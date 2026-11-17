@@ -12,7 +12,7 @@
   function curve(d) { return Math.sin(d / 1300) * 0.9 + Math.sin(d / 520 + 1) * 0.45; }
 
   function resize() {
-    const r = Math.min(1, 1600 / innerWidth);
+    const r = Math.min(Math.max(1, window.devicePixelRatio || 1), 1920 / innerWidth); // full-HD canvas (was capped at 1600 px)
     W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r);
   }
 

@@ -131,7 +131,7 @@
   let stops = [], flags = [], crowd = [], parts = [], cam = 0, finishX = 0, trophy = false, party = false;
   let epoch = 0, API = null; // animations of an earlier run (or of an aborted one) stop at once
 
-  function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); k = H / 720; }
+  function resize() { const r = Math.min(Math.max(1, window.devicePixelRatio || 1), 1920 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); k = H / 720; }
   function tween(ms, fn) {
     const e = epoch;
     return new Promise((res) => { const t0 = performance.now(); (function f() { if (e !== epoch || (API && API.aborted)) return res(); const t = Math.min(1, (performance.now() - t0) / ms); fn(t); if (t < 1) requestAnimationFrame(f); else res(); })(); });

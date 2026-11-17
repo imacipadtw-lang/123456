@@ -2,30 +2,23 @@
    Scratch card (刮刮卡): after each gate the child scratches a silver panel
    on the big screen with a finger and finds points to trade for prizes.
 
-   Points are worked out from the child's number and the gate, so every TV
-   (and the Final Gate) agrees without any network:
-   · fair mode (default): every child's six cards are 10, 10, 15, 15, 20, 30
-     in a different order → everybody who finishes all six gates has 100.
-   · surprise mode: each card is 10 / 20 / 30 / 50 (50 is rare).
+   Each card shows 10, 20 or 30 points, picked at random when the card
+   appears (not two of the same in a row on this screen). The teacher then
+   hands the child a sticker with those points for the passport: six gates
+   → 60 to 180 points.
    ===================================================================== */
 (function () {
   "use strict";
   const { h, sleep } = TC;
-  const FAIR = [10, 10, 15, 15, 20, 30];
-  function rng(seed) { let a = (seed >>> 0) || 1; return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-  function seedOf(id) { let s = 2166136261; for (const ch of "tces-" + id) { s ^= ch.charCodeAt(0); s = Math.imul(s, 16777619); } return s >>> 0; }
-  /** points on the scratch card of child `id` at gate 1–6 */
-  TC.pointsFor = function (id, gate) {
-    const r = rng(seedOf(id));
-    if (TC.cfg.fairPoints !== false) {
-      const a = FAIR.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (r() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; }
-      return a[(gate - 1) % 6];
-    }
-    let v = 10; for (let g = 1; g <= gate; g++) { const x = r(); v = x < 0.4 ? 10 : x < 0.75 ? 20 : x < 0.95 ? 30 : 50; }
-    return v;
+  const VALUES = [10, 20, 30];
+  let last = 0;
+  /** points on the next scratch card: 10, 20 or 30 (never the same as the card before on this screen) */
+  TC.pointsFor = function () {
+    const pool = VALUES.filter((v) => v !== last);
+    last = pool[(Math.random() * pool.length) | 0];
+    return last;
   };
-  /** total for a list of gates (default: all six) */
-  TC.pointsTotal = (id, gates = [1, 2, 3, 4, 5, 6]) => gates.reduce((s, g) => s + TC.pointsFor(id, g), 0);
+  TC.POINT_VALUES = VALUES;
 
   const css = `
   .sc-ov{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:radial-gradient(90% 80% at 50% 40%,rgba(20,34,90,.86),rgba(4,8,24,.96));animation:scIn .35s}

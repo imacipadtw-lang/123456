@@ -73,7 +73,7 @@
   const OPERA = TC.artImg("opera");
   let spinStart = 0, cv, ctx, W, H, raf, art = null, blocks = [], palette = [], glow = null, t0 = 0, sparks = [], swRects = [], pickCb = null, picked = null, toyMode = false;
   let hero = null, caption = ""; // hero = the picked colour shown BIG while the question is asked
-  function resize() { const r = Math.min(1, 1600 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); layout(); }
+  function resize() { const r = Math.min(Math.max(1, window.devicePixelRatio || 1), 1920 / innerWidth); W = cv.width = Math.round(innerWidth * r); H = cv.height = Math.round(innerHeight * r); layout(); }
   let L = { s: 30, ox: 0, oy: 0, d: 10 };
   function layout() {
     if (!art) return;

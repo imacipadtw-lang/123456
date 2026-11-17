@@ -98,22 +98,24 @@
   TC.onKey = (e) => {
     if (/^[a-zA-Z]$/.test(e.key) && solvedCb) typeLetter(e.key.toUpperCase());
     else if (e.key === "Backspace" && solvedCb) { for (let i = SECRET.length - 1; i >= 0; i--) if (typed[i]) { typed[i] = null; break; } renderSlots(); }
-    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (solvedCb) assist(); else TC.teacherOK(); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (solvedCb) assist(); else if (!busy) startFinal(); else TC.teacherOK(); }
     else if (e.key === "Escape") reset();
   };
 
   function assist() { if (!solvedCb) return; typed = SECRET.split(""); const cb = solvedCb; solvedCb = null; renderSlots(); TC.sfx("coin"); cb(); }
   $("#assistBtn").onclick = assist;
-  TC.onScan(async (kid) => {
+  async function startFinal() {
     TC.ac();
-    if (busy) { TC.toast(`${kid.name}：請等前一位完成`); return; }
+    if (busy) return;
+    const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level === 2 ? 2 : 1, grade: 3, color: "#ffc83d" };
     busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null };
-    $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = kid.name[0]; $("#kAv").style.background = kid.color; $("#kName").textContent = kid.name;
+    $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color; $("#kName").textContent = "PLAYER";
     await TC.Mic.init();
+    document.body.classList.add("playing");
     $("#attract").classList.add("hidden"); $("#dec").classList.remove("hidden"); document.body.classList.add("decoding");
     typed = new Array(SECRET.length).fill(null); renderSlots();
-    $("#decTitle").textContent = `Hi, ${kid.name}! What's the secret word?`;
-    TC.sfx("fanfare"); TC.speak(`Hello, ${kid.name}!`);
+    $("#decTitle").textContent = "What's the secret word?";
+    TC.sfx("fanfare"); TC.speak("Hello!");
     // the child may also just say the word
     TC.ASR.start((alts) => { if (TC.isQuiet()) return; if (solvedCb && alts.some((a) => TC.norm(a).some((t) => TC.wordMatch(t, SECRET.toLowerCase())))) { typed = SECRET.split(""); const cb = solvedCb; solvedCb = null; renderSlots(); cb(); } });
     await new Promise((r) => (solvedCb = r));
@@ -134,7 +136,7 @@
     TC.log({ type: "final", letter: SECRET });
     await certificate(kid);
     reset();
-  });
+  }
 
   /** 3-2-1 smile! — a webcam photo for the certificate (kept on this computer only) */
   async function takePhoto() {
@@ -157,43 +159,36 @@
   async function certificate(kid) {
     const d = new Date(), date = `${d.getFullYear()} / ${d.getMonth() + 1} / ${d.getDate()}`;
     const photo = await takePhoto();
-    // scratch-card points: the six cards of this child (worked out from the child's number, the same on every TV);
-    // if the live board has synced data, only the gates really finished are counted
-    const sk = TC.cfg.syncUrl && state && state.kids && state.kids[kid.id];
-    const done = (sk && sk.gates && sk.gates.length) ? sk.gates.map(Number) : [1, 2, 3, 4, 5, 6];
-    const points = TC.pointsTotal(kid.id, done.filter((g) => g >= 1 && g <= 6));
     const next = h("button", { class: "big-btn go" }, "NEXT ▶");
     const ov = h("div", { class: "overlay" },
       h("div", { class: "cert" },
         h("div", { class: "ow", html: TC.ollieSVG() }),
-        photo ? h("img", { class: "ph", src: photo, alt: kid.name }) : h("div", { class: "ph ph-o", html: TC.ollieSVG() }),
+        photo ? h("img", { class: "ph", src: photo, alt: "" }) : h("div", { class: "ph ph-o", html: TC.ollieSVG() }),
         h("img", { class: "cert-emb", src: "assets/img/tucheng-emblem.svg", alt: "土城國小校徽" }),
         h("div", { class: "k1" }, "南投縣草屯鎮土城國民小學 · TUCHENG ELEMENTARY SCHOOL · ENGLISH DAY"),
         h("h1", {}, "World English Traveler"),
         h("div", { class: "zh" }, "環遊世界英語小達人"),
-        h("div", { class: "nm" }, kid.name),
+        h("div", { class: "nm nm-line" }, "\u00a0"),
         h("p", {}, "spoke English at all six gates and cracked the secret code!"),
         h("p", { class: "zh" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
         h("div", { class: "st" }, ...GATES.map((g) => h("div", { style: `--c:${g.color}` }, g.city.toUpperCase(), h("br"), `GATE ${g.n}`))),
         h("p", { style: "font-size:2.6rem;font-weight:700;color:#d6337a" }, "“We are friends!”"),
-        h("div", { class: "cert-pts" }, "🎟 ", h("b", {}, String(points)), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
+        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "護照點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學"), h("span", {}, "Ollie-Bot ✈"))),
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");
-    await TC.speak(`Great, ${kid.name}! Friends!`);
+    await TC.speak("Great! Friends!");
     await new Promise((r) => { next.onclick = r; TC.pending = r; });
     ov.remove(); TC.ollie("idle");
   }
   function reset() {
     busy = false; solvedCb = null; TC.ASR.stop(); TC.hideTalk(); TC.kid = null;
     document.querySelectorAll(".overlay").forEach((o) => o.remove());
-    $("#kidChip").classList.add("hidden"); $("#dec").classList.add("hidden"); $("#attract").classList.remove("hidden"); document.body.classList.remove("decoding");
+    $("#kidChip").classList.add("hidden"); $("#dec").classList.add("hidden"); $("#attract").classList.remove("hidden"); document.body.classList.remove("decoding"); document.body.classList.remove("playing");
     refresh();
   }
 
-  $("#camBtn").onclick = () => { TC.ac(); TC.cameraScan(); };
-  $("#manBtn").onclick = () => { TC.ac(); TC.manualPick(); };
-  $("#vipBtn").onclick = () => { TC.ac(); const g = TC.mkKid("99", "Guest", 3); g.color = "#ffc83d"; TC.handleScan(g); };
+  $("#startBtn").onclick = startFinal;
   $("#setBtn").onclick = () => TC.openSettings();
   $("#okBtn").onclick = () => TC.teacherOK();
   $("#hearBtn").onclick = () => TC.hearModel();
