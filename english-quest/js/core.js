@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, record: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", level: 1 };
+  const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -151,7 +151,9 @@
      "It's a tiger" must have the weak /ə/). A sentence is read in one go by the computer voice, labelled 電腦語音,
      unless a teacher switches that off in ⚙ (cfg.sentence "off": the teacher then says the sentences). */
   /** a clip by key: human recordings (TC_AUDIO) first, then whole-sentence AI clips (TC_AI_AUDIO, ElevenLabs, labelled AI 語音) */
-  const clipOf = (k) => (window.TC_AUDIO || {})[k] || (TC.cfg.sentence !== "off" && (window.TC_AI_AUDIO || {})[k]) || null; // "off": human recordings only
+  // words: the ElevenLabs voice (TC_EL_AUDIO, the same voice as the sentences) unless ⚙ asks for the Wikimedia human recordings;
+  // sentences: the ElevenLabs sentence clips (TC_AI_AUDIO) unless ⚙ turns sentences off
+  const clipOf = (k) => (TC.cfg.wordVoice !== "human" && (window.TC_EL_AUDIO || {})[k]) || (window.TC_AUDIO || {})[k] || (TC.cfg.sentence !== "off" && (window.TC_AI_AUDIO || {})[k]) || null;
   TC.clipOf = clipOf;
   const clipKey = (k) => clipOf(k) ? k : clipOf(k.replace(/ /g, "-")) ? k.replace(/ /g, "-") : null;
   const normTok = (w) => String(w).toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9' -]/g, "").replace(/^['-]+|['-]+$/g, "");
@@ -266,21 +268,22 @@
     const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
     const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
     const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
-    const wordKey = word && clipKey(normTok(word)), humanWord = wordKey && !clipOf(wordKey).ai ? wordKey : null;
+    const wordKey = word && clipKey(normTok(word)), humanWord = wordKey || null; // the answer word's own clip (ElevenLabs or Wikimedia)
     if (one && clipOf(one).ai) {
       // a whole-sentence AI clip: the answer word from its human recording first, then the sentence in one go
-      if (humanWord) { showSrc("human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); await sleep(300); }
+      if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); await sleep(300); }
       showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false);
       return humanWord ? "human+ai" : "ai";
     }
     const key = one || wordKey;
-    if (key) { showSrc("human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
+    if (key) { showSrc(clipOf(key).ai ? "aiword" : "human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
     if (!one && sentence && TC.canSentence()) { if (key) await sleep(300); showSrc("tts"); spans.forEach((sp) => sp.classList.add("saying")); await ttsSpeak(String(sentence).replace(/\[[^\]]*\]/g, " "), { rate: 0.85 }); light(false); return key ? "human+tts" : "tts"; }
     if (!key) { showSrc("none"); return "none"; }
     return "human";
   };
   function showSrc(kind, word) {
     const t = $("#srcTag"); if (!t) return;
+    if (kind === "aiword") { const a = clipOf(word) || {}; t.className = "src-tag"; t.textContent = "ElevenLabs 語音"; t.title = `ElevenLabs text-to-speech (AI voice) · ${a.voice || ""}`; return; }
     if (kind === "ai") { const a = clipOf(word) || {}; t.className = "src-tag"; t.textContent = "整句：AI 語音"; t.title = `ElevenLabs text-to-speech (AI voice, not a human recording) · ${a.voice || ""}`; return; }
     if (kind === "human") {
       const a = clipOf(String(word).toLowerCase());
@@ -295,8 +298,8 @@
   TC.quiet = (on) => { quietUntil = on ? Infinity : performance.now() + 900; };
   TC.isQuiet = () => performance.now() < quietUntil;
 
-  /* ---------------- microphone: level meter + recording ---------------- */
-  const Mic = (TC.Mic = { stream: null, analyser: null, level: 0, rec: null, chunks: [], ok: false });
+  /* ---------------- microphone: level meter only (nothing is recorded or stored) ---------------- */
+  const Mic = (TC.Mic = { stream: null, analyser: null, level: 0, ok: false });
   Mic.init = async function () {
     if (Mic.ok || Mic.released) return Mic.ok;
     try {
@@ -325,22 +328,7 @@
   };
   Mic.release = function () {
     try { Mic.stream && Mic.stream.getTracks().forEach((t) => t.stop()); } catch (e) {}
-    Mic.stream = null; Mic.rec = null; TC.cfg.record = false; Mic.released = true;
-  };
-  Mic.startRec = function () {
-    if (!TC.cfg.record || !Mic.stream || !window.MediaRecorder) return;
-    try {
-      Mic.chunks = []; Mic.rec = new MediaRecorder(Mic.stream);
-      Mic.rec.ondataavailable = (e) => e.data.size && Mic.chunks.push(e.data);
-      Mic.rec.start();
-    } catch (e) { Mic.rec = null; }
-  };
-  Mic.stopRec = function () {
-    return new Promise((res) => {
-      if (!Mic.rec || Mic.rec.state === "inactive") return res(null);
-      Mic.rec.onstop = () => res(Mic.chunks.length ? new Blob(Mic.chunks, { type: Mic.rec.mimeType || "audio/webm" }) : null);
-      try { Mic.rec.stop(); } catch (e) { res(null); }
-    });
+    Mic.stream = null; Mic.released = true;
   };
 
   /* ---------------- AI speech recognition ---------------- */
@@ -362,7 +350,7 @@
     };
     r.onerror = (e) => {
       if (e.error === "audio-capture" && Mic.stream) { // some Android panels cannot share the mic: give it to the recogniser
-        Mic.release(); TC.toast("已把麥克風交給 AI 語音辨識（此裝置不支援同時錄音）", 3000);
+        Mic.release(); TC.toast("已把麥克風交給 AI 語音辨識", 3000);
       }
       if (e.error === "not-allowed" || e.error === "service-not-allowed") { ASR.state = "denied"; ASR.want = false; }
       else if (e.error === "network") ASR.state = "network";
@@ -473,8 +461,7 @@
       const finish = async (r) => {
         if (finished) return; finished = true; turn = null;
         clearTimeout(hintT); ASR.stop();
-        const blob = await Mic.stopRec();
-        r.blob = blob; r.ms = Date.now() - t0;
+        r.ms = Date.now() - t0;
         if (r.ok) {
           r.stars = r.by === "ai" ? (best >= 0.8 ? 3 : 2) : 2;
           if (r.by === "ai") { const b = h("div", { class: "ai-badge" }, "🤖 AI 聽懂了！", h("q", {}, r.heard)); document.body.append(b); setTimeout(() => b.remove(), 1900); }
@@ -482,13 +469,11 @@
           $("#kLine").querySelectorAll(".w").forEach((w) => w.classList.add("hit"));
           TC.sfx("ding");
           TC.stats.lines++; TC.stats.stars += r.stars; TC.stats.turns++; TC.lastSay = spec.say;
-          if (r.blob) TC.stats.lastBlob = r.blob;
           TC.log({ type: "line", say: spec.say, heard: r.heard || "", by: r.by });
         }
         resolve(r);
       };
       turn = { finish, spec };
-      Mic.startRec();
       ASR.start((alts, isFinal) => {
         if (finished || TC.isQuiet()) return;
         const tokensList = alts.map((a) => TC.norm(a));
@@ -525,7 +510,7 @@
   TC.skipTurn = () => turn && turn.finish({ ok: false, skipped: true });
   TC.hearModel = () => { if (!turn) return; revealKey(); TC.model(turn.spec.say, turn.spec.word); };
   TC.hideTalk = () => $("#talk").classList.remove("show");
-  TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null };
+  TC.stats = { lines: 0, stars: 0, turns: 0 };
 
   /* ---------------- little visual helpers ---------------- */
   TC.floatText = function (text, xPct = 50, yPct = 45, color = "#ffc83d") {
@@ -635,8 +620,8 @@
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
       <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力先用電腦語音把問題整句唸一次）</option></select></label>
-      <label><span>錄下孩子的聲音並播放</span><select id="sRec"><option value="1">開 ON（只留在這台電腦）</option><option value="0">關 OFF</option></select></label>
-      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">單字用真人錄音，整句用 AI 語音（ElevenLabs）一次唸完（建議）</option><option value="off">只播真人錄音的單字，整句由老師親口示範</option></select></label>
+      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句用 ElevenLabs 語音一次唸完（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
+      <label><span>單字的聲音</span><select id="sWord"><option value="el">ElevenLabs（和整句同一個聲音，建議）</option><option value="human">Wikimedia 真人錄音（多位不同錄音者）</option></select></label>
 
       <label><span>唸整句的電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>
       <label><span>音量 Volume</span><input id="sVol" type="range" min="0.2" max="1" step="0.05" value="${TC.cfg.volume}"></label>
@@ -645,12 +630,12 @@
       <p><small>快捷鍵：Enter/空白鍵＝START／老師判定通過 ✓ · H＝聽示範 · N＝跳過 · Esc＝回到開始畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sRec").value = TC.cfg.record ? "1" : "0";
+    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sWord").value = TC.cfg.wordVoice === "human" ? "human" : "el";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", record: $("#sRec").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, syncUrl: $("#sSync").value.trim() });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

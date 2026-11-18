@@ -99,7 +99,7 @@
     ctx.globalAlpha = 1;
   }
   /* where the big block sits: on the left, where the palette was (the build stays fully visible) */
-  function heroBox() { const s = Math.min(H * 0.27, W * 0.135); return { s, d: s * 0.35, x: W * 0.05, y: H * 0.275 }; }
+  function heroBox() { const s = Math.min(H * 0.27, W * 0.135); return { s, d: s * 0.35, x: W * 0.17, y: H * 0.275 }; } // right of the big 土城 emblem
   function star4(x, y, r, a) {
     ctx.globalAlpha = a; ctx.fillStyle = "#fff"; ctx.beginPath();
     for (let i = 0; i < 8; i++) { const q = (i * Math.PI) / 4, rr = i % 2 ? r * 0.28 : r; ctx.lineTo(x + Math.cos(q) * rr, y + Math.sin(q) * rr); }

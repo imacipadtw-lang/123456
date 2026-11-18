@@ -6,7 +6,7 @@ usage: PYTHONPATH=<dir with pocketsphinx> python3 tools/verify_audio.py english-
 import json, os, subprocess, sys, tempfile, re
 from pocketsphinx import Decoder, get_model_path
 AUD = sys.argv[1]; only = set(sys.argv[2:])
-man = json.load(open(os.path.join(AUD, "credits.json")))
+man = json.load(open(os.path.join(AUD, os.environ.get("MANIFEST", "credits.json"))))  # MANIFEST=el-words.json checks the ElevenLabs word clips
 mp = get_model_path()
 dic = {}
 for l in open(os.path.join(mp, "en-us", "cmudict-en-us.dict")):

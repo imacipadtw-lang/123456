@@ -41,7 +41,9 @@
   setInterval(() => { if (Date.now() - lastMove < 4000 || scanEl.classList.contains("hidden")) return; const t = Date.now() / 3000; scanEl.style.setProperty("--mx", (Math.sin(t) * 0.6).toFixed(3)); scanEl.style.setProperty("--my", (Math.cos(t * 0.8) * 0.4).toFixed(3)); }, 400);
   // the big cute 土城 badge of this gate (a different design at every gate) on the scan screen, and a small one in the HUD
   $("#scan").append(TC.badgeEl(gate, "scan-badge bob"));
-  const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.replaceWith(TC.badgeEl(gate, "emb"));
+  const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.remove();
+  // a big 3D 土城 emblem stays in the top-left corner the whole time (clear on video)
+  document.body.append(TC.badgeEl(gate, "big-emb"));
   TC.setAIPill();
 
   let running = false, resultOpen = null;
@@ -96,7 +98,7 @@
     const s = ((Date.now() - kidStart) / 1000) | 0; c.textContent = `⏱ ${(s / 60) | 0}:${String(s % 60).padStart(2, "0")}`; c.style.color = s > 300 ? "#ff8a8a" : ""; }, 1000);
   async function playKid(kid) {
     TC.kid = kid; api.aborted = false; kidStart = Date.now();
-    TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null }; TC.lastSay = "";
+    TC.stats = { lines: 0, stars: 0, turns: 0 }; TC.lastSay = "";
     setKidChip(kid);
     const ov = h("div", { class: "overlay welcome" },
       h("div", { class: "bpass" },
@@ -163,7 +165,6 @@
     const date = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
     const boxes = h("div", { class: "boxes" }, ...SECRET.split("").map((c, i) => h("span", { class: i === gate - 1 ? "me" : "" }, i === gate - 1 ? c : i + 1 + "")));
     const letter = h("div", { class: "code-letter roll" }, "?");
-    const replay = h("button", { class: "big-btn", onclick: () => playBlob() }, "🔊 ", h("span", { class: "zh" }, "聽自己說英文"));
     const next = h("button", { class: "big-btn go" }, "DONE ✓");
     const ov = h("div", { class: "overlay" },
       h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date}`))),
@@ -171,7 +172,7 @@
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
       h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母寫在護照第 ${gate} 格，老師會發 ${res.points || 0} 點貼紙給你！`),
-      h("div", { class: "res-actions" }, replay, next));
+      h("div", { class: "res-actions" }, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
     TC.sfx("stamp"); TC.ollie("cheer");
@@ -183,11 +184,6 @@
     await sleep(500);
     await TC.speak("Great!");
     await sleep(300);
-    function playBlob() {
-      if (!TC.stats.lastBlob) { TC.toast("這台沒有錄音（可在設定開啟）"); return Promise.resolve(); }
-      return new Promise((r) => { const a = new Audio(URL.createObjectURL(TC.stats.lastBlob)); a.volume = 1; a.onended = r; a.onerror = r; a.play().catch(r); });
-    }
-    if (TC.stats.lastBlob) { TC.floatText("🎤", 50, 30, "#2ee6b6"); await playBlob(); }
     await new Promise((r) => { resultOpen = r; next.onclick = r; });
     resultOpen = null; ov.remove(); TC.ollie("idle");
   }

@@ -111,7 +111,7 @@
     // place badge + speed
     ctx.font = `700 ${H * 0.07}px Fredoka, sans-serif`; ctx.textAlign = "left";
     const place = S.pos > S.rival ? 1 : 2; S.place = place;
-    if (S.running) { ctx.fillStyle = place === 1 ? "#ffc83d" : "#fff"; ctx.strokeStyle = "#0a1633"; ctx.lineWidth = H * 0.01; const txt = place === 1 ? "1st" : "2nd"; ctx.strokeText(txt, W * 0.03, H * 0.2); ctx.fillText(txt, W * 0.03, H * 0.2); }
+    if (S.running) { ctx.fillStyle = place === 1 ? "#ffc83d" : "#fff"; ctx.strokeStyle = "#0a1633"; ctx.lineWidth = H * 0.01; const txt = place === 1 ? "1st" : "2nd"; ctx.strokeText(txt, W * 0.03, H * 0.34); ctx.fillText(txt, W * 0.03, H * 0.34); /* below the big 土城 emblem */ }
     ctx.restore();
   }
   const easeOut = (t) => 1 - Math.pow(1 - t, 3) + Math.sin(t * Math.PI) * 0.15;

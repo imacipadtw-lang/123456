@@ -22,7 +22,7 @@
 - 複習建議：照上表「護照內容」欄，一關一個主題。🛂 護照密碼另外會用到護照第 1–6 關的字（初級只用第 1–3 關），孩子當場翻護照找。
 
 ## 每位孩子在一關裡的流程
-老師選好等級（一次）→ 按 START（或 Enter），一次一位孩子，畫面 Welcome! → 👋 暖身問題 → 🎮 遊戲 4–6 題加最後一題（老師問、孩子說一個字、AI 聽）→ 🎉 全班一起說 → 🧩 句子拼拼看（點 2–3 張單字卡排出短句再唸，例如 Good morning!、It's sunny.、It's a cat.）→ 🛂 護照密碼（翻紙本護照找編號單字，只用第 1–6 關的字，初級只用第 1–3 關；第一個字母就是這一關的秘密字母）→ 🎟 刮刮卡 → 全息印章＋秘密字母＋播放孩子的英文原聲，畫面寫「把字母寫在護照第 N 格，老師會發 N 點貼紙給你！」→ 老師發貼紙，按 DONE ✓ 回到 START 畫面。
+老師選好等級（一次）→ 按 START（或 Enter），一次一位孩子，畫面 Welcome! → 👋 暖身問題 → 🎮 遊戲 4–6 題加最後一題（老師問、孩子說一個字、AI 聽）→ 🎉 全班一起說 → 🧩 句子拼拼看（點 2–3 張單字卡排出短句再唸，例如 Good morning!、It's sunny.、It's a cat.）→ 🛂 護照密碼（翻紙本護照找編號單字，只用第 1–6 關的字，初級只用第 1–3 關；第一個字母就是這一關的秘密字母）→ 🎟 刮刮卡 → 全息印章＋秘密字母，畫面寫「把字母寫在護照第 N 格，老師會發 N 點貼紙給你！」→ 老師發貼紙，按 DONE ✓ 回到 START 畫面。
 
 快速模式（⚙ 每位孩子回合數：快速 3 回合）略過暖身、全班一起說和句子拼拼看。
 
@@ -49,12 +49,13 @@
 - 語音辨識：Web Speech API（en-US），對兒童口音寬鬆比對（含常見近音字）；聽到答案字就過關，聽不到時老師按 ✓（或 Enter）。電視自己播放示範時，不會把喇叭的聲音當成孩子的答案。
 - 老師按鈕（大、立體）：✓ 說得好、🔊 聽示範、⏭ 跳過、📋、⚙。按鍵：Enter／空白鍵＝START／說得好 ✓／DONE、H＝聽示範、N＝跳過、Esc＝回到開始畫面。
 - 不用登記孩子：老師按 START，一次一位孩子；玩完按 DONE ✓ 回到開始畫面。
-- 發音：電視說的單字、短語（Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），都是 Wikimedia Commons 的真人錄音（203 個）。電視**不把單字錄音接成句子**（老師發現接起來的句子聽起來不對，例如 a 聽起來像字母 A）。完整的句子（It's a tiger.）顯示在畫面上，播 ElevenLabs 的 **AI 語音**檔（69 句，一句一檔，標示「AI 語音」，不是真人錄音；清單與 SHA-1 在 `assets/audio/ai-sentences.json`，切檔程式 `tools/split_el.py`，機器檢查 `tools/verify_sentences.py`）；沒有預先做好的句子才用那台電視的電腦語音。🔊 聽示範先播真人錄音的答案字，再播整句。老師想親口示範整句時，在 ⚙「整句怎麼唸」選「只播真人錄音的單字，整句由老師親口示範」；歐力的台詞同時出現在字幕上。來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。遊戲會唸、但不是美式英語的有三個字：windy 用澳洲英語錄音（找不到美式錄音），rainy、pink 是英式錄音。
+- 單字的聲音（新）：預設改用 ElevenLabs 語音（AI，Bella 美式口音，93 個單字，`assets/audio/el-words.json`，切檔 `tools/split_el.py`、重做單字 `tools/replace_el_clip.py`，檢查 `MANIFEST=el-words.json tools/verify_audio.py`），和整句同一個聲音；⚙「單字的聲音」可改回 Wikimedia 真人錄音。duck 機器辨識不穩，請老師聽一次。
+- 發音（Wikimedia）：電視說的單字、短語（Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），都是 Wikimedia Commons 的真人錄音（203 個）。電視**不把單字錄音接成句子**（老師發現接起來的句子聽起來不對，例如 a 聽起來像字母 A）。完整的句子（It's a tiger.）顯示在畫面上，播 ElevenLabs 的 **AI 語音**檔（69 句，一句一檔，標示「AI 語音」，不是真人錄音；清單與 SHA-1 在 `assets/audio/ai-sentences.json`，切檔程式 `tools/split_el.py`，機器檢查 `tools/verify_sentences.py`）；沒有預先做好的句子才用那台電視的電腦語音。🔊 聽示範先播真人錄音的答案字，再播整句。老師想親口示範整句時，在 ⚙「整句怎麼唸」選「只播真人錄音的單字，整句由老師親口示範」；歐力的台詞同時出現在字幕上。來源、錄音者、授權見 `assets/audio/credits.json` 與 `credits.html`。遊戲會唸、但不是美式英語的有三個字：windy 用澳洲英語錄音（找不到美式錄音），rainy、pink 是英式錄音。
 - 發音正確性檢查（都是程式做的）：每個檔案的 SHA-1 與 Commons 公布的一致；每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音（或慣用檔名 `En-us-單字.ogg`）；用自動語音辨識程式（CMU PocketSphinx）聽過全部 203 個，189 個辨識為該單字。這次新增的 7 個錄音（good morning、good night、thank you、sorry、sad、angry、scared，都標示為美式英語；前三個各是一段完整的錄音）都辨識為該單字。遊戲裡會唸、但機器沒有確認的現在有 4 個字：is（只在護照密碼出現）、pig、pink、snowy。**AI 這一邊沒有人用耳朵聽過**，請老師活動前在 `credits.html` 聽一次這 4 個字。
 - 學校識別：每個畫面都有校名「南投縣草屯鎮土城國民小學」和校徽。校徽依學校自己的校徽圖檔重新描繪成 3D 向量圖，設計沒有更動。每個角色、物品的圖案上都別著一個小小的「土城」徽章。六關各有一個可愛的土城校徽造型，跟著那一關的遊戲：跑酷是金牌、賽車是賽車、方塊是像素方塊圈、盲盒是禮物盒、節奏是 DJ 耳機、孵蛋是小雞。
 - 圖案：全部為本專案原創、以程式繪製的 3D 亮面公仔風格圖（`js/art.js`），沒有使用第三方圖庫或遊戲角色。
 - 選用同步：`apps-script/Code.gs`（Google Apps Script + 試算表）匯整六間教室的句子數和印章數到即時看板（不記孩子的名字）。
-- 隱私：不登記孩子的名字或座號；錄音、照片只留在各台電腦。
+- 隱私：不登記孩子的名字或座號；程式不錄音、不儲存孩子的聲音；照片只留在各台電腦。
 
 ## 上線（GitHub Pages）
 每次推送都會由 `.github/workflows/pages.yml` 自動把網站發佈到 `gh-pages` 分支（網址：https://imacipadtw-lang.github.io/123456/english-quest/）。若第一次沒有自動開啟：Settings → Pages → Deploy from a branch → `gh-pages` / (root)。使用 https 網址，瀏覽器才會允許麥克風與相機。

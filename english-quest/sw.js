@@ -1,16 +1,17 @@
 /* Offline cache for event day: after the first visit every page, script, sound and font
    is served from the cache (and refreshed in the background when online). */
-const CACHE = "tces-english-day-v13";
+const CACHE = "tces-english-day-v14";
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
     const core = ["./", "index.html", "station.html", "control.html", "opening.html", "teacher-cards.html", "guide.html", "credits.html", "links.html", "js/links.js", "js/scratch.js", "assets/img/tucheng-emblem.svg", "assets/img/tucheng-emblem-192.png",
       "css/core.css", "js/content.js", "js/core.js", "js/art.js", "js/emblem.js", "js/art-body.js", "js/puzzles.js", "js/passport-code.js", "js/station.js", "js/control.js",
       "js/games/g1-kart.js", "js/games/g2-craft.js", "js/games/g3-hatch.js", "js/games/g4-beat.js", "js/games/g5-box.js", "js/games/g6-obby.js",
-      "assets/audio/credits.js", "assets/audio/ai-sentences.js", "fonts/fredoka-latin-400-normal.woff2", "fonts/fredoka-latin-600-normal.woff2", "fonts/fredoka-latin-700-normal.woff2"];
+      "assets/audio/credits.js", "assets/audio/ai-sentences.js", "assets/audio/el-words.js", "fonts/fredoka-latin-400-normal.woff2", "fonts/fredoka-latin-600-normal.woff2", "fonts/fredoka-latin-700-normal.woff2"];
     await c.addAll(core).catch(() => {});
     // the pronunciation clips
     try { const r = await fetch("assets/audio/credits.json"); const m = await r.json(); await c.addAll(Object.values(m).map((a) => "assets/audio/" + a.file)); } catch (err) {}
+    try { const r = await fetch("assets/audio/el-words.json"); const m = await r.json(); await c.addAll(Object.values(m).map((a) => "assets/audio/" + a.file)); } catch (err) {}
     try { const r = await fetch("assets/audio/ai-sentences.json"); const m = await r.json(); await c.addAll(Object.values(m).map((a) => "assets/audio/" + a.file)); } catch (err) {}
   })());
   self.skipWaiting();

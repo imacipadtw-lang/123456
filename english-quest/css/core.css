@@ -393,3 +393,43 @@ body:has(.overlay .stamp) #cap,body:has(.overlay.welcome) #cap{left:auto;right:2
 @media (prefers-reduced-motion:reduce){.start3d,.start3d::after{animation:none}}
 /* start screen: the timer and AI pills only matter while a child is playing */
 body:not(.playing) #clock,body:not(.playing) #aiPill{display:none}
+
+/* =====================================================================
+   v4: a big 3D 土城 emblem always on screen (clear on video) + colour pass
+   ===================================================================== */
+:root{
+  --bg1:#0a1230; --bg2:#1a2f73;
+  --panel:linear-gradient(180deg,rgba(36,54,124,.94),rgba(13,24,64,.94));
+  --panel-flat:rgba(16,28,72,.92);
+  --ink2:#d3defc;
+}
+/* big emblem: top-left, overlapping the HUD; gently turns in 3D */
+.big-emb{position:fixed;left:.8rem;top:.3rem;width:15.6rem;height:17.8rem;z-index:47;pointer-events:none;
+  filter:drop-shadow(0 .5rem 0 rgba(0,0,0,.28)) drop-shadow(0 1.4rem 1.6rem rgba(0,0,0,.45));
+  transform-origin:50% 45%;animation:embTurn 7s ease-in-out infinite}
+.big-emb svg,.big-emb img{width:100%;height:100%;display:block}
+.big-emb-plain{width:13rem;height:13rem;border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,#fff8d0,#f0bd3a 55%,#a86f08);padding:.55rem;
+  box-shadow:0 .6rem 0 #7a4f05,0 1.6rem 2.4rem rgba(0,0,0,.45),inset 0 .3rem .4rem rgba(255,255,255,.8);filter:none}
+.big-emb-plain img{border-radius:50%}
+@keyframes embTurn{0%,100%{transform:perspective(60rem) rotateY(-12deg) rotateX(4deg)}50%{transform:perspective(60rem) rotateY(12deg) rotateX(-2deg) translateY(-.3rem)}}
+@media (prefers-reduced-motion:reduce){.big-emb{animation:none}}
+/* make room for it */
+#hud{padding-left:17.2rem;gap:1rem}
+#kName{display:none}
+.lvl button{white-space:nowrap}
+.kid-chip{padding-right:.8rem}
+.gate-badge{background:var(--panel);background-color:var(--panel-flat)}
+/* on the start screen the gate's own giant badge is shown already */
+body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
+
+/* colour pass: richer panels tinted with this gate's colour */
+#stage{background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--gate) 22%,var(--bg2)),var(--bg1))}
+.talk-main{background:linear-gradient(180deg,color-mix(in srgb,var(--gate) 16%,#1d2c6b) 0%,#0f1a45 70%);border-color:var(--gate)}
+.who.t{background:linear-gradient(180deg,#8fe3ff,#4cc9ff);box-shadow:0 .25rem 0 #1b7fae}
+.who.k{background:linear-gradient(180deg,#ffe58a,#ffc83d);box-shadow:0 .25rem 0 #b5850c}
+.kid-chip,.ai-pill{background:linear-gradient(180deg,rgba(36,54,124,.95),rgba(13,24,64,.95));border-color:rgba(255,255,255,.22)}
+.k-line .w.key{color:#fff;text-shadow:0 .25rem 0 rgba(0,0,0,.35)}
+.t-line .t-zh{color:#c9d8ff}
+#scan{background:radial-gradient(80% 70% at 50% 35%,color-mix(in srgb,var(--gate) 30%,#203a8a) 0%,color-mix(in srgb,#0a1230 86%,transparent) 100%)}
+.overlay{background:radial-gradient(90% 80% at 50% 40%,color-mix(in srgb,var(--gate) 26%,rgba(20,34,90,.9)),rgba(4,8,24,.95))}

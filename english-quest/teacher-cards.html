@@ -64,7 +64,7 @@
       <li>🎮 遊戲回合：畫面出現圖片，老師問左欄，孩子<b>只要說出答案字</b>（初級畫面直接有字，中級是填空）。${esc(TOUCH[G.key])}</li><li>🎉 全班一起說最後一句（越大聲煙火越多）</li>
       <li>🧩 句子拼拼看：孩子點單字卡排好護照例句，再唸出來</li><li>🛂 護照密碼：孩子翻紙本護照找到畫面上的編號單字並說出來 → 第一個字母寫進護照第 <b>${g}</b> 格（本關字母：<b>${C.secret[g - 1]}</b>）</li>
       <li>🎟 刮刮卡：孩子用手指刮開銀色區塊，露出 10／20／30 點 → 老師發同樣點數的貼紙，貼在護照第 <b>${g}</b> 格</li>
-      <li>全息印章＋播放孩子的英文原聲 → 按 DONE ✓（Enter）回到 START，換下一位</li></ol>
+      <li>全息印章＋秘密字母 → 按 DONE ✓（Enter）回到 START，換下一位</li></ol>
       <h2>台詞（老師問 → 孩子只要說出答案字。★ = 最後一題，＋ = 中級加問）</h2>
       <table class="${r.length > 13 ? "compact xs" : r.length > 9 ? "compact" : ""}"><tr><th style="width:27%">老師問 Teacher</th><th style="width:30%">畫面上的句子</th><th style="width:20%">答案字</th><th>中文</th></tr>
       ${r.map((x) => `<tr><td>${MARK[x.kind]}${esc(x.t)}</td><td class="en">${esc(x.say)}</td><td class="en"><b>${esc(x.word.split(" ").join(" / "))}</b></td><td>${esc(x.zh)}</td></tr>`).join("")}</table>

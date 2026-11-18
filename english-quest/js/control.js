@@ -1,5 +1,6 @@
 /* Final Gate + Mission Control: decode the secret word, say the final line, get a certificate; live board for parents */
 (function () {
+  { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; document.body.append(b); }
   "use strict";
   const { h, $, sleep } = TC;
   TC.gate = 7;
@@ -108,7 +109,7 @@
     TC.ac();
     if (busy) return;
     const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level === 2 ? 2 : 1, grade: 3, color: "#ffc83d" };
-    busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0, lastBlob: null };
+    busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0 };
     $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color; $("#kName").textContent = "PLAYER";
     await TC.Mic.init();
     document.body.classList.add("playing");

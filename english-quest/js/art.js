@@ -358,7 +358,7 @@
      SEAL[name] = [x, y, radius, tilt°] in that picture's own coordinates; anything not listed gets a pin at the lower right. */
   let sealN = 0;
   function seal(x, y, r, rot = 0) {
-    const id = "tcs" + sealN++, k = r / 20; // drawn for r = 20, scaled
+    const id = "tcs" + sealN++, k = (r * 1.3) / 20; // drawn for r = 20, scaled (×1.3: bigger, clearer 土城 pins)
     return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k})"><defs><clipPath id="${id}"><circle r="17.2"/></clipPath>` +
       `<linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#f0bd3a"/><stop offset="1" stop-color="#b9820f"/></linearGradient></defs>` +
       `<circle r="21" cy="1.6" fill="#000" opacity=".22"/><circle r="20" fill="url(#${id}r)"/><circle r="18" fill="#14401f"/>` +
