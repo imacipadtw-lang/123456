@@ -128,6 +128,7 @@
       api.progress(-1, 0);
       await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
       TC.hideTalk();
+      TC.lastSay = ""; // the warm-up ("I'm ___.") is never the class chorus line
       if (api.aborted) return;
     }
     let res = null;
@@ -150,7 +151,7 @@
       if (pz) await TC.sentencePuzzle(pz.s, pz.zh, pz.keys, api);
       if (api.aborted) return;
     }
-    // 🛂 Passport Code: look the number up in the paper passport → secret letter
+    // 🛂 Booklet Hunt: open the 《校園生活英語》 booklet at the page/line on screen and read it
     await TC.bookletHunt(gate, api);
     if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
@@ -200,9 +201,9 @@
     const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
     const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "護照 " + r.no : ""].filter(Boolean).join(" · ")]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "老師問左欄，孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照密碼」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
+      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照尋寶」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
-        h("tr", {}, ...["老師問 Teacher", "畫面上的句子", "答案字（說這個字）", "中文／護照編號"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
+        h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文／護照頁-句"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
         ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),
       h("div", { class: "row" }, h("button", { class: "save", onclick: () => wrap.remove() }, "關閉 Close")));
     const wrap = h("div", { class: "settings", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);

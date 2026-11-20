@@ -453,3 +453,15 @@ body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
 .ask-pick button.on{background:linear-gradient(180deg,#ffe58a,#ffc83d 55%,#e8a21a);color:#3a2300;box-shadow:0 .5rem 0 #a3740b,0 0 2rem rgba(255,200,61,.5),inset 0 .25rem 0 rgba(255,255,255,.6)}
 .ask-pick button.on b::before{content:"✓ "}
 .ask-pick button:active{transform:translateY(.4rem)}
+/* start screen with both switches: never squash the START button; everything a little more compact */
+#scan>*{flex-shrink:0}
+#scan{gap:1.1rem}
+#scan h1{font-size:min(8.4rem,5.6vw)}
+.start3d{margin-top:.4rem;padding:1.5rem 5rem 1.5rem 1.8rem}
+.start3d .ic{width:8.6rem;height:8.6rem;font-size:4.4rem}
+.start3d b{font-size:8.2rem}
+.start3d i{font-size:2.9rem}
+.ask-pick{margin-top:.6rem}
+.lvl-pick{margin-top:.6rem}
+.lvl-pick button{padding:.8rem 2.2rem}
+.lvl-pick button b{font-size:3rem}

@@ -126,7 +126,7 @@
     TC.confetti(200); TC.sfx("levelup");
     await sleep(900);
     // twist: the secret word is itself a passport word
-    $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是護照第 111 號單字 friend！翻開第 8 頁看看 → “She is my friend.”</span>`;
+    $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是 friend「朋友」！我們都是好朋友 → “We are friends!”</span>`;
     await TC.speak("Friend!");
     await sleep(600);
     await TC.speak("We are…");

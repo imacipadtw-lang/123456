@@ -635,8 +635,8 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>歐力先唸老師的問題</span><select id="sOllie"><option value="0">關（由老師親口問，建議）</option><option value="1">開（歐力先用電腦語音把問題整句唸一次）</option></select></label>
-      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句用 ElevenLabs 語音一次唸完（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
+      <label><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題（建議，關主不用說英文）</option><option value="0">老師問：關主自己用英文問</option></select></label>
+      <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句一次唸完：有 ElevenLabs 錄音就用錄音，沒有就用電腦語音（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
       <label><span>單字的聲音</span><select id="sWord"><option value="el">ElevenLabs（和整句同一個聲音，建議）</option><option value="human">Wikimedia 真人錄音（多位不同錄音者）</option></select></label>
 
       <label><span>唸整句的電腦語音 Voice</span><select id="sVoice"><option value="">自動（優先 Natural 自然語音）</option>${vs.map((v) => `<option ${v.name === TC.cfg.voice ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select></label>

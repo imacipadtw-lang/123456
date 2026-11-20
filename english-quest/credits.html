@@ -21,30 +21,30 @@
 <body>
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
-<p class="note"><b>單字的聲音（新）</b>：依老師要求，單字、短語和歡呼（Tiger!、Good morning!、Yes!）預設改用學校購買的 <b>ElevenLabs</b> 語音，和整句是同一個聲音（Bella，美式口音）。這是 AI 產生的語音，不是真人錄音，畫面標示「ElevenLabs 語音」。共 93 個單字，機器辨識檢查：每個字和同一類的字（數字、動物、F 開頭字、短字）比對都辨識正確，只有 duck 被聽成 dock（連 Wikimedia 真人錄音的 duck 也一樣，是辨識程式的限制）；請老師活動前聽一次 duck。想改回 Wikimedia 真人錄音：⚙「單字的聲音」→「Wikimedia 真人錄音」。</p>
-<p class="note">下表是 Wikimedia Commons 的真人錄音（⚙ 選「Wikimedia 真人錄音」時使用）：遊戲中電視說的單字和短語，都是 Wikimedia Commons 上的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。</p>
-<p class="note"><b>電視不把單字錄音接成句子。</b>單字、短語（例如 Tiger!、Good morning!、Thank you!）和短短的歡呼（Yes! Wow! Great! Go!），播的是下表的真人錄音。完整的句子（例如 It's a tiger.）找不到真人錄音，改用 <b>ElevenLabs 的 AI 語音</b>整句一次唸完（見最下面「整句 AI 語音」表），畫面標示「AI 語音」。表上沒有的句子（例如帶孩子名字的句子），由那台電視瀏覽器的電腦語音唸，標示「電腦語音」。老師可在 ⚙「整句怎麼唸」改成「只播真人錄音的單字，整句由老師親口示範」。</p>
+<p class="note"><b>聲音的現況（新版內容：《校園生活英語》護照）</b>：歐力的六句誇獎 <b>Good job!、Well done!、Awesome!、Excellent!、That's right!、You got it!</b>（護照 (5)）是新做的 <b>ElevenLabs AI 語音</b>檔（Bella，美式口音；不是真人錄音），已用語音辨識程式檢查過，列在最下面的 AI 語音表。新內容其他<b>大約 88 句／字（32 個單字、56 個句子，約 1,070 個字元）還沒有音檔</b>，目前由那台電視瀏覽器的<b>電腦語音</b>唸，畫面標示「電腦語音」。學校的 ElevenLabs 點數已用完，預計 <b>2026-12-17 點數重置後</b>再用 ElevenLabs 補做；缺哪些可執行 <code>node tools/need_audio.js</code> 查看。</p>
+<p class="note">下表是 Wikimedia Commons 的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。表中大多是舊版遊戲（顏色、天氣、動物等）的單字，新遊戲用得到的只有 door、hands、walk、nurse、drink、rest、welcome。單字預設用 ElevenLabs 的聲音；沒有 ElevenLabs 檔的字（例如 door、hands）才播這裡的真人錄音。老師可在 ⚙「單字的聲音」改成「Wikimedia 真人錄音」。</p>
+<p class="note"><b>電視不把單字錄音接成句子。</b>完整的句子一定一次唸完：有 AI 語音檔就播檔案（標示「AI 語音」），沒有就用電腦語音（標示「電腦語音」）。老師可在 ⚙「整句怎麼唸」改成「只唸單字，整句由老師親口示範」。</p>
 <div id="sum" class="note"></div>
-<p class="note">這次新增 7 個錄音：<b>good morning、good night、thank you、sorry、sad、angry、scared</b>，都標示為美式英語。good morning、good night、thank you 各是一段完整的錄音，不是兩個字接起來的。</p>
-<p class="note">口音：遊戲會唸、但不是美式英語的有三個字。<b>windy</b> 找不到美式英語的真人錄音，使用的是澳洲英語錄音；<b>rainy</b> 和 <b>pink</b> 是英式英語錄音。其餘都標示為美式英語（見下表「口音」欄）。</p>
-<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字（這次新增的 7 個錄音都在其中），另外 14 個機器聽成別的字。遊戲裡電視會唸、但機器沒有確認的，現在有 4 個字：<b>is、pig、pink、snowy</b>（機器聽成別的字）。is 只會在護照密碼出現（護照第 138 號）。以前列出的其他字（an、are、grandpa、i、it's、the、touch），遊戲已經不唸了。</p>
-<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音。請至少把上面 4 個字（is、pig、pink、snowy）和新增的 7 個錄音，在下表各按 ▶ 聽一次，確認發音正確。</p>
+<p class="note">口音：表中 <b>windy</b> 是澳洲英語錄音，<b>rainy</b> 和 <b>pink</b> 是英式英語錄音，其餘都標示為美式英語（見下表「口音」欄）。這三個字新遊戲不會唸。</p>
+<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字，另外 14 個機器聽成別的字。</p>
+<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音，也沒有聽過電腦語音。請老師在每台電視把自己那一關玩一次，聽聽看發音是否正確。</p>
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2 id="ai">ElevenLabs 語音：單字與整句（AI，不是真人錄音）</h2>
-<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。每批句子之間加 1 秒停頓一起產生，再從停頓處切成一句一檔，轉成 MP3 並統一音量。</p>
-<p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/ai-sentences.json；② 自動語音辨識程式（CMU PocketSphinx）在全部句子中選，69 句中 68 句辨識成它自己那一句；③ 沒通過的 I like red. 機器有時聽成 green，另用共振峰量測比對：這句的母音（F2 約 1640 Hz、F3 約 2200 Hz）和機器每次都辨識正確的 It's red.（F2 約 1540、F3 約 2140）一致，和 green（F2 約 2410）不同；④ It's a pig. 曾被聽成 peg，量測 pig 的母音 F1 約 480–560 Hz，接近同一聲音的 /ɪ/（it's、fifteen 約 410–470），遠低於 /ɛ/（ten、friends 約 810–880）。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前至少聽一次 I like red. 和 It's a pig.</b></p>
+<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。新版遊戲用到的是六句誇獎（Good job! 等）、Open your passport!、We are friends!、刮刮卡的點數，和少數單字（welcome、drink、rest 等）；表中其他的單字和句子（例如 It's a tiger.、I like red.）是舊版遊戲做的，新遊戲不再唸。</p>
+<p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 六句誇獎用語音辨識程式檢查過；③ 舊版的 69 句，自動語音辨識程式（CMU PocketSphinx）有 68 句辨識成它自己那一句，沒通過的 I like red. 另用母音量測確認。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前至少把六句誇獎各聽一次。</b></p>
 <p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
 <table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>
 
 <h2>其他素材</h2>
 <ul>
-  <li>遊戲裡的所有圖案（動物、打招呼的情境、星星、天氣、心情的臉、彩蛋、獎盃與機器貓頭鷹歐力），都是為本活動以程式原創繪製（js/art.js、js/art-body.js、各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
-  <li>六關各自的可愛校徽造型，跟著那一關的遊戲（依關卡順序：金牌、賽車、像素方塊圈、禮物盒、DJ 耳機、小雞蛋殼帽）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
+  <li>遊戲裡的所有圖案（教室狀況的圖卡、脫口秀攝影棚、做動作的大歐力、音節怪獸和 14 張護照單字圖、DJ 舞台和跳舞的小朋友、立體故事書、星星、獎盃與機器貓頭鷹歐力），都是為本活動以程式原創繪製（js/art.js、js/art-body.js、js/games/ 裡的各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
+  <li>六關各自的可愛校徽造型（依關卡順序：金牌、DJ 耳機、像素方塊圈、蛋殼小雞、賽車、禮物盒）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
   <li>校徽：依學校提供的校徽圖檔（土城校徽.jpg）逐色描繪成向量圖，圖形與文字不變，只加上立體金邊與光影（assets/img/tucheng-emblem.svg；描繪程式 tools/emblem_trace.py）。</li>
   <li>字型：<a href="https://fonts.google.com/specimen/Fredoka">Fredoka</a>（SIL Open Font License 1.1，見 fonts/Fredoka-OFL.txt）。</li>
   <li>機器貓頭鷹歐力（Ollie-Bot）的圖形是依《土城國小英語護照》裡的角色描述重新繪製的簡化向量圖；可換成護照原圖。</li>
-  <li>音效與節奏全部由程式即時合成，沒有使用外部音檔。</li>
+  <li>遊戲的句子全部來自學校的《校園生活英語》護照第 (4)–(9) 頁（© 南投縣草屯鎮土城國小）。</li>
+  <li>音效與節奏（包括第 5 關的節拍）全部由程式即時合成，沒有使用外部音檔。</li>
 </ul>
 <script src="assets/audio/credits.js"></script>
 <script src="assets/audio/el-words.js"></script>
