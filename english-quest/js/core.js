@@ -30,6 +30,7 @@
   /* ---------------- settings (stored on this device only) ---------------- */
   const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
+  TC.cfg.wordVoice = "el"; // 115.11.21: every voice is ElevenLabs (管理者要求)
   TC.cfg.ollieAsks = true; // 115.11.20: the 老師問 mode was removed — Ollie (the TV) always asks
   // 115.11.20: three levels — 1 低年級 (only the ABC letter + do the action) · 2 中年級 (whole sentence shown, read it) · 3 高年級 (fill in the blank)
   if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
@@ -208,12 +209,12 @@
   };
   /* subtitle for what Ollie says (the words light up as they are spoken) */
   let capT = null;
-  TC.caption = function (text, active = -1, toks = null, tag = "") {
+  TC.caption = function (text, active = -1, toks = null, tag = "") { tag = ""; // 115.11.21: no voice-type labels (AI 語音／電腦語音) on screen
     let c = $("#cap"); if (!c) { c = h("div", { id: "cap" }); document.body.append(c); }
     clearTimeout(capT);
     if (!text) { c.classList.remove("show"); return; }
     c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`)
-      + (tag ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">${esc(tag)}</i>` : active === "tts" ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
+      + (tag ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">${esc(tag)}</i>` : false ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
     c.classList.add("show");
     capT = setTimeout(() => c.classList.remove("show"), 2600 + text.length * 40);
   };
