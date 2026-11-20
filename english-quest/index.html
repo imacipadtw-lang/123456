@@ -60,7 +60,7 @@
 <script src="js/art-body.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
-  const ICON = { kart: "kart", craft: "rainbow", hatch: "mystegg", beat: "mic", box: "gift", obby: "trophy" }, icons = new Proxy({}, { get: (_, n) => ICON[TC_CONTENT.gates[n].key] });
+  const ICON = { rescue: "trophy", talk: "mic", tpr: "medal", monster: "mystegg", chant: "star", story: "gift" }, icons = new Proxy({}, { get: (_, n) => ICON[TC_CONTENT.gates[n].key] });
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];

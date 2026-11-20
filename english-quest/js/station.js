@@ -26,10 +26,9 @@
   $("#passportRef").textContent = "護照對應：" + G.passport;
   $("#scanOllie").innerHTML = TC.ollieSVG();
   // floating 3D items from this gate's content drift behind the attract screen
-  const ENGINE_ART = { obby: ["greet-hello", "greet-morning", "greet-thanks", "greet-night", "trophy", "star"], kart: ["star", "kart", "medal", "star", "kart", "trophy"],
-    craft: ["rainbow", "star", "medal", "rainbow", "star", "medal"], box: ["gift", "wx-sunny", "wx-rainy", "wx-cloudy", "wx-windy", "wx-snowy", "star"],
-    beat: ["feel-happy", "feel-sad", "feel-angry", "feel-tired", "feel-hungry", "feel-scared", "mic"], hatch: ["mystegg", "tiger", "rabbit", "pig", "elephant", "lion", "duck"] };
-  const GATE_ART = { [gate]: (ENGINE_ART[G.key] || []).filter((n) => TC.ART && TC.ART[n]) };
+  // each game lists its own drifting pictures (game.startArt); these generic ones are the fallback
+  const ENGINE_ART = { rescue: ["star", "trophy", "medal"], talk: ["mic", "star", "trophy"], tpr: ["star", "medal", "rainbow"], monster: ["star", "gift", "mystegg"], chant: ["mic", "star", "medal"], story: ["star", "gift", "trophy"] };
+  const GATE_ART = { [gate]: ((game && game.startArt) || ENGINE_ART[G.key] || []).filter((n) => TC.ART && TC.ART[n]) };
   const floaty = h("div", { class: "floaty" });
   (GATE_ART[gate] || []).concat(GATE_ART[gate] || []).forEach((n, i) => { const im = TC.artImg(n === "mystegg" ? "mystegg" : n); const left = (i * 37) % 92, top = 8 + ((i * 53) % 78);
     if ((left < 31 && top > 10 && top < 90) || (left > 8 && left < 84 && top > 24 && top < 66) || (left > 30 && left < 62 && top < 30) || (left > 20 && left < 72 && top > 80)) return; im.style.cssText = `left:${left}%;top:${top}%;--d:${6 + (i % 5)}s;animation-delay:${-i}s;width:${10 + (i % 3) * 3}vh;height:${10 + (i % 3) * 3}vh`; floaty.append(im); });
@@ -61,6 +60,10 @@
   game.mount && game.mount(api);
 
   // level for the next player (初級 grades 1–2 / 中級 grades 3–6), remembered on this screen
+  // who asks the questions: the TV (電腦問, for gate hosts who do not speak English) or the host (老師問)
+  function showAsk() { $("#askPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.a === "tv") === !!TC.cfg.ollieAsks)); }
+  $("#askPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); TC.cfg.ollieAsks = b.dataset.a === "tv"; TC.saveCfg(); showAsk(); });
+  showAsk();
   let nextLevel = TC.cfg.level === 2 ? 2 : 1;
   function showLevel() { $("#lvlPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === nextLevel)); }
   $("#lvlPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); nextLevel = +b.dataset.l; TC.cfg.level = nextLevel; TC.saveCfg(); showLevel(); });
@@ -148,7 +151,7 @@
       if (api.aborted) return;
     }
     // 🛂 Passport Code: look the number up in the paper passport → secret letter
-    await TC.passportCode(LETTER, api);
+    await TC.bookletHunt(gate, api);
     if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
     const pts = TC.pointsFor(kid.id, gate);

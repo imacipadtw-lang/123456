@@ -1,7 +1,7 @@
 /* =====================================================================
    Passport puzzles (touch + speaking), shared by every gate
-   1. TC.passportCode(letter)    → "Open your passport! Find No. 26" → child
-      says the word → its first letter is the secret-code letter
+   1. TC.bookletHunt(gate)    → "Open your passport! page (4), line 7" → child
+      reads that line and says its key word
    2. TC.sentencePuzzle(s, zh)   → tap word tiles into order, then read it aloud
    ===================================================================== */
 (function () {
@@ -35,31 +35,24 @@
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
 
-  /** Passport Code: find a numbered word in the paper passport; its first letter is the code letter. */
-  TC.passportCode = async function (letter, api) {
-    const list = (window.TC_PASSCODE || {})[letter];
-    if (!list || !list.length) return letter;
-    // younger travellers get numbers from the first pages of the passport
-    const lvl = (TC.kid && TC.kid.level) || 2;
-    const easy = list.filter((x) => x.level <= (lvl === 1 ? 3 : 6));
-    const pool = easy.length ? easy : list;
-    const e = pool[(Math.random() * pool.length) | 0];
+  /** Booklet Hunt: the child opens the 《校園生活英語》 booklet to the page and line named on screen, reads that line and says its key word. */
+  TC.bookletHunt = async function (gate, api) {
+    const e = TC_CONTENT.hunt[gate]; if (!e) return;
     const ans = h("div", { class: "ans" }, "");
     const box = h("div", { class: "pz" },
-      h("h3", {}, h("div", { class: "book" }, h("i"), h("i")), "Passport Code!", h("span", { class: "zh" }, "護照密碼")),
-      h("div", { class: "sub zh" }, `打開你的護照，找到第 ${e.no} 號單字（第${e.level}關 · 第${e.page}頁）。它的第一個字母就是密碼！`),
-      h("div", { class: "num" }, "No.", h("b", {}, e.no)),
+      h("h3", {}, h("div", { class: "book" }, h("i"), h("i")), "Open your passport!", h("span", { class: "zh" }, "護照尋寶")),
+      h("div", { class: "sub zh" }, `打開你的護照，翻到第 ${e.page} 頁，找到第 ${e.line} 句，把它念出來！`),
+      h("div", { class: "num" }, e.page, h("b", {}, e.line)),
       ans);
     document.body.append(box); TC.sfx("levelup");
-    await TC.speak("Open your passport!", { human: "open" });
-    const r = await TC.ask({ teacher: `Number ${e.no}! Say the word!`, tzh: `護照第 ${e.no} 號是什麼字？`, say: cap(e.w) + "!", zh: "", keys: [[e.w]], word: e.w, hideKey: true, hideAlways: true, guideKid: `翻護照找第 ${e.no} 號，把那個字說出來` });
-    if (api && api.aborted) { box.remove(); return letter; }
+    await TC.speak("Open your passport!");
+    const r = await TC.ask({ teacher: `Page ${e.page}, number ${e.line}!`, tzh: `第 ${e.page} 頁第 ${e.line} 句是什麼？`, say: e.text, zh: "", keys: e.keys, word: e.w, hideKey: true, hideAlways: true, guideKid: "找到這一句，說出「?」的那個字", guideTeacher: "孩子找不到就按 🔊 或 ✓" });
+    if (api && api.aborted) { box.remove(); return; }
     TC.hideTalk();
-    ans.innerHTML = ""; ans.append(h("span", { class: "first" }, e.w[0].toUpperCase()), e.w.slice(1), h("span", { class: "zh", style: "font-size:2rem;margin-left:1rem" }, e.zh));
-    TC.sfx("coin"); await TC.model(e.w, e.w);
+    ans.innerHTML = ""; ans.append(h("span", { class: "zh", style: "font-size:2.2rem;display:block;margin-bottom:.4rem" }, e.zh), e.text);
+    TC.sfx("coin"); await TC.speak(e.text, { human: e.w });
     await sleep(700); box.remove();
     TC.log({ type: "code", say: e.w, heard: r.heard || "", by: r.by || "" });
-    return e.w[0].toUpperCase();
   };
 
   /** Sentence Builder: tap tiles in order, then read the sentence aloud. */

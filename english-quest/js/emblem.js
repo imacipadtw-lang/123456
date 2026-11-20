@@ -21,7 +21,7 @@
   const FONT = "'Noto Sans TC','Microsoft JhengHei','PingFang TC','Heiti TC',sans-serif";
 
   // the design follows the gate's GAME (kart, blocks, chick, DJ, gift box, medal), wherever the teacher puts that game
-  const BY_ENGINE = { kart: 1, craft: 2, hatch: 3, beat: 4, box: 5, obby: 6 };
+  const BY_ENGINE = { rescue: 6, talk: 4, tpr: 2, monster: 3, chant: 1, story: 5 }; // which of the six badge designs each game wears
   function make(gateNo) {
     const GC = window.TC_CONTENT && window.TC_CONTENT.gates && window.TC_CONTENT.gates[gateNo];
     const gate = (GC && BY_ENGINE[GC.key]) || gateNo;

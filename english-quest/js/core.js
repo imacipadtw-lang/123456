@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: false, sentence: "auto", level: 1 };
+  const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -162,7 +162,7 @@
     const words = String(text || "").replace(/\[[^\]]*\]/g, " ").split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)), out = [];
     for (let i = 0; i < words.length;) {
       let hit = null;
-      for (let n = Math.min(5, words.length - i); n >= 1 && !hit; n--) { const k = clipKey(words.slice(i, i + n).map(normTok).join(" ")); if (k) hit = { t: words.slice(i, i + n).join(" "), clip: k, n }; }
+      for (let n = Math.min(12, words.length - i); n >= 1 && !hit; n--) { const k = clipKey(words.slice(i, i + n).map(normTok).join(" ")); if (k) hit = { t: words.slice(i, i + n).join(" "), clip: k, n }; }
       if (!hit) hit = { t: words[i], clip: null, n: 1 };
       out.push(hit); i += hit.n;
     }
@@ -260,6 +260,22 @@
   /** after an answer: the whole model sentence, "Yes! It's a tiger." (one voice, in one go); on a screen without the sentence
       voice the human recordings "Yes! Tiger!" are heard instead and the sentence stays on screen for the teacher. */
   TC.sayAnswer = (ok, sentence, word) => { const W = String(word || ""), y = ok ? "Yes! " : ""; return TC.speak(y + (sentence || W), { human: y + W.charAt(0).toUpperCase() + W.slice(1) + "!" }); };
+  /** Ollie's praise after a right answer: a random passport (5)-1..3 line — "Good job!", "Well done!", "Awesome!", "Excellent!", "That's right!", "You got it!" */
+  let lastPraise = -1;
+  TC.praise = function () {
+    const L = (window.TC_CONTENT && TC_CONTENT.praise) || ["Good job!"]; let i; do { i = (Math.random() * L.length) | 0; } while (i === lastPraise && L.length > 1); lastPraise = i;
+    return TC.speak(L[i]);
+  };
+  /** The host's own line (a question or a command). Spoken by the TV only in "電腦問" mode; in "老師問" mode the teacher says it. */
+  TC.teacherLine = function (text) { return TC.cfg.ollieAsks ? TC.speak(text) : Promise.resolve(TC.caption(text)); };
+  /** Count one finished activity as a turn with 1–3 stars (for games where the child acts instead of speaking). */
+  TC.countTurn = function (stars = 3) { TC.stats.turns++; TC.stats.lines++; TC.stats.stars += stars; };
+  /** Big "Give him a big hand!" banner (passport (5)-4): parents and friends clap. */
+  TC.clapBanner = async function (ms = 3200) {
+    const c = TC_CONTENT.clap, b = h("div", { class: "clap-banner" }, h("div", { class: "hands" }, "👏"), h("div", { class: "en" }, c.say), h("div", { class: "zh" }, c.zh + "　拍拍手！"));
+    document.body.append(b); TC.sfx("fanfare"); TC.confetti(160);
+    await TC.speak(c.say); await sleep(Math.max(0, ms - 1200)); b.classList.add("out"); await sleep(400); b.remove();
+  };
   /** number of points on the scratch card: the number word is a human recording */
   TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
   /** Model the answer: first the answer word (or the whole phrase, "Good morning!") from its human recording,

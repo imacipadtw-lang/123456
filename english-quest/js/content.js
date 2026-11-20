@@ -1,172 +1,184 @@
 /* =====================================================================
-   Content for the six gates.
-   · Six themes chosen by the teacher, one per gate: 1 greetings, 2 numbers,
-     3 colours, 4 weather, 5 feelings, 6 animals. The words come from
-     《土城國小英語護照》; "no" is the passport word number so teachers can
-     check it against the book ("hello" is the only answer not in the passport).
-   · Every question is a simple lower/middle-grade pattern, and the child
-     only has to say ONE word — the blank in the sentence on screen — while
-     a picture of the answer is shown.
-   · Two levels:  1 = 初級 (grades 1–2): the word is printed under the picture
-                  2 = 中級 (grades 3–6): the word is a blank until the hint
-   "say"  = the sentence shown to the child (the key word is the blank)
-   "keys" = words the AI accepts (any one of them is enough)
+   Content for the six gates — 《校園生活英語》 passport (pages 4–9)
+   ---------------------------------------------------------------------
+   Every sentence comes from the school's classroom-English passport, which the children
+   already know:  (4) Question 提問 · (5) Giving Feedback / End of the Class 給回饋、課程結束 ·
+   (6) Lunch Time & Nap Time 午餐與午休 · (7) When Students Are Sick 學生生病時 ·
+   (8) Speech 上台朗讀 · (9) Others 其他.   "no" = "(page)-line" so a teacher can check it in the book.
+
+   One theme per gate (the principal's wish: situations, dialogue, TPR, phonics, song & dance, story):
+     1 situations  2 dialogue  3 TPR actions  4 phonics  5 chant (sing & dance)  6 story
+   Each gate has its own game engine, found by `key`; code must never hard-code gate numbers.
+
+   Levels:  1 = 初級 (grades 1–2): the key word is printed under the picture
+            2 = 中級 (grades 3–6): the key word is a blank until the hint
+   The child only ever says ONE word (the blank).  A picture shows the answer.
+   "say" = the sentence shown on screen · "w" = the key word (answer) · "keys" = words the AI accepts.
+   Ollie's praise lines are passport (5)-1..3: Good job! Well done! Awesome! Excellent! That's right! You got it!
    ===================================================================== */
 window.TC_SCHOOL = { zh: "南投縣草屯鎮土城國民小學", en: "Tucheng Elementary School", emblem: "assets/img/tucheng-emblem.svg" };
 window.TC_CONTENT = {
   secret: "FRIEND",              // one letter per gate, in gate order
-  finalLine: { say: "We are friends!", keys: [["friend", "friends"]], no: [40, 111] },
+  finalLine: { say: "We are friends!", keys: [["friend", "friends"]], no: "" },
+  praise: ["Good job!", "Well done!", "Awesome!", "Excellent!", "That's right!", "You got it!"],   // passport (5)-1, 2, 3
+  clap: { say: "Give him a big hand!", zh: "請大家給他一個掌聲！", no: "(5)-4" },
 
   gates: {
-    /* ---------------- Gate 1 · Hello Run — GREETINGS: "What do you say?" ---------------- */
+    /* ---------------- Gate 1 · Classroom Rescue — SITUATIONS ---------------- */
     1: {
-      key: "obby", title: "Hello Run", zh: "打招呼跑酷", city: "San Diego", color: "#ff9a2e",
-      genre: "Obby / runner 障礙跑酷", passport: "問候語：第25關 Good morning / Good night · 第6關 thank · 第24關 sorry",
+      key: "rescue", title: "Classroom Rescue", zh: "教室大救援", city: "San Diego", color: "#ff9a2e",
+      genre: "情境題 Situations", passport: "護照 (4) 提問、(6) 午餐、(7) 生病",
       teacher: "What do you say?", tzh: "這時候要說什麼？",
-      // img = picture of the situation; the child says the greeting
+      // img = the situation picture the game draws; the child says the key word of the sentence Ollie needs
       scenes: [
-        { w: "hello", no: "", zh: "你好（見到朋友）", img: "greet-hello", say: "Hello!", keys: [["hello", "hi"]] },
-        { w: "good morning", no: 683, zh: "早安（太陽出來了）", img: "greet-morning", say: "Good morning!", keys: [["morning"]] },
-        { w: "good night", no: 684, zh: "晚安（要睡覺了）", img: "greet-night", say: "Good night!", keys: [["night"]] },
-        { w: "thank you", no: 124, zh: "謝謝（收到禮物）", img: "greet-thanks", say: "Thank you!", keys: [["thank", "thanks"]] },
-        { w: "sorry", no: 651, zh: "對不起（不小心撞到）", img: "greet-sorry", say: "Sorry!", keys: [["sorry"]] }
-      ],
-      finale: { teacher: "Are you happy?", zh: "你開心嗎？", say: "Yes!", keys: [["yes", "yeah"]], word: "yes", no: [255] }
+        { w: "late", img: "sit-late", say: "Sorry, I am late.", zh: "遲到了，要說對不起", no: "(4)-6", keys: [["late"]] },
+        { w: "in", img: "sit-in", say: "May I come in?", zh: "想進教室", no: "(4)-14", keys: [["in"]] },
+        { w: "restroom", img: "sit-restroom", say: "May I go to the restroom?", zh: "想上廁所", no: "(4)-7", keys: [["restroom", "bathroom"]] },
+        { w: "water", img: "sit-water", say: "May I get a drink of water?", zh: "想喝水", no: "(4)-9", keys: [["water"]] },
+        { w: "lunchbox", img: "sit-lunchbox", say: "I forgot my lunchbox.", zh: "忘記帶便當", no: "(6)-5", keys: [["lunchbox", "lunch", "box"]] },
+        { w: "hurt", img: "sit-hurt", say: "I'm hurt.", zh: "受傷了", no: "(7)-1", keys: [["hurt"]] }
+      ]
     },
 
-    /* ---------------- Gate 2 · Turbo Talk Kart — NUMBERS: "How many?" ---------------- */
+    /* ---------------- Gate 2 · Ollie Talk Show — DIALOGUE ---------------- */
     2: {
-      key: "kart", title: "Turbo Talk Kart", zh: "極速英語賽車", city: "Tokyo", color: "#4cc9ff",
-      genre: "Kart racing 賽車遊戲", passport: "第7關 數字 1–10",
-      teacher: "How many?", tzh: "有幾顆星星？",
-      numbers: {
-        1: { w: "one", no: 142 }, 2: { w: "two", no: 143 }, 3: { w: "three", no: 144 }, 4: { w: "four", no: 145 }, 5: { w: "five", no: 146 },
-        6: { w: "six", no: 147 }, 7: { w: "seven", no: 148 }, 8: { w: "eight", no: 149 }, 9: { w: "nine", no: 150 }, 10: { w: "ten", no: 151 }
-      },
-      finale: { teacher: "Are you tired?", zh: "你累了嗎？", say: "No!", keys: [["no", "yes", "yeah"]], word: "no", no: [260] }
+      key: "talk", title: "Ollie Talk Show", zh: "歐力脫口秀", city: "Tokyo", color: "#4cc9ff",
+      genre: "對話 Dialogue", passport: "護照 (4) 提問、(5) 給回饋、(9) 其他",
+      teacher: "", tzh: "",
+      // t = what the host (Ollie / the teacher) says, say = the guest's answer; the child says w
+      qa: [
+        { t: "Are you finished?", tzh: "你做完了嗎？", say: "Yes, I'm done.", zh: "是的，我完成了", w: "done", keys: [["done", "finished"]], no: "(4)-5", img: "talk-done" },
+        { t: "Thank you for your help.", tzh: "謝謝你的幫忙", say: "You're welcome.", zh: "不客氣", w: "welcome", keys: [["welcome"]], no: "(5)-9", img: "talk-welcome" },
+        { t: "Can you close the door, please?", tzh: "可以請你關門嗎？", say: "Sure.", zh: "當然", w: "sure", keys: [["sure", "course", "okay"]], no: "(5)-19", img: "talk-door" },
+        { t: "May I help you?", tzh: "需要我幫忙嗎？", say: "Yes, please.", zh: "好的，麻煩你", w: "please", keys: [["please"]], no: "(9)-2", img: "talk-help" },
+        { t: "Could you please turn off the fan?", tzh: "可以請你關電扇嗎？", say: "Okay.", zh: "好的", w: "okay", keys: [["okay", "ok"]], no: "(5)-18", img: "talk-fan" },
+        { t: "Class is over. That's all for today.", tzh: "下課了", say: "Goodbye.", zh: "再見", w: "goodbye", keys: [["goodbye", "bye"]], no: "(5)-20", img: "talk-bye" }
+      ],
+      finale: { t: "Could you give me a hand?", tzh: "你可以幫我一個忙嗎？", say: "Of course.", zh: "當然", w: "course", keys: [["course", "sure", "okay"]], no: "(9)-1", img: "talk-hand" }
     },
 
-    /* ---------------- Gate 3 · Pixel Craft — COLOURS: "What color is it?" ---------------- */
+    /* ---------------- Gate 3 · Ollie Says — TPR ACTIONS ---------------- */
     3: {
-      key: "craft", title: "Pixel Craft", zh: "方塊創造家", city: "Sydney", color: "#2ee6b6",
-      genre: "Block building 方塊建造", passport: "第19關 顏色",
-      teacher: "What color is it?", tzh: "這是什麼顏色？",
-      colors: {
-        red: { no: 505, zh: "紅色", hex: "#ff4b4b", say: "It's red." },
-        orange: { no: 525, zh: "橘色", hex: "#ff9a2e", say: "It's orange." },
-        yellow: { no: 508, zh: "黃色", hex: "#ffd23d", say: "It's yellow." },
-        green: { no: 506, zh: "綠色", hex: "#35d35a", say: "It's green." },
-        blue: { no: 507, zh: "藍色", hex: "#3d8bff", say: "It's blue." },
-        purple: { no: 512, zh: "紫色", hex: "#9b5cff", say: "It's purple." },
-        pink: { no: 510, zh: "粉紅色", hex: "#ff7ac0", say: "It's pink." },
-        white: { no: 509, zh: "白色", hex: "#f4f7ff", say: "It's white." },
-        black: { no: 511, zh: "黑色", hex: "#26293a", say: "It's black." },
-        brown: { no: 523, zh: "棕色", hex: "#9a5b34", say: "It's brown." }
-      },
-      // the child answers with any colour word; the game fills "[color]" with a suggestion
-      finale: { teacher: "What color do you like?", zh: "你喜歡什麼顏色？", say: "I like [color].", no: [604] }
+      key: "tpr", title: "Ollie Says", zh: "歐力說", city: "Sydney", color: "#2ee6b6",
+      genre: "動作 TPR", passport: "護照 (5) 課程結束、(6) 午餐與午休",
+      teacher: "", tzh: "",
+      // the child DOES the action with Ollie (no speaking needed); w = the verb that is shown big
+      actions: [
+        { id: "wash", w: "wash", say: "Wash your hands!", zh: "洗手", no: "(6)-1" },
+        { id: "clean", w: "clean", say: "Clean up your table!", zh: "整理桌面", no: "(6)-3" },
+        { id: "brush", w: "brush", say: "Brush your teeth!", zh: "刷牙", no: "(6)-4" },
+        { id: "mask", w: "mask", say: "Wear your mask!", zh: "戴口罩", no: "(6)-2" },
+        { id: "door", w: "close", say: "Close the door, please.", zh: "關門", no: "(5)-19" },
+        { id: "hurry", w: "hurry", say: "Hurry up!", zh: "快一點", no: "(5)-12" },
+        { id: "walk", w: "walk", say: "No running! Please walk.", zh: "別跑，用走的", no: "(5)-10" },
+        { id: "break", w: "break", say: "Take a break!", zh: "休息一下", no: "(5)-14" }
+      ],
+      // the surprise at the end: everybody freezes, then wakes up with a bang
+      quiet: { say: "It's quiet time. Close your eyes and rest.", zh: "午休時間，閉上眼睛休息", no: "(6)-6", w: "rest" },
+      wake: { say: "Wake up, everyone!", zh: "大家起床囉！", no: "(6)-7", w: "wake" }
     },
 
-    /* ---------------- Gate 4 · Mystery Box — WEATHER: "How's the weather?" ---------------- */
+    /* ---------------- Gate 4 · Sound Monsters — PHONICS ---------------- */
     4: {
-      key: "box", title: "Mystery Box", zh: "神秘盲盒", city: "Vancouver", color: "#9b6bff",
-      genre: "Mystery box / unboxing 開箱驚喜", passport: "第5關 天氣",
-      teacher: "How's the weather?", tzh: "天氣怎麼樣？",
-      // the weather that bursts out of the box (img = picture name drawn by the game)
-      weather: [
-        { w: "sunny", no: 91, zh: "晴天", img: "wx-sunny", say: "It's sunny." },
-        { w: "rainy", no: 93, zh: "下雨", img: "wx-rainy", say: "It's rainy." },
-        { w: "cloudy", no: 95, zh: "多雲", img: "wx-cloudy", say: "It's cloudy." },
-        { w: "windy", no: 96, zh: "颳風", img: "wx-windy", say: "It's windy." },
-        { w: "snowy", no: 101, zh: "下雪", img: "wx-snowy", say: "It's snowy.", keys: [["snowy", "snow", "snowing"]] }
-      ],
-      finale: { teacher: "Is it hot?", zh: "現在很熱嗎？", say: "Yes!", keys: [["yes", "yeah", "no"]], word: "yes", no: [90] }
-    },
-
-    /* ---------------- Gate 5 · Beat Party — FEELINGS: "How are you?" ---------------- */
-    5: {
-      key: "beat", title: "Beat Party", zh: "英語節奏派對", city: "Cairo", color: "#ff5fa2",
-      genre: "Rhythm & dance 節奏舞蹈", passport: "第10關 心情 · 第3關 hungry",
-      teacher: "How are you?", tzh: "你現在覺得怎麼樣？",
-      // img = picture of a face showing this feeling
-      feelings: [
-        { w: "happy", no: 255, zh: "開心", img: "feel-happy", say: "I'm happy." },
-        { w: "sad", no: 257, zh: "傷心", img: "feel-sad", say: "I'm sad." },
-        { w: "angry", no: 256, zh: "生氣", img: "feel-angry", say: "I'm angry." },
-        { w: "tired", no: 260, zh: "好累", img: "feel-tired", say: "I'm tired." },
-        { w: "hungry", no: 59, zh: "肚子餓", img: "feel-hungry", say: "I'm hungry." },
-        { w: "scared", no: 261, zh: "害怕", img: "feel-scared", say: "I'm scared." }
-      ],
-      finale: { teacher: "Photo time!", zh: "拍照囉！大家看鏡頭", say: "Cheese!", keys: [["cheese"]], word: "cheese", no: [697] }
-    },
-
-    /* ---------------- Gate 6 · Pet Hatch — ANIMALS: "What is it?" ---------------- */
-    6: {
-      key: "hatch", title: "Pet Hatch", zh: "英語寵物孵蛋", city: "Paris", color: "#ffc83d",
-      genre: "Egg hatching & pets 孵蛋收集", passport: "第1關 動物 · 第6關 can / fly",
+      key: "monster", title: "Sound Monsters", zh: "音節怪獸", city: "Vancouver", color: "#9b6bff",
+      genre: "字母與發音 Phonics", passport: "護照 (4)-(7) 的單字",
       teacher: "What is it?", tzh: "這是什麼？",
-      items: [
-        { w: "tiger", no: 11, zh: "老虎", img: "tiger", say: "It's a tiger.", fly: false },
-        { w: "elephant", no: 6, zh: "大象", img: "elephant", say: "It's an elephant.", fly: false },
-        { w: "rabbit", no: 10, zh: "兔子", img: "rabbit", say: "It's a rabbit.", fly: false },
-        { w: "turtle", no: 12, zh: "烏龜", img: "turtle", say: "It's a turtle.", fly: false },
-        { w: "monkey", no: 8, zh: "猴子", img: "monkey", say: "It's a monkey.", fly: false },
-        { w: "pig", no: 9, zh: "豬", img: "pig", say: "It's a pig.", fly: false },
-        { w: "zebra", no: 13, zh: "斑馬", img: "zebra", say: "It's a zebra.", fly: false },
-        { w: "duck", no: 5, zh: "鴨", img: "duck", say: "It's a duck.", fly: true },
-        { w: "cat", no: 3, zh: "貓", img: "cat", say: "It's a cat.", fly: false },
-        { w: "horse", no: 7, zh: "馬", img: "horse", say: "It's a horse.", fly: false },
-        { w: "lion", no: 14, zh: "獅子", img: "lion", say: "It's a lion.", fly: false },
-        { w: "dog", no: 4, zh: "狗", img: "dog", say: "It's a dog.", fly: false },
-        { w: "bear", no: 2, zh: "熊", img: "bear", say: "It's a bear.", fly: false },
-        { w: "bird", no: 1, zh: "鳥", img: "bird", say: "It's a bird.", fly: true }
+      // every word is a thing from the passport pages; the monster only eats words that START with its letter sound
+      words: [
+        { w: "water", L: "w", img: "p-water", zh: "水", no: "(4)-9" }, { w: "window", L: "w", img: "p-window", zh: "窗戶", no: "(5)-19" },
+        { w: "table", L: "t", img: "p-table", zh: "桌子", no: "(6)-3" }, { w: "teeth", L: "t", img: "p-teeth", zh: "牙齒", no: "(6)-4" },
+        { w: "lunchbox", L: "l", img: "p-lunchbox", zh: "便當盒", no: "(6)-5" }, { w: "light", L: "l", img: "p-light", zh: "電燈", no: "(5)-18" },
+        { w: "door", L: "d", img: "p-door", zh: "門", no: "(5)-19" }, { w: "drink", L: "d", img: "p-drink", zh: "飲料", no: "(4)-9" },
+        { w: "book", L: "b", img: "p-book", zh: "書", no: "(5)-15" }, { w: "brush", L: "b", img: "p-brush", zh: "牙刷", no: "(6)-4" },
+        { w: "fan", L: "f", img: "p-fan", zh: "電扇", no: "(5)-18" }, { w: "hands", L: "h", img: "p-hands", zh: "雙手", no: "(6)-1" },
+        { w: "mask", L: "m", img: "p-mask", zh: "口罩", no: "(6)-2" }, { w: "nurse", L: "n", img: "p-nurse", zh: "護理師", no: "(7)-2" }
+      ]
+    },
+
+    /* ---------------- Gate 5 · Classroom Beat — CHANT (sing & dance) ---------------- */
+    5: {
+      key: "chant", title: "Classroom Beat", zh: "教室節奏派對", city: "Cairo", color: "#ff5fa2",
+      genre: "唱跳 Chant & Dance", passport: "護照 (5) 課程結束、(6) 午餐與午休",
+      teacher: "", tzh: "",
+      // a draft chant built from passport commands — replace with the songs the English teacher really uses; w = the last word the child says
+      lines: [
+        { say: "Wash your hands!", w: "hands", zh: "洗洗手", no: "(6)-1", move: "wash" },
+        { say: "Clean up your table!", w: "table", zh: "清桌子", no: "(6)-3", move: "clean" },
+        { say: "Brush your teeth!", w: "teeth", zh: "刷刷牙", no: "(6)-4", move: "brush" },
+        { say: "Take a break!", w: "break", zh: "休息一下", no: "(5)-14", move: "rest" },
+        { say: "Time to wake up!", w: "wake", zh: "起床囉", no: "(6)-7", move: "wake" },
+        { say: "Hurry up!", w: "hurry", zh: "快一點", no: "(5)-12", move: "run" }
+      ]
+    },
+
+    /* ---------------- Gate 6 · Storybook Day — STORY ---------------- */
+    6: {
+      key: "story", title: "Storybook Day", zh: "校園一天故事書", city: "Paris", color: "#ffc83d",
+      genre: "故事 Story", passport: "護照 (5)-(7)：一天的校園生活",
+      teacher: "What do we do?", tzh: "接下來做什麼？",
+      // a pop-up book of one school day; every page the child says the missing word (t overrides the question)
+      pages: [
+        { w: "wake", img: "st-wake", say: "Time to wake up!", zh: "該起床囉", no: "(6)-7" },
+        { w: "wash", img: "st-wash", say: "Wash your hands before lunch.", zh: "吃飯前先洗手", no: "(6)-1" },
+        { w: "clean", img: "st-clean", say: "Clean up your table.", zh: "清理餐桌", no: "(6)-3" },
+        { w: "rest", img: "st-rest", say: "Close your eyes and rest.", zh: "閉上眼睛休息", no: "(6)-6" },
+        { w: "hurt", img: "st-hurt", t: "What's the matter?", tzh: "怎麼了？", say: "I'm hurt.", zh: "我受傷了", no: "(7)-1", keys: [["hurt"]] },
+        { w: "goodbye", img: "st-bye", t: "Class is over.", tzh: "下課了", say: "Goodbye.", zh: "再見", no: "(5)-20", keys: [["goodbye", "bye"]] }
       ],
-      // one extra easy question for 中級 after a pet hatches: "Can it fly?" → "Yes!" / "No!" (either is accepted)
-      follow: { teacher: "Can it fly?", zh: "牠會飛嗎？", say: { yes: "Yes!", no: "No!" }, word: { yes: "yes", no: "no" }, keys: [["yes", "yeah", "no"]],
-        after: { yes: "It can fly!", no: "It can't fly." }, no: [134, 135, 139] },
-      // the child taps the favourite pet; the game fills "[animal]"
-      finale: { teacher: "Which one do you want?", zh: "你想要哪一隻？", say: "I want the [animal].", no: [82] }
+      ending: { say: "Have a nice day!", zh: "祝你有美好的一天", no: "(5)-22" }
     }
   }
 };
 
-/* Sentence Builder: two-or-three-word sentences made of the same simple patterns (tap the word cards into order, then read it). */
-window.TC_CONTENT.sentences = {
-  1: [ { no: 683, s: "Good morning!", zh: "早安！", keys: [["morning"]] }, { no: 684, s: "Good night!", zh: "晚安！", keys: [["night"]] },
-       { no: 124, s: "Thank you!", zh: "謝謝你！", keys: [["thank", "thanks"]] } ],
-  2: [ { no: 146, s: "Five stars.", zh: "五顆星星。", keys: [["five"]] }, { no: 144, s: "Three stars.", zh: "三顆星星。", keys: [["three"]] },
-       { no: 151, s: "Ten stars.", zh: "十顆星星。", keys: [["ten"]] } ],
-  3: [ { no: 505, s: "It's red.", zh: "它是紅色的。", keys: [["red"]] }, { no: 507, s: "It's blue.", zh: "它是藍色的。", keys: [["blue"]] },
-       { no: 508, s: "It's yellow.", zh: "它是黃色的。", keys: [["yellow"]] }, { no: 506, s: "It's green.", zh: "它是綠色的。", keys: [["green"]] } ],
-  4: [ { no: 91, s: "It's sunny.", zh: "今天是晴天。", keys: [["sunny"]] }, { no: 93, s: "It's rainy.", zh: "今天下雨。", keys: [["rainy"]] },
-       { no: 96, s: "It's windy.", zh: "今天颳風。", keys: [["windy"]] } ],
-  5: [ { no: 255, s: "I'm happy.", zh: "我很開心。", keys: [["happy"]] }, { no: 257, s: "I'm sad.", zh: "我很傷心。", keys: [["sad"]] },
-       { no: 59, s: "I'm hungry.", zh: "我肚子餓。", keys: [["hungry"]] } ],
-  6: [ { no: 3, s: "It's a cat.", zh: "這是貓。", keys: [["cat"]] }, { no: 4, s: "It's a dog.", zh: "這是狗。", keys: [["dog"]] },
-       { no: 139, s: "It can fly.", zh: "牠會飛。", keys: [["fly"]] } ]
+/* Booklet Hunt at the end of each gate: the child opens the passport booklet to this line and reads it (says the key word).
+   The page of the booklet matches the gate: gate n ↔ page (n+3). */
+window.TC_CONTENT.hunt = {
+  1: { page: "(4)", line: 7, text: "May I go to the restroom?", zh: "我可以去上廁所嗎？", w: "restroom", keys: [["restroom", "bathroom"]] },
+  2: { page: "(5)", line: 9, text: "You're welcome.", zh: "不客氣", w: "welcome", keys: [["welcome"]] },
+  3: { page: "(6)", line: 1, text: "Wash your hands before lunch.", zh: "用餐前先洗手", w: "wash", keys: [["wash"]] },
+  4: { page: "(7)", line: 4, text: "Drink lots of water and get some rest.", zh: "多喝水、多休息", w: "water", keys: [["water"]] },
+  5: { page: "(8)", line: 3, text: "Thank you for listening.", zh: "謝謝你的聆聽", w: "listening", keys: [["listening", "listen"]] },
+  6: { page: "(9)", line: 4, text: "I have an idea.", zh: "我有一個想法", w: "idea", keys: [["idea"]] }
 };
 
-/* Warm-up at the start of each gate (one short question; one word is enough). "[Name]" / "[age]" are filled in by the program. */
+/* Sentence Builder: short passport sentences — tap the word cards into order, then read it. */
+window.TC_CONTENT.sentences = {
+  1: [ { no: "(4)-14", s: "May I come in?", zh: "我可以進來嗎？", keys: [["come", "in"]] }, { no: "(6)-5", s: "I forgot my lunchbox.", zh: "我忘了帶便當。", keys: [["lunchbox", "forgot"]] },
+       { no: "(4)-6", s: "Sorry, I am late.", zh: "抱歉，我遲到了。", keys: [["late", "sorry"]] } ],
+  2: [ { no: "(5)-20", s: "Class is over.", zh: "下課了。", keys: [["class", "over"]] }, { no: "(5)-9", s: "Thank you for your help.", zh: "謝謝你的幫忙。", keys: [["help", "thank"]] },
+       { no: "(5)-22", s: "Have a nice day.", zh: "祝你有美好的一天。", keys: [["nice", "day"]] } ],
+  3: [ { no: "(6)-1", s: "Wash your hands.", zh: "洗手。", keys: [["wash", "hands"]] }, { no: "(6)-4", s: "Brush your teeth.", zh: "去刷牙。", keys: [["brush", "teeth"]] },
+       { no: "(6)-3", s: "Clean up your table.", zh: "清理餐桌。", keys: [["clean", "table"]] } ],
+  4: [ { no: "(7)-4", s: "Drink lots of water.", zh: "多喝水。", keys: [["water", "drink"]] }, { no: "(9)-4", s: "I have an idea.", zh: "我有一個想法。", keys: [["idea"]] },
+       { no: "(4)-9", s: "May I get a drink?", zh: "我可以喝水嗎？", keys: [["drink"]] } ],
+  5: [ { no: "(5)-14", s: "Take a break.", zh: "休息一下。", keys: [["break"]] }, { no: "(8)-3", s: "Thank you for listening.", zh: "謝謝你的聆聽。", keys: [["listening", "thank"]] },
+       { no: "(5)-1", s: "Good job!", zh: "做得好！", keys: [["good", "job"]] } ],
+  6: [ { no: "(6)-7", s: "Time to wake up.", zh: "該起床了。", keys: [["wake"]] }, { no: "(5)-21", s: "See you next time.", zh: "下次見。", keys: [["see", "time"]] },
+       { no: "(5)-22", s: "Have a nice day.", zh: "祝你有美好的一天。", keys: [["nice", "day"]] } ]
+};
+
+/* Warm-up at the start of each gate (one short question; one word is enough). The child says their own name. */
 window.TC_CONTENT.greetings = {
-  name: { teacher: "What's your name?", tzh: "你叫什麼名字？", no: [37], say: "I'm [Name].", keys: [["i", "am", "my", "[name]"]] }
+  name: { teacher: "What's your name?", tzh: "你叫什麼名字？", no: "(8)-1", say: "I'm [Name].", keys: [["i", "am", "my", "[name]"]] }
 };
 window.TC_CONTENT.greetingOrder = { 1: "name", 2: "name", 3: "name", 4: "name", 5: "name", 6: "name" };
 
-/* One list of "teacher asks → child says" lines per gate, used by the 📋 popup, the guide and the gate host cards,
+/* One list of "host asks → child says" lines per gate, used by the 📋 popup, the guide and the gate host cards,
    so the printed scripts always match the games.  row = { t, tzh, say, word, zh, no, kind: "hello" | "q" | "extra" | "last" } */
 window.TC_SCRIPT = function (gate) {
   const C = window.TC_CONTENT, G = C.gates[gate], gr = C.greetings[C.greetingOrder[gate]], rows = [];
-  const cap = (w) => w[0].toUpperCase() + w.slice(1);
-  rows.push({ kind: "hello", t: gr.teacher, tzh: gr.tzh, say: gr.say.replace("[Name]", "___").replace("[age]", "nine"), word: gr.word || "", zh: "", no: (gr.no || []).join("、") });
-  const q = (it, say, w) => rows.push({ kind: "q", t: G.teacher, tzh: G.tzh, say, word: w, zh: it.zh || "", no: it.no });
-  if (G.key === "obby") G.scenes.forEach((x) => q(x, x.say, x.w));
-  if (G.key === "kart") Object.entries(G.numbers).forEach(([n, v]) => q({ zh: n + " 顆星星", no: v.no }, cap(v.w) + "!", v.w));
-  if (G.key === "craft") Object.entries(G.colors).forEach(([c, v]) => q(v, v.say, c));
-  if (G.key === "box") G.weather.forEach((x) => q(x, x.say, x.w));
-  if (G.key === "beat") G.feelings.forEach((x) => q(x, x.say, x.w));
-  if (G.key === "hatch") G.items.forEach((it) => q(it, it.say, it.w));
-  if (G.follow) rows.push({ kind: "extra", t: G.follow.teacher, tzh: G.follow.zh, say: "Yes! / No!", word: "yes no", zh: "中級加問：bird、duck 答 Yes，其他答 No（說哪個都過關）", no: (G.follow.no || []).join("、") });
-  const F = G.finale;
-  rows.push({ kind: "last", t: F.teacher, tzh: F.zh, say: F.say.replace("[animal]", "cat").replace("[color]", "blue"), word: F.word || (F.say.includes("[animal]") ? "cat" : F.say.includes("[color]") ? "blue" : ""), zh: "", no: (F.no || []).join("、") });
+  rows.push({ kind: "hello", t: gr.teacher, tzh: gr.tzh, say: gr.say.replace("[Name]", "___"), word: "", zh: "說自己的名字", no: gr.no });
+  const q = (r) => rows.push(Object.assign({ kind: "q" }, r));
+  if (G.key === "rescue") G.scenes.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no }));
+  if (G.key === "talk") { G.qa.forEach((x) => q({ t: x.t, tzh: x.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.finale.t, tzh: G.finale.tzh, say: G.finale.say, word: G.finale.w, zh: G.finale.zh, no: G.finale.no }); }
+  if (G.key === "tpr") {
+    G.actions.forEach((x) => q({ t: x.say, tzh: x.zh, say: "（做動作，不用開口）", word: "", zh: "跟著歐力做", no: x.no }));
+    rows.push({ kind: "last", t: G.quiet.say, tzh: G.quiet.zh, say: "（閉眼不動）→ " + G.wake.say, word: "", zh: "午休靜止，再突然起床", no: G.quiet.no + "、" + G.wake.no });
+  }
+  if (G.key === "monster") G.words.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: "It's " + (/^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".", word: x.w, zh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", no: x.no }));
+  if (G.key === "chant") G.lines.forEach((x) => q({ t: x.say.replace(new RegExp(x.w, "i"), "___"), tzh: x.zh, say: x.say, word: x.w, zh: "唸最後一個字並做動作", no: x.no }));
+  if (G.key === "story") { G.pages.forEach((x) => q({ t: x.t || G.teacher, tzh: x.tzh || G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.ending.say, tzh: G.ending.zh, say: "（全班一起說）", word: "", zh: "故事結束，大家一起說", no: G.ending.no }); }
+  const H = C.hunt[gate];
+  rows.push({ kind: "extra", t: "Open your passport! " + H.page + " No. " + H.line, tzh: "翻護照 " + H.page + " 第 " + H.line + " 句", say: H.text, word: H.w, zh: "護照尋寶：" + H.zh, no: H.page + "-" + H.line });
   return rows;
 };
