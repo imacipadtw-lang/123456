@@ -71,7 +71,7 @@
   TC.api = api;
   game.mount && game.mount(api);
 
-  // level for the next player (初級 grades 1–2 / 中級 grades 3–6), remembered on this screen
+  // level for the next player (低年級 / 中年級 / 高年級), remembered on this screen
   // 115.11.20: only "電腦問" — Ollie always reads the questions (the 老師問 choice was removed)
   TC.cfg.ollieAsks = true;
   let nextLevel = TC.cfg.level;

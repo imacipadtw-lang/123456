@@ -1,6 +1,6 @@
 /* =====================================================================
    Tucheng English Day — shared engine for every gate
-   - one big START button per screen (no passport scanning), level 初級 / 中級
+   - one big START button per screen (no passport scanning), level 低／中／高年級
    - AI speech recognition (Web Speech API) + teacher override
    - human pronunciation clips (Wikimedia Commons) / labelled computer voice
    - voice recording replay, stamps, secret-code letters, optional Google Sheet sync
@@ -46,7 +46,7 @@
   /* ---------------- players (kept for the Live Board colours; passport scanning was removed) ----------------
      (a new player id is made each time START is pressed)  */
   const AV_COLORS = ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e", "#7ee36b", "#ff7a7a"];
-  TC.levelFromGrade = (g) => (g <= 2 ? 1 : g <= 4 ? 2 : 3); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
+  TC.levelFromGrade = (g) => (g <= 2 ? 1 : g <= 4 ? 2 : 3); // 1 低年級 · 2 中年級 · 3 高年級
   TC.parseKid = function (raw) {
     if (!raw) return null;
     const s = String(raw).trim();
