@@ -25,6 +25,13 @@
   a.card:hover img{transform:scale(1.12) rotate(-6deg)}
   h3{max-width:90rem;margin:2.4rem auto .8rem;font-size:1.4rem;color:var(--sun)}
   .tools a.card{--c:#ffc83d}
+  .lv-home{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;max-width:90rem;margin:0 auto 1.6rem}
+  .lv-home .lv-t{font-size:1.5rem;font-weight:700;color:var(--sun)}
+  .lv-home button{display:flex;flex-direction:column;align-items:center;min-width:13rem;padding:.8rem 1.6rem;border-radius:1.6rem;line-height:1.15;cursor:pointer;
+    background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;border:0;box-shadow:0 .45rem 0 #121c42}
+  .lv-home button b{font-size:2.2rem}.lv-home button i{font-style:normal;font-size:1.1rem;opacity:.9}
+  .lv-home button[aria-checked=true]{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 .45rem 0 #0b7a5c}
+  .lv-home button[aria-checked=true] b::before{content:"✓ "}
   footer{max-width:90rem;margin:3rem auto 0;color:var(--ink2);font-size:.95rem;line-height:1.6}
   footer a{color:var(--sky)}
 </style>
@@ -35,8 +42,14 @@
   <div>
     <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.4rem;color:#ffe58a;letter-spacing:.06em;margin-bottom:.6rem"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.4rem;height:5.4rem;flex:none">南投縣草屯鎮土城國民小學</div>
     <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 英語闖關（空手來就好）</span></h1>
-    <p class="zh">6 間教室 × 6 個遊戲關卡 · 句子全部來自《校園生活英語》護照 · 老師按 START → 歐力或老師用英文問、孩子看圖說一個英文字 → AI 聽懂就過關 → 打開神秘禮物盒念一句 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙 → 終點登機門解碼拿獎狀、換獎品</p>
+    <p class="zh">6 間教室 × 6 個遊戲關卡 · 老師按 START → 歐力用英文問、孩子看圖說英文（低年級認字母做動作、中年級念整句、高年級填空） → AI 聽懂就過關 → 打開神秘禮物盒念一句 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙 → 終點登機門解碼拿獎狀、換獎品</p>
   </div>
+</div>
+<div class="lv-home" id="lvHome" role="radiogroup" aria-label="題目難度">
+  <span class="zh lv-t">選擇題目：</span>
+  <button data-l="1" role="radio"><b class="zh">低年級</b><i class="zh">1–2 年級 · 認字母＋做動作</i></button>
+  <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 看整句念</i></button>
+  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 填空說</i></button>
 </div>
 <div class="grid" id="gates"></div>
 <!-- 115.11.20: tools and source notes hidden from the public home page (pages still open by direct address for teachers) -->
@@ -51,8 +64,20 @@
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : `<img src="${TC.art(icons[n])}" alt="">`}</div><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" data-gate="${n}" href="station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}"><div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : `<img src="${TC.art(icons[n])}" alt="">`}</div><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}</div></a>`);
   });
+</script>
+<script>
+  // 115.11.20: choose 低／中／高年級 here; every gate link carries it (?lv=), and the TV remembers it
+  (function () {
+    const box = document.getElementById("lvHome");
+    function paint() {
+      box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(+b.dataset.l === TC.cfg.level)));
+      document.querySelectorAll("#gates a.card").forEach((a) => { const n = a.dataset.gate; a.href = `station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}`; });
+    }
+    box.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.cfg.level = +b.dataset.l; TC.saveCfg(); paint(); });
+    paint();
+  })();
 </script>
 <script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
 </body>

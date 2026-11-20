@@ -31,6 +31,12 @@
   const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.cfg.ollieAsks = true; // 115.11.20: the 老師問 mode was removed — Ollie (the TV) always asks
+  // 115.11.20: three levels — 1 低年級 (only the ABC letter + do the action) · 2 中年級 (whole sentence shown, read it) · 3 高年級 (fill in the blank)
+  if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
+  { const q = +(new URLSearchParams(location.search).get("lv") || 0); if (q >= 1 && q <= 3) TC.cfg.level = q; }
+  if (!(TC.cfg.level >= 1 && TC.cfg.level <= 3)) TC.cfg.level = 2;
+  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 認字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 填空說" } };
+  try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {}
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
   /** rounds per child: standard, or capped in quick mode */
@@ -39,7 +45,7 @@
   /* ---------------- players (kept for the Live Board colours; passport scanning was removed) ----------------
      (a new player id is made each time START is pressed)  */
   const AV_COLORS = ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e", "#7ee36b", "#ff7a7a"];
-  TC.levelFromGrade = (g) => (g <= 2 ? 1 : 2); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
+  TC.levelFromGrade = (g) => (g <= 2 ? 1 : g <= 4 ? 2 : 3); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
   TC.parseKid = function (raw) {
     if (!raw) return null;
     const s = String(raw).trim();
@@ -463,9 +469,23 @@
       const sayWords = String(spec.say || "").split(/\s+/).filter(Boolean);
       $("#kLine").innerHTML = sayWords.map((w, i) => {
         const n = TC.norm(w)[0] || ""; const isKey = [...keyWords].some((k) => TC.wordMatch(n, k));
-        const hide = spec.hideKey && (spec.hideAlways || !(TC.kid && TC.kid.level === 1)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
+        const hide = spec.hideKey && (spec.hideAlways || (TC.kid && TC.kid.level === 3)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
+      const kw = String(spec.word || ((spec.keys || [])[0] || [])[0] || "").trim();
+      if (TC.kid && TC.kid.level === 1 && !spec.noAbc && kw && /^[a-z]/i.test(kw)) {
+        const L = kw[0].toUpperCase();
+        // 低年級: tap the right letter (touch) — or say it — then do the action with Ollie
+        const pool = "ABCDEFGHIJKLMNOPRSTUVWY".split("").filter((c) => c !== L);
+        const opts = [L]; while (opts.length < 3) { const c = pool.splice((Math.random() * pool.length) | 0, 1)[0]; opts.push(c); }
+        for (let i = opts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [opts[i], opts[j]] = [opts[j], opts[i]]; }
+        $("#kLine").innerHTML = `<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
+        $("#kLine").querySelectorAll(".abc-btn").forEach((b) => b.addEventListener("click", () => {
+          TC.ac();
+          if (b.dataset.c === L) { b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => TC.teacherOK(), 450); }
+          else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
+        }));
+      }
       $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });

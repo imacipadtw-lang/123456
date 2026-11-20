@@ -634,7 +634,7 @@
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
   async function titleCard(api) {
-    const lv2 = api.level === 2;
+    const lv2 = api.level >= 2;
     const el = h("div", { class: "title", html: `<div class="t1">Ollie <span>Says</span></div><div class="t2">歐力說</div><div><span class="t3">Do what Ollie does!　跟著歐力一起做動作！</span>${lv2 ? `<span class="t4">If Ollie doesn't say it, FREEZE! 歐力沒說就定住！</span>` : ""}</div>` });
     root.append(el); temp.push(el);
     setMode("title"); TC.sfx("fanfare");
@@ -734,7 +734,7 @@
         const n = TC.rounds(5), list = shuffle(api.G.actions).slice(0, n);
         // level 2 only: a few rounds where Ollie "didn't say" — everyone freezes (never judged)
         const twist = new Set();
-        if (api.level === 2 && n >= 3) { const c = shuffle([1, 2, 3, 4].filter((i) => i < n)); twist.add(c[0]); const o = c.find((i) => Math.abs(i - c[0]) > 1); if (o != null && n >= 5) twist.add(o); }
+        if (api.level === 3 && n >= 3) { const c = shuffle([1, 2, 3, 4].filter((i) => i < n)); twist.add(c[0]); const o = c.find((i) => Math.abs(i - c[0]) > 1); if (o != null && n >= 5) twist.add(o); }
         api.progress(0, n);
         await titleCard(api); if (api.aborted) return;
         for (let i = 0; i < list.length; i++) {

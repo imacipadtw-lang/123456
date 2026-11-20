@@ -110,7 +110,7 @@
   async function startFinal() {
     TC.ac();
     if (busy) return;
-    const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level === 2 ? 2 : 1, grade: 3, color: "#ffc83d" };
+    const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level, grade: [0, 2, 4, 6][TC.cfg.level], color: "#ffc83d" };
     busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0 };
     $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color; $("#kName").textContent = "PLAYER";
     await TC.Mic.init();

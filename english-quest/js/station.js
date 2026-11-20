@@ -74,12 +74,12 @@
   // level for the next player (初級 grades 1–2 / 中級 grades 3–6), remembered on this screen
   // 115.11.20: only "電腦問" — Ollie always reads the questions (the 老師問 choice was removed)
   TC.cfg.ollieAsks = true;
-  let nextLevel = TC.cfg.level === 2 ? 2 : 1;
+  let nextLevel = TC.cfg.level;
   function showLevel() { $("#lvlPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === nextLevel)); }
   $("#lvlPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); nextLevel = +b.dataset.l; TC.cfg.level = nextLevel; TC.saveCfg(); showLevel(); });
   showLevel();
   let players = 0;
-  function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: nextLevel === 1 ? 2 : 4, color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }
+  function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: [0, 2, 4, 6][nextLevel], color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }
 
   function setKidChip(kid) {
     $("#kidChip").classList.remove("hidden");
@@ -89,7 +89,7 @@
   }
   $("#lvlBtns").addEventListener("click", (e) => {
     const l = +e.target.dataset.l; if (!l || !TC.kid) return;
-    TC.kid.level = l; nextLevel = l; showLevel(); setKidChip(TC.kid); TC.toast("難度：" + ["", "初級 Basic（看字說）", "中級（填空說）"][l] + "（下一題生效）");
+    TC.kid.level = l; nextLevel = l; showLevel(); setKidChip(TC.kid); TC.toast("難度：" + TC.LEVELS[l].zh + "（" + TC.LEVELS[l].tip + "）（下一題生效）");
   });
 
   async function start() {
@@ -117,7 +117,7 @@
       h("div", { class: "bpass" },
         h("div", { class: "av", style: `background:radial-gradient(circle at 35% 30%,#fff,${kid.color} 55%)` }, "★"),
         h("div", {}, h("div", { class: "k" }, "BOARDING PASS · TUCHENG ENGLISH DAY"), h("div", { class: "nm" }, "Welcome!"),
-          h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, ["", "初級 Basic", "中級"][kid.level] + " · " + G.zh)),
+          h("div", { class: "rt" }, `TPE ✈ ${G.city.toUpperCase()} · GATE ${gate}`), h("div", { class: "zh", style: "font-size:2rem;color:#5a6aa8" }, TC.LEVELS[kid.level].zh + " · " + G.zh)),
         TC.badgeEl(gate, "bp-badge bob")));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(80);
     // with sync on: show how many gates this traveller has already stamped
@@ -136,7 +136,7 @@
       const age = ["", "seven", "eight", "nine", "ten", "eleven", "twelve"][kid.grade] || "ten"; // typical age for the grade
       const fill = (t) => t.replace(/\[Name\]/g, "___").replace(/\[name\]/g, "").replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age); // no names: the child says their own
       api.progress(-1, 0);
-      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
+      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, noAbc: true, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
       TC.hideTalk();
       TC.lastSay = ""; // the warm-up ("I'm ___.") is never the class chorus line
       if (api.aborted) return;
@@ -147,7 +147,7 @@
     if (api.aborted) return;
     // (115.11.20) the "everybody say it — the louder, the more fireworks" step was removed: the classrooms have no microphone
     // 🧩 Sentence Builder with one sentence of this gate (skipped in quick mode)
-    if (!TC.cfg.rounds) {
+    if (!TC.cfg.rounds && kid.level >= 2) {
       const pool = TC_CONTENT.sentences[gate] || [];
       const pz = pool[(Math.random() * pool.length) | 0];
       if (pz) await TC.sentencePuzzle(pz.s, pz.zh, pz.keys, api);
@@ -203,7 +203,7 @@
     const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
     const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, r.zh]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「神秘禮物盒」和刮刮卡（孩子不用帶護照）。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
+      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（低年級只要說字母、做動作；中年級畫面顯示整句；高年級是填空）。遊戲後有「句子拼拼看」、「神秘禮物盒」和刮刮卡（孩子不用帶護照）。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
         h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
         ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),

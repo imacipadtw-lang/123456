@@ -54,13 +54,13 @@
     const pg = document.createElement("div"); pg.className = "page"; pg.style.setProperty("--c", G.color);
     pg.innerHTML = `<div class="hd"><div class="n">${g}</div><div><h1>${esc(G.title)} · ${esc(G.zh)}</h1><div class="s">Gate ${g} · ${esc(G.city)} · ${esc(G.genre)}</div><div class="s sch"><img src="assets/img/tucheng-emblem.svg" alt="">南投縣草屯鎮土城國民小學 · 運動會英語日</div></div><div class="bdg">${TC.badgeSVG(g)}</div></div>
       <div class="grid2" style="margin-top:4mm">
-        <div class="box"><b>開機</b><br>1. Chrome／Edge 開主網址，按 F11 全螢幕<br>2. 允許麥克風 → 右上 ⚙「測試麥克風」<br>3. 選初級／中級，按 START 玩一回合（問題由歐力用語音問）<br>4. 關閉螢幕保護、音量調大</div>
-        <div class="box"><b>老師按鍵</b><br><span class="kbd">Enter</span>/<span class="kbd">空白</span> START／說得好 ✓（AI 沒聽到時）／DONE<br><span class="kbd">H</span> 🔊 聽示範　<span class="kbd">N</span> ⏭ 跳過　<span class="kbd">Esc</span> 回到開始畫面<br>📋 本關台詞　⚙ 設定<br>上方 初級/中級 可隨時切換（初級直接顯示答案字）</div>
+        <div class="box"><b>開機</b><br>1. Chrome／Edge 開主網址，按 F11 全螢幕<br>2. 允許麥克風 → 右上 ⚙「測試麥克風」<br>3. 選低年級／中年級／高年級，按 START 玩一回合（問題由歐力用語音問）<br>4. 關閉螢幕保護、音量調大</div>
+        <div class="box"><b>老師按鍵</b><br><span class="kbd">Enter</span>/<span class="kbd">空白</span> START／說得好 ✓（AI 沒聽到時）／DONE<br><span class="kbd">H</span> 🔊 聽示範　<span class="kbd">N</span> ⏭ 跳過　<span class="kbd">Esc</span> 回到開始畫面<br>📋 本關台詞　⚙ 設定<br>上方 低年級/中年級/高年級 可隨時切換（初級直接顯示答案字）</div>
       </div>
       <div class="box url" style="margin-top:3mm"><b>主網址</b>（GitHub）<code>${esc(TC_LINKS.gate(g).github)}</code><br><b>備用網址</b>（Claude，需登入老師帳號；主網址打不開時用）<code>${esc(TC_LINKS.gate(g).claude)}</code></div>
       <h2>每位孩子的流程（估計約 3–4 分鐘；⚙ 快速模式約 2 分鐘）</h2>
       <ol><li>選等級（初級 1–2 年級／中級 3–6 年級，電視會記住）→ 一次一位，按 START（Enter）</li><li>👋 暖身：<b>${esc(gr.teacher)}</b> → 孩子 ${esc(gr.say.replace("[Name]", "___"))}（說自己的名字）</li>
-      <li>🎮 遊戲回合：${esc(TOUCH[G.key])} 孩子<b>只要說出答案字</b>（初級畫面直接有字，中級是填空）。</li><li>👏 答對時歐力會誇獎（Good job! 等護照 (5) 的句子）；最後全場拍手</li>
+      <li>🎮 遊戲回合：${esc(TOUCH[G.key])} 孩子<b>只要說出答案字</b>（低年級說字母＋做動作、中年級畫面有整句、高年級是填空）。</li><li>👏 答對時歐力會誇獎（Good job! 等護照 (5) 的句子）；最後全場拍手</li>
       <li>🧩 句子拼拼看：孩子點單字卡排好本關的一句英文，再唸出來</li><li>🎁 神秘禮物盒：孩子點一個禮物盒打開，念出裡面的句子 → 畫面給本關字母（<b>${C.secret[g - 1]}</b>），孩子記住即可（終點會直接給六個字母）。孩子不用帶護照。</li>
       <li>🎟 刮刮卡：孩子用手指刮開銀色區塊，露出 10／20／30 點 → 老師發同樣點數的貼紙，孩子把貼紙貼在衣服上</li>
       <li>全息印章＋秘密字母 → 按 DONE ✓（Enter）回到 START，換下一位</li></ol>

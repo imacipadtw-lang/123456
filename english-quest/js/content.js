@@ -10,8 +10,9 @@
      1 situations  2 dialogue  3 TPR actions  4 phonics  5 chant (sing & dance)  6 story
    Each gate has its own game engine, found by `key`; code must never hard-code gate numbers.
 
-   Levels:  1 = 初級 (grades 1–2): the key word is printed under the picture
-            2 = 中級 (grades 3–6): the key word is a blank until the hint
+   Levels:  1 = 低年級 (grades 1–2): only the first letter (ABC) of the key word + do the action
+            2 = 中年級 (grades 3–4): the whole sentence is shown — read it
+            3 = 高年級 (grades 5–6): the key word is a blank until the hint
    The child only ever says ONE word (the blank).  A picture shows the answer.
    "say" = the sentence shown on screen · "w" = the key word (answer) · "keys" = words the AI accepts.
    Ollie's praise lines are passport (5)-1..3: Good job! Well done! Awesome! Excellent! That's right! You got it!
