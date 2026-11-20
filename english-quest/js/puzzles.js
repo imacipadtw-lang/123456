@@ -123,3 +123,90 @@
     return r;
   };
 })();
+
+/* =====================================================================
+   Action Buddy (115.11.21, 低年級): after the child taps the right letter, a big cute 3D Ollie spins
+   all the way round (360°) and does the action of the word — the child copies it. Touch only, no timing:
+   it closes by itself after a few seconds, or when the child / teacher taps "做好了".
+   Ollie is the original drawing from art.js, extruded into a thick 3D figure with stacked layers.
+   ===================================================================== */
+(function () {
+  "use strict";
+  const { h, sleep } = TC;
+  const css = `
+  .ab{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:radial-gradient(70% 60% at 50% 45%,#2a5bb8,#0a1633 75%);animation:abIn .35s ease-out}
+  @keyframes abIn{from{opacity:0}}
+  .ab .stage{position:relative;width:min(46vh,40vw);height:min(52vh,46vw);perspective:120vh;margin-top:-6vh}
+  .ab .floor{position:absolute;left:10%;right:10%;bottom:-3%;height:12%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);animation:abShadow var(--sp,1s) ease-in-out infinite}
+  .ab .spin{position:absolute;inset:0;transform-style:preserve-3d;animation:abSpin 6.4s cubic-bezier(.45,0,.2,1) both}
+  .ab .act{position:absolute;inset:0;transform-style:preserve-3d;animation:var(--anim) var(--sp,1s) ease-in-out infinite}
+  .ab .lay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;clip-path:inset(0 0 5% 0);backface-visibility:visible;pointer-events:none}
+  @keyframes abSpin{0%{transform:rotateY(-360deg) scale(.4) translateY(30%)}26%{transform:rotateY(-40deg) scale(1.05)}36%{transform:rotateY(12deg) scale(1)}42%,62%{transform:rotateY(0) scale(1)}86%{transform:rotateY(360deg) scale(1.06)}92%,100%{transform:rotateY(360deg) scale(1)}}
+  @keyframes abShadow{50%{transform:scale(.8);opacity:.6}}
+  /* the actions */
+  @keyframes abScrub{0%,100%{transform:rotateZ(-7deg) rotateY(-22deg)}50%{transform:rotateZ(7deg) rotateY(22deg)}}
+  @keyframes abHop{0%,100%{transform:translateY(0) scaleY(1)}12%{transform:translateY(2%) scaleY(.9)}45%{transform:translateY(-18%) scaleY(1.05) rotateY(25deg)}80%{transform:translateY(0) scaleY(.94)}}
+  @keyframes abStretch{0%,100%{transform:scaleY(.92) scaleX(1.05)}50%{transform:scaleY(1.12) scaleX(.94) translateY(-6%)}}
+  @keyframes abClap{0%,100%{transform:scale(1) rotateY(0)}25%{transform:scale(1.08) rotateY(-30deg)}50%{transform:scale(.96)}75%{transform:scale(1.08) rotateY(30deg)}}
+  @keyframes abNod{0%,100%{transform:rotateX(0) rotateY(-15deg)}50%{transform:rotateX(18deg) rotateY(15deg) translateY(4%)}}
+  @keyframes abTwirl{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+  @keyframes abSleep{0%,100%{transform:rotateZ(-10deg) translateY(4%)}50%{transform:rotateZ(10deg) translateY(4%)}}
+  .ab .props{position:absolute;inset:-10%;pointer-events:none}
+  .ab .props i{position:absolute;font-style:normal;font-size:min(9vh,8vw);animation:abFloat 2.4s ease-in-out infinite;filter:drop-shadow(0 .6rem .6rem rgba(0,0,0,.35))}
+  @keyframes abFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-14%) rotate(8deg)}}
+  .ab .txt{position:absolute;left:0;right:0;bottom:7vh;text-align:center}
+  .ab .w{font-size:min(11vh,9vw);font-weight:700;color:#fff;text-shadow:0 .5rem 0 #0a1633,0 0 3rem rgba(76,201,255,.8)}
+  .ab .w b{color:var(--sun)}
+  .ab .zh{font-size:min(4.4vh,3.6vw);color:var(--mint);font-weight:700;margin-top:.4rem}
+  .ab .done{position:absolute;right:4vw;bottom:5vh;font-size:min(4.4vh,3.6vw);padding:1rem 2.4rem;border-radius:2rem;border:0;cursor:pointer;touch-action:manipulation;color:#063a2c;font-weight:700;
+     background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);box-shadow:0 .6rem 0 #0b7a5c}
+  .ab .done:active{transform:translateY(.4rem);box-shadow:0 .2rem 0 #0b7a5c}
+  @media (prefers-reduced-motion:reduce){.ab .spin,.ab .act,.ab .props i,.ab .floor{animation:none}}`;
+  document.head.append(h("style", {}, css));
+
+  // which action Ollie does for a word (the child copies it), and a few floating props
+  const MOVES = [
+    [/wash|clean|brush|teeth|hands|soap/, "abScrub", ["🫧", "✨", "🫧"]],
+    [/hurry|run|walk|late|go/, "abHop", ["💨", "⭐", "💨"]],
+    [/wake|stretch|up|everyone/, "abStretch", ["☀️", "✨", "⏰"]],
+    [/rest|quiet|sleep|break|nap/, "abSleep", ["💤", "🌙", "💤"]],
+    [/hand|clap|welcome|please|sure|okay|course|done|good|great/, "abClap", ["👏", "💖", "👏"]],
+    [/door|close|in|window|light|fan/, "abNod", ["🚪", "✨", "💡"]],
+    [/water|drink|lunch|lunchbox|table|mask|hurt|nurse|restroom|idea|book|listen/, "abNod", ["💧", "⭐", "💖"]]
+  ];
+  function moveOf(w) { w = String(w || "").toLowerCase(); for (const m of MOVES) if (m[0].test(w)) return m; return [null, "abTwirl", ["⭐", "💖", "🎵"]]; }
+
+  TC.actionBuddy = function (word, opt = {}) {
+    return new Promise((resolve) => {
+      if (!TC.art) { resolve(); return; }
+      const [, anim, props] = moveOf(word);
+      const src = TC.art("ollie"), N = 26, act = h("div", { class: "act", style: `--anim:${anim};--sp:${anim === "abTwirl" ? "2.4s" : anim === "abSleep" ? "1.8s" : "1s"}` });
+      // a thick, solid-looking 3D Ollie: layers stacked in depth, the inner ones darker (the sides)
+      for (let i = 0; i < N; i++) {
+        const z = (i - (N - 1) / 2) * 0.32, edge = i === 0 || i === N - 1;
+        const im = h("img", { class: "lay", src, alt: edge ? "Ollie" : "", draggable: "false" });
+        im.style.transform = `translateZ(${z}vh)` + (i === 0 ? " rotateY(180deg)" : "");
+        if (!edge) im.style.filter = `brightness(${0.55 + 0.25 * Math.sin((i / N) * Math.PI)}) saturate(1.2)`;
+        act.append(im);
+      }
+      const spin = h("div", { class: "spin" }, act);
+      const P = h("div", { class: "props" }, ...props.map((p, i) => h("i", { style: `left:${[2, 44, 86][i]}%;top:${[12, -6, 18][i]}%;animation-delay:${-i * 0.6}s` }, p)));
+      const W = String(word || "");
+      const done = h("button", { class: "done zh", type: "button" }, "做好了 ✓");
+      const ov = h("div", { class: "ab", role: "dialog", "aria-label": "跟著歐力做動作" },
+        h("div", { class: "stage" }, h("div", { class: "floor" }), spin, P),
+        h("div", { class: "txt" }, h("div", { class: "w" }, h("b", {}, W.slice(0, 1).toUpperCase()), W.slice(1) + "!"), h("div", { class: "zh" }, opt.zh || "🙌 跟著歐力一起做動作！")),
+        done);
+      let closed = false;
+      const key = (e) => { if (e.key === "Enter" || e.key === " " || e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); close(); } };
+      const close = () => { if (closed) return; closed = true; clearTimeout(t); window.removeEventListener("keydown", key, true); ov.remove(); resolve(); };
+      window.addEventListener("keydown", key, true); // Enter / Space = 做好了 (the game underneath waits)
+      done.onclick = () => { TC.ac(); TC.sfx && TC.sfx("pop"); close(); };
+      ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+      document.body.append(ov);
+      TC.sfx && TC.sfx("levelup"); TC.confetti && TC.confetti(90);
+      if (TC.speak) TC.speak(W.charAt(0).toUpperCase() + W.slice(1) + "!", { human: W.toLowerCase() }).catch(() => {});
+      const t = setTimeout(close, opt.ms || 8000);
+    });
+  };
+})();

@@ -483,7 +483,7 @@
         $("#kLine").innerHTML = `<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
         $("#kLine").querySelectorAll(".abc-btn").forEach((b) => b.addEventListener("click", () => {
           TC.ac();
-          if (b.dataset.c === L) { b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => TC.teacherOK(), 450); }
+          if (b.dataset.c === L) { if (b.classList.contains("ok")) return; b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => (TC.actionBuddy ? TC.actionBuddy(kw) : Promise.resolve()).then(() => TC.teacherOK()), 450); }
           else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
         }));
       }
