@@ -603,7 +603,7 @@
     if (kind === "wake") chip = `<span class="chip no">Ollie shouts! <span class="zh">歐力大喊</span></span>`;
     let en = hi(x.say), cls = "en";
     if (kind === "quiet") { const parts = x.say.split(/(?<=\.)\s+/); if (parts.length > 1) { en = `<span class="sm">${esc(parts[0])}</span>` + hi(parts.slice(1).join(" ")); cls = "en"; } }
-    return `<div class="chips">${chip}<span class="chip ref zh">護照 ${esc(x.no || "")}</span></div><div class="${cls}">${en}</div><div class="zh">${esc(x.zh || "")}</div>`;
+    return `<div class="chips">${chip}</div><div class="${cls}">${en}</div><div class="zh">${esc(x.zh || "")}</div>`;
   }
   function showBanner(x, kind) {
     ban.classList.remove("show", "muted"); void ban.offsetWidth;

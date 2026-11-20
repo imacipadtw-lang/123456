@@ -30,6 +30,7 @@
   /* ---------------- settings (stored on this device only) ---------------- */
   const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
+  TC.cfg.ollieAsks = true; // 115.11.20: the 老師問 mode was removed — Ollie (the TV) always asks
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
   /** rounds per child: standard, or capped in quick mode */
@@ -465,8 +466,7 @@
         const hide = spec.hideKey && (spec.hideAlways || !(TC.kid && TC.kid.level === 1)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
-      // a one-line guide for the child and the gate host until something is heard
-      $("#heard").innerHTML = `<span class="guide">👦 ${esc(spec.guideKid || (spec.hideKey ? "看圖片，說出「?」的那個字" : "說出亮黃色的字就可以"))}　👩‍🏫 ${esc(spec.guideTeacher || "AI 沒反應時按 ✓（Enter）· 🔊 聽示範（H）")}</span>`;
+      $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
@@ -635,7 +635,7 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題（建議，關主不用說英文）</option><option value="0">老師問：關主自己用英文問</option></select></label>
+      <label hidden><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題</option></select></label>
       <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句一次唸完：有 ElevenLabs 錄音就用錄音，沒有就用電腦語音（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
       <label><span>單字的聲音</span><select id="sWord"><option value="el">ElevenLabs（和整句同一個聲音，建議）</option><option value="human">Wikimedia 真人錄音（多位不同錄音者）</option></select></label>
 
@@ -651,7 +651,7 @@
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
+      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: true, sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

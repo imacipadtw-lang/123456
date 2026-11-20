@@ -1,6 +1,6 @@
 # Tucheng English Day · 土城國小運動會英語日 英語護照闖關
 
-南投縣草屯鎮土城國民小學。六間教室 × 六個大螢幕觸控遊戲，再加一個「終點登機門」。孩子帶著學校的《校園生活英語》護照小冊子，一次一位，老師按 START 就開始；瀏覽器的 AI 語音辨識聽懂孩子說的字，遊戲就往前走。
+南投縣草屯鎮土城國民小學。六間教室 × 六個大螢幕觸控遊戲，再加一個「終點登機門」。點左上角（或開始畫面）的土城校徽可以回首頁（遊戲中會先問一次）。孩子**不用帶護照**（空手來），一次一位，老師按 START 就開始；瀏覽器的 AI 語音辨識聽懂孩子說的字，遊戲就往前走。
 
 **所有句子都來自《校園生活英語》第 (4)–(9) 頁**，是孩子平常在教室就會用的句子：(4) Question 提問、(5) Giving Feedback／End of the Class 給回饋、課程結束、(6) Lunch Time & Nap Time 午餐與午休、(7) When Students Are Sick 學生生病時、(8) Speech 上台朗讀、(9) Others 其他。每一句都標「(頁)-句」，例如 **(4)-7** ＝第 (4) 頁第 7 句 *May I go to the restroom?*，老師可以直接在小冊子裡對照。
 
@@ -15,48 +15,38 @@
 | 3 Sydney | 動作 TPR | Ollie Says 歐力說 | **不用開口。**歐力說一個指令，孩子跟著大歐力一起做動作（每個約 6 秒）：*Wash your hands! Clean up your table! Brush your teeth! Wear your mask! Close the door, please. Hurry up! No running! Please walk. Take a break!*（每人 5 個）。中級多了「歐力沒有說！」的回合：大家要定住不動 | 全場（家長、同學）一起做動作、一起定住 | 午休時間 *It's quiet time. Close your eyes and rest.*（(6)-6）：燈變暗、月亮出來、搖籃曲，大家閉眼不動 → 突然一道閃光、鬧鐘大響 *Wake up, everyone!*（(6)-7） | (5)、(6) |
 | 4 Vancouver | 字母與發音 | Sound Monsters 音節怪獸 | 怪獸肚子上有一個大字母，牠只吃「這個音開頭」的東西（例如 /w/）。孩子在 5 張圖卡裡點對的 2 張（點錯怪獸會說 *Yuck!* 吐出來，不扣分），再回答 *What is it?*：說出最後吃下的東西（water、window、table、teeth、lunchbox、light、door、drink、book、brush）。每人 3 隻怪獸 | 結束時 *Give him a big hand!*，家長拍手 | 怪獸打嗝噴出彩虹和字母泡泡；最後所有怪獸排成一排變大、跳舞，字母像雨一樣落下 | (4)–(7) 的單字 |
 | 5 Cairo | 唱跳 | Classroom Beat 教室節奏派對 | DJ 歐力在舞台上用節奏唸一句護照指令，畫面上的小朋友示範動作 → **DANCE BREAK**：全場一起跳，孩子跟著拍子點四個鼓墊（沒點到不扣分）→ *Your turn!* 孩子說出這句的最後一個字（hands、table、teeth、break、wake、hurry）。每人 4 句 | 全場一起跳、一起唸 | 鏡面球降下、雷射光、彩帶雨，所有句子全場一起唸一遍（ALL TOGETHER） | (5)、(6) |
-| 6 Paris | 故事 | Storybook Day 校園一天故事書 | 桌上一本立體繪本，翻開每一頁就跳出一個校園一天的場景。老師問 *What do we do?*，孩子說出這一頁缺的字：wake（Time to wake up!）、wash（Wash your hands before lunch.）、clean（Clean up your table.）、rest（Close your eyes and rest.）、hurt（*What's the matter?* → I'm hurt.）、goodbye（*Class is over.* → Goodbye.）。說對了圖會動起來，書翻到下一頁 | 全場一起大聲說 *Goodbye!*，越大聲煙火越多 | 書闔起來，所有角色跳出來揮手說 *Have a nice day!*（(5)-22），煙火 | (5)、(6)、(7) |
+| 6 Paris | 故事 | Storybook Day 校園一天故事書 | 桌上一本立體繪本，翻開每一頁就跳出一個校園一天的場景。老師問 *What do we do?*，孩子說出這一頁缺的字：wake（Time to wake up!）、wash（Wash your hands before lunch.）、clean（Clean up your table.）、rest（Close your eyes and rest.）、hurt（*What's the matter?* → I'm hurt.）、goodbye（*Class is over.* → Goodbye.）。說對了圖會動起來，書翻到下一頁 | 說完 *Goodbye!* 放煙火 | 書闔起來，所有角色跳出來揮手說 *Have a nice day!*（(5)-22），煙火 | (5)、(6)、(7) |
 
 - 第 5 關的節奏唸謠是**草稿**，用護照裡的指令句組成。英語老師怡伶之後會提供她上課真正用的歌，到時候換掉內容就好（只要改 `js/content.js` 第 5 關的 `lines`）。
-- 「電腦問」模式下，主持人的問句和指令由歐力唸；「老師問」模式下由關主老師自己說（見下方）。
+- 主持人的問句和指令一律由歐力唸。
 - 暖身問題每一關都一樣：*What's your name?* → *I'm ___.*（(8)-1），孩子說出自己的名字。
 - 每一關的完整台詞（問句、畫面上的句子、答案字、護照頁-句）由 `js/content.js` 自動產生，在 `guide.html`、關主一頁卡和電視上的 📋 都看得到，永遠和遊戲一致。
 
 ## 開始畫面
 - 一個大大的 **START**（或按 Enter）。
-- **電腦問／老師問**：「電腦問」＝歐力用語音把主持人的問題唸出來，給不會說英文的關主用（預設）；「老師問」＝關主自己用英文問，歐力只顯示字幕。
+- **歐力問問題**：問題一律由歐力用語音唸出來（「老師問」已取消）。
 - **初級／中級**：**初級**（1–2 年級）：答案字直接印在句子裡，看著唸就好。**中級**（3–6 年級）：答案字是空格「?」，提示時間到或按 🔊 才出現。提示時間在 ⚙「幾秒後提示」設定，預設 9 秒（遊戲題目會多等四成，約 13 秒）。遊戲中也可用畫面上方的初級／中級按鈕切換。
 - 兩個選擇電視都會記住。
 
 ## 每位孩子在一關裡的流程
-老師按 START（或 Enter），一次一位孩子，畫面 Welcome! → 👋 暖身 *What's your name?* → 🎮 這一關的遊戲（每答對一題歐力誇獎；最後 *Give him a big hand!*，家長拍手）→ 🎉 全班一起說（孩子最後說的那一句）→ 🧩 句子拼拼看（點單字卡排出一句護照句子再唸，例如 *May I come in?*、*Wash your hands.*、*Take a break.*）→ 📖 護照尋寶 → 🎟 刮刮卡 → 全息印章＋秘密字母，畫面寫「把字母寫在護照第 N 格，老師會發 N 點貼紙給你！」→ 老師發貼紙，按 DONE ✓ 回到 START 畫面。
+老師按 START（或 Enter），一次一位孩子，畫面 Welcome! → 👋 暖身 *What's your name?* → 🎮 這一關的遊戲（每答對一題歐力誇獎；最後 *Give him a big hand!*，家長拍手）→ 🧩 句子拼拼看（點單字卡排出一句護照句子再唸，例如 *May I come in?*、*Wash your hands.*、*Take a break.*）→ 🎁 神秘禮物盒 → 🎟 刮刮卡 → 全息印章＋秘密字母，畫面寫「記住字母！闖完六關，到終點登機門排出密碼 · 老師會發 N 點貼紙給你！」→ 老師發貼紙，按 DONE ✓ 回到 START 畫面。
 
-**📖 護照尋寶**（取代以前的「護照密碼」）：畫面說 *Open your passport!*，並顯示頁數和句號。第 n 關一律翻到第 (n+3) 頁：
+**🎁 神秘禮物盒**（115/11/20 取代「護照尋寶」，孩子不帶護照）：三個會搖的禮物盒，孩子點一個打開，裡面是本關的一句英文（`TC_CONTENT.hunt` 那一句或本關句子拼拼看的句子，隨機），孩子念出來。老師按 Enter 會替孩子開一個。終點登機門只給 FRIEND 六個打亂的字母，孩子依關卡順序排好即可。
 
-| 關卡 | 翻到 | 那一句 | 孩子說 |
-|---|---|---|---|
-| 1 | (4)-7 | May I go to the restroom? | restroom |
-| 2 | (5)-9 | You're welcome. | welcome |
-| 3 | (6)-1 | Wash your hands before lunch. | wash |
-| 4 | (7)-4 | Drink lots of water and get some rest. | water |
-| 5 | (8)-3 | Thank you for listening. | listening |
-| 6 | (9)-4 | I have an idea. | idea |
 
-孩子找到那一句、念出來，說出答案字（畫面上這個字一直是空格）。每一位孩子在同一關找的是同一句。秘密字母（F‑R‑I‑E‑N‑D）和以前一樣，在最後的結果畫面揭曉。
-
-快速模式（⚙ 每位孩子回合數：快速 3 回合）每關最多 3 回合，並略過暖身、全班一起說和句子拼拼看。
+快速模式（⚙ 每位孩子回合數：快速 3 回合）每關最多 3 回合，並略過暖身和句子拼拼看。
 
 時間（都是估計，不是實測）：有真的孩子時，標準模式每人每關大約 3–4 分鐘，快速模式大約 2 分鐘。自動測試（初級，每題立刻按 ✓ 通過）一關約 25–65 秒。
 
 ## 刮刮卡（換獎品）
 - 每過一關，孩子用手指在觸控螢幕上刮開銀色區塊，露出 **10、20 或 30 點**（隨機；同一台電視不會連續兩張一樣）。
-- 老師發一張同樣點數的貼紙，孩子貼在護照那一關的格子裡，表示這一關過了。六關合計 60 到 180 點。每間教室準備 10、20、30 點貼紙，每種約 15 張。
-- 終點的獎狀上有「護照點數貼紙合計 ____ 點」，孩子自己把貼紙點數加起來寫上，憑獎狀兌換獎品。
+- 老師發一張同樣點數的貼紙，孩子把貼紙貼在衣服上，表示這一關過了。六關合計 60 到 180 點。每間教室準備 10、20、30 點貼紙，每種約 15 張。
+- 終點的獎狀上有「點數貼紙合計 ____ 點」，孩子自己把貼紙點數加起來寫上，憑獎狀兌換獎品。
 - 獎品表由學校決定。建議越簡單越好，例如「貼滿 6 張貼紙＝1 份獎品」；可準備 28 份獎品，再多備幾份給來賓。
 
 ## 頁面
 - `index.html` 總入口
-- `station.html?gate=1`…`6` 六個關卡（各教室的觸控電視）；開始畫面有大 START、電腦問／老師問、初級／中級；📋 看本關台詞、⚙ 設定
+- `station.html?gate=1`…`6` 六個關卡（各教室的觸控電視）；開始畫面有大 START、初級／中級；📋 看本關台詞、⚙ 設定
 - `opening.html` 開場動畫（大廳大螢幕，七個畫面介紹規則，可自動播放）
 - `control.html` 終點登機門（START 開始解碼、獎狀列印）＋即時看板
 - `teacher-cards.html` 關主一頁卡（每關一張 A4，可直接列印）
@@ -66,7 +56,7 @@
 
 ## 技術重點
 - 純 HTML/JS，不需要安裝；Chrome 或 Edge。第一次開過後可離線使用（service worker），只有語音辨識需要網路。
-- 內容都在 `js/content.js`（六關、護照尋寶 `TC_CONTENT.hunt`、誇獎句、台詞表 `TC_SCRIPT`）；六個遊戲各一個檔案，在 `js/games/`（規則見 `tools/GAME-SPEC.md`）。
+- 內容都在 `js/content.js`（六關、神秘禮物盒 `TC_CONTENT.hunt`、誇獎句、台詞表 `TC_SCRIPT`）；六個遊戲各一個檔案，在 `js/games/`（規則見 `tools/GAME-SPEC.md`）。
 - 語音辨識：Web Speech API（en-US），對兒童口音寬鬆比對（含常見近音字）；聽到答案字就過關，聽不到時老師按 ✓（或 Enter）。電視自己播放示範時，不會把喇叭的聲音當成孩子的答案。
 - 沒有人會在大家面前失敗：答錯或沒說話時，歐力示範一次，孩子跟著說，遊戲照樣往下走。
 - 老師按鈕（大、立體）：✓ 說得好、🔊 聽示範、⏭ 跳過、📋、⚙。按鍵：Enter／空白鍵＝START／說得好 ✓／DONE、H＝聽示範、N＝跳過、Esc＝回到開始畫面。

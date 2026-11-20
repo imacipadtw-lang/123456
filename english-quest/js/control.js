@@ -80,7 +80,9 @@
     for (let i = 0; i < SECRET.length; i++) s.append(h("div", { class: "slot" + (bad.includes(i) ? " bad" : typed[i] && typed[i] === SECRET[i] && solvedCb === null ? " good" : "") }, h("small", {}, `${i + 1} ${GATES[i].city}`), typed[i] || ""));
   }
   const keys = $("#keys");
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((c) => keys.append(h("button", { onclick: () => typeLetter(c) }, c)));
+  // 115.11.20: children do not bring passports, so only the six secret letters are offered (scrambled) — kids put them in gate order
+  keys.classList.add("six");
+  (function () { let a = SECRET.split(""); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } if (a.join("") === SECRET) a.reverse(); a.forEach((c) => keys.append(h("button", { onclick: () => typeLetter(c) }, c))); })();
   keys.append(h("button", { class: "wide", onclick: () => { for (let i = SECRET.length - 1; i >= 0; i--) if (typed[i]) { typed[i] = null; break; } renderSlots(); } }, "⌫"));
   function typeLetter(c) {
     if (!busy || !solvedCb) return;
@@ -125,7 +127,7 @@
     document.querySelectorAll(".slot").forEach((s, i) => setTimeout(() => { s.classList.add("good"); TC.sfx("coin"); }, i * 120));
     TC.confetti(200); TC.sfx("levelup");
     await sleep(900);
-    // twist: the secret word is itself a passport word
+    // twist: the secret word is itself one of the day's words
     $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是 friend「朋友」！我們都是好朋友 → “We are friends!”</span>`;
     await TC.speak("Friend!");
     await sleep(600);
@@ -174,7 +176,7 @@
         h("p", { class: "zh" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
         h("div", { class: "st" }, ...GATES.map((g) => h("div", { style: `--c:${g.color}` }, g.city.toUpperCase(), h("br"), `GATE ${g.n}`))),
         h("p", { style: "font-size:2.6rem;font-weight:700;color:#d6337a" }, "“We are friends!”"),
-        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "護照點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
+        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學"), h("span", {}, "Ollie-Bot ✈"))),
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");

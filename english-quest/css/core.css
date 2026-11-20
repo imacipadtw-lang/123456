@@ -422,6 +422,7 @@ body:not(.playing) #clock,body:not(.playing) #aiPill{display:none}
 .gate-badge{background:var(--panel);background-color:var(--panel-flat)}
 /* on the start screen the gate's own giant badge is shown already */
 body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
+.big-emb.home-link,#scan .scan-badge.home-link,.gate-badge.home-link{pointer-events:auto;cursor:pointer;touch-action:manipulation}
 
 /* colour pass: richer panels tinted with this gate's colour */
 #stage{background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--gate) 22%,var(--bg2)),var(--bg1))}

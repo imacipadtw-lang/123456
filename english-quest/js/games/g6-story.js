@@ -656,7 +656,7 @@
       h("div", { class: "trk" }, ...Array.from({ length: n }, (_, k) => h("i", { class: k < i ? "d" : k === i ? "c" : "" }))),
       sent, h("div", { class: "szh zh" }, P.zh || ""),
       h("div", { class: "pgn" }, h("b", {}, String(i + 1))),
-      h("div", { class: "stag zh" }, P.no ? "護照 " + P.no : ""));
+      h("div", { class: "stag zh" }, ""));
   }
   function coverEl(G, ended) {
     const cv = h("div", { class: "cv" + (ended ? " theend" : "") },
@@ -867,30 +867,7 @@
         await nap(500);
         nice.classList.add("out"); await nap(380); nice.remove();
 
-        // PARENT moment: the whole room says "Goodbye!" together (the louder, the more fireworks)
-        const last = pages[pages.length - 1], word = String(last.say || "Goodbye.").replace(/[.!?]+$/, "") + "!";
-        const bar = h("i"), ch = h("div", { class: "chorus g6c" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2" }, word), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:1.8rem;color:var(--ink2)" }, "越大聲，煙火越多！"));
-        document.body.append(ch); TC.sfx("levelup");
-        await said(word);
-        let peak = 0, loud = 0, nextBoom = 0, skip = false;
-        TC.pending = () => { skip = true; };
-        const t0 = performance.now();
-        await race(new Promise((res) => {
-          (function loop() {
-            const el = performance.now() - t0, l = TC.Mic.level || 0; peak = Math.max(peak, l);
-            bar.style.width = Math.min(100, peak * 140) + "%";
-            if (l > 0.3) loud += 16; else loud = Math.max(0, loud - 8);
-            if (el > nextBoom && (l > 0.3 || el > 3000)) { fx && fx.shoot(); nextBoom = el + (l > 0.5 ? 300 : 800); }
-            if (api.aborted || el > 5200 || (skip && el > 1500) || (loud > 700 && el > 2500)) res(); else requestAnimationFrame(loop);
-          })();
-        }));
-        if (TC.pending) TC.pending = null;
-        if (api.aborted) return null;
-        for (let i = 0; i < 5; i++) { fx.shoot(); await nap(180); }
-        TC.confetti(peak > 0.5 ? 260 : 140); TC.sfx(peak > 0.5 ? "fanfare" : "ding");
-        await nap(900);
-        ch.remove();
-        if (api.aborted) return null;
+        // (115.11.20) the loudness chorus was removed: the classrooms have no microphone
         await race(TC.clapBanner());
         if (api.aborted) return null;
         await nap(400);

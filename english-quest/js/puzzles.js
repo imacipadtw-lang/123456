@@ -1,7 +1,6 @@
 /* =====================================================================
-   Passport puzzles (touch + speaking), shared by every gate
-   1. TC.bookletHunt(gate)    → "Open your passport! page (4), line 7" → child
-      reads that line and says its key word
+   Touch puzzles (touch + speaking), shared by every gate
+   1. TC.mysteryBox(gate)     → tap one of three gift boxes, it opens to a sentence → child says it
    2. TC.sentencePuzzle(s, zh)   → tap word tiles into order, then read it aloud
    ===================================================================== */
 (function () {
@@ -29,24 +28,55 @@
   .pz .slots .tile{background:linear-gradient(180deg,#fff7d6,#ffd96b);box-shadow:0 .55rem 0 #e0a21a,0 .9rem 1.4rem rgba(0,0,0,.35)}
   .pz.ok .slots .tile{background:linear-gradient(180deg,#d6fff0,#2ee6b6);box-shadow:0 .55rem 0 #17a884}
   .pz .slots.bad{animation:shake .45s}
-  .pz .zh2{font-size:1.8rem;color:var(--ink2);margin-top:.8rem}`;
+  .pz .zh2{font-size:1.8rem;color:var(--ink2);margin-top:.8rem}
+  .pz .mb-row{display:flex;justify-content:center;gap:4rem;margin:1.6rem 0 .6rem}
+  .pz .mb-box{position:relative;width:18rem;height:18rem;border:0;border-radius:2.4rem;cursor:pointer;touch-action:manipulation;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c) 45%,transparent),rgba(255,255,255,.04) 70%);
+      box-shadow:inset 0 0 0 .4rem var(--c);animation:mbWob 1.6s ease-in-out infinite}
+  .pz .mb-box .mb-gift{width:84%;height:84%;object-fit:contain;pointer-events:none}
+  .pz .mb-box b{position:absolute;right:.8rem;top:.6rem;font-size:2.6rem;color:#fff;background:var(--c);border-radius:50%;width:4rem;height:4rem;display:grid;place-items:center}
+  .pz .mb-box:active{transform:scale(.94)}
+  .pz .mb-box.open{animation:mbOpen .6s forwards}.pz .mb-box.away{animation:mbAway .5s forwards}
+  @keyframes mbWob{0%,100%{rotate:-4deg}50%{rotate:4deg}}
+  @keyframes mbOpen{40%{transform:scale(1.25)}100%{transform:scale(1.6) translateY(-2rem);opacity:0}}
+  @keyframes mbAway{to{transform:scale(.6);opacity:.2}}
+  .pz .mb-pop{font-size:7rem;animation:pop .5s}
+  @media (prefers-reduced-motion:reduce){.pz .mb-box{animation:none}}`;
   document.head.append(h("style", {}, css));
 
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
 
-  /** Booklet Hunt: the child opens the 《校園生活英語》 booklet to the page and line named on screen, reads that line and says its key word. */
-  TC.bookletHunt = async function (gate, api) {
-    const e = TC_CONTENT.hunt[gate]; if (!e) return;
+  /** Mystery Box 神秘禮物盒 (no passport needed): three wobbling gift boxes — the child taps one, it bursts open
+      and shows a sentence from this gate; the child says it (the key word) for a bonus. Touch only, no timing. */
+  TC.mysteryBox = async function (gate, api) {
+    const H = TC_CONTENT.hunt[gate]; if (!H) return;
+    const pool = [{ text: H.text, zh: H.zh, w: H.w, keys: H.keys }].concat((TC_CONTENT.sentences[gate] || []).map((x) => ({ text: x.s, zh: x.zh, w: x.keys[0][0], keys: x.keys })));
+    const picks = shuffle(pool).slice(0, 3);
+    while (picks.length < 3) picks.push(picks[0]);
+    const COL = ["#ff5fa2", "#4cc9ff", "#2ee6b6"];
     const ans = h("div", { class: "ans" }, "");
+    const row = h("div", { class: "mb-row" });
     const box = h("div", { class: "pz" },
-      h("h3", {}, h("div", { class: "book" }, h("i"), h("i")), "Open your passport!", h("span", { class: "zh" }, "護照尋寶")),
-      h("div", { class: "sub zh" }, `打開你的護照，翻到第 ${e.page} 頁，找到第 ${e.line} 句，把它念出來！`),
-      h("div", { class: "num" }, e.page, h("b", {}, e.line)),
-      ans);
+      h("h3", {}, "🎁 Mystery Box", h("span", { class: "zh" }, "神秘禮物盒")),
+      h("div", { class: "sub zh" }, "選一個禮物盒，點一下打開！裡面藏著一句英文"), row, ans);
+    let chosen, picked = false; const open = new Promise((r) => (chosen = r));
+    picks.forEach((p, k) => {
+      const b = h("button", { class: "mb-box", style: `--c:${COL[k]};animation-delay:${-k * 0.4}s`, "aria-label": "禮物盒 " + (k + 1), onclick: () => { if (picked) return; picked = true; TC.ac(); chosen(k); } },
+        TC.artImg("gift", "mb-gift"), h("b", {}, String(k + 1)));
+      row.append(b);
+    });
     document.body.append(box); TC.sfx("levelup");
-    await TC.speak("Open your passport!");
-    const r = await TC.ask({ teacher: `Page ${e.page}, number ${e.line}!`, tzh: `第 ${e.page} 頁第 ${e.line} 句是什麼？`, say: e.text, zh: "", keys: e.keys, word: e.w, hideKey: true, hideAlways: true, guideKid: "找到這一句，說出「?」的那個字", guideTeacher: "孩子找不到就按 🔊 或 ✓" });
+    TC.pending = () => { if (!picked) { picked = true; chosen((Math.random() * 3) | 0); } }; // teacher Enter = open one for the child
+    await TC.speak("Open a box!");
+    const k = await Promise.race([open, new Promise((r) => { const t = setInterval(() => { if (api && api.aborted) { clearInterval(t); r(-1); } }, 300); open.then(() => clearInterval(t)); })]);
+    TC.pending = null;
+    if (k < 0 || (api && api.aborted)) { box.remove(); return; }
+    const e = picks[k];
+    row.querySelectorAll(".mb-box").forEach((b, i) => b.classList.add(i === k ? "open" : "away"));
+    TC.sfx("pop"); TC.confetti(120); await sleep(650);
+    row.remove();
+    ans.append(h("div", { class: "mb-pop" }, "🎁✨"), h("div", { style: "font-size:4.4rem" }, e.text));
+    const r = await TC.ask({ teacher: "What's in the box?", tzh: "盒子裡是哪一句？說說看！", say: e.text, zh: e.zh, keys: e.keys, word: e.w, hideKey: true, guideKid: "把盒子裡的句子念出來", guideTeacher: "說對 → ✓（Enter）· 不會 → 🔊 聽示範" });
     if (api && api.aborted) { box.remove(); return; }
     TC.hideTalk();
     ans.innerHTML = ""; ans.append(h("span", { class: "zh", style: "font-size:2.2rem;display:block;margin-bottom:.4rem" }, e.zh), e.text);
@@ -54,6 +84,7 @@
     await sleep(700); box.remove();
     TC.log({ type: "code", say: e.w, heard: r.heard || "", by: r.by || "" });
   };
+  TC.bookletHunt = TC.mysteryBox; // old name kept for any caller
 
   /** Sentence Builder: tap tiles in order, then read the sentence aloud. */
   TC.sentencePuzzle = async function (sentence, zh, keys, api) {
@@ -63,7 +94,7 @@
     const slots = h("div", { class: "slots" }), bank = h("div", { class: "bank" });
     const box = h("div", { class: "pz" },
       h("h3", {}, "🧩 Sentence Builder", h("span", { class: "zh" }, "句子拼拼看")),
-      h("div", { class: "sub zh" }, "依順序點單字，排出護照裡的句子！"), slots, bank, h("div", { class: "zh2 zh" }, zh || ""));
+      h("div", { class: "sub zh" }, "依順序點單字，排出這一句英文！"), slots, bank, h("div", { class: "zh2 zh" }, zh || ""));
     document.body.append(box);
     let done;
     const finished = new Promise((r) => (done = r));

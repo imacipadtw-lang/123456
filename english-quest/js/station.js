@@ -1,5 +1,5 @@
 /* Station flow: the teacher presses START → welcome → play → scratch card (10/20/30 points) → stamp + secret letter → back to START.
-   No passport scanning and no names: one child plays at a time, the teacher hands out a points sticker for the passport. */
+   No passport (children come empty-handed) and no names: one child plays at a time, the teacher hands out a points sticker. */
 (function () {
   "use strict";
   const { h, $, sleep } = TC;
@@ -23,7 +23,7 @@
   $("#scanTitle").textContent = G.title;
   $("#scanSub").innerHTML = `Gate ${gate} · ${G.city} ✈ ${G.zh}`;
   $("#scanGenre").textContent = G.genre;
-  $("#passportRef").textContent = "護照對應：" + G.passport;
+  { const pr = $("#passportRef"); if (pr) pr.remove(); } // 115.11.20: children do not bring passports — no passport clues on screen
   $("#scanOllie").innerHTML = TC.ollieSVG();
   // floating 3D items from this gate's content drift behind the attract screen
   // each game lists its own drifting pictures (game.startArt); these generic ones are the fallback
@@ -43,6 +43,18 @@
   const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.remove();
   // a big 3D 土城 emblem stays in the top-left corner the whole time (clear on video)
   document.body.append(TC.badgeEl(gate, "big-emb"));
+  // 115.11.20: tap the 土城 badge → home page (while a child is playing, ask first so a stray touch does not end the game)
+  function goHome() {
+    if (!running) { location.href = "index.html"; return; }
+    if (document.querySelector(".home-ask")) return;
+    const ask = h("div", { class: "settings home-ask" }, h("div", { class: "card", style: "text-align:center" },
+      h("h2", { class: "zh" }, "回到首頁？"), h("p", { class: "zh" }, "這位孩子的遊戲會結束。"),
+      h("div", { class: "row", style: "justify-content:center;gap:1.6rem" },
+        h("button", { class: "save", onclick: () => { location.href = "index.html"; } }, "回首頁 Home"),
+        h("button", { class: "save", style: "background:#2b3f7a", onclick: () => ask.remove() }, "繼續玩 Keep playing"))));
+    document.body.append(ask);
+  }
+  document.querySelectorAll(".big-emb, #scan .scan-badge, .gate-badge").forEach((el) => { el.classList.add("home-link"); el.setAttribute("role", "button"); el.setAttribute("aria-label", "回首頁"); el.title = "回首頁"; el.addEventListener("click", (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); goHome(); }); });
   TC.setAIPill();
 
   let running = false, resultOpen = null;
@@ -60,10 +72,8 @@
   game.mount && game.mount(api);
 
   // level for the next player (初級 grades 1–2 / 中級 grades 3–6), remembered on this screen
-  // who asks the questions: the TV (電腦問, for gate hosts who do not speak English) or the host (老師問)
-  function showAsk() { $("#askPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.a === "tv") === !!TC.cfg.ollieAsks)); }
-  $("#askPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); TC.cfg.ollieAsks = b.dataset.a === "tv"; TC.saveCfg(); showAsk(); });
-  showAsk();
+  // 115.11.20: only "電腦問" — Ollie always reads the questions (the 老師問 choice was removed)
+  TC.cfg.ollieAsks = true;
   let nextLevel = TC.cfg.level === 2 ? 2 : 1;
   function showLevel() { $("#lvlPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === nextLevel)); }
   $("#lvlPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); nextLevel = +b.dataset.l; TC.cfg.level = nextLevel; TC.saveCfg(); showLevel(); });
@@ -135,24 +145,16 @@
     try { res = await game.play(api); } catch (e) { console.error(e); TC.toast("遊戲發生錯誤，老師可按 Esc 重來"); }
     TC.hideTalk();
     if (api.aborted) return;
-    // 🎉 everybody (classmates + parents) says the child's final line together
-    if (TC.lastSay && !TC.cfg.rounds) {
-      const bar = h("i"), ch = h("div", { class: "chorus" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2", style: `font-size:${TC.lastSay.length > 24 ? 6.4 : TC.lastSay.length > 14 ? 8 : 10}rem` }, TC.lastSay), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:1.8rem;color:var(--ink2)" }, "越大聲，煙火越多！"));
-      document.body.append(ch); TC.sfx("levelup");
-      let peak = 0; const t0 = Date.now();
-      await new Promise((res) => { (function loop() { const l = TC.Mic.level || 0; peak = Math.max(peak, l); bar.style.width = Math.min(100, peak * 140) + "%"; if (l > 0.35 && Math.random() < 0.15) TC.confetti(30); if (Date.now() - t0 < 4500 && !api.aborted) requestAnimationFrame(loop); else res(); })(); });
-      TC.confetti(peak > 0.5 ? 260 : 120); TC.sfx(peak > 0.5 ? "fanfare" : "ding"); await sleep(700); ch.remove();
-      if (api.aborted) return;
-    }
-    // 🧩 Sentence Builder with a passport sentence (skipped in quick mode)
+    // (115.11.20) the "everybody say it — the louder, the more fireworks" step was removed: the classrooms have no microphone
+    // 🧩 Sentence Builder with one sentence of this gate (skipped in quick mode)
     if (!TC.cfg.rounds) {
       const pool = TC_CONTENT.sentences[gate] || [];
       const pz = pool[(Math.random() * pool.length) | 0];
       if (pz) await TC.sentencePuzzle(pz.s, pz.zh, pz.keys, api);
       if (api.aborted) return;
     }
-    // 🛂 Booklet Hunt: open the 《校園生活英語》 booklet at the page/line on screen and read it
-    await TC.bookletHunt(gate, api);
+    // 🎁 Mystery Box: tap a gift box, it opens to a sentence, say it (children do not bring passports)
+    await TC.mysteryBox(gate, api);
     if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
     const pts = TC.pointsFor(kid.id, gate);
@@ -175,7 +177,7 @@
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母寫在護照第 ${gate} 格，老師會發 ${res.points || 0} 點貼紙給你！`),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `記住字母 ${LETTER}！闖完六關，到終點登機門排出密碼 · 老師會發 ${res.points || 0} 點貼紙給你！`),
       h("div", { class: "res-actions" }, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
@@ -199,11 +201,11 @@
   $("#helpBtn").onclick = () => {
     if (document.querySelector(".settings")) return; // one teacher dialog at a time
     const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
-    const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "護照 " + r.no : ""].filter(Boolean).join(" · ")]);
+    const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, r.zh]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照尋寶」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
+      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「神秘禮物盒」和刮刮卡（孩子不用帶護照）。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
-        h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文／護照頁-句"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
+        h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
         ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),
       h("div", { class: "row" }, h("button", { class: "save", onclick: () => wrap.remove() }, "關閉 Close")));
     const wrap = h("div", { class: "settings", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);

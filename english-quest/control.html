@@ -29,6 +29,9 @@
   .slot.bad{border-color:var(--red);animation:shake .4s}
   .slot.good{background:var(--sun);color:#0a1633}
   .keys{display:grid;grid-template-columns:repeat(14,1fr);gap:.5rem;width:min(92vw,110rem)}
+  .keys.six{grid-template-columns:repeat(7,1fr);width:min(92vw,90rem);gap:1.2rem}
+  .keys.six button{font-size:5rem;padding:1.2rem 0;border-radius:1.6rem;background:linear-gradient(180deg,#fff7d6,#ffd96b);color:#0a1633;box-shadow:0 .55rem 0 #e0a21a}
+  .keys.six button.wide{background:#2b3f7a;color:#fff;font-size:3rem;box-shadow:0 .3rem 0 rgba(0,0,0,.35)}
   .keys button{background:#2b3f7a;border-radius:1rem;font-size:2.2rem;font-weight:700;padding:.55rem 0;box-shadow:0 .3rem 0 rgba(0,0,0,.35)}
   .keys button:active{transform:translateY(.2rem)}
   .keys .wide{grid-column:span 2;background:#5a2b4f}
@@ -94,7 +97,7 @@
       <h2 id="decTitle">What's the secret word?</h2>
       <div class="slots" id="slots"></div>
       <div class="keys" id="keys"></div>
-      <div class="hint zh">看你護照卡上的 6 個字母，依序按下去！也可以直接用英文說出這個字。 <button class="big-btn" id="assistBtn" style="display:inline-flex;padding:.3rem 1rem;font-size:1.2rem;background:#2b3f7a;margin-left:1rem">🧑‍🏫 老師協助解碼</button></div>
+      <div class="hint zh">六關各拿到一個字母：依關卡順序（第 1 關到第 6 關）點字母排出密碼！也可以直接用英文說出這個字。 <button class="big-btn" id="assistBtn" style="display:inline-flex;padding:.3rem 1rem;font-size:1.2rem;background:#2b3f7a;margin-left:1rem">🧑‍🏫 老師協助解碼</button></div>
     </div>
   </section>
   <section class="view hidden" id="vBoard">
@@ -119,7 +122,7 @@
   </div>
   <div class="talk-side">
     <button class="big-btn btn-ok" id="okBtn">✓ <span class="zh">說得好</span></button>
-    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span> <span class="src-tag" id="srcTag"></span></button>
+    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span></button>
     <div class="meter"><i id="micMeter"></i></div>
     <canvas id="wave" width="300" height="70"></canvas>
     <button class="big-btn btn-skip" id="skipBtn">⏭ <span class="zh">跳過</span></button>

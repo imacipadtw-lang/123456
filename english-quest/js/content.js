@@ -130,8 +130,8 @@ window.TC_CONTENT = {
   }
 };
 
-/* Booklet Hunt at the end of each gate: the child opens the passport booklet to this line and reads it (says the key word).
-   The page of the booklet matches the gate: gate n ↔ page (n+3). */
+/* Mystery Box at the end of each gate (children do not bring passports): one of the sentences hidden in the gift boxes.
+   page/line are kept only as the source in the school booklet; they are never shown to children. */
 window.TC_CONTENT.hunt = {
   1: { page: "(4)", line: 7, text: "May I go to the restroom?", zh: "我可以去上廁所嗎？", w: "restroom", keys: [["restroom", "bathroom"]] },
   2: { page: "(5)", line: 9, text: "You're welcome.", zh: "不客氣", w: "welcome", keys: [["welcome"]] },
@@ -179,6 +179,6 @@ window.TC_SCRIPT = function (gate) {
   if (G.key === "chant") G.lines.forEach((x) => q({ t: x.say.replace(new RegExp(x.w, "i"), "___"), tzh: x.zh, say: x.say, word: x.w, zh: "唸最後一個字並做動作", no: x.no }));
   if (G.key === "story") { G.pages.forEach((x) => q({ t: x.t || G.teacher, tzh: x.tzh || G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.ending.say, tzh: G.ending.zh, say: "（全班一起說）", word: "", zh: "故事結束，大家一起說", no: G.ending.no }); }
   const H = C.hunt[gate];
-  rows.push({ kind: "extra", t: "Open your passport! " + H.page + " No. " + H.line, tzh: "翻護照 " + H.page + " 第 " + H.line + " 句", say: H.text, word: H.w, zh: "護照尋寶：" + H.zh, no: H.page + "-" + H.line });
+  rows.push({ kind: "extra", t: "What's in the box?", tzh: "神秘禮物盒：盒子裡是哪一句？", say: H.text + "（或本關其他句子）", word: H.w, zh: "神秘禮物盒：" + H.zh, no: "" });
   return rows;
 };
