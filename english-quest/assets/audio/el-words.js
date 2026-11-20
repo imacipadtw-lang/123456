@@ -272,7 +272,7 @@ window.TC_EL_AUDIO = {
  },
  "thank you": {
   "file": "el/thank-you.mp3",
-  "text": "Thank you!",
+  "text": "Thank you.",
   "ai": true,
   "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
   "voice": "Bella - Professional, Bright, Warm",
@@ -280,13 +280,13 @@ window.TC_EL_AUDIO = {
   "voiceKind": "ElevenLabs premade voice",
   "accent": "American (ElevenLabs label: Standard American)",
   "model": "eleven_multilingual_v2",
-  "generationId": "U3xpOQxI3LKdy3Lh6ThN",
-  "generated": "2026-11-17T15:23:01Z",
-  "downloaded": "2026-11-17T15:23:57Z",
+  "generationId": "TC9RYcZe6HWJ2zAR4NMy",
+  "generated": "2026-11-21T01:00:00Z",
+  "downloaded": "2026-11-20T16:59:25Z",
   "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "230c82d89ee908892c89aaa92a74ae6a7da52bb8",
-  "durationSec": 0.73
+  "sha1": "f1d93536cfc5d5e6106519a4e7cbbddc884b433d",
+  "durationSec": 0.68
  },
  "good": {
   "file": "el/good.mp3",
@@ -964,13 +964,13 @@ window.TC_EL_AUDIO = {
   "voiceKind": "ElevenLabs premade voice",
   "accent": "American (ElevenLabs label: Standard American)",
   "model": "eleven_multilingual_v2",
-  "generationId": "2HceyBlU6Vo5i932LPNa",
-  "generated": "2026-11-17T15:23:04Z",
-  "downloaded": "2026-11-17T15:23:57Z",
+  "generationId": "TC9RYcZe6HWJ2zAR4NMy",
+  "generated": "2026-11-21T01:00:00Z",
+  "downloaded": "2026-11-20T16:59:25Z",
   "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "59ef5bed091a4d55ae3d71b3a4604b1eb2e5786a",
-  "durationSec": 0.76
+  "sha1": "2496505d0d2113f668894b0ef6307cc8db9ab288",
+  "durationSec": 0.89
  },
  "sad": {
   "file": "el/sad.mp3",
@@ -2267,5 +2267,41 @@ window.TC_EL_AUDIO = {
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
   "sha1": "2a59a9825ef1d5242077f5ec57e9be85531ef24a",
   "durationSec": 0.89
+ },
+ "lunch": {
+  "file": "el/lunch.mp3",
+  "text": "Lunch.",
+  "ai": true,
+  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
+  "voice": "Bella - Professional, Bright, Warm",
+  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
+  "voiceKind": "ElevenLabs premade voice",
+  "accent": "American (ElevenLabs label: Standard American)",
+  "model": "eleven_multilingual_v2",
+  "generationId": "TC9RYcZe6HWJ2zAR4NMy",
+  "generated": "2026-11-21T01:00:00Z",
+  "downloaded": "2026-11-20T16:59:25Z",
+  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
+  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
+  "sha1": "2f9c5ab4c9936620676bab44847da0427e66b5fb",
+  "durationSec": 0.63
+ },
+ "help": {
+  "file": "el/help.mp3",
+  "text": "Help.",
+  "ai": true,
+  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
+  "voice": "Bella - Professional, Bright, Warm",
+  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
+  "voiceKind": "ElevenLabs premade voice",
+  "accent": "American (ElevenLabs label: Standard American)",
+  "model": "eleven_multilingual_v2",
+  "generationId": "TC9RYcZe6HWJ2zAR4NMy",
+  "generated": "2026-11-21T01:00:00Z",
+  "downloaded": "2026-11-20T16:59:25Z",
+  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
+  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
+  "sha1": "14859b25469b11ca22f9efc9354e639093351ac4",
+  "durationSec": 0.65
  }
 };

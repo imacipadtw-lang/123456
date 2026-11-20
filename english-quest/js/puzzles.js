@@ -150,7 +150,28 @@
   @keyframes abClap{0%,100%{transform:scale(1) rotateY(0)}25%{transform:scale(1.08) rotateY(-30deg)}50%{transform:scale(.96)}75%{transform:scale(1.08) rotateY(30deg)}}
   @keyframes abNod{0%,100%{transform:rotateX(0) rotateY(-15deg)}50%{transform:rotateX(18deg) rotateY(15deg) translateY(4%)}}
   @keyframes abTwirl{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+  @keyframes abWipe{0%,100%{transform:translateX(-9%) rotateZ(-5deg) rotateX(14deg)}50%{transform:translateX(9%) rotateZ(5deg) rotateX(14deg)}}
+  @keyframes abBrush{0%,100%{transform:translateX(-4%) rotateY(-12deg)}25%{transform:translateX(4%) rotateY(12deg)}50%{transform:translateX(-4%) rotateY(-12deg) translateY(-2%)}75%{transform:translateX(4%) rotateY(12deg)}}
+  @keyframes abKnock{0%,40%,100%{transform:rotateX(0) translateZ(0)}12%,28%{transform:rotateX(-14deg) translateZ(6vh)}20%{transform:rotateX(0) translateZ(0)}}
+  @keyframes abWalkIn{0%{transform:translateZ(-14vh) scale(.8) translateY(2%)}25%{transform:translateZ(-8vh) scale(.86) translateY(-3%)}50%{transform:translateZ(-2vh) scale(.94) translateY(2%)}75%{transform:translateZ(3vh) scale(1) translateY(-3%)}100%{transform:translateZ(6vh) scale(1.04)}}
+  @keyframes abRun{0%,100%{transform:translateY(0) rotateZ(-6deg) rotateX(10deg)}25%{transform:translateY(-9%) rotateZ(0) rotateX(10deg)}50%{transform:translateY(0) rotateZ(6deg) rotateX(10deg)}75%{transform:translateY(-9%) rotateZ(0) rotateX(10deg)}}
+  @keyframes abWalk{0%,100%{transform:translateX(-6%) rotateZ(-4deg) rotateY(-20deg)}50%{transform:translateX(6%) rotateZ(4deg) rotateY(20deg) translateY(-3%)}}
+  @keyframes abDrink{0%,100%{transform:rotateX(0) translateY(0)}40%,70%{transform:rotateX(-24deg) translateY(-4%) rotateZ(-6deg)}}
+  @keyframes abEat{0%,100%{transform:scaleY(1) scaleX(1)}20%{transform:scaleY(.86) scaleX(1.08)}40%{transform:scaleY(1.04) scaleX(.97)}60%{transform:scaleY(.86) scaleX(1.08)}80%{transform:scaleY(1.02)}}
+  @keyframes abOuch{0%,100%{transform:rotateZ(0) translateY(0)}10%{transform:rotateZ(-9deg) translateY(-6%)}20%{transform:rotateZ(9deg)}30%{transform:rotateZ(-6deg)}40%,80%{transform:rotateZ(0) rotateX(20deg) translateY(5%) scaleY(.92)}}
+  @keyframes abOpen{0%,100%{transform:scaleX(.9) rotateY(0)}50%{transform:scaleX(1.16) rotateY(0) translateY(-3%)}}
+  @keyframes abFlick{0%,60%,100%{transform:rotateZ(0) translateY(0);filter:brightness(1)}20%{transform:rotateZ(12deg) translateY(-6%)}35%{transform:rotateZ(0);filter:brightness(1.6)}}
+  @keyframes abRead{0%,100%{transform:rotateX(16deg) rotateY(-14deg) translateY(3%)}50%{transform:rotateX(16deg) rotateY(14deg) translateY(3%)}}
+  @keyframes abIdea{0%,55%,100%{transform:translateY(0) scale(1)}20%{transform:translateY(-14%) scale(1.08) rotateZ(-6deg)}35%{transform:translateY(-14%) scale(1.1) rotateZ(6deg)}}
+  @keyframes abListen{0%,100%{transform:rotateZ(0) rotateY(0)}30%,70%{transform:rotateZ(-14deg) rotateY(-30deg) translateX(-4%)}}
+  @keyframes abThumb{0%,100%{transform:scale(1) rotateY(0)}30%{transform:scale(1.14) rotateY(-20deg) translateY(-5%)}60%{transform:scale(1.14) rotateY(20deg) translateY(-5%)}}
+  @keyframes abBow{0%,100%{transform:rotateX(0) translateY(0)}35%,65%{transform:rotateX(34deg) translateY(8%)}}
+  @keyframes abHug{0%,100%{transform:scaleX(1) scaleY(1)}40%{transform:scaleX(1.18) scaleY(.94) translateY(2%)}70%{transform:scaleX(.92) scaleY(1.04)}}
+  @keyframes abWave{0%,100%{transform:rotateZ(-10deg) rotateY(-10deg)}50%{transform:rotateZ(10deg) rotateY(10deg)}}
   @keyframes abSleep{0%,100%{transform:rotateZ(-10deg) translateY(4%)}50%{transform:rotateZ(10deg) translateY(4%)}}
+  .ab .hold{position:absolute;left:63%;top:47%;font-style:normal;font-size:min(10vh,8.5vw);line-height:1;pointer-events:none;filter:drop-shadow(0 .5rem .5rem rgba(0,0,0,.4))}
+  .ab .hold span{display:inline-block;animation:abHold .9s ease-in-out infinite;transform-origin:30% 90%}
+  @keyframes abHold{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg) translateY(-8%)}}
   .ab .props{position:absolute;inset:-10%;pointer-events:none}
   .ab .props i{position:absolute;font-style:normal;font-size:min(9vh,8vw);animation:abFloat 2.4s ease-in-out infinite;filter:drop-shadow(0 .6rem .6rem rgba(0,0,0,.35))}
   @keyframes abFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-14%) rotate(8deg)}}
@@ -161,26 +182,87 @@
   .ab .done{position:absolute;right:4vw;bottom:5vh;font-size:min(4.4vh,3.6vw);padding:1rem 2.4rem;border-radius:2rem;border:0;cursor:pointer;touch-action:manipulation;color:#063a2c;font-weight:700;
      background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);box-shadow:0 .6rem 0 #0b7a5c}
   .ab .done:active{transform:translateY(.4rem);box-shadow:0 .2rem 0 #0b7a5c}
-  @media (prefers-reduced-motion:reduce){.ab .spin,.ab .act,.ab .props i,.ab .floor{animation:none}}`;
+  @media (prefers-reduced-motion:reduce){.ab .spin,.ab .act,.ab .props i,.ab .floor,.ab .hold span{animation:none}}`;
   document.head.append(h("style", {}, css));
 
   // which action Ollie does for a word (the child copies it), and a few floating props
-  const MOVES = [
-    [/wash|clean|brush|teeth|hands|soap/, "abScrub", ["🫧", "✨", "🫧"]],
-    [/hurry|run|walk|late|go/, "abHop", ["💨", "⭐", "💨"]],
-    [/wake|stretch|up|everyone/, "abStretch", ["☀️", "✨", "⏰"]],
-    [/rest|quiet|sleep|break|nap/, "abSleep", ["💤", "🌙", "💤"]],
-    [/hand|clap|welcome|please|sure|okay|course|done|good|great/, "abClap", ["👏", "💖", "👏"]],
-    [/door|close|in|window|light|fan/, "abNod", ["🚪", "✨", "💡"]],
-    [/water|drink|lunch|lunchbox|table|mask|hurt|nurse|restroom|idea|book|listen/, "abNod", ["💧", "⭐", "💖"]]
-  ];
-  function moveOf(w) { w = String(w || "").toLowerCase(); for (const m of MOVES) if (m[0].test(w)) return m; return [null, "abTwirl", ["⭐", "💖", "🎵"]]; }
+  // 115.11.21 (管理者要求): 低年級 actions must show the word itself, and the word must be easy.
+  // answer word → [easy word shown to the child, Ollie's move, props, what to do (中文)]
+  const ACT = {
+    wash: ["wash", "abScrub", ["🫧", "🧼", "🫧"], "搓搓手，洗洗手！"],
+    hands: ["hands", "abScrub", ["🫧", "🙌", "🫧"], "伸出雙手，搓一搓！"],
+    soap: ["wash", "abScrub", ["🫧", "🧼", "🫧"], "搓搓手，洗洗手！"],
+    clean: ["clean", "abWipe", ["🧽", "✨", "🧽"], "拿抹布，擦擦桌子！"],
+    table: ["table", "abWipe", ["🧽", "🍽️", "✨"], "手放平，擦擦桌子！"],
+    brush: ["brush", "abBrush", ["🪥", "🦷", "✨"], "拿牙刷，刷刷牙！"],
+    teeth: ["teeth", "abBrush", ["🦷", "🪥", "✨"], "張開嘴，刷刷牙齒！"],
+    mask: ["mask", "abNod", ["😷", "✨", "😷"], "雙手遮住嘴巴，戴口罩！"],
+    door: ["door", "abKnock", ["🚪", "✊", "🚪"], "叩叩叩，敲敲門！"],
+    close: ["close", "abKnock", ["🚪", "✋", "🚪"], "伸手把門推上，關門！"],
+    in: ["in", "abWalkIn", ["🚪", "👣", "🏫"], "敲敲門，走進來！"],
+    late: ["late", "abRun", ["⏰", "💨", "🏃"], "看手錶，原地快跑！"],
+    hurry: ["hurry", "abRun", ["💨", "🏃", "💨"], "原地快快跑！"],
+    run: ["run", "abRun", ["💨", "🏃", "💨"], "原地快快跑！"],
+    walk: ["walk", "abWalk", ["👣", "🚶", "👣"], "慢慢走，不要跑！"],
+    go: ["go", "abWalk", ["🚻", "👣", "✋"], "舉手，再慢慢走出去！"],
+    restroom: ["go", "abWalk", ["🚻", "👣", "✋"], "舉手，再慢慢走出去！"],
+    water: ["water", "abDrink", ["💧", "🥤", "💧"], "拿杯子，咕嚕咕嚕喝水！"],
+    drink: ["drink", "abDrink", ["🥤", "💧", "🥤"], "拿杯子，咕嚕咕嚕喝！"],
+    lunchbox: ["lunch", "abEat", ["🍱", "🥢", "🍱"], "打開便當，大口吃飯！"],
+    lunch: ["lunch", "abEat", ["🍱", "🥢", "🍱"], "打開便當，大口吃飯！"],
+    eat: ["eat", "abEat", ["🍱", "🥢", "🍙"], "大口吃，嚼嚼嚼！"],
+    hurt: ["hurt", "abOuch", ["🩹", "💥", "🩹"], "摸摸膝蓋：好痛喔！"],
+    nurse: ["nurse", "abOuch", ["🩹", "👩‍⚕️", "🩹"], "貼 OK 繃，護理師幫你！"],
+    rest: ["rest", "abSleep", ["💤", "🌙", "💤"], "趴下來，閉上眼睛休息！"],
+    break: ["break", "abSleep", ["💤", "☕", "💤"], "伸伸懶腰，休息一下！"],
+    sleep: ["sleep", "abSleep", ["💤", "🌙", "💤"], "雙手合起放臉旁，睡覺！"],
+    quiet: ["quiet", "abSleep", ["🤫", "🌙", "🤫"], "手指放嘴上：噓～"],
+    wake: ["wake", "abStretch", ["☀️", "⏰", "☀️"], "張開眼睛，伸個大懶腰！"],
+    everyone: ["wake", "abStretch", ["☀️", "⏰", "☀️"], "張開眼睛，伸個大懶腰！"],
+    window: ["window", "abOpen", ["🪟", "🌤️", "🪟"], "雙手往旁邊推，打開窗戶！"],
+    open: ["open", "abOpen", ["🪟", "✨", "🚪"], "雙手往旁邊推開！"],
+    light: ["light", "abFlick", ["💡", "✨", "💡"], "伸手按開關，開燈！"],
+    fan: ["fan", "abTwirl", ["🌀", "💨", "🌀"], "手臂轉圈圈，像電風扇！"],
+    book: ["book", "abRead", ["📖", "✨", "📚"], "雙手打開書本，看書！"],
+    idea: ["idea", "abIdea", ["💡", "✨", "💡"], "手指頭頂，叮！想到了！"],
+    listen: ["listen", "abListen", ["👂", "🎵", "👂"], "手放耳朵旁，仔細聽！"],
+    listening: ["listen", "abListen", ["👂", "🎵", "👂"], "手放耳朵旁，仔細聽！"],
+    done: ["done", "abThumb", ["👍", "✅", "👍"], "比一個讚：我做好了！"],
+    okay: ["okay", "abThumb", ["👌", "✨", "👌"], "比 OK 的手勢！"],
+    sure: ["sure", "abNod", ["👍", "😊", "👍"], "用力點點頭：好呀！"],
+    good: ["good", "abThumb", ["👍", "🌟", "👍"], "比兩個讚：好棒！"],
+    please: ["please", "abBow", ["🙏", "💖", "🙏"], "雙手合十：拜託～"],
+    welcome: ["welcome", "abHug", ["🤗", "💖", "🤗"], "張開雙手，歡迎你！"],
+    goodbye: ["goodbye", "abWave", ["👋", "💖", "👋"], "揮揮手，說再見！"],
+    bye: ["goodbye", "abWave", ["👋", "💖", "👋"], "揮揮手，說再見！"],
+    hello: ["hello", "abWave", ["👋", "😊", "👋"], "揮揮手，打招呼！"],
+    hi: ["hi", "abWave", ["👋", "😊", "👋"], "揮揮手，打招呼！"],
+    sorry: ["sorry", "abBow", ["🙇", "💖", "🙇"], "鞠個躬：對不起！"],
+    thank: ["thank you", "abBow", ["🙏", "💖", "🙏"], "鞠個躬：謝謝！"],
+    help: ["help", "abHug", ["🤝", "💖", "🤝"], "伸出手，幫幫忙！"],
+    come: ["in", "abWalkIn", ["🚪", "👣", "🏫"], "敲敲門，走進來！"],
+    course: ["sure", "abNod", ["👍", "😊", "👍"], "用力點點頭：好呀！"],
+    class: ["goodbye", "abWave", ["👋", "🔔", "👋"], "下課了！揮揮手說再見！"],
+    see: ["goodbye", "abWave", ["👋", "💖", "👋"], "揮揮手，下次見！"],
+    nice: ["happy", "abClap", ["😊", "☀️", "😊"], "笑一個，拍拍手！"],
+    happy: ["happy", "abClap", ["😊", "👏", "😊"], "笑一個，拍拍手！"],
+    job: ["good", "abThumb", ["👍", "🌟", "👍"], "比兩個讚：好棒！"],
+    thanks: ["thank you", "abBow", ["🙏", "💖", "🙏"], "鞠個躬：謝謝！"]
+  };
+  const DEF = ["happy", "abClap", ["👏", "⭐", "👏"], "拍拍手！"];
+  /** 低年級: the easy word + action for an answer word (unknown words fall back to the word + clapping) */
+  TC.lowAction = function (word) {
+    const k = String(word || "").toLowerCase().trim();
+    const a = ACT[k] || ACT[k.replace(/s$/, "")] || null;
+    return a ? { w: a[0], anim: a[1], props: a[2], zh: a[3] } : { w: k, anim: DEF[1], props: DEF[2], zh: DEF[3] };
+  };
+  TC.lowActionKnown = (word) => !!ACT[String(word || "").toLowerCase().trim()];
 
   TC.actionBuddy = function (word, opt = {}) {
     return new Promise((resolve) => {
       if (!TC.art) { resolve(); return; }
-      const [, anim, props] = moveOf(word);
-      const src = TC.art("ollie"), N = 26, act = h("div", { class: "act", style: `--anim:${anim};--sp:${anim === "abTwirl" ? "2.4s" : anim === "abSleep" ? "1.8s" : "1s"}` });
+      const A = TC.lowAction(word), anim = A.anim, props = A.props; word = A.w;
+      const src = TC.art("ollie"), N = 26, act = h("div", { class: "act", style: `--anim:${anim};--sp:${anim === "abTwirl" ? "2.4s" : anim === "abSleep" || anim === "abWalkIn" ? "1.8s" : anim === "abRun" || anim === "abBrush" ? ".7s" : anim === "abKnock" || anim === "abBow" || anim === "abOuch" ? "1.6s" : "1.1s"}` });
       // a thick, solid-looking 3D Ollie: layers stacked in depth, the inner ones darker (the sides)
       for (let i = 0; i < N; i++) {
         const z = (i - (N - 1) / 2) * 0.32, edge = i === 0 || i === N - 1;
@@ -189,13 +271,15 @@
         if (!edge) im.style.filter = `brightness(${0.55 + 0.25 * Math.sin((i / N) * Math.PI)}) saturate(1.2)`;
         act.append(im);
       }
+      // the thing Ollie holds for this word (cup, toothbrush, waving hand…), in front of him so it turns with him
+      act.append(h("i", { class: "hold", "aria-hidden": "true", style: "transform:translateZ(4.6vh)" }, h("span", {}, props[0])));
       const spin = h("div", { class: "spin" }, act);
       const P = h("div", { class: "props" }, ...props.map((p, i) => h("i", { style: `left:${[2, 44, 86][i]}%;top:${[12, -6, 18][i]}%;animation-delay:${-i * 0.6}s` }, p)));
       const W = String(word || "");
       const done = h("button", { class: "done zh", type: "button" }, "做好了 ✓");
       const ov = h("div", { class: "ab", role: "dialog", "aria-label": "跟著歐力做動作" },
         h("div", { class: "stage" }, h("div", { class: "floor" }), spin, P),
-        h("div", { class: "txt" }, h("div", { class: "w" }, h("b", {}, W.slice(0, 1).toUpperCase()), W.slice(1) + "!"), h("div", { class: "zh" }, opt.zh || "🙌 跟著歐力一起做動作！")),
+        h("div", { class: "txt" }, h("div", { class: "w" }, h("b", {}, W.slice(0, 1).toUpperCase()), W.slice(1) + "!"), h("div", { class: "zh" }, "🙌 " + (opt.zh || A.zh))),
         done);
       let closed = false;
       const key = (e) => { if (e.key === "Enter" || e.key === " " || e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); close(); } };

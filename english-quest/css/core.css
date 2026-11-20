@@ -477,3 +477,7 @@ body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
 .lvl-pick{margin-top:.6rem}
 .lvl-pick button{padding:.8rem 2.2rem}
 .lvl-pick button b{font-size:3rem}
+
+.k-line .abc-pic{display:inline-block;font-size:1.3em;margin-right:.3em;vertical-align:middle;animation:abcPic 1.6s ease-in-out infinite}
+@keyframes abcPic{50%{transform:translateY(-.12em) rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){.k-line .abc-pic{animation:none}}

@@ -475,17 +475,20 @@
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
       const kw = String(spec.word || ((spec.keys || [])[0] || [])[0] || "").trim();
       if (TC.kid && TC.kid.level === 1 && !spec.noAbc && kw && /^[a-z]/i.test(kw)) {
+        const ans = kw, low = TC.lowAction ? TC.lowAction(kw) : { w: kw }; // 115.11.21: easy word + its own action
+        const kw2 = low.w; { const kw = kw2;
         const L = kw[0].toUpperCase();
         // 低年級: tap the right letter (touch) — or say it — then do the action with Ollie
         const pool = "ABCDEFGHIJKLMNOPRSTUVWY".split("").filter((c) => c !== L);
         const opts = [L]; while (opts.length < 3) { const c = pool.splice((Math.random() * pool.length) | 0, 1)[0]; opts.push(c); }
         for (let i = opts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [opts[i], opts[j]] = [opts[j], opts[i]]; }
-        $("#kLine").innerHTML = `<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
+        $("#kLine").innerHTML = `${low.props ? `<span class="abc-pic" aria-hidden="true">${low.props[0]}</span>` : ""}<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
         $("#kLine").querySelectorAll(".abc-btn").forEach((b) => b.addEventListener("click", () => {
           TC.ac();
-          if (b.dataset.c === L) { if (b.classList.contains("ok")) return; b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => (TC.actionBuddy ? TC.actionBuddy(kw) : Promise.resolve()).then(() => TC.teacherOK()), 450); }
+          if (b.dataset.c === L) { if (b.classList.contains("ok")) return; b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => (TC.actionBuddy ? TC.actionBuddy(ans) : Promise.resolve()).then(() => TC.teacherOK()), 450); }
           else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
         }));
+      }
       }
       $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");

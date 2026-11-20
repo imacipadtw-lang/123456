@@ -173,7 +173,7 @@ window.TC_SCRIPT = function (gate) {
   if (G.key === "rescue") G.scenes.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no }));
   if (G.key === "talk") { G.qa.forEach((x) => q({ t: x.t, tzh: x.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.finale.t, tzh: G.finale.tzh, say: G.finale.say, word: G.finale.w, zh: G.finale.zh, no: G.finale.no }); }
   if (G.key === "tpr") {
-    G.actions.forEach((x) => q({ t: x.say, tzh: x.zh, say: "（做動作，不用開口）", word: "", zh: "跟著歐力做", no: x.no }));
+    G.actions.forEach((x) => q({ t: x.say, tzh: x.zh, say: "低年級跟著做；中高年級說：" + x.say, word: x.w, zh: "低年級跟著歐力做／中高年級下指令", no: x.no }));
     rows.push({ kind: "last", t: G.quiet.say, tzh: G.quiet.zh, say: "（閉眼不動）→ " + G.wake.say, word: "", zh: "午休靜止，再突然起床", no: G.quiet.no + "、" + G.wake.no });
   }
   if (G.key === "monster") G.words.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: "It's " + (/^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".", word: x.w, zh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", no: x.no }));
