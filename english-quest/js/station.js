@@ -75,8 +75,8 @@
   // 115.11.20: only "電腦問" — Ollie always reads the questions (the 老師問 choice was removed)
   TC.cfg.ollieAsks = true;
   let nextLevel = TC.cfg.level;
-  function showLevel() { $("#lvlPick").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === nextLevel)); }
-  $("#lvlPick").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.ac(); TC.sfx("pop"); nextLevel = +b.dataset.l; TC.cfg.level = nextLevel; TC.saveCfg(); showLevel(); });
+  // 115.11.21: the level is chosen on the home page only (?lv= in the gate's address); here it is just shown
+  function showLevel() { const L = TC.LEVELS[nextLevel]; $("#lvlPick").innerHTML = `題目：<b>${L.zh}</b>（${L.tip}）<small>要換年級請按左上角校徽回首頁選</small>`; }
   showLevel();
   let players = 0;
   function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: [0, 2, 4, 6][nextLevel], color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }
@@ -85,12 +85,8 @@
     $("#kidChip").classList.remove("hidden");
     $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color;
     $("#kName").textContent = "PLAYER";
-    $("#lvlBtns").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.l === kid.level));
+    $("#lvlTag").textContent = TC.LEVELS[kid.level].zh;
   }
-  $("#lvlBtns").addEventListener("click", (e) => {
-    const l = +e.target.dataset.l; if (!l || !TC.kid) return;
-    TC.kid.level = l; nextLevel = l; showLevel(); setKidChip(TC.kid); TC.toast("難度：" + TC.LEVELS[l].zh + "（" + TC.LEVELS[l].tip + "）（下一題生效）");
-  });
 
   async function start() {
     if (running) return;
