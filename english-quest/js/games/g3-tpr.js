@@ -600,6 +600,7 @@
     let chip = `<span class="chip">Ollie says <span class="zh">歐力說</span></span>`;
     if (kind === "nosay") chip = `<span class="chip no">Ollie didn't say! <span class="zh">歐力沒有說！</span></span>`;
     if (kind === "quiet") chip = `<span class="chip">Shhh... <span class="zh">安靜</span></span>`;
+    if (kind === "you") chip = `<span class="chip">You said! <span class="zh">你下的指令</span></span>`;
     if (kind === "wake") chip = `<span class="chip no">Ollie shouts! <span class="zh">歐力大喊</span></span>`;
     let en = hi(x.say), cls = "en";
     if (kind === "quiet") { const parts = x.say.split(/(?<=\.)\s+/); if (parts.length > 1) { en = `<span class="sm">${esc(parts[0])}</span>` + hi(parts.slice(1).join(" ")); cls = "en"; } }
@@ -649,8 +650,8 @@
     const r = await api.ask({ teacher: "Tell Ollie!", tzh: "用英文叫歐力做這個動作！", say: x.say, zh: x.zh, keys: x.keys || [[x.w]], word: x.w, hideKey: true });
     TC.hideTalk();
     if (api.aborted) return false;
-    showBanner(x, "says"); setMode(x.id); TC.sfx("pop");
-    setRing("act", "Ollie does it!<br><span class='zh'>歐力照你說的做！</span>");
+    showBanner(x, "you"); setMode(x.id); TC.sfx("pop");
+    TC.floatText("Ollie does it! 歐力照做！", 50, 22, "#ffd23d");
     await TC.waitAction(r && r.skipped ? 2600 : 3600);
     if (api.aborted) return false;
     setMode("cheer"); hideRing(); TC.countTurn(3); TC.confetti(90); TC.sfx("ding");
