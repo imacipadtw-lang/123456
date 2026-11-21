@@ -577,7 +577,8 @@ body.tk-on:has(#cap.show) .tk .hbub{opacity:0}
   /** one question: Ollie asks (bubble + prop), the child answers; returns false when Esc was pressed */
   async function turn(x, seg) {
     el.gbub.classList.remove("on");
-    say(x.t, x.tzh); showProp(x.img, x.w);
+    if (api.level === 1) say(""); else say(x.t, x.tzh); // 低年級: no booklet question — the bar asks for a letter, then an action
+    showProp(x.img, x.w);
     const r = await api.ask({ teacher: x.t, tzh: x.tzh, say: x.say, zh: x.zh, keys: x.keys, word: x.w, hideKey: true });
     if (api.aborted) return false;
     if (r.ok) {

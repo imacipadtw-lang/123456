@@ -4,8 +4,9 @@
 
    Each card shows 10, 20 or 30 points, picked at random when the card
    appears (not two of the same in a row on this screen). The teacher then
-   hands the child a sticker with those points for the passport: six gates
-   → 60 to 180 points.
+   hands the child a sticker with those points (children stick it on their clothes): six gates
+   → 60 to 180 points. Prizes: all six gates = a pack of cookies and a drink; more than 100 points
+   in all = one more pack of cookies.
    ===================================================================== */
 (function () {
   "use strict";
@@ -50,6 +51,7 @@
   .sc-win.done .sc-prize{animation:scPop .6s cubic-bezier(.2,1.6,.4,1)}
   @keyframes scPop{from{transform:scale(.6)}}
   .sc-foot{display:flex;align-items:center;justify-content:space-between;font-size:1.7rem;font-weight:700;color:#5b4a1a}
+  .sc-rule{margin-top:.8rem;text-align:center;font-size:1.55rem;font-weight:700;color:#7a5a10;background:rgba(255,255,255,.55);border-radius:1.4rem;padding:.4rem 1rem}
   .sc-foot .tot{background:#14213d;color:#ffe58a;border-radius:2rem;padding:.5rem 1.6rem}
   .sc-next{display:block;margin:1.4rem auto 0}
   .sc-finger{position:absolute;left:50%;top:50%;font-size:6rem;pointer-events:none;animation:scFinger 1.6s ease-in-out infinite}
@@ -77,6 +79,7 @@
         h("div", { class: "sc-sub zh" }, `${opt.name ? opt.name + "，" : ""}用手指把銀色的地方刮開！ Scratch it!`),
         win,
         h("div", { class: "sc-foot" }, h("span", {}, `GATE ${opt.gate}${opt.city ? " · " + opt.city.toUpperCase() : ""}`), h("span", { class: "tot zh", style: "visibility:hidden" }, "")),
+        h("div", { class: "sc-rule zh" }, "🍪＋🧃 六關完成：餅乾 1 包＋飲料 1 瓶　·　＋🍪 合計超過 100 點：再多 1 包餅乾"),
         next);
       const ov = h("div", { class: "sc-ov overlay-like" }, h("div", { class: "sc-rays" }), card);
       document.body.append(ov);

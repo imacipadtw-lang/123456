@@ -2,66 +2,69 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@400;700&display=swap">
 <style>
-/* Layout: a launch board — six gate tiles (the classroom TVs), the Final Gate, then the teacher tools. */
+/* Layout: ONE screen — the school name, the three levels, and the eight screens of the day (opening show, six gates,
+   Final Gate). Nothing scrolls and nothing is cut off: every size is in --u, which follows the smaller of the
+   screen's height and width; 4 × 2 tiles on a wide screen, 2 × 4 on a tall one. */
 :root {
   --bg: #f3f6fb; --panel: #ffffff; --fg: #17223b; --muted: #5b6784; --line: #dbe2ef; --accent: #2f6bff;
   --display: "Fredoka", "Noto Sans TC", system-ui, sans-serif;
   --body: "Noto Sans TC", system-ui, sans-serif;
+  --u: min(1vh, .56vw);
 }
+@media (orientation: portrait) { :root { --u: min(.6vh, 1.06vw) } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1526; --panel: #182038; --fg: #eef2fb; --muted: #a6b1cc; --line: #2a3554; --accent: #7aa2ff; color-scheme: dark } }
 :root[data-theme="dark"] { --bg: #0f1526; --panel: #182038; --fg: #eef2fb; --muted: #a6b1cc; --line: #2a3554; --accent: #7aa2ff; color-scheme: dark }
-body { background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.55 }
-.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px }
-h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0; text-wrap: balance; letter-spacing: .01em }
-h2 { font-family: var(--display); font-weight: 700; font-size: 1.45rem; margin: 0 }
-.lead { margin: 6px 0 0; color: var(--muted); max-width: 65ch }
-.note { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; color: var(--muted); font-size: .92rem; max-width: 80ch }
-.note b { color: var(--fg) }
-.gates { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 14px }
-.gate { --c: var(--accent); display: grid; grid-template-columns: 112px 1fr; gap: 4px 14px; align-items: center; text-decoration: none; color: inherit; background: var(--panel); border: 1px solid var(--line); border-top: 5px solid var(--c); border-radius: 14px; padding: 14px; transition: transform .15s ease, box-shadow .15s ease }
-.gate:hover, .gate:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20, 40, 90, .14); outline: none }
-.gate:focus-visible { box-shadow: 0 0 0 3px var(--c) }
-.gate .bdg { width: 112px; height: 128px; grid-row: span 3; line-height: 0 }
-.gate .bdg svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 6px rgba(20, 40, 90, .25)) }
-.gate:hover .bdg svg { transform: scale(1.06) rotate(-3deg); transition: transform .2s }
-.gate .no { font-family: var(--display); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
-.gate .zh { font-size: 1.05rem; color: var(--muted); min-width: 0 }
-.row { display: flex; flex-wrap: wrap; gap: 10px }
-.lv { display: flex; flex-wrap: wrap; gap: 10px }
-.lv button { font: inherit; cursor: pointer; display: grid; gap: 2px; text-align: left; min-width: min(200px, 100%); padding: 10px 18px; border-radius: 14px; background: var(--panel); color: var(--fg); border: 2px solid var(--line) }
-.lv button b { font-family: var(--display); font-size: 1.25rem }
-.lv button span { font-size: .88rem; color: var(--muted) }
-.lv button[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent) }
+html, body { height: 100%; overflow: hidden }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.3; font-size: calc(var(--u) * 2) }
+.wrap { height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: calc(var(--u) * 1.8);
+  padding: calc(var(--u) * 2) max(16px, calc(var(--u) * 2.6), env(safe-area-inset-right, 0px)) calc(var(--u) * 2.4) max(16px, calc(var(--u) * 2.6), env(safe-area-inset-left, 0px)) }
+header { display: flex; align-items: center; gap: calc(var(--u) * 1.8); min-width: 0 }
+header img { width: calc(var(--u) * 10); height: calc(var(--u) * 10); flex: none }
+header .sch { font-weight: 700; letter-spacing: .08em; color: var(--muted); font-size: calc(var(--u) * 2.6); white-space: nowrap }
+h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5.2); margin: 0; line-height: 1.1; letter-spacing: .01em; white-space: nowrap }
+@media (orientation: portrait) { h1 { font-size: calc(var(--u) * 4.6) } header .sch { font-size: calc(var(--u) * 2.5) } .lv .lv-t { display: none } }
+.lv { display: flex; align-items: center; gap: calc(var(--u) * 1.6); min-width: 0 }
+.lv .lv-t { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 2.8); white-space: nowrap }
+.lv button { font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1 1 0; max-width: calc(var(--u) * 36); min-width: 0;
+  padding: calc(var(--u) * .9) calc(var(--u) * 1.2); border-radius: calc(var(--u) * 2); background: var(--panel); color: var(--fg); border: calc(var(--u) * .3) solid var(--line); line-height: 1.15; touch-action: manipulation }
+.lv button b { font-family: var(--display); font-size: calc(var(--u) * 3.4) }
+.lv button span { font-size: calc(var(--u) * 1.9); color: var(--muted); white-space: nowrap }
+.lv button[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 calc(var(--u) * .45) color-mix(in srgb, var(--accent) 28%, transparent) }
 .lv button[aria-checked="true"] b::before { content: "✓ " }
-.lv button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
-.tool { text-decoration: none; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 10px 20px; font-size: 1.1rem; font-weight: 700 }
-.tool:hover, .tool:focus-visible { border-color: var(--accent); outline: none }
-.tool.main { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700 }
+.lv button:focus-visible { outline: calc(var(--u) * .4) solid var(--accent); outline-offset: 2px }
+.gates { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.8); min-height: 0 }
+@media (orientation: portrait) { .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)) } }
+.gate { --c: var(--accent); display: grid; grid-template-columns: calc(var(--u) * 15) minmax(0, 1fr); gap: calc(var(--u) * 1.2); align-items: center; min-width: 0; min-height: 0; overflow: hidden; text-decoration: none; color: inherit;
+  background: var(--panel); border: 1px solid var(--line); border-top: calc(var(--u) * .7) solid var(--c); border-radius: calc(var(--u) * 2.2); padding: calc(var(--u) * 1.2) calc(var(--u) * 1.5) calc(var(--u) * 1.2) calc(var(--u) * 1);
+  transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation }
+.gate:hover, .gate:focus-visible { transform: translateY(calc(var(--u) * -.3)); box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2.6) rgba(20, 40, 90, .16); outline: none }
+.gate:focus-visible { box-shadow: 0 0 0 calc(var(--u) * .45) var(--c) }
+.gate .bdg { width: calc(var(--u) * 15); height: calc(var(--u) * 17.2); line-height: 0; display: grid; place-items: center }
+.gate .bdg svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * .5) calc(var(--u) * .8) rgba(20, 40, 90, .25)) }
+.gate .bdg .pic { position: relative; width: calc(var(--u) * 13.4); height: calc(var(--u) * 13.4) }
+.gate .bdg .pic img { width: 100%; height: 100% }
+.gate .bdg .pic i { position: absolute; right: calc(var(--u) * -.8); bottom: calc(var(--u) * -.6); width: calc(var(--u) * 6.2); height: calc(var(--u) * 6.2); border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: calc(var(--u) * 3.4); background: var(--panel); border: calc(var(--u) * .3) solid var(--c) }
+.gate .tx { min-width: 0 }
+.gate .no { font-family: var(--display); font-size: calc(var(--u) * 1.9); letter-spacing: .06em; color: var(--muted); white-space: nowrap }
+.gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 3.2); margin: calc(var(--u) * .4) 0 calc(var(--u) * .3); line-height: 1.1 }
+.gate .zh { font-size: calc(var(--u) * 2.1); color: var(--muted); line-height: 1.25 }
 @media (prefers-reduced-motion: reduce) { .gate { transition: none } .gate:hover { transform: none } }
 </style>
 
 <div class="wrap">
   <header>
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:84px;height:84px;flex:none">
-    <div><div style="font-weight:700;letter-spacing:.08em;color:var(--muted)">南投縣草屯鎮土城國民小學</div><h1>運動會英語日 English Day</h1></div></div>
-    <p class="lead">六間教室各開一關。先選年級，再點下面的關卡，在該教室的大螢幕上按全螢幕（F11）就能開始。</p>
+    <img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">
+    <div style="min-width:0"><div class="sch">南投縣草屯鎮土城國民小學</div><h1>運動會英語日 English Day</h1></div>
   </header>
 
-  <section aria-labelledby="lv-h" style="display:grid;gap:10px">
-    <h2 id="lv-h">先選年級 Level</h2>
-    <div class="lv" id="lv" role="radiogroup" aria-label="題目難度">
-      <button type="button" role="radio" data-l="1"><b>低年級</b><span>1–2 年級 · 認字母＋做動作</span></button>
-      <button type="button" role="radio" data-l="2"><b>中年級</b><span>3–4 年級 · 看整句念</span></button>
-      <button type="button" role="radio" data-l="3"><b>高年級</b><span>5–6 年級 · 填空說</span></button>
-    </div>
-  </section>
+  <div class="lv" id="lv" role="radiogroup" aria-label="題目難度">
+    <span class="lv-t">選年級：</span>
+    <button type="button" role="radio" data-l="1"><b>低年級</b><span>1–2 年級 · 大小寫字母＋做動作</span></button>
+    <button type="button" role="radio" data-l="2"><b>中年級</b><span>3–4 年級 · 看整句念</span></button>
+    <button type="button" role="radio" data-l="3"><b>高年級</b><span>5–6 年級 · 答句填空</span></button>
+  </div>
 
-  <section aria-labelledby="g-h" style="display:grid;gap:12px">
-    <h2 id="g-h">六關大螢幕 Gates 1–6</h2>
-    <div class="gates" id="gates"></div>
-  </section>
-
-
+  <div class="gates" id="gates" aria-label="八個畫面：開場、六關、終點"></div>
 </div>
 
 <script src="js/content.js"></script>
@@ -83,24 +86,32 @@ h2 { font-family: var(--display); font-weight: 700; font-size: 1.45rem; margin: 
   window.addEventListener("hashchange", route);
   if (route()) return;
 
-  // gate list comes from the same content file the games use, so names and themes always match
-  var C = (window.TC_CONTENT && TC_CONTENT.gates) || {};
-  var G = [1, 2, 3, 4, 5, 6].filter(function (n) { return C[n]; }).map(function (n) { return [n, C[n].title, C[n].zh + " · " + C[n].teacher, C[n].color]; });
   var box = document.getElementById("gates");
-  G.forEach(function (g) {
+  function tile(href, color, badge, no, title, zh, gate) {
     var a = document.createElement("a");
-    a.className = "gate"; a.dataset.gate = g[0]; a.href = "station.html?gate=" + g[0] + "#gate-" + g[0]; a.style.setProperty("--c", g[3]);
-    var img = document.createElement("div"); img.className = "bdg";
-    try { if (window.TC && TC.badgeSVG) img.innerHTML = TC.badgeSVG(g[0]); } catch (e) {}
-    var no = document.createElement("span"); no.className = "no"; no.textContent = "Gate " + g[0];
-    var t = document.createElement("h2"); t.textContent = g[1];
-    var zh = document.createElement("span"); zh.className = "zh"; zh.textContent = g[2];
-    a.append(img, no, t, zh); box.append(a);
+    a.className = "gate"; a.href = href; a.style.setProperty("--c", color); if (gate) a.dataset.gate = gate;
+    var img = document.createElement("div"); img.className = "bdg"; img.innerHTML = badge;
+    var tx = document.createElement("div"); tx.className = "tx";
+    var n = document.createElement("span"); n.className = "no"; n.textContent = no;
+    var t = document.createElement("h2"); t.textContent = title;
+    var z = document.createElement("div"); z.className = "zh"; z.textContent = zh;
+    tx.append(n, t, z); a.append(img, tx); box.append(a);
+  }
+  function pic(icon) { return '<div class="pic"><img src="assets/img/tucheng-emblem.svg" alt=""><i>' + icon + "</i></div>"; }
+  // the eight screens of the day; the gate list comes from the same content file the games use, so names always match
+  var C = (window.TC_CONTENT && TC_CONTENT.gates) || {};
+  tile("opening.html", "#ffc83d", pic("🎬"), "開場 OPENING", "Opening Show", "開場動畫 · 大廳");
+  [1, 2, 3, 4, 5, 6].forEach(function (n) {
+    if (!C[n]) return;
+    var b = ""; try { if (window.TC && TC.badgeSVG) b = TC.badgeSVG(n); } catch (e) {}
+    tile("station.html?gate=" + n + "#gate-" + n, C[n].color, b, "GATE " + n, C[n].title, C[n].zh + " · " + C[n].city, n);
   });
+  tile("control.html", "#ff9a2e", pic("🏁"), "終點 FINAL", "Final Gate", "終點登機門 · 解碼領獎");
+
   var lv = saved() || 2, pick = document.getElementById("lv");
   function paint() {
     pick.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-checked", String(+b.dataset.l === lv)); });
-    box.querySelectorAll("a.gate").forEach(function (a) { var n = a.dataset.gate; a.href = "station.html?gate=" + n + "&lv=" + lv + "#gate-" + n; });
+    box.querySelectorAll("a.gate[data-gate]").forEach(function (a) { var n = a.dataset.gate; a.href = "station.html?gate=" + n + "&lv=" + lv + "#gate-" + n; });
   }
   pick.addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; lv = +b.dataset.l; try { localStorage.setItem("tc_launch_lv", String(lv)); } catch (err) {} paint(); });
   paint();

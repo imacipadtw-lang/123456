@@ -7,65 +7,71 @@
 <title>Tucheng English Day</title>
 <link rel="stylesheet" href="css/core.css">
 <style>
-  html{font-size:clamp(13px,1.05vw,20px)} html,body{overflow:auto;height:auto}
-  body{background:radial-gradient(120% 80% at 50% 0%,#1d3a86,#0a1633) fixed;padding:2rem 1.6rem 4rem}
-  .hero{display:flex;align-items:center;gap:2rem;max-width:90rem;margin:0 auto 2rem}
-  .hero .o{width:9rem;height:10.5rem;flex:0 0 auto}
-  .hero h1{margin:0;font-size:3.4rem;line-height:1.05}
-  .hero p{margin:.4rem 0 0;color:var(--ink2);font-size:1.3rem}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:1.2rem;max-width:90rem;margin:0 auto}
-  a.card{display:block;text-decoration:none;color:#fff;background:var(--panel);border:2px solid var(--line);border-radius:1.6rem;padding:1.3rem 1.4rem;transition:transform .15s,border-color .15s;position:relative;overflow:hidden}
-  a.card:hover{transform:translateY(-.3rem);border-color:var(--c)}
-  a.card .n{display:inline-grid;place-items:center;width:3rem;height:3rem;border-radius:.8rem;background:var(--c);color:#0a1633;font-weight:700;font-size:1.6rem}
-  a.card h2{margin:.7rem 0 .2rem;font-size:1.7rem}
-  a.card .zh{color:var(--ink2);font-size:1.1rem}
-  a.card .g{font-size:1rem;color:var(--ink2);margin-top:.6rem}
-  a.card img{position:absolute;right:.8rem;top:.6rem;width:6.4rem;height:6.4rem;filter:drop-shadow(0 .6rem .8rem rgba(0,0,0,.4));transition:transform .2s}
-  .grid.gates{grid-template-columns:repeat(3,1fr);gap:1.5rem}
-  @media (max-width:1100px){.grid.gates{grid-template-columns:repeat(2,1fr)}} @media (max-width:700px){.grid.gates{grid-template-columns:1fr}}
-  a.card.gate{display:grid;grid-template-columns:10.4rem 1fr;align-items:center;gap:1.1rem;padding:1.1rem 1.4rem 1.1rem .9rem;overflow:visible;border:.2rem solid color-mix(in srgb,var(--c) 60%,transparent);
-    background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,#142460),#0f1a47 70%);box-shadow:0 .45rem 0 rgba(4,10,35,.75),0 1.4rem 2.4rem rgba(0,0,0,.35),inset 0 .12rem 0 rgba(255,255,255,.22)}
-  a.card.gate:hover{transform:translateY(-.35rem);box-shadow:0 .8rem 0 rgba(4,10,35,.75),0 2rem 3rem rgba(0,0,0,.4),0 0 2.6rem color-mix(in srgb,var(--c) 55%,transparent),inset 0 .12rem 0 rgba(255,255,255,.22)}
-  a.card.gate:active{transform:translateY(.2rem);box-shadow:0 .15rem 0 rgba(4,10,35,.75)}
-  a.card.gate .bdg{width:10.4rem;height:12rem;line-height:0;transition:transform .2s}a.card.gate .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .7rem .9rem rgba(0,0,0,.45))}a.card.gate:hover .bdg{transform:scale(1.07) rotate(-3deg)}
-  a.card.gate .tx{min-width:0}
-  a.card.gate .top{display:flex;align-items:center;gap:.7rem}
-  a.card.gate .n{width:2.7rem;height:2.7rem;font-size:1.5rem;flex:none;box-shadow:0 .2rem 0 rgba(0,0,0,.35)}
-  a.card.gate .th{font-size:1.05rem;font-weight:700;color:var(--c);letter-spacing:.04em}
-  a.card.gate h2{margin:.45rem 0 .1rem;font-size:1.85rem;line-height:1.1}
-  a.card.gate .zh{font-size:1.25rem;color:#fff;font-weight:700}
-  a.card.gate .go{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;padding:.35rem 1rem;border-radius:2rem;background:var(--c);color:#0a1633;font-weight:700;font-size:1.05rem;box-shadow:0 .22rem 0 rgba(0,0,0,.35)}
-  a.card:hover img{transform:scale(1.12) rotate(-6deg)}
-  h3{max-width:90rem;margin:2.4rem auto .8rem;font-size:1.4rem;color:var(--sun)}
-  .tools a.card{--c:#ffc83d}
-  .lv-home{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;max-width:90rem;margin:0 auto 1.6rem}
-  .lv-home .lv-t{font-size:1.5rem;font-weight:700;color:var(--sun)}
-  .lv-home button{display:flex;flex-direction:column;align-items:center;min-width:13rem;padding:.8rem 1.6rem;border-radius:1.6rem;line-height:1.15;cursor:pointer;
-    background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;border:0;box-shadow:0 .45rem 0 #121c42}
-  .lv-home button b{font-size:2.2rem}.lv-home button i{font-style:normal;font-size:1.1rem;opacity:.9}
-  .lv-home button[aria-checked=true]{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 .45rem 0 #0b7a5c}
+  /* The home page is ONE screen: school name, the three levels, and the eight screens of the day
+     (opening show, six gates, Final Gate). Nothing scrolls and nothing is cut off: every size is in --u,
+     a unit that follows the smaller of the screen's height and width. */
+  :root{--u:min(1vh,.56vw)}
+  @media (orientation:portrait){:root{--u:min(.6vh,1.06vw)}}
+  html{font-size:calc(var(--u) * 1.6)}
+  html,body{height:100%;overflow:hidden}
+  body{margin:0;background:radial-gradient(120% 80% at 50% 0%,#1d3a86,#0a1633) fixed;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:calc(var(--u) * 1.8);
+    padding:calc(var(--u) * 2) calc(var(--u) * 2.6) calc(var(--u) * 2.4);box-sizing:border-box}
+  .hero{display:flex;align-items:center;gap:calc(var(--u) * 2);min-width:0}
+  .hero .o{width:calc(var(--u) * 10);height:calc(var(--u) * 11.6);flex:none}
+  .hero .tx{min-width:0}
+  .hero .sch{display:flex;align-items:center;gap:calc(var(--u) * 1);font-weight:700;font-size:calc(var(--u) * 3.1);color:#ffe58a;letter-spacing:.06em;white-space:nowrap}
+  .hero .sch img{width:calc(var(--u) * 6.2);height:calc(var(--u) * 6.2);flex:none}
+  .hero h1{margin:calc(var(--u) * .4) 0 0;font-size:calc(var(--u) * 5.4);line-height:1.05;white-space:nowrap}
+  .hero h1 span{font-size:calc(var(--u) * 2.9);margin-left:calc(var(--u) * 1.6);color:var(--ink2)}
+  @media (orientation:portrait){.hero .sch{font-size:calc(var(--u) * 2.9)}.hero h1{font-size:calc(var(--u) * 4.8)}.hero h1 span{display:block;margin:calc(var(--u) * .3) 0 0;font-size:calc(var(--u) * 2.6)}.lv-home .lv-t{display:none}}
+  .lv-home{display:flex;align-items:center;gap:calc(var(--u) * 1.6);min-width:0}
+  .lv-home .lv-t{font-size:calc(var(--u) * 2.7);font-weight:700;color:var(--sun);white-space:nowrap}
+  .lv-home button{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1 1 0;max-width:calc(var(--u) * 36);min-width:0;padding:calc(var(--u) * .9) calc(var(--u) * 1.2);border-radius:calc(var(--u) * 2.2);line-height:1.15;cursor:pointer;
+    background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;border:0;box-shadow:0 calc(var(--u) * .6) 0 #121c42;touch-action:manipulation}
+  .lv-home button b{font-size:calc(var(--u) * 3.6)}.lv-home button i{font-style:normal;font-size:calc(var(--u) * 1.9);opacity:.9;white-space:nowrap}
+  .lv-home button[aria-checked=true]{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 calc(var(--u) * .6) 0 #0b7a5c}
   .lv-home button[aria-checked=true] b::before{content:"✓ "}
-  footer{max-width:90rem;margin:3rem auto 0;color:var(--ink2);font-size:.95rem;line-height:1.6}
-  footer a{color:var(--sky)}
+  .lv-home button:active{transform:translateY(calc(var(--u) * .4));box-shadow:0 calc(var(--u) * .2) 0 #121c42}
+  /* eight tiles: 4 × 2 on a wide screen, 2 × 4 on a tall one */
+  .gates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:calc(var(--u) * 1.8);min-height:0}
+  @media (orientation:portrait){.gates{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr))}}
+  a.gate{--c:#ffc83d;display:grid;grid-template-columns:calc(var(--u) * 15) minmax(0,1fr);align-items:center;gap:calc(var(--u) * 1.2);min-width:0;min-height:0;overflow:hidden;text-decoration:none;color:#fff;
+    padding:calc(var(--u) * 1.2) calc(var(--u) * 1.6) calc(var(--u) * 1.2) calc(var(--u) * 1);border-radius:calc(var(--u) * 2.6);border:calc(var(--u) * .3) solid color-mix(in srgb,var(--c) 60%,transparent);
+    background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,#142460),#0f1a47 70%);box-shadow:0 calc(var(--u) * .7) 0 rgba(4,10,35,.75),0 calc(var(--u) * 1.6) calc(var(--u) * 2.6) rgba(0,0,0,.35),inset 0 calc(var(--u) * .16) 0 rgba(255,255,255,.22);
+    transition:transform .15s,box-shadow .15s;touch-action:manipulation}
+  a.gate:hover{transform:translateY(calc(var(--u) * -.4));box-shadow:0 calc(var(--u) * 1.1) 0 rgba(4,10,35,.75),0 0 calc(var(--u) * 3.4) color-mix(in srgb,var(--c) 55%,transparent),inset 0 calc(var(--u) * .16) 0 rgba(255,255,255,.22)}
+  a.gate:active{transform:translateY(calc(var(--u) * .4));box-shadow:0 calc(var(--u) * .2) 0 rgba(4,10,35,.75)}
+  a.gate .bdg{width:calc(var(--u) * 15);height:calc(var(--u) * 17.2);line-height:0;display:grid;place-items:center}
+  a.gate .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 calc(var(--u) * .8) calc(var(--u) * 1) rgba(0,0,0,.45))}
+  a.gate .bdg img{width:calc(var(--u) * 13);height:calc(var(--u) * 13);filter:drop-shadow(0 calc(var(--u) * .8) calc(var(--u) * 1) rgba(0,0,0,.45))}
+  a.gate .bdg .pic{position:relative;width:calc(var(--u) * 14);height:calc(var(--u) * 14)}
+  a.gate .bdg .pic i{position:absolute;right:calc(var(--u) * -.8);bottom:calc(var(--u) * -.6);width:calc(var(--u) * 6.4);height:calc(var(--u) * 6.4);border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:calc(var(--u) * 3.6);
+    background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 calc(var(--u) * .4) 0 color-mix(in srgb,var(--c) 70%,#000)}
+  a.gate .tx{min-width:0}
+  a.gate .top{display:flex;align-items:center;gap:calc(var(--u) * 1);min-width:0}
+  a.gate .n{width:calc(var(--u) * 4.4);height:calc(var(--u) * 4.4);border-radius:calc(var(--u) * 1.2);background:var(--c);color:#0a1633;display:grid;place-items:center;font-weight:700;font-size:calc(var(--u) * 2.6);flex:none;box-shadow:0 calc(var(--u) * .3) 0 rgba(0,0,0,.35)}
+  a.gate .th{font-size:calc(var(--u) * 1.9);font-weight:700;color:var(--c);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  a.gate h2{margin:calc(var(--u) * .7) 0 calc(var(--u) * .2);font-size:calc(var(--u) * 3.3);line-height:1.08}
+  a.gate .zh{font-size:calc(var(--u) * 2.2);color:#fff;font-weight:700;line-height:1.2}
+  a.gate .go{display:inline-flex;align-items:center;gap:calc(var(--u) * .5);margin-top:calc(var(--u) * 1);padding:calc(var(--u) * .4) calc(var(--u) * 1.5);border-radius:calc(var(--u) * 3);background:var(--c);color:#0a1633;font-weight:700;font-size:calc(var(--u) * 1.9);box-shadow:0 calc(var(--u) * .3) 0 rgba(0,0,0,.35);white-space:nowrap}
+  @media (prefers-reduced-motion:reduce){a.gate{transition:none}}
 </style>
 </head>
 <body>
 <div class="hero">
   <div class="o" id="o"></div>
-  <div>
-    <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.4rem;color:#ffe58a;letter-spacing:.06em;margin-bottom:.6rem"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.4rem;height:5.4rem;flex:none">南投縣草屯鎮土城國民小學</div>
-    <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 英語闖關（空手來就好）</span></h1>
-    <p class="zh">6 間教室 × 6 個遊戲關卡 · 老師按 START → 歐力用英文問、孩子看圖說英文（低年級認字母做動作、中年級念整句、高年級填空） → 老師按 ✓ 就過關 → 打開神秘禮物盒念一句 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙 → 終點登機門解碼拿獎狀、換獎品</p>
+  <div class="tx">
+    <div class="sch"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">南投縣草屯鎮土城國民小學</div>
+    <h1>Tucheng English Day<span class="zh">運動會英語日 · 英語闖關</span></h1>
   </div>
 </div>
 <div class="lv-home" id="lvHome" role="radiogroup" aria-label="題目難度">
-  <span class="zh lv-t">選擇題目：</span>
-  <button data-l="1" role="radio"><b class="zh">低年級</b><i class="zh">1–2 年級 · 認字母＋做動作</i></button>
+  <span class="zh lv-t">選年級：</span>
+  <button data-l="1" role="radio"><b class="zh">低年級</b><i class="zh">1–2 年級 · 大小寫字母＋做動作</i></button>
   <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 看整句念</i></button>
-  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 填空說</i></button>
+  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 答句填空</i></button>
 </div>
-<div class="grid gates" id="gates"></div>
-<!-- 115.11.20: tools and source notes hidden from the public home page (pages still open by direct address for teachers) -->
+<div class="gates" id="gates"></div>
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
@@ -73,20 +79,25 @@
 <script src="js/art-body.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
-  const g = document.getElementById("gates");
+  // the eight screens of the day: opening show, six gates, Final Gate
+  const g = document.getElementById("gates"), EMB = "assets/img/tucheng-emblem.svg";
+  const extra = (href, color, icon, th, title, zh) => `<a class="gate" style="--c:${color}" href="${href}"><div class="bdg"><div class="pic"><img src="${EMB}" alt=""><i>${icon}</i></div></div>
+      <div class="tx"><div class="top"><span class="n">${icon === "🎬" ? "▶" : "★"}</span><span class="th">${th}</span></div><h2>${title}</h2><div class="zh">${zh}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入</span></span></div></a>`;
+  g.insertAdjacentHTML("beforeend", extra("opening.html", "#ffc83d", "🎬", "開場", "Opening Show", "開場動畫 · 大廳"));
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card gate" style="--c:${G.color}" data-gate="${n}" href="station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
-      <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="gate" style="--c:${G.color}" data-gate="${n}" href="station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
+      <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre.split(" ")[0]}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);
   });
+  g.insertAdjacentHTML("beforeend", extra("control.html", "#ff9a2e", "🏁", "終點", "Final Gate", "終點登機門 · 解碼領獎"));
 </script>
 <script>
-  // 115.11.20: choose 低／中／高年級 here; every gate link carries it (?lv=), and the TV remembers it
+  // choose 低／中／高年級 here; every gate link carries it (?lv=), and the TV remembers it
   (function () {
     const box = document.getElementById("lvHome");
     function paint() {
       box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(+b.dataset.l === TC.cfg.level)));
-      document.querySelectorAll("#gates a.card").forEach((a) => { const n = a.dataset.gate; a.href = `station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}`; });
+      document.querySelectorAll("#gates a.gate[data-gate]").forEach((a) => { const n = a.dataset.gate; a.href = `station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}`; });
     }
     box.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.cfg.level = +b.dataset.l; TC.saveCfg(); paint(); });
     paint();

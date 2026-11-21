@@ -42,12 +42,27 @@
   .attract .start3d b{font-size:7rem}.attract .start3d .ic{width:7.6rem;height:7.6rem;font-size:4rem}.attract .start3d i{font-size:2.6rem}
   .attract{top:50%!important}
   /* certificate */
-  .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:radial-gradient(120% 90% at 50% 0%,#fffef9,#fff6dc);color:#0a1633;border-radius:1.6em;padding:3.2% 4.4% 2.6%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5),inset 0 0 0 .25em #fff3c4;border:1.2em solid #ffc83d;border-image:linear-gradient(135deg,#ffe58a,#f2a900 30%,#ffe9a0 50%,#e59a00 72%,#ffd65a) 1;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
+  .cert{width:min(120rem,94vw,calc((100vh - 14rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 14rem) / 88));background:radial-gradient(120% 90% at 50% 0%,#fffef9,#fff6dc);color:#0a1633;border-radius:1.6em;padding:3.2% 4.4% 2.6%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5),inset 0 0 0 .25em #fff3c4;border:1.2em solid #ffc83d;border-image:linear-gradient(135deg,#ffe58a,#f2a900 30%,#ffe9a0 50%,#e59a00 72%,#ffd65a) 1;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
   .cert::before{content:"";position:absolute;inset:1.1em;border:.22em solid #e9b530;border-radius:.6em;pointer-events:none}
   .cert::after{content:"";position:absolute;inset:1.75em;border:.08em solid #f0cf78;border-radius:.3em;pointer-events:none}
   .cert .k1{font-size:1.7em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
   .cert .cert-emb{position:absolute;left:4.2%;top:6%;width:13em;height:13em;filter:drop-shadow(0 .5em .8em rgba(0,0,0,.25))}
-  .cert .cert-pts{display:inline-block;font-size:2.3em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;margin-top:.5em}
+  .cert .cert-prize{display:flex;align-items:stretch;justify-content:center;gap:1.2em;margin-top:.7em;flex-wrap:nowrap}
+  .cert .cert-pts{display:inline-flex;align-items:center;font-size:2.35em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;white-space:nowrap}
+  .cert .pts-line.set{border-bottom-style:solid;min-width:2.2em;text-align:center}
+  .cert .pz-box{display:flex;align-items:center;gap:.6em;border-radius:1.6em;padding:.3em 1.2em;border:.22em dashed #c9b27a;background:#fffaf0;color:#8a7a55;white-space:nowrap}
+  .cert .pz-box b{font-size:2.9em;line-height:1}
+  .cert .pz-box .zh{font-size:1.9em;font-weight:700}
+  .cert .pz-box.on{border:.22em solid #2aa66a;background:#e9fff3;color:#0d5c37;box-shadow:0 .3em 0 #bfe8d1}
+  .cert .pz-box.off{opacity:.45}
+  .prize-rule{display:flex;flex-wrap:wrap;gap:1rem 1.6rem;justify-content:center;margin:.2rem 0 1.4rem;font-size:2rem;font-weight:700}
+  .prize-rule span{display:inline-flex;align-items:center;gap:.8rem;padding:.5rem 1.6rem;border-radius:2rem;background:rgba(255,255,255,.1);border:2px solid rgba(255,229,138,.55);color:#ffe58a;white-space:nowrap}
+  .prize-rule b{font-size:1.5em;line-height:1}
+  .pts-pick{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;margin-top:.8rem;font-size:1.7rem;font-weight:700;color:#fff}
+  .pts-pick span{margin-right:.6rem}
+  .pts-pick button{font:inherit;font-family:Fredoka,sans-serif;min-width:4.6rem;padding:.3rem .6rem;border-radius:1rem;border:0;cursor:pointer;background:linear-gradient(180deg,#fff,#dfe7ff);color:#0a1633;box-shadow:0 .35rem 0 #8fa2ff;touch-action:manipulation}
+  .pts-pick button.on{background:linear-gradient(180deg,#fff7d6,#ffd23d);box-shadow:0 .35rem 0 #e0a21a}
+  .pts-pick button:active{transform:translateY(.25rem);box-shadow:0 .1rem 0 #8fa2ff}
   .cert .cert-pts b{font-size:1.5em;color:#d6337a}.cert .cert-pts .zh{font-size:1em}
   .cert h1{font-size:7.4em;margin:.12em 0 .04em;line-height:1;color:#152a63;text-shadow:0 .05em 0 #fff,0 .09em 0 rgba(242,169,0,.55)}
   .cert .zh{font-size:2.4em}
@@ -103,6 +118,7 @@
     <div class="stats"><div class="stat"><b id="sKids">0</b><span class="zh">完成環遊的小旅客</span></div><div class="stat"><b id="sLines">0</b><span class="zh">今天說出的英文句子</span></div><div class="stat"><b id="sStamps">0</b><span class="zh">已蓋的關卡印章</span></div></div>
     <div class="attract" id="attract">
       <h2 class="zh">集滿 6 個秘密字母，解開密碼就能登機！</h2>
+      <div class="prize-rule zh"><span><b>🍪＋🧃</b> 六關完成：餅乾 1 包＋飲料 1 瓶</span><span><b>＋🍪</b> 貼紙合計超過 100 點：再多 1 包餅乾</span></div>
       <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始解碼</i></span></button>
     </div>
     <div class="dec hidden" id="dec">

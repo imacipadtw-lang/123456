@@ -2573,5 +2573,41 @@ window.TC_AI_AUDIO = {
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
   "sha1": "a849aaa0e8e51b37e5e077b0fdb6ae845aad1213",
   "durationSec": 1.02
+ },
+ "find the small letter": {
+  "file": "ai/find-the-small-letter.mp3",
+  "text": "Find the small letter!",
+  "ai": true,
+  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
+  "voice": "Bella - Professional, Bright, Warm",
+  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
+  "voiceKind": "ElevenLabs premade voice",
+  "accent": "American (ElevenLabs label: Standard American)",
+  "model": "eleven_multilingual_v2",
+  "generationId": "tvDLBY7uXlZPfeBxDM8M",
+  "generated": "2026-11-21T03:21:42Z",
+  "downloaded": "2026-11-21T03:22:44Z",
+  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
+  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
+  "sha1": "a6a1bde6572600a52fbc8eadfc9ad8961ff812e4",
+  "durationSec": 1.31
+ },
+ "find the big letter": {
+  "file": "ai/find-the-big-letter.mp3",
+  "text": "Find the big letter!",
+  "ai": true,
+  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
+  "voice": "Bella - Professional, Bright, Warm",
+  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
+  "voiceKind": "ElevenLabs premade voice",
+  "accent": "American (ElevenLabs label: Standard American)",
+  "model": "eleven_multilingual_v2",
+  "generationId": "tvDLBY7uXlZPfeBxDM8M",
+  "generated": "2026-11-21T03:21:42Z",
+  "downloaded": "2026-11-21T03:22:44Z",
+  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
+  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
+  "sha1": "cdebfd6a6f4e2e92caf802995ac7fe7596a9f058",
+  "durationSec": 1.49
  }
 };

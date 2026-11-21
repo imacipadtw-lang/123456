@@ -503,3 +503,7 @@ body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
 body:has(.pz) #cap{left:auto;right:3rem;top:9.2rem;transform:translate(0,-1rem);max-width:30vw;font-size:2.5rem;padding:.4rem 1.6rem .4rem .6rem}
 body:has(.pz) #cap img{width:3.6rem;height:4.1rem}
 body:has(.pz) #cap.show{transform:none}
+/* 低年級 big / small letters: the letter to match on a yellow tile, an arrow, then three choices in the other case */
+.k-line:has(.abc-opts) .abc-big{font-size:1.3em;min-width:1.5em;margin-right:0;line-height:1.15;box-shadow:0 .5rem 0 #e0a21a}
+.k-line .abc-arrow{color:var(--sun);font-size:.9em}
+.k-line:has(.abc-opts) .abc-btn{font-size:1.1em;min-width:1.9em;line-height:1.15}

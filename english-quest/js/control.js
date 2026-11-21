@@ -163,6 +163,13 @@
     const d = new Date(), date = `${d.getFullYear()} / ${d.getMonth() + 1} / ${d.getDate()}`;
     const photo = await takePhoto();
     const next = h("button", { class: "big-btn go" }, "NEXT ▶");
+    const ptsLine = h("b", { class: "pts-line" }, "\u00a0");
+    const bonusBox = h("div", { class: "pz-box" }, h("b", {}, "＋🍪"), h("span", { class: "zh" }, "合計超過 100 點：再多 1 包餅乾"));
+    // the teacher (or the child) taps the total of the six stickers: the certificate fills it in and shows the prize
+    const pick = h("div", { class: "pts-pick zh" }, h("span", {}, "貼紙合計幾點？"), ...[60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180].map((n) => h("button", { type: "button", "data-n": n, onclick: (e) => {
+      TC.ac(); ptsLine.textContent = String(n); ptsLine.classList.add("set"); bonusBox.classList.toggle("on", n > 100); bonusBox.classList.toggle("off", n <= 100);
+      pick.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b === e.currentTarget)); TC.sfx(n > 100 ? "fanfare" : "coin"); if (n > 100) TC.confetti(160);
+    } }, String(n))));
     const ov = h("div", { class: "overlay" },
       h("div", { class: "cert" },
         h("div", { class: "ow", html: TC.ollieSVG() }),
@@ -177,8 +184,13 @@
         h("p", { class: "zh why" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
         h("div", { class: "st" }, ...GATES.map((g) => h("div", { class: "cg", style: `--c:${g.color}` }, TC.badgeEl(g.n, "cb"), h("b", {}, g.city)))),
         h("p", { class: "motto" }, "“We are friends!”"),
-        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
+        // prizes: all six gates = a pack of cookies and a drink; more than 100 points in all = one more pack of cookies
+        h("div", { class: "cert-prize" },
+          h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "點數貼紙合計 "), ptsLine, h("span", { class: "zh" }, " 點")),
+          h("div", { class: "pz-box on" }, h("b", {}, "🍪＋🧃"), h("span", { class: "zh" }, "六關完成：餅乾 1 包＋飲料 1 瓶")),
+          bonusBox),
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學 · 運動會英語日"), h("span", { class: "by" }, h("i", {}), h("span", { class: "zh" }, "頒發人 Presented by")))),
+      pick,
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");
     await TC.speak("Great! Friends!");

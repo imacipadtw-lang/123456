@@ -1,14 +1,16 @@
 /* Stress check: random taps, keys and scans at every gate for a while; there must be no page error and the gate
-   must still start a new player afterwards.   usage: node tools/tests/chaos.js [baseUrl] [seconds per gate] */
+   must still start a new player afterwards.   usage: node tools/tests/chaos.js [baseUrl] [seconds per gate] [level 1-3] */
 const { chromium } = require("playwright");
-const base = process.argv[2] || "http://localhost:8767", secs = +(process.argv[3] || 25);
+const base = process.argv[2] || "http://localhost:8767", secs = +(process.argv[3] || 25), lv = +(process.argv[4] || 0); // lv: 1 低年級, 2 中年級, 3 高年級 (default: what the screen remembers)
 (async () => {
   const b = await chromium.launch({ args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] }); let fail = 0;
   for (let g = 1; g <= 6; g++) {
     const p = await b.newPage({ viewport: { width: 1366, height: 768 }, hasTouch: true }); const errs = [];
     p.on("pageerror", (e) => errs.push(e.message));
-    await p.goto(`${base}/station.html?gate=${g}`); await p.waitForTimeout(800);
-    await p.route("**/index.html*", (r) => r.abort()); // the emblems are Home buttons (top-left in play, beside START on the start screen): leaving the page is not part of random play
+    await p.goto(`${base}/station.html?gate=${g}${lv ? "&lv=" + lv : ""}`); await p.waitForTimeout(800);
+    // the emblems are Home buttons (top-left in play, beside START on the start screen): leaving the page is not part of
+    // random play, so they are made untouchable here (blocking the navigation instead would leave a browser error page)
+    await p.addStyleTag({ content: ".home-link{pointer-events:none!important}" });
     await p.click("#startBtn", { force: true }); const t0 = Date.now(); let n = 0;
     const keys = ["Enter", "Enter", "Enter", " ", "n", "h", "Escape", "c", "m", "s", "g", "ArrowLeft", "ArrowRight"];
     while (Date.now() - t0 < secs * 1000) {

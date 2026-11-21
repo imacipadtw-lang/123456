@@ -23,6 +23,7 @@ for (let g = 1; g <= 6; g++) {
   (C.sentences[g] || []).forEach((x) => add(x.s));
 }
 add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Welcome"); add("Go");
+add("Find the small letter"); add("Find the big letter"); // 低年級: the two letter tasks (js/core.js)
 // literal strings in the code
 for (const f of ["js/station.js", "js/control.js", "js/core.js", "js/puzzles.js", "js/scratch.js", ...fs.readdirSync(path.join(R, "js/games")).filter((x) => x.endsWith(".js")).map((x) => "js/games/" + x)]) {
   const src = fs.readFileSync(path.join(R, f), "utf8"); let m; const re = /TC\.(?:speak|teacherLine)\(\s*(["'])((?:(?!\1).)*)\1/g;

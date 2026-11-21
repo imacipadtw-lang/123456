@@ -13,6 +13,11 @@
   `tools/verify_audio.py` must be run; report honestly which clips the recogniser could not confirm.
 - The venue has no microphone and children do not carry the passport booklet: the microphone stays off by default, nothing may
   depend on listening or loudness, and no step may need the booklet. The level (低／中／高年級) is chosen on the home page.
+- Levels: 低年級 = big/small letters and "Ollie says a word, do the action" only (no booklet sentence in the question bar);
+  中年級 = booklet sentences shown in full, never a blank; 高年級 = booklet answer sentences with the answer word blank.
+- The home page (and the backup launcher) is ONE screen with exactly eight tiles — opening show, six gates, Final Gate — plus
+  the level buttons; no tool links, no scrolling (`node tools/tests/home-fit.js`).
+- Prizes: all six gates = a pack of cookies and a drink; more than 100 sticker points in all = one more pack of cookies.
 - More than one session may work on this branch: `git fetch` and merge before pushing, never force-push, and keep the other
   session's flow decisions unless the teacher says otherwise.
 - Artwork is original (drawn in code in `english-quest/js/art.js`); no third-party images.

@@ -58,7 +58,7 @@
     const row = h("div", { class: "mb-row" });
     const box = h("div", { class: "pz" },
       h("h3", {}, "🎁 Mystery Box", h("span", { class: "zh" }, "神秘禮物盒")),
-      h("div", { class: "sub zh" }, "選一個禮物盒，點一下打開！裡面藏著一句英文"), row, ans);
+      h("div", { class: "sub zh" }, TC.kid && TC.kid.level === 1 ? "選一個禮物盒，點一下打開！裡面藏著一個英文字" : "選一個禮物盒，點一下打開！裡面藏著一句英文"), row, ans);
     let chosen, picked = false; const open = new Promise((r) => (chosen = r));
     picks.forEach((p, k) => {
       const b = h("button", { class: "mb-box", style: `--c:${COL[k]};animation-delay:${-k * 0.4}s`, "aria-label": "禮物盒 " + (k + 1), onclick: () => { if (picked) return; picked = true; TC.ac(); chosen(k); } },
@@ -75,12 +75,17 @@
     row.querySelectorAll(".mb-box").forEach((b, i) => b.classList.add(i === k ? "open" : "away"));
     TC.sfx("pop"); TC.confetti(120); await sleep(650);
     row.remove();
-    ans.append(h("div", { class: "mb-pop" }, "🎁✨"), h("div", { style: "font-size:4.4rem" }, e.text));
+    // 低年級: the box holds one easy word (with its picture), not a booklet sentence
+    const low = TC.kid && TC.kid.level === 1 && TC.lowAction ? TC.lowAction(e.w) : null;
+    ans.append(h("div", { class: "mb-pop" }, "🎁✨"), h("div", { style: "font-size:4.4rem" }, low ? (low.props ? low.props[0] + " " : "") + low.w : e.text));
     const r = await TC.ask({ teacher: "What's in the box?", tzh: "盒子裡是哪一句？說說看！", say: e.text, zh: e.zh, keys: e.keys, word: e.w, hideKey: true, guideKid: "把盒子裡的句子念出來", guideTeacher: "說對 → ✓（Enter）· 不會 → 🔊 聽示範" });
     if (api && api.aborted) { box.remove(); return; }
     TC.hideTalk();
-    ans.innerHTML = ""; ans.append(h("span", { class: "zh", style: "font-size:2.2rem;display:block;margin-bottom:.4rem" }, e.zh), e.text);
-    TC.sfx("coin"); await TC.speak(e.text, { human: e.w });
+    if (low) { TC.sfx("coin"); await sleep(300); } // the word was just said and acted out with Ollie
+    else {
+      ans.innerHTML = ""; ans.append(h("span", { class: "zh", style: "font-size:2.2rem;display:block;margin-bottom:.4rem" }, e.zh), e.text);
+      TC.sfx("coin"); await TC.speak(e.text, { human: e.w });
+    }
     await sleep(700); box.remove();
     TC.log({ type: "code", say: e.w, heard: r.heard || "", by: r.by || "" });
   };

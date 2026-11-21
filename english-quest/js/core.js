@@ -36,7 +36,7 @@
   if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
   { const q = +(new URLSearchParams(location.search).get("lv") || 0); if (q >= 1 && q <= 3) TC.cfg.level = q; }
   if (!(TC.cfg.level >= 1 && TC.cfg.level <= 3)) TC.cfg.level = 2;
-  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 認字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 填空說" } };
+  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 大小寫字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 答句填空" } };
   try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {}
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -485,27 +485,38 @@
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
       const kw = String(spec.word || ((spec.keys || [])[0] || [])[0] || "").trim();
+      // 低年級 (1–2 年級): no booklet sentence in the question bar. Two very easy steps:
+      //   1. big and small letters — the first letter of an easy word is shown in one case, the child taps its partner
+      //      in the other case ("H" → h, or "h" → H);  2. Ollie says the word and does its action, the child copies it.
+      let lowLine = "";
       if (TC.kid && TC.kid.level === 1 && !spec.noAbc && kw && /^[a-z]/i.test(kw)) {
-        const ans = kw, low = TC.lowAction ? TC.lowAction(kw) : { w: kw }; // 115.11.21: easy word + its own action
-        const kw2 = low.w; { const kw = kw2;
-        const L = kw[0].toUpperCase();
-        // 低年級: tap the right letter (touch) — or say it — then do the action with Ollie
-        const pool = "ABCDEFGHIJKLMNOPRSTUVWY".split("").filter((c) => c !== L);
-        const opts = [L]; while (opts.length < 3) { const c = pool.splice((Math.random() * pool.length) | 0, 1)[0]; opts.push(c); }
+        const ans = kw, low = TC.lowAction ? TC.lowAction(kw) : { w: kw }, word = low.w; // easy word + its own action
+        const L = word[0].toUpperCase(), l = L.toLowerCase();
+        // true: "H" is shown, the child finds "h". A lone "l" looks like "I", so L and I are always shown as capitals
+        const bigShown = L === "L" || L === "I" || Math.random() < 0.5;
+        const show = bigShown ? L : l, want = bigShown ? l : L;
+        // letters whose two cases look alike (C c, O o, S s…) are fine: the child still has to tell them from the other two
+        const pool = "ABCDEFGHIJKLMNOPRSTUVWY".split("").filter((c) => c !== L && !((L === "L" || L === "I") && (c === "L" || c === "I")) && !(!bigShown && (c === "L" || c === "I")));
+        const opts = [L]; while (opts.length < 3) opts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
         for (let i = opts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [opts[i], opts[j]] = [opts[j], opts[i]]; }
-        $("#kLine").innerHTML = `${low.props ? `<span class="abc-pic" aria-hidden="true">${low.props[0]}</span>` : ""}<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
+        lowLine = bigShown ? "Find the small letter!" : "Find the big letter!";
+        $("#tLine").innerHTML = esc(lowLine) + `<span class="t-zh">${bigShown ? "找出小寫字母" : "找出大寫字母"}</span>`;
+        $("#kLine").innerHTML = `${low.props ? `<span class="abc-pic" aria-hidden="true">${low.props[0]}</span>` : ""}<span class="abc-big">${esc(show)}</span><span class="abc-arrow" aria-hidden="true">➜</span>`
+          + `<span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}" aria-label="${bigShown ? "小寫" : "大寫"} ${c}">${bigShown ? c.toLowerCase() : c}</button>`).join("")}</span>`
+          + `<span class="abc-do zh">👆 ${esc(show)} 的${bigShown ? "小寫" : "大寫"}是哪一個？點點看！</span>`;
+        $("#kLine").dataset.want = want;
         $("#kLine").querySelectorAll(".abc-btn").forEach((b) => b.addEventListener("click", () => {
           TC.ac();
           if (b.dataset.c === L) { if (b.classList.contains("ok")) return; b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => (TC.actionBuddy ? TC.actionBuddy(ans) : Promise.resolve()).then(() => TC.teacherOK()), 450); }
           else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
         }));
       }
-      }
       $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
-      if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) TC.speak(spec.teacher.replace(/___/g, ""));
+      if (lowLine) TC.speak(lowLine); // 低年級: Ollie only says the letter task, not the booklet question
+      else if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) TC.speak(spec.teacher.replace(/___/g, ""));
       const wrongSeen = new Set();
       let finished = false, hintT = null, best = 0;
       const t0 = Date.now();
