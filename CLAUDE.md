@@ -24,7 +24,9 @@
   the school emblem BIG (a 3D medal that turns 360°, `TC.coin3d`) and the 3D Ollie; the teacher wants emblems large, never tiny. The other
   pages (`control.html`, `opening.html`, `quest-card.html`, `guide.html`, `teacher-cards.html`, `links.html`, `credits.html`)
   are opened by address. The printable card (`quest-card.html`) has six sticker places and NO letter boxes.
-- Prizes: all six gates = a pack of cookies and a drink; more than 100 sticker points in all = one more pack of cookies.
+- Prizes (the teacher, 2026-11-21): a child (a parent may come along) plays only the six gates of their OWN level and collects six
+  point stickers (10 / 20 / 30 points, one per gate). All six gates = a snack (點心) and a drink; a total of more than 100 points =
+  one more small snack (小點心). Say 點心／小點心 in the pages, not 餅乾.
 - More than one session may work on this branch: `git fetch` and merge before pushing, never force-push, and keep the other
   session's flow decisions unless the teacher says otherwise.
 - Artwork is original (drawn in code in `english-quest/js/art.js`); no third-party images. Ollie in real 3D (360°, a finger can

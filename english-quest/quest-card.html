@@ -7,7 +7,7 @@
 <title>Sticker Card 闖關小卡</title>
 <link rel="stylesheet" href="css/core.css">
 <style>
-  /* 闖關小卡: one card per child, two on an A4 page. Six places for the point stickers — no letter boxes
+  /* 闖關小卡: one card per child (a child plays only the six gates of their own level), two on an A4 page. Six places for the point stickers — no letter boxes
      (the Final Gate hands out the six letters) — the total, and the prize rule. */
   html{font-size:16px} html,body{overflow:auto;height:auto}
   body{background:#e9eefc;color:#14213d;user-select:text;-webkit-user-select:text;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",Fredoka,sans-serif}
@@ -48,7 +48,7 @@
 <div class="bar">
   <button onclick="print()">🖨 列印</button>
   <select id="cnt"><option value="28">28 張（14 張 A4）</option><option value="32">32 張（16 張 A4）</option><option value="36">36 張（18 張 A4）</option><option value="2">2 張（試印 1 張 A4）</option></select>
-  <span>闖關小卡：每位孩子一張（一張 A4 印兩張，沿虛線剪開）。每過一關，把老師發的<b>點數貼紙</b>貼在這一關的圓圈裡。卡上不用寫字母。<a href="index.html">← 回首頁</a></span>
+  <span>闖關小卡：每位孩子一張（一張 A4 印兩張，沿虛線剪開）。每位孩子只闖<b>自己年級的六關</b>；每過一關，把老師發的<b>點數貼紙</b>（10／20／30 points）貼在這一關的圓圈裡，一共六張。卡上不用寫字母。<a href="index.html">← 回首頁</a></span>
 </div>
 <div id="pages"></div>
 <script src="js/content.js"></script>
@@ -58,10 +58,10 @@
 <script>
   const G = TC_CONTENT.gates, esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const cell = (n) => `<div class="cell" style="--c:${G[n].color}"><div class="hd"><div class="n">${n}</div><div class="nm">${esc(G[n].city)}</div><div class="zh">${esc(G[n].zh)}</div></div>
-    <div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : ""}</div><div class="stk">點數貼紙<br>Sticker</div></div>`;
+    <div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : ""}</div><div class="stk">點數貼紙<br>10・20・30 points</div></div>`;
   const card = () => `<div class="qc"><div class="top"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="t"><div class="l1"><div class="sch">南投縣草屯鎮土城國民小學</div><div class="who">Name 姓名 <i style="width:33mm"></i> Class 班級 <i style="width:14mm"></i></div></div><h1>Tucheng English Day<span>Sticker Card 闖關小卡</span></h1></div></div>
     <div class="cells">${[1, 2, 3, 4, 5, 6].map(cell).join("")}</div>
-    <div class="foot"><div class="rule"><span><b>🍪＋🧃</b> 六關完成：餅乾 1 包＋飲料 1 瓶</span><span><b>＋🍪</b> 超過 100 點：再多 1 包餅乾</span></div><span class="sum">Total 合計 <i></i> 點</span></div></div>`;
+    <div class="foot"><div class="rule"><span><b>🍪＋🧃</b> 六關完成：點心 1 份＋飲料 1 瓶</span><span><b>＋🍪</b> 超過 100 點：再多 1 份小點心</span></div><span class="sum">Total 合計 <i></i> 點</span></div></div>`;
   const cnt = document.getElementById("cnt");
   function render() { const n = +cnt.value || 28, out = []; for (let i = 0; i < Math.ceil(n / 2); i++) out.push(`<div class="page">${card()}${card()}</div>`); document.getElementById("pages").innerHTML = out.join(""); }
   cnt.onchange = render; render();

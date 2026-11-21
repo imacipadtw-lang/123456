@@ -4,9 +4,9 @@
 
    Each card shows 10, 20 or 30 points, picked at random when the card
    appears (not two of the same in a row on this screen). The teacher then
-   hands the child a sticker with those points (children stick it on their clothes): six gates
-   → 60 to 180 points. Prizes: all six gates = a pack of cookies and a drink; more than 100 points
-   in all = one more pack of cookies.
+   hands the child a sticker with those points (it goes on the child's sticker card). A child plays
+   only the six gates of their own level: six stickers → 60 to 180 points. Prizes: all six gates = a snack
+   and a drink; a total of more than 100 points = one more small snack.
    ===================================================================== */
 (function () {
   "use strict";
@@ -79,7 +79,7 @@
         h("div", { class: "sc-sub zh" }, `${opt.name ? opt.name + "，" : ""}用手指把銀色的地方刮開！ Scratch it!`),
         win,
         h("div", { class: "sc-foot" }, h("span", {}, `GATE ${opt.gate}${opt.city ? " · " + opt.city.toUpperCase() : ""}`), h("span", { class: "tot zh", style: "visibility:hidden" }, "")),
-        h("div", { class: "sc-rule zh" }, "🍪＋🧃 六關完成：餅乾 1 包＋飲料 1 瓶　·　＋🍪 合計超過 100 點：再多 1 包餅乾"),
+        h("div", { class: "sc-rule zh" }, "🍪＋🧃 六關完成：點心 1 份＋飲料 1 瓶　·　＋🍪 總分超過 100 點：再多 1 份小點心"),
         next);
       const ov = h("div", { class: "sc-ov overlay-like" }, h("div", { class: "sc-rays" }), card);
       document.body.append(ov);
