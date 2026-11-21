@@ -18,6 +18,7 @@ const { chromium } = require("playwright");
       let cut = 0, clipped = 0, minFont = 99;
       for (const t of tiles) {
         const q = t.getBoundingClientRect();
+        if (q.width < vw * 0.12 || q.height < vh * 0.07) cut++; // a tile that is hidden or tiny is as bad as one that is cut off
         if (q.left < -0.5 || q.top < -0.5 || q.right > vw + 0.5 || q.bottom > vh + 0.5) cut++;
         // nothing inside a tile may stick out of it
         for (const c of t.querySelectorAll("h2,.zh,.go,.top,.bdg")) { const cq = c.getBoundingClientRect(); if (cq.bottom > q.bottom + 1 || cq.right > q.right + 1 || cq.top < q.top - 1) clipped++; }

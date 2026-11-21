@@ -52,6 +52,7 @@
 <script src="js/art.js"></script>
 <script src="js/emblem.js"></script>
 <script src="js/ollie3d.js"></script>
+<script src="js/campus3d.js"></script>
 <script>
   const { h, sleep } = TC;
   // the school emblem: a big 3D medal that turns through 360°
@@ -60,9 +61,12 @@
   const ollie3 = (action, cls = "") => { const d = h("div", { class: "ollie-wrap " + cls, style: "position:relative" });
     if (TC.O3 && TC.O3.supported()) setTimeout(() => { if (d.isConnected) TC.O3.mount(d, { action, spin: "auto", every: 4, zoom: action === "cheer" ? 0.95 : 1.08 }); }, 30);
     else d.innerHTML = TC.ollieSVG(action === "cheer" ? "cheer" : "talk"); return d; };
+  // our own school from the air, in 3D, turning through 360° with the six gate flags on it (js/campus3d.js)
+  const campus3 = () => { const d = h("div", { class: "campus-wrap pop", style: "position:relative;width:min(78vh,48vw);height:46vh" });
+    if (TC.Campus && TC.Campus.supported()) setTimeout(() => { if (d.isConnected) TC.Campus.mount(d, { spin: true, speed: 14, drag: true, flags: true, tilt: 36 }); }, 30); else d.style.display = "none"; return d; };
   const G = TC_CONTENT.gates, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const S = [
-    { say: "Hello! Welcome!", build: () => [ollie3("cheer", "flyin"), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
+    { say: "Hello! Welcome!", build: () => [h("div", { class: "row" }, ollie3("cheer", "flyin"), campus3()), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
     { say: "Hello! Welcome!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🚪 GATE"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▶ START"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Welcome!")),
         h("div", { class: "en" }, "Go to a gate. Your teacher presses START!"), h("div", { class: "zh2" }, "空手來就好！到任何一關，老師按 START 就開始！")] },
     { say: "Six! Games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.badgeEl(n, "gbadge"), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),

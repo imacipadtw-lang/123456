@@ -43,6 +43,11 @@
   spin him) is `english-quest/js/ollie3d.js`: our own small WebGL renderer, model and animations — no 3D library, no downloaded
   model. It carries a copy of the school emblem made by `python3 tools/embed_emblem.py` (run it again if the emblem SVG changes)
   and falls back to the flat picture where WebGL is missing. New actions go into its `A` table (and `WORD` for 低年級 words).
+- The school itself is in the game (the teacher, 2026-11-21): `english-quest/js/campus3d.js` is our own 3D model of the campus
+  (track, classroom block, footbridge, big trees, solar roof, banana grove, paddies, greenhouses, mountains) built with the kit of
+  `ollie3d.js`; it turns 360° and carries the six gate flags. It sits in the middle of the home page (and of the backup launcher)
+  with the six gates round it, and on the first slide of the opening show. It was modelled after the real layout seen in a public
+  aerial video; no frame of that video may be used. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
 - Before pushing: load every page in headless Chromium with no errors (`node tools/tests/pages.js`); play at least one gate
   end to end (`node tools/tests/e2e.js <base> <gates> <levels 1,2,3>`; with `SLOW=4500 FAKE_TTS=1` in front it taps the 高年級 word buttons,
   presses 🔊 so every model line plays, and lists the lines a computer voice had to read — there must be none);
