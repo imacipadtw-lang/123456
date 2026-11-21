@@ -4,7 +4,7 @@ const { chromium } = require("playwright");
 const base = process.argv[2] || "http://localhost:8767", secs = +(process.argv[3] || 25), lv = +(process.argv[4] || 0); // lv: 1 低年級, 2 中年級, 3 高年級 (default: what the screen remembers)
 (async () => {
   const b = await chromium.launch({ args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] }); let fail = 0;
-  for (let g = 1; g <= 6; g++) {
+  for (let g = 1; g <= 8; g++) {
     const p = await b.newPage({ viewport: { width: 1366, height: 768 }, hasTouch: true }); const errs = [];
     p.on("pageerror", (e) => errs.push(e.message));
     await p.goto(`${base}/station.html?gate=${g}${lv ? "&lv=" + lv : ""}`); await p.waitForTimeout(800);

@@ -11,14 +11,15 @@ const norm = (t) => t.toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9'
 const have = (k) => !!(TC_AUDIO[k] || TC_AUDIO[k.replace(/ /g, "-")] || TC_EL_AUDIO[k] || TC_AI_AUDIO[k]);
 const texts = new Set(), add = (t) => { if (t && /[a-z]/i.test(t)) String(t).replace(/\[[^\]]*\]/g, " ").split(/[.!?…,;:]+/).map((x) => x.trim()).filter((x) => /[a-z]/i.test(x)).forEach((x) => texts.add(x)); };
 const C = TC_CONTENT;
-for (let g = 1; g <= 6; g++) {
+for (const g of Object.keys(C.gates).map(Number)) {
   const G = C.gates[g]; add(G.teacher);
+  (G.items || []).forEach((x) => add(x.say)); // gates 7 and 8 (picture quizzes): the English word the child says
   (G.scenes || []).forEach((x) => { add(x.say); add(x.w); });
   (G.qa || []).forEach((x) => { add(x.t); add(x.say); add(x.w); }); if (G.finale) { add(G.finale.t); add(G.finale.say); add(G.finale.w); }
   (G.actions || []).forEach((x) => { add(x.say); add(x.w); }); if (G.quiet) { add(G.quiet.say); add(G.wake.say); }
   (G.words || []).forEach((x) => add(x.w)); (G.lines || []).forEach((x) => { add(x.say); add(x.w); });
   (G.pages || []).forEach((x) => { add(x.t); add(x.say); add(x.w); }); if (G.ending) add(G.ending.say);
-  const H = C.hunt[g]; add(H.text); add(H.w); // the mystery-box sentence of this gate
+  const H = C.hunt[g]; if (H) { add(H.text); add(H.w); } // the mystery-box sentence of this gate
   if (G.key === "monster") { add("What are they?"); (G.words || []).forEach((x) => add(/^(teeth|hands)$/.test(x.w) ? "They're " + x.w + "." : "It's " + (/^(water)$/.test(x.w) ? "" : /^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".")); }
   (C.sentences[g] || []).forEach((x) => add(x.s));
 }

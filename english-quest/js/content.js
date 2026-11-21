@@ -132,6 +132,65 @@ window.TC_CONTENT = {
         { w: "goodbye", img: "st-bye", t: "Class is over.", tzh: "下課了", say: "Goodbye.", zh: "再見", no: "(5)-20", keys: [["goodbye", "bye"]] }
       ],
       ending: { say: "Have a nice day!", zh: "祝你有美好的一天", no: "(5)-22" }
+    },
+
+    /* ============ Gates 7 and 8 — picture quizzes (the teacher, 2026-11-21): international education ============
+       Not from the booklet. Super easy: look at the picture, tap the answer, then say the English word.
+       Chinese text carries 注音: [text, "one syllable per Chinese character, separated by spaces"] — punctuation and
+       Latin letters take none (tools/tests/zhuyin.js checks the count). Words whose reading is argued about in Taiwan
+       (一, 不, 和, 法國, 故事, 個 …) are avoided on purpose.
+       items: pic = the big picture · q = the question (gate-wide G.q when missing) · opts[0] is ALWAYS the right answer
+       (the game shuffles) · opt = { zh: [text, 注音], en, pic?, big? (text shown instead of a picture) } ·
+       say = the English the child says after tapping · fact = one short thing to learn. */
+    /* ---------------- Gate 7 · Holiday Party — HOLIDAYS ---------------- */
+    7: {
+      key: "quiz", title: "Holiday Party", zh: "節日派對", city: "New York", color: "#ff6b6b",
+      genre: "節日 Holidays", passport: "國際教育：世界的節日（圖片配節日名稱）",
+      teacher: "What holiday is it?", tzh: "這是什麼節日？", askFirst: true, pick: 6,   // askFirst: Ollie asks it when the picture appears
+      q: ["這是什麼節日？", "ㄓㄜˋ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄐㄧㄝˊ ㄖˋ"],
+      items: [
+        { id: "christmas", pic: "hol-christmas", say: "Christmas", w: "christmas", zh: ["聖誕節", "ㄕㄥˋ ㄉㄢˋ ㄐㄧㄝˊ"] },
+        { id: "halloween", pic: "hol-halloween", say: "Halloween", w: "halloween", zh: ["萬聖節", "ㄨㄢˋ ㄕㄥˋ ㄐㄧㄝˊ"] },
+        { id: "thanksgiving", pic: "hol-thanksgiving", say: "Thanksgiving", w: "thanksgiving", zh: ["感恩節", "ㄍㄢˇ ㄣ ㄐㄧㄝˊ"] },
+        { id: "easter", pic: "hol-easter", say: "Easter", w: "easter", zh: ["復活節", "ㄈㄨˋ ㄏㄨㄛˊ ㄐㄧㄝˊ"] },
+        { id: "newyear", pic: "hol-newyear", say: "Lunar New Year", w: "year", zh: ["農曆新年", "ㄋㄨㄥˊ ㄌㄧˋ ㄒㄧㄣ ㄋㄧㄢˊ"] },
+        { id: "moon", pic: "hol-moon", say: "Moon Festival", w: "moon", zh: ["中秋節", "ㄓㄨㄥ ㄑㄧㄡ ㄐㄧㄝˊ"] },
+        { id: "dragonboat", pic: "hol-dragonboat", say: "Dragon Boat Festival", w: "dragon", zh: ["端午節", "ㄉㄨㄢ ㄨˇ ㄐㄧㄝˊ"] },
+        { id: "mother", pic: "hol-mother", say: "Mother's Day", w: "mother", zh: ["母親節", "ㄇㄨˇ ㄑㄧㄣ ㄐㄧㄝˊ"] }
+      ]
+    },
+
+    /* ---------------- Gate 8 · Hello, America! — AMERICAN CULTURE AND STORIES ---------------- */
+    8: {
+      key: "quiz", title: "Hello, America!", zh: "美國文化小學堂", city: "Washington", color: "#3d7bff",
+      genre: "國際教育 World", passport: "國際教育：美國的文化和故事（中文題目加注音）",
+      teacher: "Say it in English!", tzh: "用英文說說看！", pick: 6,   // the questions themselves are Chinese (read by the host); Ollie asks for the English word
+      items: [
+        { id: "flag", q: ["美國的國旗在哪裡？", "ㄇㄟˇ ㄍㄨㄛˊ ˙ㄉㄜ ㄍㄨㄛˊ ㄑㄧˊ ㄗㄞˋ ㄋㄚˇ ㄌㄧˇ"], say: "America", w: "america",
+          opts: [{ pic: "usa-flag", zh: ["美國", "ㄇㄟˇ ㄍㄨㄛˊ"], en: "America" }, { pic: "flag-japan", zh: ["日本", "ㄖˋ ㄅㄣˇ"], en: "Japan" }, { pic: "flag-germany", zh: ["德國", "ㄉㄜˊ ㄍㄨㄛˊ"], en: "Germany" }],
+          fact: ["America 就是美國！", "ㄐㄧㄡˋ ㄕˋ ㄇㄟˇ ㄍㄨㄛˊ"] },
+        { id: "stars", pic: "usa-flag", q: ["美國國旗上有幾顆星？", "ㄇㄟˇ ㄍㄨㄛˊ ㄍㄨㄛˊ ㄑㄧˊ ㄕㄤˋ ㄧㄡˇ ㄐㄧˇ ㄎㄜ ㄒㄧㄥ"], say: "fifty", w: "fifty",
+          opts: [{ big: "50", zh: ["五十", "ㄨˇ ㄕˊ"], en: "fifty" }, { big: "5", zh: ["五", "ㄨˇ"], en: "five" }, { big: "10", zh: ["十", "ㄕˊ"], en: "ten" }],
+          fact: ["五十顆星代表五十州。", "ㄨˇ ㄕˊ ㄎㄜ ㄒㄧㄥ ㄉㄞˋ ㄅㄧㄠˇ ㄨˇ ㄕˊ ㄓㄡ"] },
+        { id: "bus", q: ["美國的校車是什麼顏色？", "ㄇㄟˇ ㄍㄨㄛˊ ˙ㄉㄜ ㄒㄧㄠˋ ㄔㄜ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄧㄢˊ ㄙㄜˋ"], say: "yellow", w: "yellow",
+          opts: [{ pic: "bus-yellow", zh: ["黃色", "ㄏㄨㄤˊ ㄙㄜˋ"], en: "yellow" }, { pic: "bus-red", zh: ["紅色", "ㄏㄨㄥˊ ㄙㄜˋ"], en: "red" }, { pic: "bus-blue", zh: ["藍色", "ㄌㄢˊ ㄙㄜˋ"], en: "blue" }],
+          fact: ["黃色最顯眼，大家都看得到。", "ㄏㄨㄤˊ ㄙㄜˋ ㄗㄨㄟˋ ㄒㄧㄢˇ ㄧㄢˇ ㄉㄚˋ ㄐㄧㄚ ㄉㄡ ㄎㄢˋ ˙ㄉㄜ ㄉㄠˋ"] },
+        { id: "eagle", q: ["美國的國鳥是什麼？", "ㄇㄟˇ ㄍㄨㄛˊ ˙ㄉㄜ ㄍㄨㄛˊ ㄋㄧㄠˇ ㄕˋ ㄕㄣˊ ˙ㄇㄜ"], say: "eagle", w: "eagle",
+          opts: [{ pic: "usa-eagle", zh: ["白頭海鵰", "ㄅㄞˊ ㄊㄡˊ ㄏㄞˇ ㄉㄧㄠ"], en: "eagle" }, { pic: "bird-penguin", zh: ["企鵝", "ㄑㄧˋ ㄜˊ"], en: "penguin" }, { pic: "duck", zh: ["鴨子", "ㄧㄚ ˙ㄗ"], en: "duck" }],
+          fact: ["白頭海鵰飛得又高又快。", "ㄅㄞˊ ㄊㄡˊ ㄏㄞˇ ㄉㄧㄠ ㄈㄟ ˙ㄉㄜ ㄧㄡˋ ㄍㄠ ㄧㄡˋ ㄎㄨㄞˋ"] },
+        { id: "turkey", q: ["感恩節大家吃什麼？", "ㄍㄢˇ ㄣ ㄐㄧㄝˊ ㄉㄚˋ ㄐㄧㄚ ㄔ ㄕㄣˊ ˙ㄇㄜ"], say: "turkey", w: "turkey",
+          opts: [{ pic: "food-turkey", zh: ["火雞", "ㄏㄨㄛˇ ㄐㄧ"], en: "turkey" }, { pic: "food-zongzi", zh: ["粽子", "ㄗㄨㄥˋ ˙ㄗ"], en: "rice dumpling" }, { pic: "food-mooncake", zh: ["月餅", "ㄩㄝˋ ㄅㄧㄥˇ"], en: "mooncake" }],
+          fact: ["感恩節要謝謝家人跟朋友。", "ㄍㄢˇ ㄣ ㄐㄧㄝˊ ㄧㄠˋ ㄒㄧㄝˋ ˙ㄒㄧㄝ ㄐㄧㄚ ㄖㄣˊ ㄍㄣ ㄆㄥˊ ㄧㄡˇ"] },
+        { id: "johnny", pic: "usa-johnny", story: true, q: ["強尼蘋果籽到處種什麼樹？", "ㄑㄧㄤˊ ㄋㄧˊ ㄆㄧㄥˊ ㄍㄨㄛˇ ㄗˇ ㄉㄠˋ ㄔㄨˋ ㄓㄨㄥˋ ㄕㄣˊ ˙ㄇㄜ ㄕㄨˋ"], say: "apple tree", w: "apple",
+          opts: [{ pic: "tree-apple", zh: ["蘋果樹", "ㄆㄧㄥˊ ㄍㄨㄛˇ ㄕㄨˋ"], en: "apple tree" }, { pic: "tree-banana", zh: ["香蕉樹", "ㄒㄧㄤ ㄐㄧㄠ ㄕㄨˋ"], en: "banana tree" }, { pic: "tree-coconut", zh: ["椰子樹", "ㄧㄝˊ ˙ㄗ ㄕㄨˋ"], en: "coconut tree" }],
+          fact: ["強尼是真的人，他愛種蘋果樹。", "ㄑㄧㄤˊ ㄋㄧˊ ㄕˋ ㄓㄣ ˙ㄉㄜ ㄖㄣˊ ㄊㄚ ㄞˋ ㄓㄨㄥˋ ㄆㄧㄥˊ ㄍㄨㄛˇ ㄕㄨˋ"] },
+        { id: "liberty", pic: "usa-liberty", q: ["自由女神手上拿著什麼？", "ㄗˋ ㄧㄡˊ ㄋㄩˇ ㄕㄣˊ ㄕㄡˇ ㄕㄤˋ ㄋㄚˊ ˙ㄓㄜ ㄕㄣˊ ˙ㄇㄜ"], say: "torch", w: "torch",
+          opts: [{ pic: "thing-torch", zh: ["火炬", "ㄏㄨㄛˇ ㄐㄩˋ"], en: "torch" }, { pic: "thing-umbrella", zh: ["雨傘", "ㄩˇ ㄙㄢˇ"], en: "umbrella" }, { pic: "thing-icecream", zh: ["冰淇淋", "ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ"], en: "ice cream" }],
+          fact: ["自由女神在紐約。", "ㄗˋ ㄧㄡˊ ㄋㄩˇ ㄕㄣˊ ㄗㄞˋ ㄋㄧㄡˇ ㄩㄝ"] },
+        { id: "treat", pic: "usa-treat", q: ["萬聖節要糖果說什麼？", "ㄨㄢˋ ㄕㄥˋ ㄐㄧㄝˊ ㄧㄠˋ ㄊㄤˊ ㄍㄨㄛˇ ㄕㄨㄛ ㄕㄣˊ ˙ㄇㄜ"], say: "Trick or treat!", w: "treat",
+          opts: [{ big: "Trick or treat!", zh: ["要糖果", "ㄧㄠˋ ㄊㄤˊ ㄍㄨㄛˇ"], en: "" }, { big: "Good night!", zh: ["晚安", "ㄨㄢˇ ㄢ"], en: "" }, { big: "Happy New Year!", zh: ["新年快樂", "ㄒㄧㄣ ㄋㄧㄢˊ ㄎㄨㄞˋ ㄌㄜˋ"], en: "" }],
+          fact: ["說了就有糖果吃！", "ㄕㄨㄛ ˙ㄌㄜ ㄐㄧㄡˋ ㄧㄡˇ ㄊㄤˊ ㄍㄨㄛˇ ㄔ"] }
+      ]
     }
   }
 };
@@ -168,7 +227,7 @@ window.TC_CONTENT.sentences = {
 window.TC_CONTENT.greetings = {
   hi: { teacher: "Hi, everyone!", tzh: "大家好！", no: "(1)-5", say: "Hi, Ollie!", zh: "跟歐力打招呼", keys: [["hi", "hello"]], word: "hi" }
 };
-window.TC_CONTENT.greetingOrder = { 1: "hi", 2: "hi", 3: "hi", 4: "hi", 5: "hi", 6: "hi" };
+window.TC_CONTENT.greetingOrder = { 1: "hi", 2: "hi", 3: "hi", 4: "hi", 5: "hi", 6: "hi", 7: "hi", 8: "hi" };
 
 /* One list of "host asks → child says" lines per gate, used by the 📋 popup, the guide and the gate host cards,
    so the printed scripts always match the games.  row = { t, tzh, say, word, zh, no, kind: "hello" | "q" | "extra" | "last" } */
@@ -187,7 +246,8 @@ window.TC_SCRIPT = function (gate) {
   if (G.key === "monster") G.words.forEach((x) => q({ t: /^(teeth|hands)$/.test(x.w) ? "What are they?" : G.teacher, tzh: /^(teeth|hands)$/.test(x.w) ? "這些是什麼？" : G.tzh, say: itIs(x.w), word: x.w, zh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", no: x.no }));
   if (G.key === "chant") G.lines.forEach((x) => q({ t: x.say.replace(new RegExp(x.w, "i"), "___"), tzh: x.zh, say: x.say, word: x.w, zh: "唸最後一個字並做動作", no: x.no }));
   if (G.key === "story") { G.pages.forEach((x) => q({ t: x.t || G.teacher, tzh: x.tzh || G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.ending.say, tzh: G.ending.zh, say: "（全班一起說）", word: "", zh: "故事結束，大家一起說", no: G.ending.no }); }
+  if (G.key === "quiz") G.items.forEach((x) => { const o = x.opts ? x.opts[0] : x; q({ t: x.q ? x.q[0] : G.tzh, tzh: "點圖選答案：" + o.zh[0], say: x.say, word: x.w, zh: (x.fact ? x.fact[0] : o.zh[0]), no: "" }); });
   const H = C.hunt[gate];
-  rows.push({ kind: "extra", t: "What's in the box?", tzh: "神秘禮物盒：盒子裡是哪一句？", say: H.text + "（或本關其他句子）", word: H.w, zh: "神秘禮物盒：" + H.zh, no: "" });
+  if (H) rows.push({ kind: "extra", t: "What's in the box?", tzh: "神秘禮物盒：盒子裡是哪一句？", say: H.text + "（或本關其他句子）", word: H.w, zh: "神秘禮物盒：" + H.zh, no: "" });
   return rows;
 };

@@ -220,7 +220,7 @@
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
   const out = document.getElementById("scripts");
   const bold = (s, keys) => { let r = esc(s); (keys || []).flat().forEach((k) => { r = r.replace(new RegExp("\\b(" + k.replace(/[.*+?^${}()|[\]\\]/g, "") + "\\w*)", "i"), "<b>$1</b>"); }); return r; };
-  for (let g = 1; g <= 6; g++) {
+  for (let g = 1; g <= 8; g++) {
     const G = C.gates[g], LBL = { hello: "暖身", q: "", extra: "神秘禮物盒", last: "最後一題" };
     const rows = TC_SCRIPT(g).map((r) => `<tr${r.kind === "last" ? ' style="background:#fff8e1"' : ""}><td>${LBL[r.kind] ? "<b>" + LBL[r.kind] + "</b><br>" : ""}${esc(r.t)}<br><small>${esc(r.tzh || "")}</small></td><td class="en">${bold(r.say, r.word.split(" "))}</td><td class="en"><b>${esc(r.word.split(" ").join(" / "))}</b></td><td><small>${esc(r.zh)}${r.no ? "　（" + esc(r.no) + "）" : ""}</small></td></tr>`).join("");
     out.insertAdjacentHTML("beforeend", `<h3><span class="g" style="background:${G.color}">${g}</span> ${esc(G.title)} · ${esc(G.zh)} · ${esc(G.city)} <small style="font-weight:400;color:#556">（${esc(G.passport)}）</small></h3>

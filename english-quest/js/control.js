@@ -3,7 +3,7 @@
   { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; document.body.append(b); }
   "use strict";
   const { h, $, sleep } = TC;
-  TC.gate = 7;
+  TC.gate = 9; // the Final Gate (gates 1–8 are the game gates); odd, so Ollie speaks in the same voice as before
   const SECRET = TC_CONTENT.secret.toUpperCase();
   const GATES = [1, 2, 3, 4, 5, 6].map((g) => Object.assign({ n: g }, TC_CONTENT.gates[g]));
   TC.setAIPill();

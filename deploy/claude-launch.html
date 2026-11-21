@@ -37,38 +37,38 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
 .lv button[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 calc(var(--u) * .45) color-mix(in srgb, var(--accent) 28%, transparent) }
 .lv button[aria-checked="true"] b::before { content: "✓ " }
 .lv button:focus-visible { outline: calc(var(--u) * .4) solid var(--accent); outline-offset: 2px }
-.gates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.8); min-height: 0 }
-@media (orientation: portrait) { .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)) } }
+.gates { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.8); min-height: 0 }
+@media (orientation: portrait) { .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)) } }
 /* a phone held upright: the tiles are tall and narrow, so the badge sits above the words */
 @media (max-aspect-ratio: 3/5) { .gate { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto auto; justify-items: center; align-content: center; text-align: center } }
-.gate { --c: var(--accent); display: grid; grid-template-columns: calc(var(--u) * 21) minmax(0, 1fr); gap: calc(var(--u) * 1.2); align-items: center; min-width: 0; min-height: 0; overflow: hidden; text-decoration: none; color: inherit;
+.gate { --c: var(--accent); display: grid; grid-template-columns: calc(var(--u) * 15) minmax(0, 1fr); gap: calc(var(--u) * 1.2); align-items: center; min-width: 0; min-height: 0; overflow: hidden; text-decoration: none; color: inherit;
   background: var(--panel); border: 1px solid var(--line); border-top: calc(var(--u) * .7) solid var(--c); border-radius: calc(var(--u) * 2.2); padding: calc(var(--u) * 1.2) calc(var(--u) * 1.5) calc(var(--u) * 1.2) calc(var(--u) * 1);
   transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation }
 .gate:hover, .gate:focus-visible { transform: translateY(calc(var(--u) * -.3)); box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2.6) rgba(20, 40, 90, .16); outline: none }
 .gate:focus-visible { box-shadow: 0 0 0 calc(var(--u) * .45) var(--c) }
-.gate .bdg { width: calc(var(--u) * 21); height: calc(var(--u) * 24); line-height: 0; display: grid; place-items: center }
+.gate .bdg { width: calc(var(--u) * 15); height: calc(var(--u) * 17); line-height: 0; display: grid; place-items: center }
 .gate .bdg svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * .5) calc(var(--u) * .8) rgba(20, 40, 90, .25)) }
 .gate .tx { min-width: 0 }
 .gate .no { font-family: var(--display); font-size: calc(var(--u) * 2.5); letter-spacing: .06em; color: var(--muted); white-space: nowrap }
-.gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 4.2); margin: calc(var(--u) * .6) 0 calc(var(--u) * .4); line-height: 1.1 }
-.gate .zh { font-size: calc(var(--u) * 2.8); color: var(--muted); line-height: 1.25 }
-/* The school from the air (js/campus3d.js) turns through 360° in the middle and the six gates stand round it; its six flags
-   carry the gate numbers. Without WebGL the plain 3 × 2 grid above is used. */
+.gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 3.4); margin: calc(var(--u) * .6) 0 calc(var(--u) * .4); line-height: 1.1 }
+.gate .zh { font-size: calc(var(--u) * 2.4); color: var(--muted); line-height: 1.25 }
+/* The school from the air (js/campus3d.js) turns through 360° in the middle and the eight gates stand round it; its eight flags
+   carry the gate numbers. Without WebGL the plain 4 × 2 grid above is used. */
 .campus { display: none; position: relative; min-width: 0; min-height: 0 }
-.has-campus .campus { display: block; grid-column: 2; grid-row: 1 / 4 }
-.has-campus .gates { grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr) minmax(0, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)) }
-.has-campus .gate[data-gate="1"] { grid-area: 1 / 1 } .has-campus .gate[data-gate="2"] { grid-area: 2 / 1 } .has-campus .gate[data-gate="3"] { grid-area: 3 / 1 }
-.has-campus .gate[data-gate="4"] { grid-area: 1 / 3 } .has-campus .gate[data-gate="5"] { grid-area: 2 / 3 } .has-campus .gate[data-gate="6"] { grid-area: 3 / 3 }
-.has-campus .gate { grid-template-columns: calc(var(--u) * 15) minmax(0, 1fr); padding: calc(var(--u) * .8) calc(var(--u) * 1.2) calc(var(--u) * .8) calc(var(--u) * .8) }
-.has-campus .gate .bdg { width: calc(var(--u) * 15); height: calc(var(--u) * 17) }
-.has-campus .gate .no { font-size: calc(var(--u) * 2.2) }
-.has-campus .gate h2 { font-size: calc(var(--u) * 3.3); margin: calc(var(--u) * .4) 0 calc(var(--u) * .2) }
-.has-campus .gate .zh { font-size: calc(var(--u) * 2.3) }
+.has-campus .campus { display: block; grid-column: 2; grid-row: 1 / 5 }
+.has-campus .gates { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: calc(var(--u) * 1.3) calc(var(--u) * 1.8) }
+.has-campus .gate[data-gate="1"] { grid-area: 1 / 1 } .has-campus .gate[data-gate="2"] { grid-area: 2 / 1 } .has-campus .gate[data-gate="3"] { grid-area: 3 / 1 } .has-campus .gate[data-gate="4"] { grid-area: 4 / 1 }
+.has-campus .gate[data-gate="5"] { grid-area: 1 / 3 } .has-campus .gate[data-gate="6"] { grid-area: 2 / 3 } .has-campus .gate[data-gate="7"] { grid-area: 3 / 3 } .has-campus .gate[data-gate="8"] { grid-area: 4 / 3 }
+.has-campus .gate { grid-template-columns: calc(var(--u) * 12.5) minmax(0, 1fr); gap: calc(var(--u) * 1); padding: calc(var(--u) * .4) calc(var(--u) * 1.2) calc(var(--u) * .4) calc(var(--u) * .7) }
+.has-campus .gate .bdg { width: calc(var(--u) * 12.5); height: calc(var(--u) * 14.2) }
+.has-campus .gate .no { font-size: calc(var(--u) * 2.1) }
+.has-campus .gate h2 { font-size: calc(var(--u) * 3.1); margin: calc(var(--u) * .3) 0 calc(var(--u) * .15) }
+.has-campus .gate .zh { font-size: calc(var(--u) * 2.2) }
 .flag-link{position:absolute;left:0;top:0;z-index:2;width:calc(var(--u) * 5.6);height:calc(var(--u) * 5.6);border-radius:50%;display:grid;place-items:center;text-decoration:none;color:transparent;font-size:1px;cursor:pointer;touch-action:manipulation}
 .flag-link:hover,.flag-link:focus-visible{box-shadow:0 0 0 calc(var(--u) * .5) #fff,0 0 calc(var(--u) * 2.4) #fff;outline:none}
 .campus .cap { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); white-space: nowrap; font-size: calc(var(--u) * 2); font-weight: 700; color: var(--muted); pointer-events: none }
 @media (orientation: portrait) {
-  .has-campus .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1.9fr) repeat(3, minmax(0, 1fr)) }
+  .has-campus .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1.9fr) repeat(4, minmax(0, 1fr)) }
   .has-campus .campus { grid-column: 1 / 3; grid-row: 1 }
   .has-campus .gate[data-gate] { grid-area: auto }
 }
@@ -93,7 +93,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     <button type="button" role="radio" data-l="3"><b>高年級</b><span>5–6 年級 · 點字填空再念</span></button>
   </div>
 
-  <div class="gates" id="gates" aria-label="六關"><div class="campus" id="campus"><span class="cap">土城國小校園 · 點旗子 1–6 就進入那一關 · 用手指左右滑可以轉 360 度</span></div></div>
+  <div class="gates" id="gates" aria-label="八關"><div class="campus" id="campus"><span class="cap">土城國小校園 · 點旗子 1–8 就進入那一關 · 用手指左右滑可以轉 360 度</span></div></div>
 </div>
 
 <script src="js/content.js"></script>
@@ -103,12 +103,12 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
 <script src="js/campus3d.js"></script>
 <script>
 (function () {
-  // Deep links: this page's URL + #gate-1 … #gate-6, #final, #opening opens that screen directly.
+  // Deep links: this page's URL + #gate-1 … #gate-8, #final, #opening opens that screen directly.
   // the level (低／中／高年級) is chosen here, like on the main site's home page; every gate link carries it as ?lv=
   function saved() { try { var v = +localStorage.getItem("tc_launch_lv"); return v >= 1 && v <= 3 ? v : 0; } catch (e) { return 0; } }
   function route() {
     var h = (location.hash || "").slice(1);
-    var m = h.match(/^gate-([1-6])$/);
+    var m = h.match(/^gate-([1-8])$/);
     if (m) { location.replace("station.html?gate=" + m[1] + (saved() ? "&lv=" + saved() : "") + "#gate-" + m[1]); return true; }
     if (h === "final") { location.replace("control.html"); return true; }
     if (h === "opening") { location.replace("opening.html"); return true; }
@@ -126,10 +126,10 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
   // the six flags on the model are links too: a round button sits on every flag and follows it as the campus turns
   function campusFlags(ctl, hrefOf) {
     var host = ctl.el.parentElement, links = [];
-    for (var n = 1; n <= 6; n++) { var a = document.createElement("a"); a.className = "flag-link"; a.dataset.gate = n; a.textContent = n; a.setAttribute("aria-label", "第 " + n + " 關"); a.href = hrefOf(n); host.append(a); links.push(a); }
+    for (var n = 1; n <= 8; n++) { var a = document.createElement("a"); a.className = "flag-link"; a.dataset.gate = n; a.textContent = n; a.setAttribute("aria-label", "第 " + n + " 關"); a.href = hrefOf(n); host.append(a); links.push(a); }
     ctl.onFrame(function () { links.forEach(function (a, i) { var q = ctl.project(i + 1); a.style.display = q && q.visible ? "" : "none"; if (q) a.style.transform = "translate(" + q.x.toFixed(1) + "px," + q.y.toFixed(1) + "px) translate(-50%,-50%)"; a.href = hrefOf(i + 1); }); });
   }
-  try { if (TC.Campus && TC.Campus.supported()) { document.querySelector(".wrap").classList.add("has-campus"); var cc = TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；點旗子 1–6 進入那一關" });
+  try { if (TC.Campus && TC.Campus.supported()) { document.querySelector(".wrap").classList.add("has-campus"); var cc = TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；點旗子 1–8 進入那一關" });
     if (cc && cc.ok) campusFlags(cc, function (n) { return "station.html?gate=" + n + "&lv=" + (saved() || 2) + "#gate-" + n; }); } } catch (e) {}
 
   var box = document.getElementById("gates");
@@ -143,9 +143,9 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     var z = document.createElement("div"); z.className = "zh"; z.textContent = zh;
     tx.append(n, t, z); a.append(img, tx); box.append(a);
   }
-  // the six gates — the only links on this page; the list comes from the same content file the games use
+  // the eight gates — the only links on this page; the list comes from the same content file the games use
   var C = (window.TC_CONTENT && TC_CONTENT.gates) || {};
-  [1, 2, 3, 4, 5, 6].forEach(function (n) {
+  [1, 2, 3, 4, 5, 6, 7, 8].forEach(function (n) {
     if (!C[n]) return;
     var b = ""; try { if (window.TC && TC.badgeSVG) b = TC.badgeSVG(n); } catch (e) {}
     tile("station.html?gate=" + n + "#gate-" + n, C[n].color, b, "GATE " + n, C[n].title, C[n].zh + " · " + C[n].city, n);

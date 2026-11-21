@@ -31,7 +31,7 @@ const { chromium } = require("playwright");
       const hero = document.querySelector(".hero").getBoundingClientRect();
       return { tiles: tiles.length, links: document.querySelectorAll("a[href]:not(.flag-link)").length, flags: document.querySelectorAll("a.flag-link").length, cut, clipped, minFont: Math.round(minFont), scroll: document.documentElement.scrollHeight > vh + 1 || document.documentElement.scrollWidth > vw + 1, lvCut: lv, heroCut: hero.right > vw + 0.5, textCut };
     });
-    const ok = r.tiles === 6 && r.links === 6 && !r.cut && !r.clipped && !r.scroll && !r.lvCut && !r.heroCut && !r.textCut && !errs.length;
+    const ok = r.tiles === 8 && r.links === 8 && !r.cut && !r.clipped && !r.scroll && !r.lvCut && !r.heroCut && !r.textCut && !errs.length;
     if (!ok) bad++;
     console.log((ok ? "ok   " : "FAIL ") + w + "x" + h + " " + JSON.stringify(r) + (errs.length ? " " + errs[0] : ""));
     if (process.argv[3] && (w === 1920 || w === 390 || w === 1366)) await p.screenshot({ path: process.argv[3] + "-" + w + ".png" });

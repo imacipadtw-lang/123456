@@ -1,7 +1,7 @@
 /* End-to-end check: a guest plays a gate from the scan screen to the stamp (teacher presses ✓ for every answer).
    usage: node tools/tests/e2e.js [baseUrl] [gates e.g. 1,2,3] [levels e.g. 1,2]   (needs a static server on english-quest/) */
 const { chromium } = require("playwright");
-const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3] || "1,2,3,4,5,6").split(",").map(Number), levels = (process.argv[4] || "1,2").split(",").map(Number);
+const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3] || "1,2,3,4,5,6,7,8").split(",").map(Number), levels = (process.argv[4] || "1,2").split(",").map(Number);
 (async () => {
   const b = await chromium.launch({ args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", "--autoplay-policy=no-user-gesture-required"] });
   let fail = 0;

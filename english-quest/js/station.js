@@ -9,13 +9,13 @@
   const ROOM = window.TC_CLASSROOM || null;
   if (ROOM) document.body.classList.add("room");
   let gate = (ROOM && +ROOM.gate) || +qs.get("gate") || +hashGate || +(() => { try { return localStorage.getItem("tc_gate"); } catch (e) { return 0; } })() || 1;
-  if (!(gate >= 1 && gate <= 6)) gate = 1;
+  if (!TC_CONTENT.gates[gate]) gate = 1;
   try { localStorage.setItem("tc_gate", gate); } catch (e) {}
   TC.gate = gate;
   const G = TC_CONTENT.gates[gate];
   const game = TC.games[G.key];
   const SECRET = TC_CONTENT.secret.toUpperCase();
-  const LETTER = SECRET[gate - 1];
+  const LETTER = SECRET[gate - 1] || ""; // gates 7 and 8 (bonus quizzes) carry no letter of the secret word
   document.documentElement.style.setProperty("--gate", G.color);
   document.title = `Gate ${gate} · ${G.title}`;
 
@@ -199,16 +199,16 @@
     const ov = h("div", { class: "overlay" },
       h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date}`))),
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
-      h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
+      h("div", { class: "code-reveal", style: LETTER ? "" : "display:none" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `記住字母 ${LETTER}！闖完六關，到終點登機門排出密碼 · 把 ${res.points || 0} 點貼紙貼在闖關小卡上！`),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, LETTER ? `記住字母 ${LETTER}！闖完六關，到終點登機門排出密碼 · 把 ${res.points || 0} 點貼紙貼在闖關小卡上！` : `加分關完成！把 ${res.points || 0} 點貼紙貼在闖關小卡上！`),
       h("div", { class: "res-actions" }, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
     TC.sfx("stamp"); TC.ollie("cheer");
     // rolling decoder
     const AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i = 0; i < 8; i++) { letter.textContent = AZ[(Math.random() * 26) | 0]; TC.sfx("tick"); await sleep(60 + i * 8); }
+    if (LETTER) for (let i = 0; i < 8; i++) { letter.textContent = AZ[(Math.random() * 26) | 0]; TC.sfx("tick"); await sleep(60 + i * 8); }
     letter.classList.remove("roll"); letter.textContent = LETTER; TC.sfx("levelup"); TC.confetti(200);
     TC.log({ type: "complete", stars, letter: LETTER, lines: TC.stats.lines });
     await sleep(500);

@@ -7,7 +7,7 @@
 <title>Tucheng English Day</title>
 <link rel="stylesheet" href="css/core.css">
 <style>
-  /* The home page is ONE screen: school name, the three levels, and the six gates — nothing else (no tools,
+  /* The home page is ONE screen: school name, the three levels, and the eight gates — nothing else (no tools,
      no other links). Nothing scrolls and nothing is cut off: every size is in --u, a unit that follows the
      smaller of the screen's height and width. */
   :root{--u:min(1vh,.56vw)}
@@ -36,54 +36,54 @@
   .lv-home button[aria-checked=true]{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 calc(var(--u) * .6) 0 #0b7a5c}
   .lv-home button[aria-checked=true] b::before{content:"✓ "}
   .lv-home button:active{transform:translateY(calc(var(--u) * .4));box-shadow:0 calc(var(--u) * .2) 0 #121c42}
-  /* six tiles: 3 × 2 on a wide screen, 2 × 3 on a tall one */
-  .gates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:calc(var(--u) * 1.8);min-height:0}
-  @media (orientation:portrait){.gates{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr))}}
+  /* eight tiles: 4 × 2 on a wide screen, 2 × 4 on a tall one */
+  .gates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:calc(var(--u) * 1.8);min-height:0}
+  @media (orientation:portrait){.gates{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr))}}
   /* a phone held upright: the tiles are tall and narrow, so the badge sits above the words */
   @media (max-aspect-ratio:3/5){a.gate{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto;justify-items:center;align-content:center;text-align:center}
     a.gate .top{justify-content:center}}
-  a.gate{--c:#ffc83d;display:grid;grid-template-columns:calc(var(--u) * 21) minmax(0,1fr);align-items:center;gap:calc(var(--u) * 1.2);min-width:0;min-height:0;overflow:hidden;text-decoration:none;color:#fff;
+  a.gate{--c:#ffc83d;display:grid;grid-template-columns:calc(var(--u) * 15) minmax(0,1fr);align-items:center;gap:calc(var(--u) * 1.2);min-width:0;min-height:0;overflow:hidden;text-decoration:none;color:#fff;
     padding:calc(var(--u) * 1.2) calc(var(--u) * 1.6) calc(var(--u) * 1.2) calc(var(--u) * 1);border-radius:calc(var(--u) * 2.6);border:calc(var(--u) * .3) solid color-mix(in srgb,var(--c) 60%,transparent);
     background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,#142460),#0f1a47 70%);box-shadow:0 calc(var(--u) * .7) 0 rgba(4,10,35,.75),0 calc(var(--u) * 1.6) calc(var(--u) * 2.6) rgba(0,0,0,.35),inset 0 calc(var(--u) * .16) 0 rgba(255,255,255,.22);
     transition:transform .15s,box-shadow .15s;touch-action:manipulation}
   a.gate:hover{transform:translateY(calc(var(--u) * -.4));box-shadow:0 calc(var(--u) * 1.1) 0 rgba(4,10,35,.75),0 0 calc(var(--u) * 3.4) color-mix(in srgb,var(--c) 55%,transparent),inset 0 calc(var(--u) * .16) 0 rgba(255,255,255,.22)}
   a.gate:active{transform:translateY(calc(var(--u) * .4));box-shadow:0 calc(var(--u) * .2) 0 rgba(4,10,35,.75)}
-  a.gate .bdg{width:calc(var(--u) * 21);height:calc(var(--u) * 24);line-height:0;display:grid;place-items:center}
+  a.gate .bdg{width:calc(var(--u) * 15);height:calc(var(--u) * 17);line-height:0;display:grid;place-items:center}
   a.gate .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 calc(var(--u) * .8) calc(var(--u) * 1) rgba(0,0,0,.45))}
   a.gate .tx{min-width:0}
   a.gate .top{display:flex;align-items:center;gap:calc(var(--u) * 1);min-width:0}
   a.gate .n{width:calc(var(--u) * 5.4);height:calc(var(--u) * 5.4);border-radius:calc(var(--u) * 1.4);background:var(--c);color:#0a1633;display:grid;place-items:center;font-weight:700;font-size:calc(var(--u) * 3.3);flex:none;box-shadow:0 calc(var(--u) * .3) 0 rgba(0,0,0,.35)}
   a.gate .th{font-size:calc(var(--u) * 2.5);font-weight:700;color:var(--c);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  a.gate h2{margin:calc(var(--u) * .9) 0 calc(var(--u) * .3);font-size:calc(var(--u) * 4.3);line-height:1.08}
-  a.gate .zh{font-size:calc(var(--u) * 2.8);color:#fff;font-weight:700;line-height:1.2}
+  a.gate h2{margin:calc(var(--u) * .7) 0 calc(var(--u) * .3);font-size:calc(var(--u) * 3.5);line-height:1.08}
+  a.gate .zh{font-size:calc(var(--u) * 2.4);color:#fff;font-weight:700;line-height:1.2}
   a.gate .go{display:inline-flex;align-items:center;gap:calc(var(--u) * .5);margin-top:calc(var(--u) * 1.2);padding:calc(var(--u) * .5) calc(var(--u) * 1.8);border-radius:calc(var(--u) * 3);background:var(--c);color:#0a1633;font-weight:700;font-size:calc(var(--u) * 2.4);box-shadow:0 calc(var(--u) * .3) 0 rgba(0,0,0,.35);white-space:nowrap}
-  /* The school from the air: with WebGL the six gates stand round a 3D model of our own campus that turns through 360°
-     (js/campus3d.js — the track, the classroom block, the footbridge, the big trees…); the six flags on the model carry the
-     gate numbers. Without WebGL the plain 3 × 2 grid above is used. */
+  /* The school from the air: with WebGL the eight gates stand round a 3D model of our own campus that turns through 360°
+     (js/campus3d.js — the track, the classroom block, the footbridge, the big trees…); the eight flags on the model carry the
+     gate numbers. Without WebGL the plain 4 × 2 grid above is used. */
   .campus{display:none;position:relative;min-width:0;min-height:0}
-  body.has-campus .campus{display:block;grid-column:2;grid-row:1 / 4}
-  body.has-campus .gates{grid-template-columns:minmax(0,1fr) minmax(0,1.9fr) minmax(0,1fr);grid-template-rows:repeat(3,minmax(0,1fr))}
-  body.has-campus a.gate[data-gate="1"]{grid-area:1 / 1}body.has-campus a.gate[data-gate="2"]{grid-area:2 / 1}body.has-campus a.gate[data-gate="3"]{grid-area:3 / 1}
-  body.has-campus a.gate[data-gate="4"]{grid-area:1 / 3}body.has-campus a.gate[data-gate="5"]{grid-area:2 / 3}body.has-campus a.gate[data-gate="6"]{grid-area:3 / 3}
-  body.has-campus a.gate{grid-template-columns:calc(var(--u) * 15) minmax(0,1fr);padding:calc(var(--u) * .8) calc(var(--u) * 1.2) calc(var(--u) * .8) calc(var(--u) * .8)}
-  body.has-campus a.gate .bdg{width:calc(var(--u) * 15);height:calc(var(--u) * 17)}
-  body.has-campus a.gate .n{width:calc(var(--u) * 4.4);height:calc(var(--u) * 4.4);font-size:calc(var(--u) * 2.8)}
-  body.has-campus a.gate .th{font-size:calc(var(--u) * 2.2)}
-  body.has-campus a.gate h2{font-size:calc(var(--u) * 3.3);margin:calc(var(--u) * .5) 0 calc(var(--u) * .2)}
-  body.has-campus a.gate .zh{font-size:calc(var(--u) * 2.3)}
-  body.has-campus a.gate .go{margin-top:calc(var(--u) * .6);padding:calc(var(--u) * .3) calc(var(--u) * 1.4);font-size:calc(var(--u) * 2)}
+  body.has-campus .campus{display:block;grid-column:2;grid-row:1 / 5}
+  body.has-campus .gates{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) minmax(0,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:calc(var(--u) * 1.3) calc(var(--u) * 1.8)}
+  body.has-campus a.gate[data-gate="1"]{grid-area:1 / 1}body.has-campus a.gate[data-gate="2"]{grid-area:2 / 1}body.has-campus a.gate[data-gate="3"]{grid-area:3 / 1}body.has-campus a.gate[data-gate="4"]{grid-area:4 / 1}
+  body.has-campus a.gate[data-gate="5"]{grid-area:1 / 3}body.has-campus a.gate[data-gate="6"]{grid-area:2 / 3}body.has-campus a.gate[data-gate="7"]{grid-area:3 / 3}body.has-campus a.gate[data-gate="8"]{grid-area:4 / 3}
+  body.has-campus a.gate{grid-template-columns:calc(var(--u) * 12.5) minmax(0,1fr);gap:calc(var(--u) * 1);padding:calc(var(--u) * .5) calc(var(--u) * 1.2) calc(var(--u) * .5) calc(var(--u) * .7)}
+  body.has-campus a.gate .bdg{width:calc(var(--u) * 12.5);height:calc(var(--u) * 14.2)}
+  body.has-campus a.gate .n{width:calc(var(--u) * 4);height:calc(var(--u) * 4);font-size:calc(var(--u) * 2.7)}
+  body.has-campus a.gate .th{font-size:calc(var(--u) * 2.1)}
+  body.has-campus a.gate h2{font-size:calc(var(--u) * 3.1);margin:calc(var(--u) * .3) 0 calc(var(--u) * .1)}
+  body.has-campus a.gate .zh{font-size:calc(var(--u) * 2.2)}
+  body.has-campus a.gate .go{margin-top:calc(var(--u) * .3);padding:calc(var(--u) * .15) calc(var(--u) * 1.3);font-size:calc(var(--u) * 1.8)}
   .flag-link{position:absolute;left:0;top:0;z-index:2;width:calc(var(--u) * 5.6);height:calc(var(--u) * 5.6);border-radius:50%;display:grid;place-items:center;text-decoration:none;color:transparent;font-size:1px;cursor:pointer;touch-action:manipulation}
   .flag-link:hover,.flag-link:focus-visible{box-shadow:0 0 0 calc(var(--u) * .5) #fff,0 0 calc(var(--u) * 2.4) #fff;outline:none}
   .campus .cap{position:absolute;left:50%;bottom:0;transform:translateX(-50%);white-space:nowrap;font-size:calc(var(--u) * 2);font-weight:700;color:#cfe0ff;pointer-events:none;text-shadow:0 .15em .4em #0a1633}
   @media (orientation:portrait){
-    body.has-campus .gates{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1.9fr) repeat(3,minmax(0,1fr))}
+    body.has-campus .gates{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1.9fr) repeat(4,minmax(0,1fr))}
     body.has-campus .campus{grid-column:1 / 3;grid-row:1}
     body.has-campus a.gate[data-gate]{grid-area:auto}
   }
   @media (max-aspect-ratio:3/5){body.has-campus a.gate{grid-template-columns:calc(var(--u) * 15) minmax(0,1fr)!important;grid-template-rows:none;justify-items:stretch;text-align:left}body.has-campus a.gate .top{justify-content:flex-start}}
-  /* the six badges take turns to spin a full 360° in 3D */
+  /* the eight badges take turns to spin a full 360° in 3D */
   @keyframes bdgTurn{0%{transform:perspective(50rem) rotateY(0)}11%,100%{transform:perspective(50rem) rotateY(360deg)}}
-  a.gate .bdg svg{animation:bdgTurn 9s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(var(--i,0) * 1.5s + 1s)}
+  a.gate .bdg svg{animation:bdgTurn 12s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(var(--i,0) * 1.5s + 1s)}
   @media (prefers-reduced-motion:reduce){a.gate{transition:none}a.gate .bdg svg{animation:none}}
 </style>
 </head>
@@ -102,7 +102,7 @@
   <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 看整句念出來</i></button>
   <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 點字填空再念</i></button>
 </div>
-<div class="gates" id="gates"><div class="campus" id="campus"><span class="cap zh">土城國小校園 · 點旗子 1–6 就進入那一關 · 用手指左右滑可以轉 360 度</span></div></div>
+<div class="gates" id="gates"><div class="campus" id="campus"><span class="cap zh">土城國小校園 · 點旗子 1–8 就進入那一關 · 用手指左右滑可以轉 360 度</span></div></div>
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
@@ -114,19 +114,19 @@
   // the school emblem as a big 3D medal, and Ollie in 3D (a finger can spin him)
   document.getElementById("emb").replaceWith(Object.assign(TC.coin3d("emb"), { id: "emb" }));
   TC.O3.mount(document.getElementById("o"), { action: "wave", spin: "auto", every: 6, zoom: 1.12 });
-  // the school from the air, turning through 360°: the six gates stand round it, and its six flags carry the gate numbers
+  // the school from the air, turning through 360°: the eight gates stand round it, and its eight flags carry the gate numbers
 
-  // the six flags on the model are links too: a round button sits on every flag and follows it as the campus turns
+  // the eight flags on the model are links too: a round button sits on every flag and follows it as the campus turns
   function campusFlags(ctl, hrefOf) {
     var host = ctl.el.parentElement, links = [];
-    for (var n = 1; n <= 6; n++) { var a = document.createElement("a"); a.className = "flag-link"; a.dataset.gate = n; a.textContent = n; a.setAttribute("aria-label", "第 " + n + " 關"); a.href = hrefOf(n); host.append(a); links.push(a); }
+    for (var n = 1; n <= 8; n++) { var a = document.createElement("a"); a.className = "flag-link"; a.dataset.gate = n; a.textContent = n; a.setAttribute("aria-label", "第 " + n + " 關"); a.href = hrefOf(n); host.append(a); links.push(a); }
     ctl.onFrame(function () { links.forEach(function (a, i) { var q = ctl.project(i + 1); a.style.display = q && q.visible ? "" : "none"; if (q) a.style.transform = "translate(" + q.x.toFixed(1) + "px," + q.y.toFixed(1) + "px) translate(-50%,-50%)"; a.href = hrefOf(i + 1); }); });
   }
-  if (TC.Campus && TC.Campus.supported()) { document.body.classList.add("has-campus"); const cc = TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；點旗子 1–6 進入那一關" });
+  if (TC.Campus && TC.Campus.supported()) { document.body.classList.add("has-campus"); const cc = TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；點旗子 1–8 進入那一關" });
     if (cc && cc.ok) campusFlags(cc, (n) => `station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}`); }
-  // the six gates — the only links on this page
+  // the eight gates — the only links on this page
   const g = document.getElementById("gates");
-  [1, 2, 3, 4, 5, 6].forEach((n) => {
+  [1, 2, 3, 4, 5, 6, 7, 8].forEach((n) => {
     const G = TC_CONTENT.gates[n];
     g.insertAdjacentHTML("beforeend", `<a class="gate" style="--c:${G.color};--i:${n - 1}" data-gate="${n}" href="station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
       <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre.split(" ")[0]}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);

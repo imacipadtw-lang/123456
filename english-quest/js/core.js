@@ -744,7 +744,7 @@
     const card = h("div", { class: "card" });
     const wrap = h("div", { class: "settings" }, card);
     card.innerHTML = `<h2>⚙ 設定 Settings <small>（只存在這台電腦 · stored on this device）</small></h2>
-      <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
+      <label><span>關卡 Gate</span><select id="sGate">${Object.keys(TC_CONTENT.gates).map(Number).map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>麥克風／AI 語音辨識</span><select id="sAsr"><option value="0">關（建議：現場不收音，孩子說完老師按 ✓）</option><option value="1">開（需要麥克風和網路，Chrome / Edge）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
       <label hidden><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題</option></select></label>
@@ -766,7 +766,7 @@
       Object.assign(TC.cfg, { listen: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: true, sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
-      if (!window.TC_CLASSROOM && TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
+      if (!window.TC_CLASSROOM && TC_CONTENT.gates[TC.gate] && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
     };
   };
 })();

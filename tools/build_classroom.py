@@ -55,7 +55,7 @@ def content_for(gate):
     js = r"""
       const fs = require("fs"); global.window = global; eval(fs.readFileSync(process.argv[1], "utf8"));
       const keep = +process.argv[2], C = TC_CONTENT;
-      for (const n of Object.keys(C.gates)) if (+n !== keep) for (const k of ["scenes", "qa", "finale", "actions", "quiet", "wake", "words", "lines", "pages", "ending"]) delete C.gates[n][k];
+      for (const n of Object.keys(C.gates)) if (+n !== keep) for (const k of ["scenes", "qa", "finale", "actions", "quiet", "wake", "words", "lines", "pages", "ending", "items", "q"]) delete C.gates[n][k];
       for (const part of ["hunt", "sentences"]) for (const n of Object.keys(C[part] || {})) if (+n !== keep) delete C[part][n];
       process.stdout.write("window.TC_SCHOOL = " + JSON.stringify(TC_SCHOOL) + ";\nwindow.TC_CONTENT = " + JSON.stringify(C) + ";\nwindow.TC_SCRIPT = " + TC_SCRIPT.toString() + ";\n");
     """
@@ -66,7 +66,7 @@ def build(page, gate, title):
     game = None
     if gate:
         key = json.loads(subprocess.run(["node", "-e", "global.window=global;eval(require('fs').readFileSync(process.argv[1],'utf8'));process.stdout.write(JSON.stringify(TC_CONTENT.gates[process.argv[2]].key))", str(APP / "js/content.js"), str(gate)], capture_output=True, text=True, check=True).stdout)
-        game = next(p.name for p in sorted((APP / "js/games").glob("g%d-*.js" % gate)))
+        game = next(p.name for p in sorted((APP / "js/games").glob("g*.js")) if ("TC.games.%s = " % key) in p.read_text(encoding="utf8"))  # the file of this gate's game engine
     def one(m):
         src = m.group(1)
         if src == "js/content.js": return script(content_for(gate))
@@ -89,7 +89,7 @@ def build(page, gate, title):
 
 GATES = json.loads(subprocess.run(["node", "-e", "global.window=global;eval(require('fs').readFileSync(process.argv[1],'utf8'));process.stdout.write(JSON.stringify(TC_CONTENT.gates))", str(APP / "js/content.js")], capture_output=True, text=True, check=True).stdout)
 files = []
-for g in range(1, 7):
+for g in range(1, len(GATES) + 1):
     G = GATES[str(g)]; slug = re.sub(r"[^a-z0-9]+", "-", G["title"].lower()).strip("-")
     files.append(("gate%d-%s" % (g, slug), "station.html", g, "第 %d 關 %s %s · 土城國小英語日（教室版）" % (g, G["title"], G["zh"]), "第 %d 關 %s（%s）" % (g, G["zh"], G["genre"].split(" ")[0])))
 files.append(("final-gate", "control.html", 0, "終點登機門 Final Gate · 土城國小英語日（教室版）", "終點登機門（排字母、領獎狀）"))
@@ -120,8 +120,9 @@ for name, page, gate, title, zh in files:
 3. 開始畫面下方選年級（低年級／中年級／高年級），再按大大的 START。
 4. 歐力只問問題，孩子自己先念；念完老師按「✓ 說得好」或 Enter。
    孩子不會念時，老師按「🔊 聽示範」，歐力才會念。
-5. 每位孩子（家長可以陪同）只闖自己年級的六關，一共六張點數貼紙（10／20／30 points）。
-   六關完成：點心 1 份＋飲料 1 瓶；總分超過 100 點：再多 1 份小點心。
+5. 每位孩子（家長可以陪同）只闖自己年級的關卡，每關一張點數貼紙（10／20／30 points）。
+   第 1–6 關完成：點心 1 份＋飲料 1 瓶；總分超過 100 點：再多 1 份小點心。
+   第 7 關（節日）、第 8 關（美國文化）暫定是「加分關」：貼紙點數一起算進總分（待老師確認）。
 
 【畫面】
 每個畫面都排在一頁裡，不用往下捲；1920×1080、1366×768、1280×720 的螢幕都檢查過。
