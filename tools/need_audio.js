@@ -1,6 +1,7 @@
 /* Lists every line the TVs may say aloud that has NO audio clip yet, so they can all be generated in one batch with
    ElevenLabs (words → assets/audio/el-words, sentences → assets/audio/ai-sentences).
-   Sources: js/content.js (all gates) + literal strings in TC.speak("...") / TC.teacherLine("...") calls of the game files.
+   Sources: js/content.js (all gates) + literal strings in TC.speak("...") / TC.teacherLine("...") calls and the
+   teacher: "..." lines of TC.ask() in the game files.
    usage: node tools/need_audio.js [--json]     (writes tools/el-need.json with --json) */
 const fs = require("fs"), path = require("path");
 const R = path.join(__dirname, "..", "english-quest");
@@ -17,14 +18,17 @@ for (let g = 1; g <= 6; g++) {
   (G.actions || []).forEach((x) => { add(x.say); add(x.w); }); if (G.quiet) { add(G.quiet.say); add(G.wake.say); }
   (G.words || []).forEach((x) => add(x.w)); (G.lines || []).forEach((x) => { add(x.say); add(x.w); });
   (G.pages || []).forEach((x) => { add(x.t); add(x.say); add(x.w); }); if (G.ending) add(G.ending.say);
-  const H = C.hunt[g]; add(H.text); add(H.w); add(`Page ${H.page.replace(/[()]/g, "")}, number ${H.line}`);
+  const H = C.hunt[g]; add(H.text); add(H.w); // the mystery-box sentence of this gate
+  if (G.key === "monster") { add("What are they?"); (G.words || []).forEach((x) => add(/^(teeth|hands)$/.test(x.w) ? "They're " + x.w + "." : "It's " + (/^(water)$/.test(x.w) ? "" : /^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".")); }
   (C.sentences[g] || []).forEach((x) => add(x.s));
 }
-add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Open your passport"); add("Welcome"); add("Go");
+add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Welcome"); add("Go");
 // literal strings in the code
 for (const f of ["js/station.js", "js/control.js", "js/core.js", "js/puzzles.js", "js/scratch.js", ...fs.readdirSync(path.join(R, "js/games")).filter((x) => x.endsWith(".js")).map((x) => "js/games/" + x)]) {
   const src = fs.readFileSync(path.join(R, f), "utf8"); let m; const re = /TC\.(?:speak|teacherLine)\(\s*(["'])((?:(?!\1).)*)\1/g;
   while ((m = re.exec(src))) if (!/\$\{/.test(m[2])) add(m[2]);
+  const re2 = /\bteacher:\s*(["'])((?:(?!\1).)*)\1/g; // the question the host line of TC.ask() speaks
+  while ((m = re2.exec(src))) if (/^[A-Z]/.test(m[2])) add(m[2]);
 }
 const miss = [...texts].filter((t) => !have(norm(t))).sort();
 const words = miss.filter((t) => !/\s/.test(t)), sents = miss.filter((t) => /\s/.test(t));

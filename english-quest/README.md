@@ -63,14 +63,14 @@
 - 不用登記孩子：老師按 START，一次一位孩子；玩完按 DONE ✓ 回到開始畫面。
 
 ### 聲音：現在的情況（請老師一定要知道）
-- **歐力的六句誇獎**（Good job! Well done! Awesome! Excellent! That's right! You got it!）是新做的 **ElevenLabs AI 語音**檔（Bella，美式口音；不是真人錄音），已用語音辨識程式檢查過。
-- **新內容還有大約 88 句／字沒有音檔**（32 個單字、56 個句子，約 1,070 個字元）。在補上之前，電視用**瀏覽器內建的電腦語音**唸這些句子，畫面標示「電腦語音」。學校的 ElevenLabs 點數用完了，**2026-12-17 點數重置後**才會用 ElevenLabs 補做。要看缺哪些：`node tools/need_audio.js`。
-- 有音檔的新答案字很少：welcome、drink、rest 有 ElevenLabs 語音和 Wikimedia 真人錄音；door、hands、walk、nurse 只有 Wikimedia 真人錄音。其他答案字（例如 restroom、lunchbox、water）目前都是電腦語音。
+- **全部都有音檔**：六關和終點登機門裡，歐力說的每一句（問題、指令、示範的答案字和整句、誇獎、點數）都有 **ElevenLabs AI 語音**檔（聲音 Bella，美式口音，模型 eleven_multilingual_v2；是 AI 語音，不是真人錄音）。自動測試（`FAKE_TTS=1 node tools/tests/e2e.js … 1,2,3,4,5,6 1,2,3`）把六關 × 低／中／高年級全部玩過，沒有任何一句需要電腦語音。音檔一共 271 個（單字 128、句子 143，包含舊版遊戲留下的）。
+- **萬一有一句沒有音檔**（例如以後加了新句子）：電視改用瀏覽器的電腦語音。Edge 的「Natural」和 Chrome 的「Google US English」語音要連網；沒有網路時程式自動改用電腦本機的英文語音（Windows 的 Microsoft Zira／David、Mac 的 Samantha）；沒有本機英文語音時那一句不出聲。加音檔：批次用 `tools/add_el_batch.py`，單句用 `tools/add_el_clip.py`。
+- **機器檢查**：已用語音辨識程式（CMU PocketSphinx）檢查：143 句裡 141 句辨識成它自己那一句；沒通過的是 What is it?（另外重錄了兩次，三個版本的辨識結果都一樣，判斷是辨識程式聽不清句尾弱讀的 it）和舊版遊戲的 I like red.（新遊戲不用）。單字 127 個裡 111 個辨識正確；done、in、please、teeth、eyes 這類很短的字辨識程式分不清，lunchbox 不在它的字典裡，無法用程式檢查。（`tools/verify_sentences.py`、`tools/verify_audio.py`）
 - 電視**不把單字錄音接成句子**（接起來的句子聽起來不對，例如 a 聽起來像字母 A）；整句一定一次唸完。
-- 這台電視如果沒有英文電腦語音，或老師在 ⚙「整句怎麼唸」選了「只唸單字」，沒有音檔的句子請老師親口示範（🔊 旁會出現提示）。
+- 老師在 ⚙「整句怎麼唸」選「只唸單字」時，整句由老師親口示範（🔊 旁會出現提示）。
 - 舊版遊戲的音檔（Wikimedia 真人錄音 203 個、ElevenLabs 單字 93 個、ElevenLabs 整句 69 句，例如 It's a tiger.）還留在 `assets/audio/` 和 `credits.html`，新遊戲大多不再使用。真人錄音的來源、錄音者、授權、下載時間在 `assets/audio/credits.json`；AI 語音的資料和 SHA-1 在 `assets/audio/el-words.json`、`assets/audio/ai-sentences.json`。
 - 單字的聲音預設用 ElevenLabs；⚙「單字的聲音」可改成「Wikimedia 真人錄音」（只有已有錄音的字會改變）。
-- **AI 這一邊沒有人用耳朵聽過這些音檔，電腦語音也沒有。**請老師活動前在每台電視把自己那一關玩一次，聽聽看發音是否正確。
+- **AI 這一邊沒有人用耳朵聽過這些音檔。**請老師活動前在每台電視把自己那一關玩一次，聽聽看發音是否正確。
 
 ### 其他
 - 學校識別：每個畫面都有校名「南投縣草屯鎮土城國民小學」和校徽；校徽依學校自己的校徽圖檔重新描繪成 3D 向量圖，設計沒有更動。左上角的大校徽同時是「回首頁」按鈕。圖案裡的小校徽不是貼上去的，而是放在那個東西本來就會有校徽的地方：衣服上的繡章、門和桌子上的銅牌、杯子和書本上的印花、時鐘的鐘面、耳機的耳罩、怪獸的學生帽和項圈名牌、故事書的燙金封面；找不到合適位置的圖（例如牙齒、愛心、太陽）就不放。六關各有一個配合主題的土城徽章：① 救生圈和警示燈、② ON AIR 燈泡招牌、③ 體育金牌、④ 咬著徽章的音節怪獸、⑤ DJ 耳機和唱片、⑥ 立體故事書。

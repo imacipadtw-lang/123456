@@ -21,9 +21,9 @@
 <body>
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
-<p class="note"><b>聲音的現況（新版內容：《校園生活英語》護照）</b>：歐力的六句誇獎 <b>Good job!、Well done!、Awesome!、Excellent!、That's right!、You got it!</b>（護照 (5)）是新做的 <b>ElevenLabs AI 語音</b>檔（Bella，美式口音；不是真人錄音），已用語音辨識程式檢查過，列在最下面的 AI 語音表。新內容其他<b>大約 74 句／字（30 個單字、44 個句子，約 930 個字元）還沒有音檔</b>，目前由那台電視瀏覽器的<b>電腦語音</b>唸，畫面標示「電腦語音」。學校的 ElevenLabs 點數已用完，預計 <b>2026-12-17 點數重置後</b>再用 ElevenLabs 補做；缺哪些可執行 <code>node tools/need_audio.js</code> 查看。</p>
+<p class="note"><b>聲音的現況（《校園生活英語》版）</b>：六關和終點登機門裡，歐力說的每一句（問題、指令、示範的答案字和整句、誇獎、點數）都有 <b>ElevenLabs AI 語音</b>檔（聲音 Bella，美式口音；是 AI 語音，不是真人錄音），列在最下面的 AI 語音表。自動測試把六關 × 低／中／高年級全部玩過一遍，沒有任何一句需要電腦語音；沒有網路也聽得到。</p>
 <p class="note">下表是 Wikimedia Commons 的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。表中大多是舊版遊戲（顏色、天氣、動物等）的單字，新遊戲用得到的只有 door、hands、walk、nurse、drink、rest、welcome。單字預設用 ElevenLabs 的聲音；沒有 ElevenLabs 檔的字（例如 door、hands）才播這裡的真人錄音。老師可在 ⚙「單字的聲音」改成「Wikimedia 真人錄音」。</p>
-<p class="note"><b>電視不把單字錄音接成句子。</b>完整的句子一定一次唸完：有 AI 語音檔就播檔案（標示「AI 語音」），沒有就用電腦語音（標示「電腦語音」）。老師可在 ⚙「整句怎麼唸」改成「只唸單字，整句由老師親口示範」。</p>
+<p class="note"><b>電視不把單字錄音接成句子。</b>完整的句子一定一次唸完，播放整句的 AI 語音檔。老師可在 ⚙「整句怎麼唸」改成「只唸單字，整句由老師親口示範」。</p>
 <div id="sum" class="note"></div>
 <p class="note">口音：表中 <b>windy</b> 是澳洲英語錄音，<b>rainy</b> 和 <b>pink</b> 是英式英語錄音，其餘都標示為美式英語（見下表「口音」欄）。這三個字新遊戲不會唸。</p>
 <p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字，另外 14 個機器聽成別的字。</p>
@@ -31,8 +31,8 @@
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2 id="ai">ElevenLabs 語音：單字與整句（AI，不是真人錄音）</h2>
-<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。新版遊戲用到的是六句誇獎（Good job! 等）、We are friends!、刮刮卡的點數，和少數單字（welcome、drink、rest 等）；表中其他的單字和句子（例如 It's a tiger.、I like red.）是舊版遊戲做的，新遊戲不再唸。</p>
-<p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 六句誇獎用語音辨識程式檢查過；③ 舊版的 69 句，自動語音辨識程式（CMU PocketSphinx）有 68 句辨識成它自己那一句，沒通過的 I like red. 另用母音量測確認。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前至少把六句誇獎各聽一次。</b></p>
+<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。表中有一部分單字和句子（例如 It's a tiger.、I like red.）是舊版遊戲做的，新遊戲不再唸。學校的 ElevenLabs 額度這一期（到 2026-12-20）用了大約 2,550／30,026 字元。</p>
+<p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 已用語音辨識程式（CMU PocketSphinx）檢查：143 句裡 141 句辨識成它自己那一句；沒通過的是 What is it?（另外重錄了兩次，三個版本的辨識結果都一樣，判斷是辨識程式聽不清句尾弱讀的 it）和舊版遊戲的 I like red.（新遊戲不用）。單字 127 個裡 111 個辨識正確；done、in、please、teeth、eyes 這類很短的字辨識程式分不清，lunchbox 不在它的字典裡，無法用程式檢查。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前把自己那一關玩一次；特別請試聽 What is it?、They're teeth.、done、in、please、teeth、lunchbox。</b></p>
 <p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
 <table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>
 
