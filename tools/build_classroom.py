@@ -24,6 +24,30 @@ def read(rel): return (APP / rel).read_text(encoding="utf-8")
 def data_uri(rel, mime): return "data:" + mime + ";base64," + base64.b64encode((APP / rel).read_bytes()).decode("ascii")
 def script(code): return "<script>" + code.replace("</script", "<\\/script") + "</script>"
 
+# Obfuscate + minify the game's own CODE (not the question data, not the audio): the files that get out become one
+# unreadable blob that still runs, so the classroom copies are harder to peek at or copy. Default on; pass
+# --no-obfuscate to skip (e.g. for debugging). If the obfuscator is missing or fails, the build keeps the plain
+# code and prints a warning rather than dying. Each distinct source is obfuscated once and cached (core.js etc.
+# are shared by every gate file).
+OBFUSCATE = "--no-obfuscate" not in sys.argv
+_OBF_CACHE, _OBF_PREFIX, _OBF_WARNED = {}, {}, [False]
+def obf(code, tag):
+    # tag = the file path: it gives this file its own identifiersPrefix so the obfuscator's per-file string-array
+    # helpers don't collide across the many <script> blocks on one page.
+    if not OBFUSCATE: return code
+    if tag not in _OBF_PREFIX: _OBF_PREFIX[tag] = "_o%d_" % (len(_OBF_PREFIX) + 1)
+    key = (tag, code)
+    if key in _OBF_CACHE: return _OBF_CACHE[key]
+    try:
+        r = subprocess.run(["node", str(ROOT / "tools/obfuscate.js"), _OBF_PREFIX[tag]], input=code, capture_output=True, text=True)
+        if r.returncode != 0 or not r.stdout.strip(): raise RuntimeError((r.stderr or "no output").strip()[:200])
+        out = r.stdout
+    except Exception as e:
+        if not _OBF_WARNED[0]: print("  ! obfuscation skipped (code left as-is):", e); _OBF_WARNED[0] = True
+        out = code
+    _OBF_CACHE[key] = out
+    return out
+
 EMB = data_uri("assets/img/tucheng-emblem.svg", "image/svg+xml")
 
 # styles with the three font files built in
@@ -69,10 +93,10 @@ def build(page, gate, title):
         game = next(p.name for p in sorted((APP / "js/games").glob("g*.js")) if ("TC.games.%s = " % key) in p.read_text(encoding="utf8"))  # the file of this gate's game engine
     def one(m):
         src = m.group(1)
-        if src == "js/content.js": return script(content_for(gate))
-        if src in small: return script(small[src]) + (script(SOUND_JS) if src == "assets/audio/ai-sentences.js" else "")
-        if src.startswith("js/games/"): return script(read(src)) if src == "js/games/" + game else ""
-        return script(read(src))
+        if src == "js/content.js": return script(content_for(gate))   # question data: not obfuscated
+        if src in small: return script(small[src]) + (script(SOUND_JS) if src == "assets/audio/ai-sentences.js" else "")  # audio manifests + blob
+        if src.startswith("js/games/"): return script(obf(read(src), src)) if src == "js/games/" + game else ""
+        return script(obf(read(src), src))   # core.js, art*.js, ollie3d.js, toys.js, station.js … — the game's own code
     html, n = re.subn(r'<script src="([^"]+)"></script>', one, html)
     if VOICE_M.exists() and "TC_VOICE_M" not in html:
         html = html.replace(script(SOUND_JS), script(small["assets/audio/voice-m.js"]) + script(SOUND_JS), 1)

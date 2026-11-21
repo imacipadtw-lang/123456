@@ -21,6 +21,8 @@
   (the teacher's photographs); only the shortest, easiest lines, each with its "(unit)-line" in `js/content.js`. The children must
   never get stuck in front of guests, but the CHILD always says the line first (the teacher, 2026-11-21): Ollie asks the question
   and never reads the answer by himself — he models it only when the teacher presses 🔊 聽示範 (or H). No automatic model, no timer.
+  When he models, he reads only the whole sentence, never the answer word on its own first (the teacher, 2026-11-21): `TC.model` in
+  `js/core.js` plays just the sentence (its clip, or its pieces in order) — the standalone answer-word clip was removed.
 - Gates 7 and 8 (the teacher, 2026-11-21) are NOT from the booklet: international-education picture quizzes, engine
   `js/games/g7-quiz.js` (key `quiz`), pictures `js/art-world.js`, content in `js/content.js`. Gate 7 "Holiday Party 節日派對"
   (New York): a holiday picture → tap its name (Chinese with 注音 + English). Gate 8 "Hello, America! 美國文化小學堂"
@@ -44,6 +46,12 @@
   self-contained HTML per gate, all eight, with only that gate's questions, plus Final Gate and opening show) — check it with
   `node tools/tests/room-fit.js <dir>` and send the ZIP to the teacher. Every game screen must fit ONE page of the big screen:
   no scrolling, no button off the screen. Every badge that goes home carries the tag 「回首頁 HOME」.
+  The classroom build obfuscates + minifies the game's own code (the teacher, 2026-11-21: harder to peek at or copy once the files
+  are out) via `tools/obfuscate.js` (javascript-obfuscator; `npm i -g javascript-obfuscator`); only CODE files go through it — the
+  question data, the audio manifests and the base64 sound blob are left alone. Each file gets its own `identifiersPrefix` so the
+  per-file string-array helpers don't collide across the many `<script>` blocks on one page, and `renameGlobals` stays off so the
+  files still talk through `TC` / `window.*`. `python3 tools/build_classroom.py <dir> --no-obfuscate` skips it for debugging. The
+  ONLINE versions (GitHub Pages, claude.ai backup) are NOT obfuscated.
 - Prizes (the teacher, 2026-11-21): a child (a parent may come along) plays only the gates of their OWN level; gates 1–6 give six
   point stickers (10 / 20 / 30 points, one per gate). All of gates 1–6 = a snack (點心) and a drink; a total of more than 100 points =
   one more small snack (小點心). Say 點心／小點心 in the pages, not 餅乾.

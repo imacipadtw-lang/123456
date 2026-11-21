@@ -320,10 +320,9 @@
     const wordKey = word && clipKey(normTok(word)), humanWord = wordKey || null; // the answer word's own clip (ElevenLabs or Wikimedia)
     const my = ++modelRun, clips = whole.map((x) => x.clip), mv = TC.voiceOf("model"); // the model answer: the other voice than Ollie's questions
     if (whole.length > 1 && clips.every(Boolean)) {
-      // a line of several pieces, each with its own clip ("Sorry, | I am late."): the answer word first, then the pieces in order
+      // a line of several pieces, each with its own clip ("Sorry, | I am late."): just the sentence, piece by piece — no separate word first (the teacher, 2026-11-21)
       modelOn++;
       try {
-        if (humanWord) { light(true, [word]); TC.quiet(true); await playClip(humanWord, mv); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
         showSrc("ai", clips[0]); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true);
         for (const c of clips) { await playClip(c, mv); if (my !== modelRun) break; await sleep(140); }
         TC.quiet(false); light(false);
@@ -335,17 +334,17 @@
       return "ai";
     }
     if (one && clipOf(one).ai) {
-      // a whole-sentence AI clip: the answer word from its human recording first, then the sentence in one go
+      // a whole-sentence AI clip: just the sentence, in one go — no separate word first (the teacher, 2026-11-21)
       modelOn++;
       try {
-        if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord, mv); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
         showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one, mv); TC.quiet(false); light(false);
       } finally { modelOn--; TC.quiet(false); }
-      return humanWord ? "human+ai" : "ai";
+      return "ai";
     }
     const key = one || wordKey;
-    if (key) { showSrc(clipOf(key).ai ? "aiword" : "human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
-    if (!one && sentence && TC.canSentence()) { if (key) await sleep(300); showSrc("tts"); spans.forEach((sp) => sp.classList.add("saying")); await ttsSpeak(String(sentence).replace(/\[[^\]]*\]/g, " "), { rate: 0.85 }); light(false); return key ? "human+tts" : "tts"; }
+    const sentenceToo = !one && sentence && TC.canSentence(); // a separate sentence still to read → skip the lone word, read only the sentence (the teacher, 2026-11-21)
+    if (key && !sentenceToo) { showSrc(clipOf(key).ai ? "aiword" : "human", key); light(true, key.split(/[ -]/)); TC.quiet(true); await playClip(key); TC.quiet(false); light(false); }
+    if (sentenceToo) { showSrc("tts"); spans.forEach((sp) => sp.classList.add("saying")); await ttsSpeak(String(sentence).replace(/\[[^\]]*\]/g, " "), { rate: 0.85 }); light(false); return "tts"; }
     if (!key) { showSrc("none"); return "none"; }
     return "human";
   };
