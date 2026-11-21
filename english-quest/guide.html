@@ -127,7 +127,7 @@
 <ol>
   <li>開網址，按 F11 全螢幕。年級（低／中／高年級）在首頁選好再點進這一關。</li>
   <li>按 START 玩一回合：孩子說完按 ✓，確認遊戲會往下走、聽得到歐力的聲音。</li>
-  <li>開始畫面上會顯示目前的年級；要換年級，按左上角校徽回首頁重選。</li>
+  <li>開始畫面上會顯示目前的年級；要換年級，按校徽上的「回首頁 HOME」回首頁重選（每個可以回首頁的校徽下方都寫著「回首頁 HOME」）。</li>
   <li>確認歐力的聲音聽得到（全部是音檔，不靠網路）。電腦關閉螢幕保護與睡眠；音量調到後排家長聽得到。</li>
   <li>點數貼紙（10、20、30 點）放在電視旁。</li>
 </ol>
@@ -191,9 +191,9 @@
 </ol>
 <h3 id="voice">聲音的現況（請老師一定要看）</h3>
 <ul>
-  <li><b>全部都有音檔</b>：六關和終點登機門裡，歐力說的每一句（問題、指令、示範的關鍵字和整句、誇獎、點數）都有 <b>ElevenLabs AI 語音</b>檔（聲音 Bella - Professional, Bright, Warm，美式口音，模型 eleven_multilingual_v2；是 AI 語音，不是真人錄音）。2026-11-21 為新的句子做了 23 個新音檔，並刪掉已經沒有任何畫面會用的舊音檔（<code>node tools/prune_audio.js</code>）；現在是句子 80 個、單字 68 個，<code>node tools/need_audio.js</code> 回報「缺 0 個」。<b>目前的例外：</b>第 3 關中、高年級示範 <span class="en">Stand up!、Sit down!、Raise your hand!</span> 時，先唸的關鍵字 stand、sit、raise 還沒有 ElevenLabs 單字檔，播的是 Wikimedia 的真人錄音（聲音和歐力不同）；後面的整句是 ElevenLabs。</li>
+  <li><b>全部都有音檔</b>：六關和終點登機門裡，歐力說的每一句（問題、指令、示範的關鍵字和整句、誇獎、點數）都有 <b>ElevenLabs AI 語音</b>檔（男女兩種聲音，每一句各錄一份：女聲 Bella - Professional, Bright, Warm、男聲 Liam - Energetic, Social Media Creator，美式口音，模型 eleven_multilingual_v2；是 AI 語音，不是真人錄音）。單數關（1、3、5）歐力的問題用女聲、示範用男聲，雙數關（2、4、6）相反，誇獎隨機，所以整場活動男女聲各半；任何一句都不會退回電腦內建的機器語音。2026-11-21 為新的句子做了 23 個新音檔，並刪掉已經沒有任何畫面會用的舊音檔（<code>node tools/prune_audio.js</code>）；現在每種聲音是句子 80 個、單字 68 個，<code>node tools/need_audio.js</code> 回報「缺 0 個」。<b>目前的例外：</b>第 3 關中、高年級示範 <span class="en">Stand up!、Sit down!、Raise your hand!</span> 時，先唸的關鍵字 stand、sit、raise 還沒有 ElevenLabs 單字檔，播的是 Wikimedia 的真人錄音（聲音和歐力不同）；後面的整句是 ElevenLabs。</li>
   <li><b>萬一有一句沒有音檔</b>（例如以後老師自己加了新句子）：電視會改用瀏覽器的電腦語音唸。Edge 的「Natural」語音和 Chrome 的「Google US English」語音要連網；沒有網路時，程式自動改用電腦本機的英文語音（Windows 的 Microsoft Zira／David、Mac 的 Samantha）；電腦沒有本機英文語音時，那一句不出聲，請老師親口唸。</li>
-  <li><b>機器檢查的結果</b>（2026-11-21；這是程式做的檢查，有它的限制，不能證明發音正確）：用語音辨識程式（CMU PocketSphinx）檢查，句子 80 個裡 78 個辨識成它自己那一句；沒通過的是 <span class="en">What is it?</span>（程式聽成 what is；錄了三個版本結果都一樣，是辨識程式的限制）和 <span class="en">Bow!</span>（只有一個很短的字）。單字 68 個裡 67 個可以檢查，61 個辨識正確；要再確認的是 done、eat、in、please、six、yes（yes 被聽成 yeah）；lunchbox 不在辨識程式的字典裡，無法用程式檢查。<span class="en">Bow!</span> 有兩種唸法，這裡要和 now 押韻（敬禮），不是和 go 押韻：用同一個辨識程式做最小對比測試，它替這個音檔選的是 now 的母音；同一個測試對同一個聲音的 8 個參考字判對了 7 個，所以這是不錯的證據，但不是證明。每個音檔都可以在 <a href="credits.html">credits.html</a> 逐一試聽。學校的 ElevenLabs 額度這個月用了大約 3,150／30,026 字元（2026-12-20 重新計算）。</li>
+  <li><b>機器檢查的結果</b>（2026-11-21；這是程式做的檢查，有它的限制，不能證明發音正確）：用語音辨識程式（CMU PocketSphinx）檢查，句子 80 個裡 78 個辨識成它自己那一句；沒通過的是 <span class="en">What is it?</span>（程式聽成 what is；錄了三個版本結果都一樣，是辨識程式的限制）和 <span class="en">Bow!</span>（只有一個很短的字）。單字 68 個裡 67 個可以檢查，61 個辨識正確；要再確認的是 done、eat、in、please、six、yes（yes 被聽成 yeah）；lunchbox 不在辨識程式的字典裡，無法用程式檢查。<span class="en">Bow!</span> 有兩種唸法，這裡要和 now 押韻（敬禮），不是和 go 押韻：用同一個辨識程式做最小對比測試，它替這個音檔選的是 now 的母音；同一個測試對同一個聲音的 8 個參考字判對了 7 個，所以這是不錯的證據，但不是證明。男聲（Liam）同樣的檢查：句子 80 個裡 79 個通過，沒通過的是 What do we do?（他說得很快，程式聽不出來；放慢到 85% 就聽得出來）；單字 67 個可檢查的裡 65 個通過，要再確認的是 fun、light；Bow! 用同樣的對比測試也是 now 的母音。每個音檔都可以在 <a href="credits.html">credits.html</a> 逐一試聽。學校的 ElevenLabs 額度這個月用了大約 6,324／30,026 字元（2026-12-20 重新計算）。</li>
   <li><b>電視不把單字錄音接成句子。</b>老師發現，用單字錄音接起來的句子聽起來不對（例如 <span class="en">a</span> 聽起來像字母 A），所以句子一定一次唸完。</li>
   <li>想由老師親口示範整句時，在 ⚙「整句怎麼唸」選「只唸單字，整句由老師親口示範」。</li>
   <li>Wikimedia 真人錄音 203 個沒有更動，留著當作設定：⚙「單字的聲音」可以改成「Wikimedia 真人錄音」（只有已有錄音的字會改變；重新整理頁面後會回到 ElevenLabs）。錄音者、授權、下載時間和檢查方式在 <a href="credits.html">credits.html</a>。舊版遊戲留下、已經沒有任何畫面會用的 ElevenLabs 音檔（例如 <span class="en">It's a tiger.</span>）已經刪除。</li>

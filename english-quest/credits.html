@@ -31,8 +31,8 @@
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2 id="ai">ElevenLabs 語音：單字與整句（AI，不是真人錄音）</h2>
-<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella - Professional, Bright, Warm（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。其中單字 <span id="elN"></span> 個、句子 <span id="sentN"></span> 個。2026-11-21 為新的句子做了 23 個新音檔，並刪掉已經沒有任何畫面會用的舊音檔（例如舊版遊戲的 It's a tiger.、I like red.；<code>node tools/prune_audio.js</code>）；<code>node tools/need_audio.js</code> 回報缺 0 個。學校的 ElevenLabs 額度這個月用了大約 3,150／30,026 字元（2026-12-20 重新計算）。</p>
-<p class="note">已做的檢查（都是程式做的，2026-11-21；程式有它的限制，不能證明發音正確）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 用語音辨識程式（CMU PocketSphinx）檢查：句子 80 個裡 78 個辨識成它自己那一句；沒通過的是 What is it?（程式聽成 what is；錄了三個版本結果都一樣，是辨識程式的限制）和 Bow!（只有一個很短的字）。單字 68 個裡 67 個可以檢查，61 個辨識正確；要再確認的是 done、eat、in、please、six、yes（yes 被聽成 yeah）；lunchbox 不在辨識程式的字典裡，無法用程式檢查。③ Bow! 有兩種唸法，這裡要和 now 押韻（敬禮），不是和 go 押韻：用同一個辨識程式做最小對比測試，它替這個音檔選的是 now 的母音；同一個測試對同一個聲音的 8 個參考字判對了 7 個，所以是不錯的證據，但不是證明。<b>AI 這一邊沒有人用耳朵聽過；請老師活動前把每一句都聽一遍，特別是 Bow!、What is it?、done、eat、in、please、six、yes。</b></p>
+<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。兩種聲音，男女各一：女聲 Bella - Professional, Bright, Warm、男聲 Liam - Energetic, Social Media Creator（都是 ElevenLabs 內建聲音，標示為美式口音）；每一句兩種聲音各錄一份。單數關（1、3、5）歐力的問題用女聲、示範用男聲，雙數關（2、4、6）相反，誇獎隨機，所以整場活動男女聲各半；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。每種聲音單字 <span id="elN"></span> 個、句子 <span id="sentN"></span> 個（男聲 148 個是 2026-11-21 錄的）。2026-11-21 為新的句子做了 23 個新音檔，並刪掉已經沒有任何畫面會用的舊音檔（例如舊版遊戲的 It's a tiger.、I like red.；<code>node tools/prune_audio.js</code>）；<code>node tools/need_audio.js</code> 回報缺 0 個。學校的 ElevenLabs 額度這個月用了大約 6,324／30,026 字元（2026-12-20 重新計算）。</p>
+<p class="note">已做的檢查（都是程式做的，2026-11-21；程式有它的限制，不能證明發音正確）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 用語音辨識程式（CMU PocketSphinx）檢查：句子 80 個裡 78 個辨識成它自己那一句；沒通過的是 What is it?（程式聽成 what is；錄了三個版本結果都一樣，是辨識程式的限制）和 Bow!（只有一個很短的字）。單字 68 個裡 67 個可以檢查，61 個辨識正確；要再確認的是 done、eat、in、please、six、yes（yes 被聽成 yeah）；lunchbox 不在辨識程式的字典裡，無法用程式檢查。③ Bow! 有兩種唸法，這裡要和 now 押韻（敬禮），不是和 go 押韻：用同一個辨識程式做最小對比測試，它替這個音檔選的是 now 的母音；同一個測試對同一個聲音的 8 個參考字判對了 7 個，所以是不錯的證據，但不是證明。男聲（Liam）同樣的檢查：句子 80 個裡 79 個通過，沒通過的是 What do we do?（他說得很快，程式聽不出來；放慢到 85% 就聽得出來）；單字 67 個可檢查的裡 65 個通過，要再確認的是 fun、light；Bow! 用同樣的對比測試也是 now 的母音。<b>AI 這一邊沒有人用耳朵聽過；請老師活動前把每一句都聽一遍，特別是女聲的 Bow!、What is it?、done、eat、in、please、six、yes，和男聲的 What do we do?、light、fun。</b></p>
 <p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
 <table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>
 
@@ -49,6 +49,8 @@
 <script src="assets/audio/credits.js"></script>
 <script src="assets/audio/el-words.js"></script>
 <script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/m-words.js"></script>
+<script src="assets/audio/m-sentences.js"></script>
 <script>
   const A = window.TC_AUDIO || {}, rows = document.getElementById("rows");
   const words = Object.keys(A).sort();
@@ -61,6 +63,9 @@
       <td>${a.licenceUrl ? `<a href="${esc(a.licenceUrl)}" target="_blank" rel="noopener">${esc(a.licence)}</a>` : esc(a.licence)}</td><td>${esc(a.recorded)}</td><td>${esc(a.downloaded)}</td></tr>`);
   });
   const AI = Object.assign({}, window.TC_EL_AUDIO || {}, window.TC_AI_AUDIO || {}), airows = document.getElementById("airows");
+  // the second voice (a man's voice): the same lines again, listed after the first voice
+  const AI2 = Object.assign({}, window.TC_M_EL || {}, window.TC_M_AI || {});
+  for (const [k, v] of Object.entries(AI2)) AI["m:" + k] = v;
   document.getElementById("aiN").textContent = Object.keys(AI).length;
   document.getElementById("elN").textContent = Object.keys(window.TC_EL_AUDIO || {}).length; document.getElementById("sentN").textContent = Object.keys(window.TC_AI_AUDIO || {}).length;
   Object.values(AI).forEach((a) => airows.insertAdjacentHTML("beforeend", `<tr><td><b>${esc(a.text)}</b></td><td><button class="play" data-f="${esc(a.file)}">▶</button></td><td>${esc(a.voice)}</td><td>${esc(a.model)}</td><td>${esc(a.generated)}</td><td>${esc(a.downloaded)}</td></tr>`));

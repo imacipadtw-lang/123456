@@ -5,7 +5,10 @@
   const { h, $, sleep } = TC;
   const qs = new URLSearchParams(location.search);
   const hashGate = (location.hash.match(/gate-?(\d)/) || [])[1]; // e.g. station.html#gate-3 (hosts that drop ?query)
-  let gate = +qs.get("gate") || +hashGate || +(() => { try { return localStorage.getItem("tc_gate"); } catch (e) { return 0; } })() || 1;
+  // classroom edition (one self-contained file per classroom, tools/build_classroom.py): the file itself says which gate it is
+  const ROOM = window.TC_CLASSROOM || null;
+  if (ROOM) document.body.classList.add("room");
+  let gate = (ROOM && +ROOM.gate) || +qs.get("gate") || +hashGate || +(() => { try { return localStorage.getItem("tc_gate"); } catch (e) { return 0; } })() || 1;
   if (!(gate >= 1 && gate <= 6)) gate = 1;
   try { localStorage.setItem("tc_gate", gate); } catch (e) {}
   TC.gate = gate;
@@ -46,16 +49,19 @@
   document.body.append(TC.badgeEl(gate, "big-emb"));
   // 115.11.20: tap the 土城 badge → home page (while a child is playing, ask first so a stray touch does not end the game)
   function goHome() {
-    if (!running) { location.href = "index.html"; return; }
+    if (!running) { if (!ROOM) location.href = "index.html"; return; } // classroom edition: there is no home page, the START screen is home
     if (document.querySelector(".home-ask")) return;
     const ask = h("div", { class: "settings home-ask" }, h("div", { class: "card", style: "text-align:center" },
-      h("h2", { class: "zh" }, "回到首頁？"), h("p", { class: "zh" }, "這位孩子的遊戲會結束。"),
+      h("h2", { class: "zh" }, ROOM ? "回到開始畫面？" : "回到首頁？"), h("p", { class: "zh" }, "這位孩子的遊戲會結束。"),
       h("div", { class: "row", style: "justify-content:center;gap:1.6rem" },
         h("button", { class: "save", onclick: () => ask.remove() }, "▶ 繼續玩 Keep playing"), // the safe choice is the bright one
-        h("button", { class: "save", style: "background:#2b3f7a", onclick: () => { location.href = "index.html"; } }, "🏠 回首頁 Home"))));
+        h("button", { class: "save", style: "background:#2b3f7a", onclick: () => { if (ROOM) location.reload(); else location.href = "index.html"; } }, ROOM ? "⏮ 回開始畫面 Restart" : "🏠 回首頁 Home"))));
     document.body.append(ask);
   }
-  document.querySelectorAll(".big-emb, #scan .scan-badge, .gate-badge").forEach((el) => { el.classList.add("home-link"); el.setAttribute("role", "button"); el.setAttribute("aria-label", "回首頁"); el.title = "回首頁"; el.addEventListener("click", (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); goHome(); }); });
+  // every place that goes back home says so: a "回首頁 HOME" tag sits on the badge (the teacher's wish, 2026-11-21).
+  // Classroom edition: the START screen is home, so the badge on the START screen itself is not a link.
+  document.querySelectorAll(ROOM ? ".big-emb" : ".big-emb, #scan .scan-badge").forEach((el) => { el.classList.add("home-link"); el.setAttribute("role", "button"); el.setAttribute("aria-label", "回首頁 HOME"); el.title = "回首頁 HOME";
+    el.append(h("span", { class: "home-tag zh", "aria-hidden": "true" }, "🏠 回首頁 HOME")); el.addEventListener("click", (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); goHome(); }); });
   TC.setAIPill();
 
   let running = false, resultOpen = null;
@@ -77,7 +83,14 @@
   TC.cfg.ollieAsks = true;
   let nextLevel = TC.cfg.level;
   // 115.11.21: the level is chosen on the home page only (?lv= in the gate's address); here it is just shown
-  function showLevel() { const L = TC.LEVELS[nextLevel]; $("#lvlPick").innerHTML = `題目：<b>${L.zh}</b>（${L.tip}）<small>要換年級請按左上角校徽回首頁選</small>`; }
+  function showLevel() {
+    const L = TC.LEVELS[nextLevel], box = $("#lvlPick");
+    if (!ROOM) { box.innerHTML = `題目：<b>${L.zh}</b>（${L.tip}）<small>要換年級請按左邊校徽的「回首頁 HOME」重選</small>`; return; }
+    // classroom edition: no home page, so the three levels are chosen right here on the START screen
+    box.classList.add("lvl-room"); box.innerHTML = "";
+    box.append(h("span", { class: "lr-t" }, "選年級："), ...[1, 2, 3].map((n) => h("button", { type: "button", class: "lr-b" + (n === nextLevel ? " on" : ""), "aria-pressed": String(n === nextLevel),
+      onclick: (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); nextLevel = n; TC.cfg.level = n; TC.saveCfg(); showLevel(); } }, h("b", {}, TC.LEVELS[n].zh), h("i", {}, TC.LEVELS[n].tip))));
+  }
   showLevel();
   let players = 0;
   function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: [0, 2, 4, 6][nextLevel], color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }

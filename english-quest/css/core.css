@@ -508,6 +508,21 @@ body:has(.pz) #cap.show{transform:none}
 /* 低年級 big / small letters: the letter to match on a yellow tile, an arrow, then three choices in the other case */
 .k-line:has(.abc-opts) .abc-big{font-size:1.3em;min-width:1.5em;margin-right:0;line-height:1.15;box-shadow:0 .5rem 0 #e0a21a}
 .k-line .abc-arrow{color:var(--sun);font-size:.9em}
+/* the tag on every badge that goes back home */
+.home-tag{position:absolute;left:50%;bottom:-.5rem;transform:translateX(-50%);z-index:3;white-space:nowrap;padding:.3rem 1.1rem .35rem;border-radius:2rem;background:#fff;color:#152a63;
+  font:700 1.45rem/1.2 "Microsoft JhengHei","PingFang TC","Noto Sans TC",var(--font);box-shadow:0 .3rem 0 rgba(0,0,0,.4);pointer-events:none}
+#scan .scan-badge .home-tag{font-size:min(2.2rem,2.4vh);bottom:-1.4rem;padding:.4rem 1.6rem .5rem}
+/* classroom edition: the three levels are chosen on the START screen */
+.lvl-now.lvl-room{display:flex;align-items:center;justify-content:center;gap:1.2rem;padding:1rem 1.6rem}
+.lvl-room .lr-t{font-size:2.2rem;font-weight:700;color:var(--sun);white-space:nowrap}
+.lvl-room .lr-b{display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.7rem 1.6rem;border:0;border-radius:1.6rem;cursor:pointer;touch-action:manipulation;font:inherit;line-height:1.15;color:#dfe7ff;background:linear-gradient(180deg,#3a4f93,#24346b);box-shadow:0 .5rem 0 #121c42}
+.lvl-room .lr-b b{font-size:2.6rem;color:inherit}.lvl-room .lr-b i{font-style:normal;font-size:1.4rem;opacity:.9;white-space:nowrap}
+.lvl-room .lr-b.on{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 .5rem 0 #0b7a5c}
+.lvl-room .lr-b.on b::before{content:"✓ "}
+.lvl-room .lr-b:active{transform:translateY(.3rem);box-shadow:0 .2rem 0 #121c42}
+.lvl-now.lvl-room{position:relative;z-index:3;max-width:100%}
+body.room #scan .scan-o3{bottom:27vh} /* Ollie stands beside START, clear of the level buttons */
+@media (max-aspect-ratio:3/2){.lvl-room .lr-b i{display:none}.lvl-room .lr-b{padding:.7rem 1.4rem}}
 /* start screen: Ollie in 3D at the right-hand side */
 #scan .scan-o3{position:absolute;right:.2vw;bottom:3vh;width:min(15vw,30vh);height:min(19vw,38vh);z-index:2}
 @media (max-aspect-ratio:4/3){#scan .scan-o3{display:none}}

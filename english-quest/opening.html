@@ -43,10 +43,11 @@
 <div id="scenes"></div>
 <div class="dots" id="dots"></div>
 <div class="ctrl"><button id="prev">◀</button><button id="play">▶ 自動播放</button><button id="next">▶▶</button></div>
-<div class="tag zh">按空白鍵或點畫面換下一頁 · 歐力的聲音是 ElevenLabs AI 語音檔</div>
+<div class="tag zh">按空白鍵或點畫面換下一頁</div>
 <script src="js/content.js"></script>
 <script src="assets/audio/el-words.js"></script>
 <script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/voice-m.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
 <script src="js/emblem.js"></script>
@@ -84,7 +85,7 @@
     root.innerHTML = ""; const sc = h("div", { class: "scene" }, ...S[i].build()); root.append(sc); requestAnimationFrame(() => sc.classList.add("on"));
     [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
     TC.sfx("whoosh"); clearTimeout(timer);
-    await sleep(500); await TC.speak(S[i].say, { rate: 0.9 });
+    await sleep(500); await TC.speak(S[i].say, { rate: 0.9, voice: i % 2 ? "m" : "f" }); // the two voices take turns
     if (auto && cur === i && i < S.length - 1) timer = setTimeout(() => show(i + 1), 2200);
   }
   document.getElementById("next").onclick = (e) => { e.stopPropagation(); show(cur + 1); };

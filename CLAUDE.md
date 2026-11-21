@@ -6,9 +6,13 @@
   (GitHub Pages updates automatically via `.github/workflows/pages.yml`), **and** republish the claude.ai backup
   (see `deploy/publish-claude.md`; one version of the backup holds at most 512 files) to the same URL.
 - English pronunciation (the teacher's decision, November 2026): every line the games speak is a clip made with the school's
-  ElevenLabs account (voice "Bella - Professional, Bright, Warm", model `eleven_multilingual_v2`), listed in
-  `english-quest/assets/audio/el-words.json` and `ai-sentences.json`. It is an AI voice: pages and docs must say so, never call it
-  a human recording. The Wikimedia human recordings (`credits.json`, speaker / licence / download time) stay as a setting.
+  ElevenLabs account, model `eleven_multilingual_v2`, in TWO lively voices so that a woman's and a man's voice are heard equally:
+  "Bella - Professional, Bright, Warm" (`el-words.json`, `ai-sentences.json`) and "Liam - Energetic, Social Media Creator"
+  (`m-words.json`, `m-sentences.json`, files under `assets/audio/m/`; the pages load the short list `voice-m.js` made by
+  `python3 tools/pack_voice.py`). `TC.voiceOf(role)` in `js/core.js` decides: gates 1, 3, 5 — Ollie's lines in the woman's voice and
+  the 🔊 model answer in the man's; gates 2, 4, 6 the other way round; praise at random. A line must NEVER fall back to the browser's
+  robotic computer voice. These are AI voices: `credits.html`, the guide and the README must say so and never call them human
+  recordings; the game and show screens carry no voice label (the teacher does not want one on the big screen). The Wikimedia human recordings (`credits.json`, speaker / licence / download time) stay as a setting.
   A new spoken line needs a clip: `node tools/need_audio.js` must report 0 missing (`node tools/prune_audio.js` lists clips no screen uses), and `tools/verify_sentences.py` /
   `tools/verify_audio.py` must be run; report honestly which clips the recogniser could not confirm.
 - The venue has no microphone and children do not carry the passport booklet: the microphone stays off by default, nothing may

@@ -142,12 +142,21 @@
 
   /* ---------------- voices: human clips first, labelled TTS otherwise ---------------- */
   TC.audioBase = "assets/audio/";
+  /* where a clip's sound comes from: its mp3 file — or, in the single-file classroom edition (tools/build_classroom.py),
+     a data: address built into the page (TC_AUDIO_DATA[file]) */
+  const fileSrc = (file) => (window.TC_AUDIO_DATA && window.TC_AUDIO_DATA[file]) || (/^data:/.test(file) ? file : TC.audioBase + file);
+  /* Two voices, both made with ElevenLabs: "f" = the clips of el-words / ai-sentences (a woman's voice), "m" = the second set
+     (a man's voice; window.TC_VOICE_M: clip key → file). So that both are heard equally over the six gates: in gates 1, 3, 5
+     Ollie's own lines (questions, commands) are "f" and the model answer (🔊) is "m"; in gates 2, 4, 6 the other way round.
+     Praise lines take either voice at random. Without the second set everything is "f". */
+  TC.voiceOf = (role) => { const odd = (TC.gate || 1) % 2 === 1; return (role === "model") === odd ? "m" : "f"; };
+  const clipSrc = (key, a, v) => (v === "m" && a.ai && window.TC_VOICE_M && window.TC_VOICE_M[key]) ? fileSrc(window.TC_VOICE_M[key]) : fileSrc(a.file);
   TC.hasHuman = (w) => !!(window.TC_AUDIO && window.TC_AUDIO[String(w).toLowerCase()]);
   TC.playHuman = function (w) {
     const a = window.TC_AUDIO && window.TC_AUDIO[String(w).toLowerCase()];
     if (!a) return Promise.resolve(false);
     return new Promise((res) => {
-      const au = new Audio(TC.audioBase + a.file);
+      const au = new Audio(fileSrc(a.file));
       au.volume = TC.cfg.volume;
       TC.quiet(true);
       au.onended = () => { TC.quiet(false); res(true); }; au.onerror = () => { TC.quiet(false); res(false); };
@@ -179,19 +188,20 @@
   const isName = (t) => TC.kid && normTok(t) === normTok(TC.kid.name);
   const clipCache = {};
   let curClip = null; // the clip that is playing now (TC.stopModel can cut it short)
-  function playClip(key) {
+  function playClip(key, voice) {
     const a = clipOf(key); if (!a) return Promise.resolve(false);
     return new Promise((res) => {
-      const au = clipCache[key] || (clipCache[key] = new Audio(TC.audioBase + a.file));
+      const ck = (voice === "m" ? "m:" : "") + key, au = clipCache[ck] || (clipCache[ck] = new Audio(clipSrc(key, a, voice)));
       let fin = false; const done = (ok) => { if (!fin) { fin = true; if (curClip && curClip.au === au) curClip = null; res(ok); } };
       curClip = { au, done };
       try { au.currentTime = 0; } catch (e) {}
-      au.volume = TC.cfg.volume; au.onended = () => done(true); au.onerror = () => done(false);
+      // the man's clips are about 1.7 dB quieter on average than the woman's: play hers a little softer so the two match
+      au.volume = TC.cfg.volume * (voice === "m" || !a.ai || !(window.TC_VOICE_M && window.TC_VOICE_M[key]) ? 1 : 0.83); au.onended = () => done(true); au.onerror = () => done(false);
       const p = au.play(); if (p && p.catch) p.catch(() => done(false));
       setTimeout(() => done(false), 4000);
     });
   }
-  TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && clipOf(k); if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = TC.audioBase + a.file; clipCache[k] = au; } });
+  TC.preloadClips = (words) => (words || []).forEach((w) => { const k = clipKey(normTok(w)); const a = k && clipOf(k); if (a && !clipCache[k]) { const au = new Audio(); au.preload = "auto"; au.src = fileSrc(a.file); clipCache[k] = au; } });
   /** The TV never glues separate word recordings into a sentence (that sounds unnatural: no weak forms, no linking).
       A line is cut at its punctuation; a piece is a human recording only when ONE recording covers the whole piece
       ("Yes!", "Tiger!", "Good morning!"). Anything longer is a sentence: see TC.speak. */
@@ -202,10 +212,10 @@
   /** true when every piece of the line (apart from the child's name) is one human recording */
   TC.canSayHuman = (text) => { const p = TC.voicePieces(text); return p.length > 0 && p.every((x) => x.clip || isName(x.text)); };
   /** play the pieces of a line that have a recording; onPiece(piece) fires as each starts. Resolves true if anything was played. */
-  TC.sayHuman = async function (text, onPiece) {
+  TC.sayHuman = async function (text, onPiece, voice) {
     const pieces = TC.voicePieces(text).filter((x) => x.clip); let any = false;
     TC.quiet(true);
-    try { for (const pc of pieces) { onPiece && onPiece(pc); any = (await playClip(pc.clip)) || any; await sleep(140); } }
+    try { for (const pc of pieces) { onPiece && onPiece(pc); any = (await playClip(pc.clip, voice)) || any; await sleep(140); } }
     finally { TC.quiet(false); onPiece && onPiece(null); }
     return any;
   };
@@ -274,7 +284,7 @@
     TC.caption(text, -1, toks, tag);
     if (!TC.voicePieces(line).some((x) => x.clip)) { await sleep(Math.min(1600, 600 + text.length * 30)); return; }
     TC.ollie && TC.ollie("talk");
-    await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks, tag); });
+    await TC.sayHuman(line, (pc) => { if (!pc) return; const i = toks.findIndex((t) => t.clip === pc.clip); TC.caption(text, i, toks, tag); }, opt.voice || TC.voiceOf("host"));
     TC.ollie && TC.ollie("idle");
   };
   /** after an answer: the whole model sentence, "Yes! It's a tiger." (one voice, in one go); on a screen without the sentence
@@ -284,7 +294,7 @@
   let lastPraise = -1;
   TC.praise = function () {
     const L = (window.TC_CONTENT && TC_CONTENT.praise) || ["Good job!"]; let i; do { i = (Math.random() * L.length) | 0; } while (i === lastPraise && L.length > 1); lastPraise = i;
-    return TC.speak(L[i]);
+    return TC.speak(L[i], { voice: Math.random() < 0.5 ? "f" : "m" }); // praise: a woman's or a man's voice, at random
   };
   /** The host's own line (a question or a command). Spoken by the TV only in "電腦問" mode; in "老師問" mode the teacher says it. */
   TC.teacherLine = function (text) { return TC.cfg.ollieAsks ? TC.speak(text) : Promise.resolve(TC.caption(text)); };
@@ -308,28 +318,28 @@
     const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
     const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
     const wordKey = word && clipKey(normTok(word)), humanWord = wordKey || null; // the answer word's own clip (ElevenLabs or Wikimedia)
-    const my = ++modelRun, clips = whole.map((x) => x.clip);
+    const my = ++modelRun, clips = whole.map((x) => x.clip), mv = TC.voiceOf("model"); // the model answer: the other voice than Ollie's questions
     if (whole.length > 1 && clips.every(Boolean)) {
       // a line of several pieces, each with its own clip ("Sorry, | I am late."): the answer word first, then the pieces in order
       modelOn++;
       try {
-        if (humanWord) { light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
+        if (humanWord) { light(true, [word]); TC.quiet(true); await playClip(humanWord, mv); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
         showSrc("ai", clips[0]); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true);
-        for (const c of clips) { await playClip(c); if (my !== modelRun) break; await sleep(140); }
+        for (const c of clips) { await playClip(c, mv); if (my !== modelRun) break; await sleep(140); }
         TC.quiet(false); light(false);
       } finally { modelOn--; TC.quiet(false); }
       return "ai";
     }
     if (one && one === humanWord) { // the line IS the word ("Yes!", "Bow!"): say it once
-      modelOn++; try { showSrc(clipOf(one).ai ? "aiword" : "human", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false); } finally { modelOn--; }
+      modelOn++; try { showSrc(clipOf(one).ai ? "aiword" : "human", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one, mv); TC.quiet(false); light(false); } finally { modelOn--; }
       return "ai";
     }
     if (one && clipOf(one).ai) {
       // a whole-sentence AI clip: the answer word from its human recording first, then the sentence in one go
       modelOn++;
       try {
-        if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
-        showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false);
+        if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord, mv); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
+        showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one, mv); TC.quiet(false); light(false);
       } finally { modelOn--; TC.quiet(false); }
       return humanWord ? "human+ai" : "ai";
     }
@@ -756,7 +766,7 @@
       Object.assign(TC.cfg, { listen: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: true, sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
-      if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
+      if (!window.TC_CLASSROOM && TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;
     };
   };
 })();

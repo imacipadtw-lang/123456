@@ -3,7 +3,7 @@ of the sentences; a clip passes when the answer is its own sentence. Also checks
 usage: PYTHONPATH=<dir with pocketsphinx> python3 tools/verify_sentences.py english-quest/assets/audio"""
 import json, os, re, subprocess, sys, tempfile, hashlib
 from pocketsphinx import Decoder, get_model_path
-AUD = sys.argv[1]; man = json.load(open(os.path.join(AUD, os.environ.get("MANIFEST", "ai-sentences.json"))))  # MANIFEST=m-sentences.json checks the second (male) voice; mp = get_model_path()
+AUD = sys.argv[1]; man = json.load(open(os.path.join(AUD, os.environ.get("MANIFEST", "ai-sentences.json")))); mp = get_model_path()  # MANIFEST=m-sentences.json checks the second (male) voice
 words = lambda t: re.sub(r"[^a-z' ]", " ", t.lower()).split()
 gram = "#JSGF V1.0;\ngrammar s;\npublic <s> = " + " | ".join("( " + " ".join(words(v["text"])) + " )" for v in man.values()) + ";\n"
 gf = tempfile.NamedTemporaryFile("w", suffix=".gram", delete=False); gf.write(gram); gf.close()
