@@ -8,7 +8,7 @@ const base = process.argv[2] || "http://localhost:8767", secs = +(process.argv[3
     const p = await b.newPage({ viewport: { width: 1366, height: 768 }, hasTouch: true }); const errs = [];
     p.on("pageerror", (e) => errs.push(e.message));
     await p.goto(`${base}/station.html?gate=${g}`); await p.waitForTimeout(800);
-    await p.evaluate(() => { TC.goHome = () => {}; }); // the emblems are Home buttons (top-left in play, beside START on the start screen): leaving the page is not part of random play
+    await p.route("**/index.html*", (r) => r.abort()); // the emblems are Home buttons (top-left in play, beside START on the start screen): leaving the page is not part of random play
     await p.click("#startBtn", { force: true }); const t0 = Date.now(); let n = 0;
     const keys = ["Enter", "Enter", "Enter", " ", "n", "h", "Escape", "c", "m", "s", "g", "ArrowLeft", "ArrowRight"];
     while (Date.now() - t0 < secs * 1000) {

@@ -628,10 +628,11 @@
     let chip = `<span class="chip">Ollie says <span class="zh">歐力說</span></span>`;
     if (kind === "nosay") chip = `<span class="chip no">Ollie didn't say! <span class="zh">歐力沒有說！</span></span>`;
     if (kind === "quiet") chip = `<span class="chip">Shhh... <span class="zh">安靜</span></span>`;
+    if (kind === "you") chip = `<span class="chip">You said! <span class="zh">你下的指令</span></span>`;
     if (kind === "wake") chip = `<span class="chip no">Ollie shouts! <span class="zh">歐力大喊</span></span>`;
     let en = hi(x.say), cls = "en";
     if (kind === "quiet") { const parts = x.say.split(/(?<=\.)\s+/); if (parts.length > 1) { en = `<span class="sm">${esc(parts[0])}</span>` + hi(parts.slice(1).join(" ")); cls = "en"; } }
-    return `<div class="chips">${chip}<span class="chip ref zh">護照 ${esc(x.no || "")}</span></div><div class="${cls}">${en}</div><div class="zh">${esc(x.zh || "")}</div>`;
+    return `<div class="chips">${chip}</div><div class="${cls}">${en}</div><div class="zh">${esc(x.zh || "")}</div>`;
   }
   function showBanner(x, kind) {
     ban.classList.remove("show", "muted"); void ban.offsetWidth;
@@ -662,15 +663,34 @@
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
   async function titleCard(api) {
-    const lv2 = api.level === 2;
-    const el = h("div", { class: "title", html: `<div class="t1">Ollie <span>Says</span></div><div class="t2">歐力說</div><div><span class="t3">Do what Ollie does!　跟著歐力一起做動作！</span>${lv2 ? `<span class="t4">If Ollie doesn't say it, FREEZE! 歐力沒說就定住！</span>` : ""}</div>` });
+    const boss = api.level >= 2; // 115.11.21: 跟著做動作 is only for 低年級 — 中／高年級 give the orders and Ollie does them
+    const el = h("div", { class: "title", html: boss
+      ? `<div class="t1">You <span>Say</span></div><div class="t2">你是老師</div><div><span class="t3">Tell Ollie what to do!　用英文下指令，歐力照著做！</span></div>`
+      : `<div class="t1">Ollie <span>Says</span></div><div class="t2">歐力說</div><div><span class="t3">Do what Ollie does!　跟著歐力一起做動作！</span></div>` });
     root.append(el); temp.push(el);
     setMode("title"); TC.sfx("fanfare");
     await TC.waitAction(2300);
     el.remove();
   }
 
+  async function bossRound(api, x) {
+    setMode("ready"); hideRing(); hideBanner();
+    const r = await api.ask({ teacher: "Tell Ollie!", tzh: "用英文叫歐力做這個動作！", say: x.say, zh: x.zh, keys: x.keys || [[x.w]], word: x.w, hideKey: true });
+    TC.hideTalk();
+    if (api.aborted) return false;
+    showBanner(x, "you"); setMode(x.id); TC.sfx("pop");
+    TC.floatText("Ollie does it! 歐力照做！", 50, 22, "#ffd23d");
+    await TC.waitAction(r && r.skipped ? 2600 : 3600);
+    if (api.aborted) return false;
+    setMode("cheer"); hideRing(); TC.countTurn(3); TC.confetti(90); TC.sfx("ding");
+    await raceSkip(TC.praise());
+    if (api.aborted) return false;
+    hideBanner(); await TC.waitAction(350);
+    return !api.aborted;
+  }
+
   async function oneRound(api, x, twist) {
+    if (api.level >= 2) return bossRound(api, x);
     setMode("ready"); showBanner(x, twist ? "nosay" : "says"); hideRing();
     if (twist) nosay.classList.add("show");
     talking = true; await raceSkip(TC.teacherLine(x.say)); talking = false;
@@ -704,15 +724,23 @@
     showBanner(Qt, "quiet");
     talking = false; await raceSkip(TC.teacherLine(Qt.say));
     if (api.aborted) return false;
-    setRing("big", "Eyes closed!", "閉上眼睛<br>不要動"); cdBig = true; cdStart = performance.now();
-    await TC.waitAction(6000); cdBig = false; cdStart = 0;
+    if (api.level >= 2) {
+      // 中／高年級: nobody has to freeze — Ollie snores until the child shouts him awake
+      await TC.waitAction(1200); if (api.aborted) return false;
+      hideBanner();
+      await api.ask({ teacher: "Ollie is sleeping! Wake him up!", tzh: "歐力睡著了！用英文把他叫醒！", say: Wk.say, zh: Wk.zh, keys: Wk.keys || [[Wk.w]], word: Wk.w, hideKey: true });
+      TC.hideTalk();
+    } else {
+      setRing("big", "Eyes closed!", "閉上眼睛<br>不要動"); cdBig = true; cdStart = performance.now();
+      await TC.waitAction(6000); cdBig = false; cdStart = 0;
+    }
     if (api.aborted) return false;
     // BANG: ONE flash, a loud alarm, Ollie springs up
     stopAudio(); hideRing();
     const fl = h("div", { class: "tpr-flash" }); document.body.append(fl); temp.push(fl); fl.addEventListener("animationend", () => fl.remove());
     alarm(); root.classList.add("sizzle", "wakeup"); root.classList.remove("night"); void root.offsetWidth;
     setMode("wake"); bangAt = performance.now(); showBanner(Wk, "wake"); TC.confetti(260); TC.confetti(120, ["#ffd23d", "#fff", "#ff5fa2"]);
-    await raceSkip(TC.speak(Wk.say));
+    if (api.level < 2) await raceSkip(TC.speak(Wk.say)); else await TC.waitAction(1600);
     root.classList.remove("sizzle");
     if (api.aborted) return false;
     TC.confetti(120); await TC.waitAction(1500);
@@ -763,7 +791,7 @@
         const n = TC.rounds(5), list = shuffle(api.G.actions).slice(0, n);
         // level 2 only: a few rounds where Ollie "didn't say" — everyone freezes (never judged)
         const twist = new Set();
-        if (api.level === 2 && n >= 3) { const c = shuffle([1, 2, 3, 4].filter((i) => i < n)); twist.add(c[0]); const o = c.find((i) => Math.abs(i - c[0]) > 1); if (o != null && n >= 5) twist.add(o); }
+        if (false && n >= 3) { const c = shuffle([1, 2, 3, 4].filter((i) => i < n)); twist.add(c[0]); const o = c.find((i) => Math.abs(i - c[0]) > 1); if (o != null && n >= 5) twist.add(o); }
         api.progress(0, n);
         await titleCard(api); if (api.aborted) return;
         for (let i = 0; i < list.length; i++) {

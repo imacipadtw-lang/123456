@@ -689,7 +689,8 @@
     mouth(mon, null); SND.giggle(M.pitch);
 
     const plural = /^(teeth|hands)$/.test(w.w);
-    const sentence = plural ? "They're " + w.w + "." : "It's " + (/^[aeiou]/.test(w.w) ? "an " : "a ") + w.w + ".";
+    const mass = /^(water)$/.test(w.w); // uncountable: "It's water." (never "It's a water.")
+    const sentence = plural ? "They're " + w.w + "." : "It's " + (mass ? "" : /^[aeiou]/.test(w.w) ? "an " : "a ") + w.w + ".";
     const r = await api.ask({ teacher: plural ? "What are they?" : G.teacher, tzh: plural ? "這些是什麼？" : G.tzh, say: sentence, zh: w.zh, keys: [[w.w]], word: w.w, hideKey: true });
     TC.hideTalk(); if (dead(my)) return null;
     if (r && r.ok) { TC.confetti(50, [M.col, "#ffd23d", "#fff", "#2ee6b6"]); await TC.praise(); }

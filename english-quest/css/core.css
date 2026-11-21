@@ -56,6 +56,14 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 .t-line{font-size:2.3rem;font-weight:600;color:var(--ink2);line-height:1.2}
 .k-line{font-size:3.8rem;font-weight:700;line-height:1.15;letter-spacing:.01em}
 .k-line .w{display:inline-block;transition:color .2s,transform .2s}
+.k-line .abc-opts{display:inline-flex;gap:1.4rem;vertical-align:middle;margin-left:1rem}
+.k-line .abc-btn{font:inherit;font-size:1.1em;min-width:2.6em;padding:.1em .3em;border:0;border-radius:1.4rem;cursor:pointer;touch-action:manipulation;color:#0a1633;background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 .55rem 0 #8fa2ff}
+.k-line .abc-btn:active{transform:translateY(.4rem);box-shadow:0 .15rem 0 #8fa2ff}
+.k-line .abc-btn.ok{background:linear-gradient(180deg,#d6fff0,#2ee6b6);box-shadow:0 .55rem 0 #17a884}
+.k-line .abc-btn.bad{animation:shake .45s}
+.k-line .abc-big{display:inline-grid;place-items:center;min-width:1.6em;padding:0 .3em;margin-right:.5em;border-radius:1.2rem;background:linear-gradient(180deg,#fff7d6,#ffd96b);color:#0a1633;font-size:1.5em;line-height:1.25;box-shadow:0 .5rem 0 #e0a21a;vertical-align:middle}
+.k-line .abc-w{font-size:.8em;vertical-align:middle;color:var(--ink2)}.k-line .abc-w b{color:var(--sun)}
+.k-line .abc-do{display:block;font-size:.5em;color:var(--mint);margin-top:.4rem}
 .k-line .w.hit{color:var(--mint);transform:translateY(-.2rem) scale(1.06);text-shadow:0 0 1rem rgba(46,230,182,.6)}
 .k-line .w.blank{min-width:4.5em;text-align:center;border:.25rem dashed var(--sun);border-radius:1rem;color:var(--sun);text-decoration:none;padding:0 .4em}
 .k-line .w.key{text-decoration:underline;text-decoration-color:var(--sun);text-decoration-thickness:.25rem;text-underline-offset:.35rem}
@@ -355,9 +363,12 @@ body:has(.overlay .stamp) #cap,body:has(.overlay.welcome) #cap{left:auto;right:2
 @keyframes startBreath{0%,100%{scale:1}50%{scale:1.045}}
 @keyframes startShine{0%,55%{left:-40%}100%{left:130%}}
 
-/* --- level switch under START (初級 / 中級) --- */
+/* --- level shown under START (chosen on the home page) --- */
+.lvl-now{margin-top:2.2rem;padding:1rem 2.4rem;border-radius:2.4rem;background:rgba(5,12,30,.55);font-size:2.2rem;color:#dfe7ff;text-align:center;line-height:1.4}
+.lvl-now b{color:#7dffd8;font-size:2.8rem}.lvl-now small{display:block;font-size:1.4rem;opacity:.8}
+.lvl .lvl-tag{display:inline-block;padding:.3rem 1.2rem;border-radius:1.2rem;background:#ffc83d;color:#0a1633;font-weight:700}
 .lvl-pick{display:flex;gap:1.4rem;margin-top:2.2rem;padding:.8rem;border-radius:3rem;background:rgba(5,12,30,.55);box-shadow:inset 0 .4rem 1rem rgba(0,0,0,.5)}
-.lvl-pick button{display:flex;flex-direction:column;align-items:center;min-width:20rem;padding:1rem 2.4rem;border-radius:2.4rem;line-height:1.1;
+.lvl-pick button{display:flex;flex-direction:column;align-items:center;min-width:16rem;padding:1rem 2.4rem;border-radius:2.4rem;line-height:1.1;
   background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;box-shadow:0 .6rem 0 #121c42,inset 0 .2rem 0 rgba(255,255,255,.25)}
 .lvl-pick button b{font-size:3.4rem}
 .lvl-pick button i{font-style:normal;font-size:1.7rem;opacity:.85;margin-top:.3rem}
@@ -422,6 +433,7 @@ body:not(.playing) #clock,body:not(.playing) #aiPill{display:none}
 .gate-badge{background:var(--panel);background-color:var(--panel-flat)}
 /* on the start screen the gate's own giant badge is shown already */
 body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
+.big-emb.home-link,#scan .scan-badge.home-link,.gate-badge.home-link{pointer-events:auto;cursor:pointer;touch-action:manipulation}
 
 /* colour pass: richer panels tinted with this gate's colour */
 #stage{background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--gate) 22%,var(--bg2)),var(--bg1))}
@@ -466,26 +478,28 @@ body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
 .lvl-pick button{padding:.8rem 2.2rem}
 .lvl-pick button b{font-size:3rem}
 
-/* the top-left emblem is the HOME button (asks first while a child is playing) */
-.big-emb{pointer-events:auto;cursor:pointer}
-.big-emb:active{filter:brightness(1.15) drop-shadow(0 .5rem 0 rgba(0,0,0,.28))}
-#scan .scan-badge{pointer-events:auto!important;cursor:pointer}
-.big-emb::after,#scan .scan-badge::after{content:"🏠";position:absolute;right:-.2rem;bottom:.6rem;width:3.4rem;height:3.4rem;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;
-  background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 .3rem 0 #8fa2ff,0 .6rem 1rem rgba(0,0,0,.35)}
-#scan .scan-badge::after{right:6%;bottom:8%;width:4.6rem;height:4.6rem;font-size:2.6rem}
-.home-ask{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(5,10,25,.82);backdrop-filter:blur(4px)}
-.home-ask .card{background:linear-gradient(180deg,#24367c,#0f1a45);border:3px solid #ffc83d;border-radius:3rem;padding:3rem 4rem;text-align:center;box-shadow:0 2rem 5rem rgba(0,0,0,.6);animation:zoomIn .3s cubic-bezier(.2,1.4,.4,1)}
-.home-ask .q{font-size:5rem;font-weight:700}.home-ask .s{font-size:2.4rem;color:var(--ink2);margin:.6rem 0 2.2rem}
-.home-ask .row{display:flex;gap:2rem;justify-content:center}
-.home-ask .big-btn{font-size:3.4rem;padding:1.4rem 3.4rem;border-radius:2rem}
-.home-ask .stay{background-color:#35e07a;color:#06331a;box-shadow:0 .8rem 0 #148a42,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.5)}
-.home-ask .leave{background-color:#4a557c;box-shadow:0 .8rem 0 #252c45,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.25)}
+.k-line .abc-pic{display:inline-block;font-size:1.3em;margin-right:.3em;vertical-align:middle;animation:abcPic 1.6s ease-in-out infinite}
+@keyframes abcPic{50%{transform:translateY(-.12em) rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){.k-line .abc-pic{animation:none}}
 
-/* compact talk bar: ✓ on top, 🔊 and ⏭ side by side — the game scene gets the freed space */
+/* compact teacher bar: ✓ on top, 🔊 and ⏭ side by side; no voice waveform (no microphone is used) —
+   the game scene gets the freed space */
 #talk{grid-template-columns:minmax(0,1fr) 25rem;align-items:stretch}
 .talk-side{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.25fr 1fr;gap:.9rem}
 .talk-side .btn-ok{grid-column:1 / 3}
 .talk-side .btn-hear{grid-column:1;flex-direction:column;gap:.1rem;font-size:2.3rem!important;line-height:1.1}
 .talk-side .btn-skip{grid-column:2;font-size:2.1rem!important}
 .talk-side #wave,.talk-side .meter{display:none}
-.talk-side .src-tag{font-size:1.1rem}
+
+/* 低年級 letter buttons: picture, word and the three letters share one row, so the scene above stays visible */
+.k-line:has(.abc-opts){display:flex;flex-wrap:wrap;align-items:center;column-gap:1.2rem;row-gap:.2rem}
+.k-line:has(.abc-opts) .abc-opts{flex:none;margin-left:.4rem;gap:1.1rem}
+.k-line:has(.abc-opts) .abc-do{flex-basis:100%;margin-top:.2rem}
+.k-line:has(.abc-opts) .abc-btn{font-size:.84em;min-width:2.15em}
+.k-line:has(.abc-opts) .abc-pic{font-size:1.1em;margin-right:0}
+.k-line:has(.abc-opts) .abc-w{flex:none}
+
+/* while a puzzle / mystery-box panel is open, Ollie's subtitle sits in the panel's top-right corner, clear of its title */
+body:has(.pz) #cap{left:auto;right:3rem;top:9.2rem;transform:translate(0,-1rem);max-width:30vw;font-size:2.5rem;padding:.4rem 1.6rem .4rem .6rem}
+body:has(.pz) #cap img{width:3.6rem;height:4.1rem}
+body:has(.pz) #cap.show{transform:none}

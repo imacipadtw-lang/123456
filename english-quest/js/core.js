@@ -1,6 +1,6 @@
 /* =====================================================================
    Tucheng English Day — shared engine for every gate
-   - one big START button per screen (no passport scanning), level 初級 / 中級
+   - one big START button per screen (no passport scanning), level 低／中／高年級
    - AI speech recognition (Web Speech API) + teacher override
    - human pronunciation clips (Wikimedia Commons) / labelled computer voice
    - voice recording replay, stamps, secret-code letters, optional Google Sheet sync
@@ -28,8 +28,16 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", listen: false, /* no microphone at the venue: the host presses ✓ */ volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
+  const DEF = { syncUrl: "", listen: false, /* no microphone at the venue: the host presses the tick; older saved "asr" settings are ignored on purpose */ volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
+  TC.cfg.wordVoice = "el"; // 115.11.21: every voice is ElevenLabs (管理者要求)
+  TC.cfg.ollieAsks = true; // 115.11.20: the 老師問 mode was removed — Ollie (the TV) always asks
+  // 115.11.20: three levels — 1 低年級 (only the ABC letter + do the action) · 2 中年級 (whole sentence shown, read it) · 3 高年級 (fill in the blank)
+  if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
+  { const q = +(new URLSearchParams(location.search).get("lv") || 0); if (q >= 1 && q <= 3) TC.cfg.level = q; }
+  if (!(TC.cfg.level >= 1 && TC.cfg.level <= 3)) TC.cfg.level = 2;
+  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 認字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 填空說" } };
+  try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {}
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
   /** rounds per child: standard, or capped in quick mode */
@@ -38,7 +46,7 @@
   /* ---------------- players (kept for the Live Board colours; passport scanning was removed) ----------------
      (a new player id is made each time START is pressed)  */
   const AV_COLORS = ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e", "#7ee36b", "#ff7a7a"];
-  TC.levelFromGrade = (g) => (g <= 2 ? 1 : 2); // 1 = 初級 (grades 1–2, the word is shown) · 2 = 中級 (grades 3–6, the word is a blank)
+  TC.levelFromGrade = (g) => (g <= 2 ? 1 : g <= 4 ? 2 : 3); // 1 低年級 · 2 中年級 · 3 高年級
   TC.parseKid = function (raw) {
     if (!raw) return null;
     const s = String(raw).trim();
@@ -201,12 +209,12 @@
   };
   /* subtitle for what Ollie says (the words light up as they are spoken) */
   let capT = null;
-  TC.caption = function (text, active = -1, toks = null, tag = "") {
+  TC.caption = function (text, active = -1, toks = null, tag = "") { tag = ""; // 115.11.21: no voice-type labels (AI 語音／電腦語音) on screen
     let c = $("#cap"); if (!c) { c = h("div", { id: "cap" }); document.body.append(c); }
     clearTimeout(capT);
     if (!text) { c.classList.remove("show"); return; }
     c.innerHTML = `<img src="${TC.art ? TC.art("ollie") : ""}" alt="">` + (toks ? toks.map((t, i) => `<span class="${i === active ? "on" : ""}">${esc(t.t)}</span>`).join(" ") : `<span>${esc(text)}</span>`)
-      + (tag ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">${esc(tag)}</i>` : active === "tts" ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
+      + (tag ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">${esc(tag)}</i>` : false ? `<i style="font:700 .42em/1 system-ui;font-style:normal;margin-left:.6em;padding:.25em .6em;border-radius:99px;background:rgba(255,255,255,.22);white-space:nowrap;vertical-align:middle">電腦語音</i>` : "");
     c.classList.add("show");
     capT = setTimeout(() => c.classList.remove("show"), 2600 + text.length * 40);
   };
@@ -285,17 +293,6 @@
     const c = TC_CONTENT.clap, b = h("div", { class: "clap-banner" }, h("div", { class: "hands" }, "👏"), h("div", { class: "en" }, c.say), h("div", { class: "zh" }, c.zh + "　拍拍手！"));
     document.body.append(b); TC.sfx("fanfare"); TC.confetti(160);
     await TC.speak(c.say); await sleep(Math.max(0, ms - 1200)); b.classList.add("out"); await sleep(400); b.remove();
-  };
-  /** Back to the home page (the list of all gates). While a child is playing, ask first so that a stray tap cannot end the game. */
-  TC.goHome = function (ask) {
-    const go = () => { location.href = "index.html"; };
-    if (!ask) return go();
-    if (document.querySelector(".home-ask")) return;
-    const close = () => wrap.remove();
-    const wrap = h("div", { class: "home-ask", onclick: (e) => { if (e.target === wrap) close(); } },
-      h("div", { class: "card" }, h("div", { class: "q zh" }, "要回首頁嗎？"), h("div", { class: "s zh" }, "這位小朋友的遊戲會結束"),
-        h("div", { class: "row" }, h("button", { class: "big-btn stay", onclick: close }, "▶ ", h("span", { class: "zh" }, "繼續玩")), h("button", { class: "big-btn leave", onclick: go }, "🏠 ", h("span", { class: "zh" }, "回首頁")))));
-    document.body.append(wrap);
   };
   /** number of points on the scratch card: the number word is a human recording */
   TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
@@ -484,11 +481,27 @@
       const sayWords = String(spec.say || "").split(/\s+/).filter(Boolean);
       $("#kLine").innerHTML = sayWords.map((w, i) => {
         const n = TC.norm(w)[0] || ""; const isKey = [...keyWords].some((k) => TC.wordMatch(n, k));
-        const hide = spec.hideKey && (spec.hideAlways || !(TC.kid && TC.kid.level === 1)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
+        const hide = spec.hideKey && (spec.hideAlways || (TC.kid && TC.kid.level === 3)) && (spec.keys[0] || []).some((k) => TC.norm(k).some((kk) => TC.wordMatch(n, kk))); // hide only the mystery word
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
-      // a one-line guide for the child and the gate host until something is heard
-      $("#heard").innerHTML = `<span class="guide">👦 ${esc(spec.guideKid || (spec.hideKey ? "看圖片，說出「?」的那個字" : "說出亮黃色的字就可以"))}　👩‍🏫 ${esc(spec.guideTeacher || (TC.cfg.listen ? "AI 沒反應時按 ✓（Enter）· 🔊 聽示範（H）" : "孩子說完，老師按 ✓ 說得好（Enter）· 🔊 聽示範（H）"))}</span>`;
+      const kw = String(spec.word || ((spec.keys || [])[0] || [])[0] || "").trim();
+      if (TC.kid && TC.kid.level === 1 && !spec.noAbc && kw && /^[a-z]/i.test(kw)) {
+        const ans = kw, low = TC.lowAction ? TC.lowAction(kw) : { w: kw }; // 115.11.21: easy word + its own action
+        const kw2 = low.w; { const kw = kw2;
+        const L = kw[0].toUpperCase();
+        // 低年級: tap the right letter (touch) — or say it — then do the action with Ollie
+        const pool = "ABCDEFGHIJKLMNOPRSTUVWY".split("").filter((c) => c !== L);
+        const opts = [L]; while (opts.length < 3) { const c = pool.splice((Math.random() * pool.length) | 0, 1)[0]; opts.push(c); }
+        for (let i = opts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [opts[i], opts[j]] = [opts[j], opts[i]]; }
+        $("#kLine").innerHTML = `${low.props ? `<span class="abc-pic" aria-hidden="true">${low.props[0]}</span>` : ""}<span class="abc-w"><b>${esc(kw[0])}</b>${esc(kw.slice(1))}</span><span class="abc-opts">${opts.map((c) => `<button type="button" class="abc-btn" data-c="${c}">${c}${c.toLowerCase()}</button>`).join("")}</span><span class="abc-do zh">👆 點出第一個字母 ${esc(L)}，再跟著歐力做動作！</span>`;
+        $("#kLine").querySelectorAll(".abc-btn").forEach((b) => b.addEventListener("click", () => {
+          TC.ac();
+          if (b.dataset.c === L) { if (b.classList.contains("ok")) return; b.classList.add("ok"); TC.sfx("coin"); setTimeout(() => (TC.actionBuddy ? TC.actionBuddy(ans) : Promise.resolve()).then(() => TC.teacherOK()), 450); }
+          else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
+        }));
+      }
+      }
+      $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
@@ -657,7 +670,7 @@
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
       <label><span>麥克風／AI 語音辨識</span><select id="sAsr"><option value="0">關（建議：現場不收音，孩子說完老師按 ✓）</option><option value="1">開（需要麥克風和網路，Chrome / Edge）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
-      <label><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題（建議，關主不用說英文）</option><option value="0">老師問：關主自己用英文問</option></select></label>
+      <label hidden><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題</option></select></label>
       <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句一次唸完：有 ElevenLabs 錄音就用錄音，沒有就用電腦語音（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
       <label><span>單字的聲音</span><select id="sWord"><option value="el">ElevenLabs（和整句同一個聲音，建議）</option><option value="human">Wikimedia 真人錄音（多位不同錄音者）</option></select></label>
 
@@ -673,7 +686,7 @@
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { listen: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
+      Object.assign(TC.cfg, { listen: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: true, sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

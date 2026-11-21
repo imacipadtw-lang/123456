@@ -559,7 +559,7 @@
       const said = Promise.resolve(TC.teacherLine(x.say)).catch(() => {});
       // 2. dance break: everybody does the move, the child taps the pads on the beat
       B.targets.clear();
-      cueAt(D0, () => { danceOn = true; setChip("DANCE! 大家一起跳！", "dance"); music(1, 0.05); TC.sfx("whoosh"); });
+      cueAt(D0, () => { danceOn = true; setChip(TC.kid && TC.kid.level >= 2 ? "BEAT! 跟著節奏拍按鈕！" : "DANCE! 大家一起跳！", "dance"); music(1, 0.05); TC.sfx("whoosh"); });
       for (let r = 0; r < BREAK_BARS; r++) for (let k = 0; k < 4; k++) {
         const b = D0 + 4 * r + k, pad = r % 2 ? 3 - k : k; B.targets.set(b, false);
         cueAt(b - 1, () => cueRing(pad));

@@ -1,6 +1,6 @@
 /* Final Gate + Mission Control: decode the secret word, say the final line, get a certificate; live board for parents */
 (function () {
-  { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; b.title = "回首頁 Home"; b.onclick = () => TC.goHome(document.body.classList.contains("playing")); document.body.append(b); }
+  { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; document.body.append(b); }
   "use strict";
   const { h, $, sleep } = TC;
   TC.gate = 7;
@@ -59,6 +59,7 @@
     const b = $("#board"); b.innerHTML = "";
     kids.sort((a, z) => a[0].localeCompare(z[0])).forEach(([id, k]) => {
       const col = TC.mkKid(id, k.name || id, +k.grade || 3).color;
+      const EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
       const done = k.final ? [1, 2, 3, 4, 5, 6] : (k.gates || []);
       const dots = h("div", { class: "dots" }, ...GATES.map((g) => done.includes(g.n) ? Object.assign(TC.badgeEl(g.n, "emb"), { title: g.city }) : h("i", { title: g.city })));
       b.append(h("div", { class: "kc" + (k.final ? " fin" : "") }, h("div", { class: "av", style: `background:${col}` }, (k.name || "?")[0]), h("div", {}, h("b", {}, `${id} ${k.name || ""} ${k.final ? "🏆" : ""}`), dots)));
@@ -79,7 +80,9 @@
     for (let i = 0; i < SECRET.length; i++) s.append(h("div", { class: "slot" + (bad.includes(i) ? " bad" : typed[i] && typed[i] === SECRET[i] && solvedCb === null ? " good" : "") }, h("small", {}, `${i + 1} ${GATES[i].city}`), typed[i] || ""));
   }
   const keys = $("#keys");
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((c) => keys.append(h("button", { onclick: () => typeLetter(c) }, c)));
+  // 115.11.20: children do not bring passports, so only the six secret letters are offered (scrambled) — kids put them in gate order
+  keys.classList.add("six");
+  (function () { let a = SECRET.split(""); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } if (a.join("") === SECRET) a.reverse(); a.forEach((c) => keys.append(h("button", { onclick: () => typeLetter(c) }, c))); })();
   keys.append(h("button", { class: "wide", onclick: () => { for (let i = SECRET.length - 1; i >= 0; i--) if (typed[i]) { typed[i] = null; break; } renderSlots(); } }, "⌫"));
   function typeLetter(c) {
     if (!busy || !solvedCb) return;
@@ -107,7 +110,7 @@
   async function startFinal() {
     TC.ac();
     if (busy) return;
-    const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level === 2 ? 2 : 1, grade: 3, color: "#ffc83d" };
+    const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level, grade: [0, 2, 4, 6][TC.cfg.level], color: "#ffc83d" };
     busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0 };
     $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color; $("#kName").textContent = "PLAYER";
     if (TC.cfg.listen) await TC.Mic.init();
@@ -124,7 +127,7 @@
     document.querySelectorAll(".slot").forEach((s, i) => setTimeout(() => { s.classList.add("good"); TC.sfx("coin"); }, i * 120));
     TC.confetti(200); TC.sfx("levelup");
     await sleep(900);
-    // twist: the secret word is itself a passport word
+    // twist: the secret word is itself one of the day's words
     $("#decTitle").innerHTML = `${SECRET}! <span class="zh" style="font-size:2.4rem;color:var(--sun)">它就是 friend「朋友」！我們都是好朋友 → “We are friends!”</span>`;
     await TC.speak("Friend!");
     await sleep(600);

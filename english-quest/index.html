@@ -34,11 +34,17 @@
   a.card.gate .th{font-size:1.05rem;font-weight:700;color:var(--c);letter-spacing:.04em}
   a.card.gate h2{margin:.45rem 0 .1rem;font-size:1.85rem;line-height:1.1}
   a.card.gate .zh{font-size:1.25rem;color:#fff;font-weight:700}
-  a.card.gate .g{font-size:.95rem;margin-top:.35rem;line-height:1.4}
-  a.card.gate .go{display:inline-flex;align-items:center;gap:.4rem;margin-top:.6rem;padding:.35rem 1rem;border-radius:2rem;background:var(--c);color:#0a1633;font-weight:700;font-size:1.05rem;box-shadow:0 .22rem 0 rgba(0,0,0,.35)}
+  a.card.gate .go{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;padding:.35rem 1rem;border-radius:2rem;background:var(--c);color:#0a1633;font-weight:700;font-size:1.05rem;box-shadow:0 .22rem 0 rgba(0,0,0,.35)}
   a.card:hover img{transform:scale(1.12) rotate(-6deg)}
   h3{max-width:90rem;margin:2.4rem auto .8rem;font-size:1.4rem;color:var(--sun)}
   .tools a.card{--c:#ffc83d}
+  .lv-home{display:flex;flex-wrap:wrap;align-items:center;gap:1rem;max-width:90rem;margin:0 auto 1.6rem}
+  .lv-home .lv-t{font-size:1.5rem;font-weight:700;color:var(--sun)}
+  .lv-home button{display:flex;flex-direction:column;align-items:center;min-width:13rem;padding:.8rem 1.6rem;border-radius:1.6rem;line-height:1.15;cursor:pointer;
+    background:linear-gradient(180deg,#3a4f93,#24346b);color:#dfe7ff;border:0;box-shadow:0 .45rem 0 #121c42}
+  .lv-home button b{font-size:2.2rem}.lv-home button i{font-style:normal;font-size:1.1rem;opacity:.9}
+  .lv-home button[aria-checked=true]{background:linear-gradient(180deg,#7dffd8,#2ee6b6 55%,#14b88d);color:#063a2c;box-shadow:0 .45rem 0 #0b7a5c}
+  .lv-home button[aria-checked=true] b::before{content:"✓ "}
   footer{max-width:90rem;margin:3rem auto 0;color:var(--ink2);font-size:.95rem;line-height:1.6}
   footer a{color:var(--sky)}
 </style>
@@ -48,27 +54,18 @@
   <div class="o" id="o"></div>
   <div>
     <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.4rem;color:#ffe58a;letter-spacing:.06em;margin-bottom:.6rem"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.4rem;height:5.4rem;flex:none">南投縣草屯鎮土城國民小學</div>
-    <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 校園生活英語闖關</span></h1>
-    <p class="zh">6 間教室 × 6 個遊戲關卡 · 句子全部來自《校園生活英語》護照 · 老師按 START → 歐力或老師用英文問、孩子看圖說一個英文字 → 老師按 ✓ 就過關 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙貼在闖關小卡上 → 終點登機門解碼拿獎狀、換獎品</p>
+    <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 英語闖關（空手來就好）</span></h1>
+    <p class="zh">6 間教室 × 6 個遊戲關卡 · 老師按 START → 歐力用英文問、孩子看圖說英文（低年級認字母做動作、中年級念整句、高年級填空） → 老師按 ✓ 就過關 → 打開神秘禮物盒念一句 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙 → 終點登機門解碼拿獎狀、換獎品</p>
   </div>
 </div>
-<div class="grid gates" id="gates"></div>
-<h3 class="zh">工具 Tools</h3>
-<div class="grid tools">
-  <a class="card" href="opening.html"><span class="n">🎬</span><h2>Opening Show</h2><div class="zh">開場動畫：歐力在大廳大螢幕介紹闖關規則（七個畫面，可自動播放）</div></a>
-  <a class="card" href="control.html"><span class="n">★</span><h2>Final Gate · Mission Control</h2><div class="zh">終點登機門（解密碼、獎狀）＋即時看板（放大廳給家長看）</div></a>
-  <a class="card" href="quest-card.html"><span class="n">🎫</span><h2>Quest Card</h2><div class="zh">闖關小卡：每位孩子一張（寫六個秘密字母、貼點數貼紙），不用帶護照；一張 A4 印兩張</div></a>
-  <a class="card" href="teacher-cards.html"><span class="n">🧾</span><h2>Gate Host Cards</h2><div class="zh">關主一頁卡：每關一張 A4（開機、流程、台詞、狀況處理），貼在電視旁</div></a>
-  <a class="card" href="guide.html"><span class="n">📘</span><h2>活動手冊 Guide</h2><div class="zh">流程、六關玩法、各關台詞、設備檢查、部長參訪路線</div></a>
-  <a class="card" href="links.html"><span class="n">🔗</span><h2>Links · 網址總表</h2><div class="zh">每個畫面兩個網址：GitHub 主網址＋Claude 備用網址</div></a>
-  <a class="card" href="credits.html"><span class="n">🔊</span><h2>Credits · 發音來源</h2><div class="zh">發音來源：ElevenLabs AI 語音、Wikimedia 真人錄音（錄音者、授權與下載時間）</div></a>
+<div class="lv-home" id="lvHome" role="radiogroup" aria-label="題目難度">
+  <span class="zh lv-t">選擇題目：</span>
+  <button data-l="1" role="radio"><b class="zh">低年級</b><i class="zh">1–2 年級 · 認字母＋做動作</i></button>
+  <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 看整句念</i></button>
+  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 填空說</i></button>
 </div>
-<footer class="zh">
-  所有句子都來自學校的《校園生活英語》護照第 (4)–(9) 頁（提問、給回饋與下課、午餐與午休、生病、上台朗讀、其他），是孩子在教室就會用的句子；每一句都標「(頁)-句」，例如 (4)-7。六關六個主題：情境題、對話、動作（TPR）、字母與發音、唱跳、故事；孩子每一題只要說一個字，第 3 關只要跟著做動作。分兩級：初級（1–2 年級）直接顯示答案字，中級（3–6 年級）是填空。開始畫面可選「電腦問」（歐力用語音問，給不會說英文的關主）或「老師問」。每關的台詞見<a href="guide.html#lines">活動手冊</a>。
-  現場不用麥克風：孩子說完，關主老師按 ✓（或 Enter）就過關。學生不用帶護照，秘密字母和點數貼紙記在<a href="quest-card.html">闖關小卡</a>上。任何畫面按左上角的大校徽，都會回到這一頁。
-  歐力的六句誇獎（Good job! 等）是 ElevenLabs 的 AI 語音檔；新內容其他大約 74 句還沒有音檔，目前由那台電視的電腦語音唸（標示「電腦語音」），預計 2026-12-17 ElevenLabs 點數重置後補做（來源見 <a href="credits.html">Credits</a>）。電視不把單字錄音接成句子。
-  程式不錄音、預設也不開麥克風；照片只存在各台電腦，不上傳（Google 試算表同步的內容不含照片）。
-</footer>
+<div class="grid gates" id="gates"></div>
+<!-- 115.11.20: tools and source notes hidden from the public home page (pages still open by direct address for teachers) -->
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
@@ -79,9 +76,21 @@
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card gate" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
-      <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">《校園生活英語》${G.passport}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="card gate" style="--c:${G.color}" data-gate="${n}" href="station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
+      <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);
   });
+</script>
+<script>
+  // 115.11.20: choose 低／中／高年級 here; every gate link carries it (?lv=), and the TV remembers it
+  (function () {
+    const box = document.getElementById("lvHome");
+    function paint() {
+      box.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(+b.dataset.l === TC.cfg.level)));
+      document.querySelectorAll("#gates a.card").forEach((a) => { const n = a.dataset.gate; a.href = `station.html?gate=${n}&lv=${TC.cfg.level}#gate-${n}`; });
+    }
+    box.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; TC.cfg.level = +b.dataset.l; TC.saveCfg(); paint(); });
+    paint();
+  })();
 </script>
 <script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
 </body>

@@ -13,7 +13,7 @@
 <header id="hud">
   <div class="gate-badge"><img class="emb" src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="num" id="gNum">1</div><div><div class="t0 zh">南投縣草屯鎮土城國民小學</div><div class="t1" id="gTitle">Gate</div><div class="t2" id="gSub"></div></div></div>
   <div class="kid-chip hidden" id="kidChip"><div class="av" id="kAv">A</div><span id="kName">Amy</span>
-    <div class="lvl" id="lvlBtns"><button data-l="1" class="zh">初級</button><button data-l="2" class="zh">中級</button></div></div>
+    <div class="lvl" id="lvlBtns"><span class="zh lvl-tag" id="lvlTag"></span></div></div>
   <div class="pips" id="pips"></div>
   <div class="ai-pill" id="clock" title="這位孩子已玩的時間">⏱ 0:00</div>
   <div class="ai-pill" id="aiPill"><i></i>AI</div>
@@ -29,7 +29,7 @@
   </div>
   <div class="talk-side">
     <button class="big-btn btn-ok" id="okBtn">✓ <span class="zh">說得好</span></button>
-    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span> <span class="src-tag" id="srcTag"></span></button>
+    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span></button>
     <div class="meter"><i id="micMeter"></i></div>
     <canvas id="wave" width="300" height="70"></canvas>
     <button class="big-btn btn-skip" id="skipBtn">⏭ <span class="zh">跳過</span></button>
@@ -43,9 +43,7 @@
   <h1 id="scanTitle">Gate</h1>
   <div class="sub zh" id="scanSub"></div>
   <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始遊戲</i></span></button>
-  <div class="ask-pick" id="askPick"><button data-a="tv"><b class="zh">電腦問</b><i class="zh">歐力用語音問問題</i></button><button data-a="teacher"><b class="zh">老師問</b><i class="zh">關主自己用英文問</i></button></div>
-  <div class="lvl-pick" id="lvlPick"><button data-l="1"><b class="zh">初級</b><i class="zh">1–2 年級 · 看字說</i></button><button data-l="2"><b class="zh">中級</b><i class="zh">3–6 年級 · 填空說</i></button></div>
-  <div class="hint zh" id="passportRef"></div>
+  <div class="lvl-now zh" id="lvlPick"></div>
 </section>
 
 <script src="js/content.js"></script>

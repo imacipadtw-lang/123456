@@ -723,7 +723,7 @@
       h("div", { class: "trk" }, ...Array.from({ length: n }, (_, k) => h("i", { class: k < i ? "d" : k === i ? "c" : "" }))),
       sent, h("div", { class: "szh zh" }, P.zh || ""),
       h("div", { class: "pgn" }, h("b", {}, String(i + 1))),
-      h("div", { class: "stag zh" }, P.no ? "護照 " + P.no : ""));
+      h("div", { class: "stag zh" }, ""));
   }
   function coverEl(G, ended) {
     return h("div", { class: "cv" + (ended ? " theend" : "") },
@@ -935,33 +935,7 @@
         await nap(500);
         nice.classList.add("out"); await nap(380); nice.remove();
 
-        // PARENT moment: the whole room says "Goodbye!" together. Nothing listens: the bar fills by itself in about five seconds,
-        // and every tap on the screen launches a firework where the finger is and fills the bar faster. Enter = go on, Esc = stop.
-        const last = pages[pages.length - 1], word = String(last.say || "Goodbye.").replace(/[.!?]+$/, "") + "!";
-        const bar = h("i"), ch = h("div", { class: "chorus g6c" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2" }, word), h("div", { class: "bar" }, bar), h("div", { class: "tap zh" }, "👆 點螢幕放煙火！ Tap for fireworks!"));
-        let fill = 0, taps = 0, skip = false;
-        ch.addEventListener("pointerdown", (e) => { taps++; fill = Math.min(100, fill + 8); if (fx) fx.shoot(e.clientX, Math.min(e.clientY, innerHeight * 0.8), (taps * 47) % 360); });
-        document.body.append(ch); TC.sfx("levelup");
-        await said(word);
-        TC.pending = () => { skip = true; };
-        const t0 = performance.now(); let tPrev = t0, nextBoom = 700;
-        await race(new Promise((res) => {
-          const safety = setTimeout(res, 6500); // a hidden tab stops requestAnimationFrame: never wait for ever
-          (function loop() {
-            const now = performance.now(), el = now - t0;
-            fill = Math.min(100, fill + ((now - tPrev) / 5000) * 100); tPrev = now; bar.style.width = fill + "%";
-            if (el > nextBoom) { fx && fx.shoot(); nextBoom = el + 800; }
-            if (api.aborted || fill >= 100 || el > 5200 || (skip && el > 1500)) { clearTimeout(safety); res(); } else requestAnimationFrame(loop);
-          })();
-        }));
-        if (TC.pending) TC.pending = null;
-        if (api.aborted) return null;
-        bar.style.width = "100%";
-        for (let i = 0; i < 5; i++) { fx.shoot(); await nap(180); }
-        TC.confetti(taps > 4 ? 260 : 140); TC.sfx(taps > 4 ? "fanfare" : "ding");
-        await nap(900);
-        ch.remove();
-        if (api.aborted) return null;
+        // (115.11.20) the loudness chorus was removed: the classrooms have no microphone
         await race(TC.clapBanner());
         if (api.aborted) return null;
         await nap(400);

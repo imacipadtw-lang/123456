@@ -4,14 +4,15 @@
    Every sentence comes from the school's classroom-English passport, which the children
    already know:  (4) Question 提問 · (5) Giving Feedback / End of the Class 給回饋、課程結束 ·
    (6) Lunch Time & Nap Time 午餐與午休 · (7) When Students Are Sick 學生生病時 ·
-   (8) Speech 上台朗讀 · (9) Others 其他.   "no" = "(page)-line" so a teacher can check it in the book (the children do not carry the booklet on the day).
+   (8) Speech 上台朗讀 · (9) Others 其他.   "no" = "(page)-line" so a teacher can check it in the book.
 
    One theme per gate (the principal's wish: situations, dialogue, TPR, phonics, song & dance, story):
      1 situations  2 dialogue  3 TPR actions  4 phonics  5 chant (sing & dance)  6 story
    Each gate has its own game engine, found by `key`; code must never hard-code gate numbers.
 
-   Levels:  1 = 初級 (grades 1–2): the key word is printed under the picture
-            2 = 中級 (grades 3–6): the key word is a blank until the hint
+   Levels:  1 = 低年級 (grades 1–2): only the first letter (ABC) of the key word + do the action
+            2 = 中年級 (grades 3–4): the whole sentence is shown — read it
+            3 = 高年級 (grades 5–6): the key word is a blank until the hint
    The child only ever says ONE word (the blank).  A picture shows the answer.
    "say" = the sentence shown on screen · "w" = the key word (answer) · "keys" = words the AI accepts.
    Ollie's praise lines are passport (5)-1..3: Good job! Well done! Awesome! Excellent! That's right! You got it!
@@ -27,7 +28,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 1 · Classroom Rescue — SITUATIONS ---------------- */
     1: {
       key: "rescue", title: "Classroom Rescue", zh: "教室大救援", city: "San Diego", color: "#ff9a2e",
-      genre: "情境題 Situations", passport: "(4) 提問、(6) 午餐、(7) 生病",
+      genre: "情境題 Situations", passport: "護照 (4) 提問、(6) 午餐、(7) 生病",
       teacher: "What do you say?", tzh: "這時候要說什麼？",
       // img = the situation picture the game draws; the child says the key word of the sentence Ollie needs
       scenes: [
@@ -43,7 +44,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 2 · Ollie Talk Show — DIALOGUE ---------------- */
     2: {
       key: "talk", title: "Ollie Talk Show", zh: "歐力脫口秀", city: "Tokyo", color: "#4cc9ff",
-      genre: "對話 Dialogue", passport: "(4) 提問、(5) 給回饋、(9) 其他",
+      genre: "對話 Dialogue", passport: "護照 (4) 提問、(5) 給回饋、(9) 其他",
       teacher: "", tzh: "",
       // t = what the host (Ollie / the teacher) says, say = the guest's answer; the child says w
       qa: [
@@ -60,7 +61,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 3 · Ollie Says — TPR ACTIONS ---------------- */
     3: {
       key: "tpr", title: "Ollie Says", zh: "歐力說", city: "Sydney", color: "#2ee6b6",
-      genre: "動作 TPR", passport: "(5) 課程結束、(6) 午餐與午休",
+      genre: "動作 TPR", passport: "護照 (5) 課程結束、(6) 午餐與午休",
       teacher: "", tzh: "",
       // the child DOES the action with Ollie (no speaking needed); w = the verb that is shown big
       actions: [
@@ -81,7 +82,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 4 · Sound Monsters — PHONICS ---------------- */
     4: {
       key: "monster", title: "Sound Monsters", zh: "音節怪獸", city: "Vancouver", color: "#9b6bff",
-      genre: "字母與發音 Phonics", passport: "(4)-(7) 的單字",
+      genre: "字母與發音 Phonics", passport: "護照 (4)-(7) 的單字",
       teacher: "What is it?", tzh: "這是什麼？",
       // every word is a thing from the passport pages; the monster only eats words that START with its letter sound
       words: [
@@ -98,7 +99,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 5 · Classroom Beat — CHANT (sing & dance) ---------------- */
     5: {
       key: "chant", title: "Classroom Beat", zh: "教室節奏派對", city: "Cairo", color: "#ff5fa2",
-      genre: "唱跳 Chant & Dance", passport: "(5) 課程結束、(6) 午餐與午休",
+      genre: "唱跳 Chant & Dance", passport: "護照 (5) 課程結束、(6) 午餐與午休",
       teacher: "", tzh: "",
       // a draft chant built from passport commands — replace with the songs the English teacher really uses; w = the last word the child says
       lines: [
@@ -114,7 +115,7 @@ window.TC_CONTENT = {
     /* ---------------- Gate 6 · Storybook Day — STORY ---------------- */
     6: {
       key: "story", title: "Storybook Day", zh: "校園一天故事書", city: "Paris", color: "#ffc83d",
-      genre: "故事 Story", passport: "(5)-(7)：一天的校園生活",
+      genre: "故事 Story", passport: "護照 (5)-(7)：一天的校園生活",
       teacher: "What do we do?", tzh: "接下來做什麼？",
       // a pop-up book of one school day; every page the child says the missing word (t overrides the question)
       pages: [
@@ -128,6 +129,17 @@ window.TC_CONTENT = {
       ending: { say: "Have a nice day!", zh: "祝你有美好的一天", no: "(5)-22" }
     }
   }
+};
+
+/* Mystery Box at the end of each gate (children do not bring passports): one of the sentences hidden in the gift boxes.
+   page/line are kept only as the source in the school booklet; they are never shown to children. */
+window.TC_CONTENT.hunt = {
+  1: { page: "(4)", line: 7, text: "May I go to the restroom?", zh: "我可以去上廁所嗎？", w: "restroom", keys: [["restroom", "bathroom"]] },
+  2: { page: "(5)", line: 9, text: "You're welcome.", zh: "不客氣", w: "welcome", keys: [["welcome"]] },
+  3: { page: "(6)", line: 1, text: "Wash your hands before lunch.", zh: "用餐前先洗手", w: "wash", keys: [["wash"]] },
+  4: { page: "(7)", line: 4, text: "Drink lots of water and get some rest.", zh: "多喝水、多休息", w: "water", keys: [["water"]] },
+  5: { page: "(8)", line: 3, text: "Thank you for listening.", zh: "謝謝你的聆聽", w: "listening", keys: [["listening", "listen"]] },
+  6: { page: "(9)", line: 4, text: "I have an idea.", zh: "我有一個想法", w: "idea", keys: [["idea"]] }
 };
 
 /* Sentence Builder: short passport sentences — tap the word cards into order, then read it. */
@@ -161,11 +173,15 @@ window.TC_SCRIPT = function (gate) {
   if (G.key === "rescue") G.scenes.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no }));
   if (G.key === "talk") { G.qa.forEach((x) => q({ t: x.t, tzh: x.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.finale.t, tzh: G.finale.tzh, say: G.finale.say, word: G.finale.w, zh: G.finale.zh, no: G.finale.no }); }
   if (G.key === "tpr") {
-    G.actions.forEach((x) => q({ t: x.say, tzh: x.zh, say: "（做動作，不用開口）", word: "", zh: "跟著歐力做", no: x.no }));
+    G.actions.forEach((x) => q({ t: x.say, tzh: x.zh, say: "低年級跟著做；中高年級說：" + x.say, word: x.w, zh: "低年級跟著歐力做／中高年級下指令", no: x.no }));
     rows.push({ kind: "last", t: G.quiet.say, tzh: G.quiet.zh, say: "（閉眼不動）→ " + G.wake.say, word: "", zh: "午休靜止，再突然起床", no: G.quiet.no + "、" + G.wake.no });
   }
-  if (G.key === "monster") G.words.forEach((x) => q({ t: G.teacher, tzh: G.tzh, say: "It's " + (/^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".", word: x.w, zh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", no: x.no }));
+  // the same sentence the game shows: "They're teeth." for plurals, "It's water." for uncountable words
+  const itIs = (w) => /^(teeth|hands)$/.test(w) ? "They're " + w + "." : "It's " + (/^(water)$/.test(w) ? "" : /^[aeiou]/.test(w) ? "an " : "a ") + w + ".";
+  if (G.key === "monster") G.words.forEach((x) => q({ t: /^(teeth|hands)$/.test(x.w) ? "What are they?" : G.teacher, tzh: /^(teeth|hands)$/.test(x.w) ? "這些是什麼？" : G.tzh, say: itIs(x.w), word: x.w, zh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", no: x.no }));
   if (G.key === "chant") G.lines.forEach((x) => q({ t: x.say.replace(new RegExp(x.w, "i"), "___"), tzh: x.zh, say: x.say, word: x.w, zh: "唸最後一個字並做動作", no: x.no }));
   if (G.key === "story") { G.pages.forEach((x) => q({ t: x.t || G.teacher, tzh: x.tzh || G.tzh, say: x.say, word: x.w, zh: x.zh, no: x.no })); rows.push({ kind: "last", t: G.ending.say, tzh: G.ending.zh, say: "（全班一起說）", word: "", zh: "故事結束，大家一起說", no: G.ending.no }); }
+  const H = C.hunt[gate];
+  rows.push({ kind: "extra", t: "What's in the box?", tzh: "神秘禮物盒：盒子裡是哪一句？", say: H.text + "（或本關其他句子）", word: H.w, zh: "神秘禮物盒：" + H.zh, no: "" });
   return rows;
 };
