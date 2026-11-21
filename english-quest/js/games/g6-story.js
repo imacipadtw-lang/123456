@@ -1,32 +1,38 @@
-/* Gate 6 · Storybook Day — a giant glossy 3D pop-up storybook lies open on a wooden table under a warm lamp.
+/* Gate 6 · Storybook Day — a giant premium 3D pop-up storybook lies open on a wooden table under a warm lamp.
    Every page is a pop-up scene of layered paper cut-outs (drawn in code) that rise up with a springy animation.
-   The child says the missing word of the page sentence; the picture comes alive, the page turns; at the end the book closes,
-   all the characters jump out and wave ("Have a nice day!"), the whole room says "Goodbye!" and fireworks go off.
-   Content is data: TC_CONTENT.gates[n].pages / .ending (key "story") — the English teacher's own story can replace it. */
+   The child says the missing word of the page sentence; the picture comes alive, the page turns; at the end the lamp dims,
+   the book closes, all the characters jump out and wave ("Have a nice day!"), the whole room says "Goodbye!" together and
+   every tap on the screen launches a firework (no microphone is used anywhere).
+   Content is data: TC_CONTENT.gates[n].pages / .ending (key "story") — the English teacher's own story can replace it.
+   The school's 土城 mark is part of every cut-out (TC.seal inside the art): an embroidered patch on shirts and blankets,
+   a neck-ribbon tag on the rooster, the clock-face logo, the teddy's bow tag, the print on the first-aid box and the basin,
+   brass plates on the table and the bus, the crest on the school gable, a fruit sticker on the apple, a printed napkin under
+   the cookie, the embossed crest of the book cover and the end of the ribbon bookmark. */
 (function () {
   "use strict";
   const { h } = TC;
   TC.games = TC.games || {};
-  const PW = 330, PH = 240; // page space: one page is 66em x 48em  ->  330 x 240 drawing units
+  const PW = 330, PH = 240; // page space: one page is 330 x 240 drawing units
 
   /* =====================================================================
-     ART — original paper cut-outs, drawn in code.  Each "layer" is one cut-out with its own 土城 pin;
+     ART — original paper cut-outs, drawn in code.  Each "layer" is one cut-out that carries its own 土城 mark;
      a scene (TC.ART["st-wake"] …) is the same layers stitched together on one page.
      ===================================================================== */
-  const INK = "#3a2a3e", SKIN = "#ffd3a8", SKIN2 = "#f0a878";
+  const INK = "#3a2a3e", SKIN = "#ffd3a8";
   const f1 = (v) => +v.toFixed(1);
   const st = (d, col, w, ex = "") => `<path d="${d}" stroke="${col}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round" ${ex}/>`;
   const star4 = (x, y, r, col = "#fff6a8") => { const k = f1(r * 0.22); return `<path d="M${x} ${y - r} Q${x + k} ${y - k} ${x + r} ${y} Q${x + k} ${y + k} ${x} ${y + r} Q${x - k} ${y + k} ${x - r} ${y} Q${x - k} ${y - k} ${x} ${y - r}Z" fill="${col}"/>`; };
+  const mark = (x, y, r, tilt, kind) => TC.seal(x, y, r, tilt || 0, kind); // the school's mark, in the style of the material it is on
   const LAY = {};
-  /** register one cut-out: id, size, pin [x,y,r,tilt] (null = no pin), draw(c, …args) → svg markup in a w x h box */
-  function def(id, w, hh, pin, draw) {
-    LAY[id] = { w, h: hh, pin, draw };
+  /** register one cut-out: id, size, draw(c, …args) → svg markup in a w x h box (the art draws its own 土城 mark with mark()) */
+  function def(id, w, hh, draw) {
+    LAY[id] = { w, h: hh, draw };
     TC.ART[id] = (...a) => { const c = TC.ArtCtx(); return c.out(draw(c, ...a), `0 0 ${w} ${hh}`); };
-    TC.SEAL[id] = pin || [-999, -999, 1, 0]; // no pin on backgrounds: park it outside the picture
+    TC.SEAL[id] = "none"; // no pin is dropped on top: the mark is part of the drawing
   }
   const smileOpen = (x, y, w = 8) => `<path d="M${x - w} ${y} Q${x} ${y + w * 1.5} ${x + w} ${y}Z" fill="#7a1a2c" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><path d="M${x - w * 0.55} ${y + w * 0.75} Q${x} ${y + w * 0.4} ${x + w * 0.55} ${y + w * 0.75} Q${x} ${y + w * 1.15} ${x - w * 0.55} ${y + w * 0.75}Z" fill="#ff7a9a"/>`;
 
-  /* ----- a chibi kid (120 x 160), one arm waving: the cast of the finale ----- */
+  /* ----- a chibi kid (120 x 160), one arm waving: the cast of the finale.  School crest: embroidered on the left chest ----- */
   function kidFig(c, o) {
     const hair = o.hair, shirt = o.shirt, pants = o.pants;
     let s = c.shadow(60, 156, 34, 6);
@@ -34,6 +40,8 @@
     s += c.ell(49, 152, 12, 6, "#ff9a2e", 0, 0.4) + c.ell(71, 152, 12, 6, "#ff9a2e", 0, 0.4);
     s += st("M42 86 Q28 100 33 114", shirt, 13) + c.sphere(33, 117, 7.5, SKIN, 0.5);
     s += `<rect x="38" y="76" width="44" height="50" rx="18" fill="${c.g(shirt)}"/>`;
+    s += `<path d="M50 77 Q60 86 70 77" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".85"/>`; // collar
+    s += mark(67, 99, 5.6, 0, "patch");
     s += st("M80 86 Q99 80 101 58", shirt, 13) + c.sphere(101, 52, 9, SKIN, 0.5) + st("M108 38 q6 4 8 10 M111 52 q7 0 10 4", "#ffc83d", 3.5);
     if (o.girl) s += c.sphere(27, 46, 11, hair, 0.4) + c.sphere(93, 46, 11, hair, 0.4) + `<circle cx="31" cy="35" r="5.5" fill="#ff5fa2"/><circle cx="89" cy="35" r="5.5" fill="#ff5fa2"/>`;
     s += c.sphere(60, 46, 30, SKIN, 0.6);
@@ -41,35 +49,39 @@
     s += c.eyes(60, 49, 11, 5.2) + c.blush(60, 59, 21) + smileOpen(60, 58, 7);
     return s;
   }
-  def("st-boy", 120, 160, [60, 100, 10, 0], (c) => kidFig(c, { girl: false, hair: "#5a3518", shirt: "#4cc9ff", pants: "#3d4a8a" }));
-  def("st-girl", 120, 160, [60, 100, 10, 0], (c) => kidFig(c, { girl: true, hair: "#3a2210", shirt: "#ff7ab0", pants: "#7a5cff" }));
+  def("st-boy", 120, 160, (c) => kidFig(c, { girl: false, hair: "#5a3518", shirt: "#4cc9ff", pants: "#3d4a8a" }));
+  def("st-girl", 120, 160, (c) => kidFig(c, { girl: true, hair: "#3a2210", shirt: "#ff7ab0", pants: "#7a5cff" }));
 
-  /* ----- the rooster (crowing), the alarm clock, Ollie stretching in bed ----- */
-  def("st-rooster", 70, 80, [33, 55, 9, 0], (c) => {
+  /* ----- the rooster (crowing; the mark hangs from a blue neck ribbon), the alarm clock (the mark is the logo printed on
+           its face), Ollie stretching in bed (the mark is embroidered on the blanket) ----- */
+  def("st-rooster", 70, 80, (c) => {
     let s = c.shadow(35, 78, 22, 4);
     s += `<path d="M46 56 Q72 52 66 12 Q55 30 43 44Z" fill="${c.g("#3fbf5a")}"/><path d="M48 62 Q76 64 72 30 Q58 44 46 54Z" fill="${c.g("#3d8bff")}"/><path d="M46 66 Q70 78 71 46 Q58 56 44 60Z" fill="${c.g("#ff9a2e")}"/>`;
     s += st("M28 70 V77 M40 70 V77", "#ffb020", 3.6) + st("M21 77.5 H31 M33 77.5 H43", "#ffb020", 3.6);
-    s += c.ell(34, 54, 22, 20, "#fff2da", 0, 0.5) + c.ell(42, 56, 11, 13, "#ffc27a", -12, 0.3);
+    s += c.ell(34, 54, 22, 20, "#fff2da", 0, 0.5) + c.ell(43, 57, 10.5, 12.5, "#ffc27a", -12, 0.3);
     s += c.sphere(25, 27, 15, "#fff2da", 0.6);
+    s += `<path d="M16.6 39.2 Q26.5 48.4 38.6 39" stroke="#1d5fd0" stroke-width="5.4" fill="none"/><path d="M16.6 39.2 Q26.5 48.4 38.6 39" stroke="#4d9bff" stroke-width="3.6" fill="none"/><path d="M18 39.4 Q26.6 46 37 38.6" stroke="#bfe0ff" stroke-width="1" fill="none" opacity=".8"/>`; // neck ribbon
     s += c.sphere(19, 12, 6, "#ff3d4f", 0.5) + c.sphere(27, 9, 7, "#ff3d4f", 0.5) + c.sphere(35, 13, 6, "#ff3d4f", 0.5);
     s += `<path d="M13 21 L0 13 L13 27Z" fill="#ffb020" stroke="#e08a00" stroke-width="1.2" stroke-linejoin="round"/><path d="M13 29 L2 34 L13 34Z" fill="#ffa010" stroke="#e08a00" stroke-width="1.2" stroke-linejoin="round"/><path d="M14 35 Q10 46 18 44 Q22 40 20 35Z" fill="#ff3d4f"/>`;
     s += `<ellipse cx="25" cy="22" rx="3" ry="3.8" fill="${INK}"/><circle cx="24" cy="20.5" r="1.2" fill="#fff"/>` + `<ellipse cx="31" cy="30" rx="5" ry="3" fill="#ff9ab0" opacity=".6"/>`;
     s += st("M3 4 q-2 4 0 8 M8 0 q-3 6 0 12", "#ff9a2e", 2.2);
+    s += mark(27.5, 53.4, 5.2, 0, "tag"); // the tag hangs from the ribbon onto the chest
     return s;
   });
-  def("st-clock", 74, 80, [58, 62, 8, 0], (c) => {
+  def("st-clock", 74, 80, (c) => {
     let s = c.shadow(37, 78, 28, 4);
     s += st("M37 14 V24", "#8a94b8", 4) + c.sphere(37, 8, 5, "#ffd23d", 0.5);
     s += c.sphere(18, 17, 12, "#ffd23d") + c.sphere(56, 17, 12, "#ffd23d") + `<path d="M12 12 Q18 4 24 10" stroke="#fff6a8" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M50 12 Q56 4 62 10" stroke="#fff6a8" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
     s += c.ell(16, 73, 9, 5, "#26293a", 0, 0.3) + c.ell(58, 73, 9, 5, "#26293a", 0, 0.3);
     s += c.sphere(37, 46, 30, "#ff4b55") + `<circle cx="37" cy="46" r="23" fill="#fff8ec"/><circle cx="37" cy="46" r="23" fill="none" stroke="#ffb0b0" stroke-width="1.5"/>`;
-    for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; s += st(`M${f1(37 + Math.cos(a) * 18)} ${f1(46 + Math.sin(a) * 18)} L${f1(37 + Math.cos(a) * 21)} ${f1(46 + Math.sin(a) * 21)}`, INK, i % 3 === 0 ? 2.6 : 1.6); }
-    s += st("M26 36 L34 40 M48 36 L40 40", INK, 3) + `<ellipse cx="30" cy="44" rx="3" ry="3.6" fill="${INK}"/><ellipse cx="44" cy="44" rx="3" ry="3.6" fill="${INK}"/><circle cx="29" cy="42.6" r="1.1" fill="#fff"/><circle cx="43" cy="42.6" r="1.1" fill="#fff"/>`;
-    s += `<ellipse cx="37" cy="57" rx="7" ry="6" fill="#7a1a2c" stroke="${INK}" stroke-width="2"/><ellipse cx="37" cy="60" rx="4" ry="2.6" fill="#ff7a9a"/>`;
+    for (let i = 0; i < 12; i++) { if (i === 9) continue; const a = (i / 12) * Math.PI * 2; s += st(`M${f1(37 + Math.cos(a) * 18)} ${f1(46 + Math.sin(a) * 18)} L${f1(37 + Math.cos(a) * 21)} ${f1(46 + Math.sin(a) * 21)}`, INK, i % 3 === 0 ? 2.6 : 1.6); }
+    s += mark(37, 31.2, 4.7, 0, "print"); // the maker's logo at twelve o'clock
+    s += st("M26 38.5 L34 42 M48 38.5 L40 42", INK, 3) + `<ellipse cx="30" cy="46.4" rx="3" ry="3.6" fill="${INK}"/><ellipse cx="44" cy="46.4" rx="3" ry="3.6" fill="${INK}"/><circle cx="29" cy="45" r="1.1" fill="#fff"/><circle cx="43" cy="45" r="1.1" fill="#fff"/>`;
+    s += `<ellipse cx="37" cy="58" rx="7" ry="5.6" fill="#7a1a2c" stroke="${INK}" stroke-width="2"/><ellipse cx="37" cy="60.6" rx="4" ry="2.4" fill="#ff7a9a"/>`;
     s += c.hl(24, 28, 10, 5, -35, 0.7);
     return s;
   });
-  def("st-wake-bed", 190, 134, [100, 108, 11, 0], (c) => {
+  def("st-wake-bed", 190, 134, (c) => {
     let s = c.shadow(95, 130, 92, 6);
     s += `<rect x="2" y="50" width="15" height="82" rx="7" fill="${c.g("#b97a44")}"/><rect x="173" y="84" width="15" height="48" rx="7" fill="${c.g("#b97a44")}"/>`;
     s += `<rect x="8" y="108" width="174" height="20" rx="8" fill="${c.g("#e9eefc")}"/>`;
@@ -85,11 +97,12 @@
     s += `<ellipse cx="66" cy="70" rx="8" ry="4.5" fill="#ff7aa8" opacity=".55"/><ellipse cx="134" cy="70" rx="8" ry="4.5" fill="#ff7aa8" opacity=".55"/>`;
     s += c.hl(78, 40, 14, 22, 15, 0.45);
     s += c.path("M6 100 Q24 88 44 99 T84 99 T124 99 T164 99 T184 100 V126 H6Z", "#ffb347");
-    s += st("M26 104 V124 M52 104 V124 M78 104 V124 M104 104 V124 M130 104 V124 M156 104 V124", "#fff", 6, 'opacity=".4"') + c.hl(60, 106, 40, 5, 0, 0.5);
+    s += st("M26 104 V124 M52 104 V124 M78 104 V124 M130 104 V124 M156 104 V124", "#fff", 6, 'opacity=".4"') + c.hl(60, 106, 40, 5, 0, 0.5);
+    s += mark(104, 108.6, 6.6, -3, "patch"); // embroidered on the blanket
     s += `<rect x="2" y="120" width="186" height="12" rx="6" fill="${c.g("#b97a44")}"/>`;
     return s;
   });
-  def("st-wake-bg", 306, 216, null, (c) => {
+  def("st-wake-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="wkr"><rect width="${W}" height="${H}" rx="14"/></clipPath><clipPath id="wkw"><rect x="34" y="20" width="142" height="96" rx="5"/></clipPath>` +
       `<linearGradient id="wks" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset=".5" stop-color="#ffe6a8"/><stop offset="1" stop-color="#ff9a6b"/></linearGradient>` +
@@ -112,11 +125,12 @@
     return s;
   });
 
-  /* ----- wash: sink, hands, bathroom tiles ----- */
-  def("st-sink", 176, 126, [88, 92, 11, 0], (c) => {
+  /* ----- wash: the basin (the mark is printed on the porcelain), soapy hands (the mark is a patch on the cuff), bathroom tiles ----- */
+  def("st-sink", 176, 126, (c) => {
     let s = c.shadow(88, 122, 66, 5);
     s += `<path d="M62 84 L114 84 L124 122 L52 122Z" fill="${c.v("#f2f6ff", "#b9c6e2")}"/>`;
     s += `<path d="M6 62 Q10 108 88 110 Q166 108 170 62Z" fill="${c.g("#ffffff")}"/>`;
+    s += mark(88, 98.4, 6.6, 0, "print");
     s += `<ellipse cx="88" cy="62" rx="82" ry="25" fill="${c.g("#f4f8ff")}"/><ellipse cx="88" cy="63" rx="68" ry="18" fill="${c.v("#9fd8ff", "#4aa6e6")}"/><ellipse cx="88" cy="60" rx="52" ry="9" fill="#d8f1ff" opacity=".7"/>`;
     s += st("M88 52 V22 Q88 8 104 8 H112", "#c9d3ea", 11) + st("M88 52 V22 Q88 8 104 8 H112", "#f4f8ff", 5) + st("M112 8 V22", "#c9d3ea", 11) + st("M112 8 V20", "#f4f8ff", 5);
     s += c.sphere(66, 46, 8, "#3d8bff") + c.sphere(110, 46, 8, "#ff5a5a");
@@ -124,23 +138,24 @@
     s += c.hl(40, 84, 24, 6, -10, 0.8);
     return s;
   });
-  def("st-hands", 120, 96, [16, 78, 8, -10], (c) => {
+  def("st-hands", 140, 100, (c) => {
     let s = "";
     const hand = (cx, flip) => {
       const k = flip ? -1 : 1, X = (v) => cx + k * v;
       let t = `<g>`;
-      t += `<rect x="${flip ? cx + 8 : cx - 46}" y="54" width="38" height="40" rx="14" fill="${c.g("#4cc9ff")}" transform="rotate(${flip ? -28 : 28} ${cx} 74)"/>`;
-      t += c.ell(cx, 52, 21, 25, SKIN, flip ? 14 : -14, 0.5);
-      [-12, -4, 4, 12].forEach((dx, i) => { t += c.ell(cx + dx * (flip ? -1 : 1), 28 - (i === 1 || i === 2 ? 3 : 0), 5.6, 12, SKIN, 0, 0.35); });
-      t += c.ell(X(-19), 54, 6, 13, SKIN, flip ? 45 : -45, 0.35);
+      t += `<g transform="rotate(${flip ? -28 : 28} ${cx} 76)"><rect x="${flip ? cx + 8 : cx - 46}" y="56" width="38" height="40" rx="14" fill="${c.g("#4cc9ff")}"/>` +
+        `<rect x="${flip ? cx + 8 : cx - 16}" y="56" width="8" height="40" rx="3" fill="#fff" opacity=".7"/>${flip ? "" : mark(cx - 29, 78, 4.8, 0, "patch")}</g>`;
+      t += c.ell(cx, 54, 21, 25, SKIN, flip ? 14 : -14, 0.5);
+      [-12, -4, 4, 12].forEach((dx, i) => { t += c.ell(cx + dx * (flip ? -1 : 1), 30 - (i === 1 || i === 2 ? 3 : 0), 5.6, 12, SKIN, 0, 0.35); });
+      t += c.ell(X(-19), 56, 6, 13, SKIN, flip ? 45 : -45, 0.35);
       return t + `</g>`;
     };
-    s += hand(38, false) + hand(82, true);
-    [[60, 38, 15], [44, 30, 11], [78, 28, 12], [58, 22, 10], [68, 44, 9], [38, 40, 8], [86, 44, 8]].forEach(([x, y, r]) => (s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.g("#ffffff")}" opacity=".95"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.35}" r="${r * 0.22}" fill="#fff"/>`));
-    s += `<circle cx="60" cy="14" r="6" fill="#bfe6ff" stroke="#fff" stroke-width="1.5" opacity=".9"/><circle cx="30" cy="12" r="4" fill="#bfe6ff" stroke="#fff" stroke-width="1.5" opacity=".9"/>`;
+    s += hand(48, false) + hand(92, true);
+    [[70, 40, 15], [54, 32, 11], [88, 30, 12], [68, 24, 10], [78, 46, 9], [48, 42, 8], [96, 46, 8]].forEach(([x, y, r]) => (s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.g("#ffffff")}" opacity=".95"/><circle cx="${x - r * 0.3}" cy="${y - r * 0.35}" r="${r * 0.22}" fill="#fff"/>`));
+    s += `<circle cx="70" cy="16" r="6" fill="#bfe6ff" stroke="#fff" stroke-width="1.5" opacity=".9"/><circle cx="40" cy="14" r="4" fill="#bfe6ff" stroke="#fff" stroke-width="1.5" opacity=".9"/>`;
     return s;
   });
-  def("st-wash-bg", 306, 216, null, (c) => {
+  def("st-wash-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="wsr"><rect width="${W}" height="${H}" rx="14"/></clipPath></defs><g clip-path="url(#wsr)">`;
     s += `<rect width="${W}" height="${H}" fill="${c.v("#d7f4ff", "#a6e0f6")}"/>`;
@@ -148,7 +163,7 @@
     for (let y = 0; y <= H; y += 38) s += `<path d="M0 ${y} H${W}" stroke="#fff" stroke-width="2.2" opacity=".7"/>`;
     for (let i = 0; i < 14; i++) s += `<rect x="${(i * 67) % 260 + 4}" y="${(i * 41) % 150 + 4}" width="30" height="30" rx="5" fill="#fff" opacity=".18"/>`;
     s += `<rect y="176" width="${W}" height="40" fill="${c.v("#ffe9b8", "#f2c97a")}"/>`;
-    for (let i = 0; i < 9; i++) s += `<rect x="${i * 38 + (i % 2 ? 0 : 0)}" y="${176 + (i % 2) * 20}" width="38" height="20" fill="#fff" opacity=".35"/>`;
+    for (let i = 0; i < 9; i++) s += `<rect x="${i * 38}" y="${176 + (i % 2) * 20}" width="38" height="20" fill="#fff" opacity=".35"/>`;
     s += `<circle cx="155" cy="62" r="50" fill="${c.v("#f0bd3a", "#b9820f")}"/><circle cx="155" cy="62" r="44" fill="${c.v("#f1fbff", "#b9e6ff")}"/>`;
     s += `<path d="M122 90 L150 36 L162 36 L134 98Z" fill="#fff" opacity=".6"/><path d="M164 78 L178 52 L184 52 L170 82Z" fill="#fff" opacity=".45"/>` + star4(184, 36, 9, "#fff") + star4(128, 46, 5, "#fff");
     s += `<rect x="12" y="102" width="70" height="8" rx="4" fill="${c.v("#d9a066", "#8a5a32")}"/><rect x="22" y="76" width="22" height="26" rx="7" fill="${c.v("#ffb3d1", "#ff5fa2")}"/><path d="M28 76 L26 58 M34 76 L34 56 M40 76 L42 60" stroke="#3d8bff" stroke-width="3.4" stroke-linecap="round"/><rect x="52" y="92" width="22" height="10" rx="5" fill="#ffd23d"/>`;
@@ -156,33 +171,34 @@
     return s + `</g>`;
   });
 
-  /* ----- clean: table, crumbs, cloth, canteen wall ----- */
-  def("st-table", 262, 124, [131, 63, 11, 0], (c) => {
+  /* ----- clean: the canteen table (the mark is a brass plate on its apron), crumbs, the cloth (the mark is embroidered on its corner) ----- */
+  def("st-table", 262, 124, (c) => {
     let s = c.shadow(131, 120, 120, 5);
-    [[20, 76], [226, 76]].forEach(([x, y]) => (s += `<rect x="${x}" y="${y}" width="16" height="46" rx="6" fill="${c.g("#a8703a")}"/>`));
+    [[20, 78], [226, 78]].forEach(([x, y]) => (s += `<rect x="${x}" y="${y}" width="16" height="44" rx="6" fill="${c.g("#a8703a")}"/>`));
     s += `<path d="M22 10 H240 L258 54 H4Z" fill="${c.v("#f1c58a", "#d9a066")}"/>` + st("M32 20 H232 M24 32 H244 M14 44 H250", "#b57a42", 1.8, 'opacity=".5"');
-    s += `<rect x="4" y="54" width="254" height="22" rx="7" fill="${c.g("#c98a4f")}"/>` + c.hl(100, 59, 90, 4, 0, 0.5);
-    s += `<g><rect x="168" y="-0" width="26" height="30" rx="5" fill="${c.v("#fff", "#ffd0e4")}"/><path d="M168 10 H194 V22 H168Z" fill="#ff7aa8"/><circle cx="177" cy="16" r="2" fill="#fff"/><circle cx="186" cy="16" r="2" fill="#fff"/><path d="M174 -2 L181 -9 L188 -2Z" fill="#fff"/></g>`;
+    s += `<rect x="4" y="54" width="254" height="28" rx="8" fill="${c.g("#c98a4f")}"/>` + c.hl(64, 60, 50, 4, 0, 0.5);
+    s += mark(131, 68, 7.2, 0, "plate");
+    s += `<g><rect x="168" y="0" width="26" height="30" rx="5" fill="${c.v("#fff", "#ffd0e4")}"/><path d="M168 10 H194 V22 H168Z" fill="#ff7aa8"/><circle cx="177" cy="16" r="2" fill="#fff"/><circle cx="186" cy="16" r="2" fill="#fff"/><path d="M174 0 L181 -7 L188 0Z" fill="#fff"/></g>`;
     s += `<ellipse cx="70" cy="22" rx="28" ry="7" fill="${c.v("#fff", "#cfd8ea")}"/><path d="M44 22 Q70 -8 96 22Z" fill="${c.g("#ffffff")}"/><circle cx="66" cy="12" r="2.3" fill="#ffb020"/><circle cx="76" cy="14" r="2.3" fill="#ffb020"/>`;
     return s;
   });
-  def("st-crumbs", 190, 46, null, (c) => {
+  def("st-crumbs", 190, 46, (c) => {
     let s = `<ellipse cx="136" cy="26" rx="30" ry="9" fill="${c.v("#ffb3cc", "#ff6f9c")}" opacity=".95"/><ellipse cx="128" cy="23" rx="14" ry="3" fill="#fff" opacity=".6"/>`;
-    const cols = ["#e8b86a", "#c98a4f", "#ffe9b8", "#ff9a2e", "#fff", "#a8703a"];
-    for (let i = 0; i < 44; i++) { const x = 8 + ((i * 47) % 170), y = 6 + ((i * 29) % 34), r = 1.8 + (i % 4) * 0.8; s += `<ellipse cx="${x}" cy="${y}" rx="${f1(r * 1.3)}" ry="${f1(r)}" fill="${cols[i % 6]}" transform="rotate(${(i * 37) % 180} ${x} ${y})"/>`; }
+    const cols = ["#e8b86a", "#c98a4f", "#ffe9b8", "#ff9a2e", "#f6d7a0", "#a8703a"];
+    for (let i = 0; i < 44; i++) { const x = 8 + ((i * 47) % 170), y = 6 + ((i * 29) % 34), r = 1.8 + (i % 4) * 0.8; s += `<ellipse cx="${x}" cy="${f1(y + r * 0.5)}" rx="${f1(r * 1.3)}" ry="${f1(r * 0.7)}" fill="#5a3310" opacity=".22"/><ellipse cx="${x}" cy="${y}" rx="${f1(r * 1.3)}" ry="${f1(r)}" fill="${cols[i % 6]}" transform="rotate(${(i * 37) % 180} ${x} ${y})"/>`; }
     return s;
   });
-  def("st-cloth", 112, 96, [88, 20, 9, 0], (c) => {
+  def("st-cloth", 112, 106, (c) => {
     let s = "";
-    s += `<g transform="rotate(-8 50 66)"><rect x="12" y="40" width="86" height="52" rx="10" fill="${c.g("#ffd84a")}"/>`;
-    for (let x = 28; x < 98; x += 18) s += `<rect x="${x}" y="40" width="9" height="52" fill="#fff" opacity=".45"/>`;
-    for (let y = 52; y < 92; y += 18) s += `<rect x="12" y="${y}" width="86" height="9" fill="#fff" opacity=".45"/>`;
-    s += `<path d="M18 48 Q54 40 92 50" stroke="#fff" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/></g>`;
-    s += `<rect x="70" y="-4" width="36" height="34" rx="12" fill="${c.g("#ff7ab0")}" transform="rotate(-18 88 14)"/>`;
-    s += c.ell(66, 50, 17, 14, SKIN, -10, 0.5) + c.ell(58, 40, 5, 9, SKIN, 20, 0.3) + c.ell(66, 38, 5, 9, SKIN, 0, 0.3) + c.ell(75, 40, 5, 9, SKIN, -15, 0.3);
+    s += `<g transform="rotate(-8 50 76)"><rect x="12" y="50" width="86" height="52" rx="10" fill="${c.g("#ffd84a")}"/>`;
+    for (let x = 28; x < 98; x += 18) s += `<rect x="${x}" y="50" width="9" height="52" fill="#fff" opacity=".45"/>`;
+    for (let y = 62; y < 102; y += 18) s += `<rect x="12" y="${y}" width="86" height="9" fill="#fff" opacity=".45"/>`;
+    s += `<path d="M18 58 Q54 50 92 60" stroke="#fff" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>` + mark(82, 88, 5.6, 0, "patch") + `</g>`;
+    s += `<rect x="70" y="8" width="36" height="34" rx="12" fill="${c.g("#ff7ab0")}" transform="rotate(-18 88 25)"/><rect x="68" y="34" width="34" height="8" rx="4" fill="#fff" opacity=".85" transform="rotate(-18 88 25)"/>`;
+    s += c.ell(66, 60, 17, 14, SKIN, -10, 0.5) + c.ell(58, 50, 5, 9, SKIN, 20, 0.3) + c.ell(66, 48, 5, 9, SKIN, 0, 0.3) + c.ell(75, 50, 5, 9, SKIN, -15, 0.3);
     return s;
   });
-  def("st-clean-bg", 306, 216, null, (c) => {
+  def("st-clean-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="clr"><rect width="${W}" height="${H}" rx="14"/></clipPath></defs><g clip-path="url(#clr)">`;
     s += `<rect width="${W}" height="${H}" fill="${c.v("#fff6cf", "#ffe29a")}"/>`;
@@ -197,15 +213,20 @@
     return s + `</g>`;
   });
 
-  /* ----- rest: night sky, sleepy moon, kid asleep on a cloud ----- */
-  def("st-moon", 88, 96, [66, 72, 9, 0], (c) => {
-    let s = `<circle cx="44" cy="52" r="46" fill="#fff3a8" opacity=".25"/><circle cx="44" cy="52" r="38" fill="#fff3a8" opacity=".3"/>`;
-    s += c.sphere(44, 52, 32, "#fff0a0") + `<circle cx="28" cy="40" r="6" fill="#f2d86a" opacity=".6"/><circle cx="62" cy="62" r="5" fill="#f2d86a" opacity=".6"/><circle cx="56" cy="38" r="3.4" fill="#f2d86a" opacity=".6"/>`;
-    s += st("M34 52 Q40 58 46 52", INK, 3.2) + st("M50 52 Q56 58 62 52", INK, 3.2) + st("M41 66 Q48 70 54 65", INK, 3) + `<ellipse cx="32" cy="62" rx="6" ry="3.6" fill="#ff9ab0" opacity=".6"/><ellipse cx="66" cy="60" rx="6" ry="3.6" fill="#ff9ab0" opacity=".6"/>`;
-    s += `<path d="M18 36 Q44 -4 80 34 Q50 24 18 36Z" fill="${c.g("#4f6bff")}"/><path d="M24 33 Q48 14 74 32" stroke="#fff" stroke-width="3" stroke-dasharray="6 6" fill="none" opacity=".7"/><circle cx="80" cy="32" r="8" fill="#fff"/><circle cx="78" cy="30" r="3" fill="#dfe6ff"/>`;
+  /* ----- rest: night sky, the sleepy moon (the mark is a patch on its nightcap), the kid asleep on a cloud (a patch on the blanket) ----- */
+  def("st-moon", 92, 104, (c) => {
+    let s = `<circle cx="46" cy="58" r="44" fill="#fff3a8" opacity=".25"/><circle cx="46" cy="58" r="38" fill="#fff3a8" opacity=".3"/>`;
+    s += c.sphere(46, 58, 32, "#fff0a0") + `<circle cx="29" cy="62" r="5" fill="#f2d86a" opacity=".5"/><circle cx="66" cy="74" r="5" fill="#f2d86a" opacity=".6"/><circle cx="50" cy="84" r="3.4" fill="#f2d86a" opacity=".6"/>`;
+    s += st("M35 60 Q41 66 47 60", INK, 3.2) + st("M52 59 Q58 65 64 59", INK, 3.2) + st("M43 73 Q50 77 56 72", INK, 3) + `<ellipse cx="33" cy="70" rx="6" ry="3.6" fill="#ff9ab0" opacity=".6"/><ellipse cx="68" cy="67" rx="6" ry="3.6" fill="#ff9ab0" opacity=".6"/>`;
+    // the nightcap: big enough to carry the school's patch on its front
+    s += `<path d="M14.5 49 C13 19 37 3 58 7 C74 10 85 22 88.5 41 C79 30 71 27.5 62 28.5 C45 30.5 28 38 14.5 49Z" fill="${c.g("#4f6bff", 40, 20)}"/>`;
+    s += `<path d="M50 9 Q66 13 76 27 M34 14 Q30 26 31 37" stroke="#fff" stroke-width="2.2" stroke-dasharray="5 6" fill="none" opacity=".45" stroke-linecap="round"/>`;
+    s += mark(46.5, 19.5, 5.3, -14, "patch");
+    s += `<path d="M15.5 47.4 C29 36.6 45 30 63 28" stroke="#dfe6ff" stroke-width="8.6" fill="none" stroke-linecap="round"/><path d="M15.5 46.4 C29 35.6 45 29 63 27" stroke="#fff" stroke-width="5.6" fill="none" stroke-linecap="round"/>`;
+    s += `<circle cx="86" cy="42.5" r="6" fill="#fff"/><circle cx="84.4" cy="40.8" r="2.4" fill="#dfe6ff"/>`;
     return s;
   });
-  def("st-sleepkid", 200, 112, [138, 70, 11, -6], (c) => {
+  def("st-sleepkid", 200, 112, (c) => {
     let s = c.shadow(100, 108, 90, 5);
     s += c.sphere(30, 92, 22, "#ffffff", 0.4) + c.sphere(62, 84, 28, "#ffffff", 0.4) + c.sphere(104, 90, 30, "#ffffff", 0.4) + c.sphere(148, 88, 28, "#ffffff", 0.4) + c.sphere(176, 94, 20, "#ffffff", 0.4);
     s += `<rect x="20" y="84" width="170" height="20" rx="10" fill="${c.g("#f4f8ff")}"/>`;
@@ -214,11 +235,13 @@
     s += c.path("M18 44 Q18 14 46 14 Q74 14 70 44 Q60 26 44 30 Q28 26 18 44Z", "#5a3518");
     s += st("M31 46 Q37 52 43 46", INK, 3.6) + st("M50 46 Q56 52 62 46", INK, 3.6) + `<ellipse cx="30" cy="55" rx="6" ry="3.6" fill="#ff7aa8" opacity=".55"/><ellipse cx="62" cy="55" rx="6" ry="3.6" fill="#ff7aa8" opacity=".55"/>` + st("M40 58 Q46 62 52 58", INK, 3);
     s += c.path("M62 62 Q74 52 100 58 T150 56 T190 64 V102 H60Z", "#7a5cff");
-    s += `<g fill="#ffd23d">${[[84, 74, 5], [112, 82, 4], [138, 70, 5], [160, 86, 4], [180, 74, 4]].map(([x, y, r]) => star4(x, y, r * 1.5)).join("")}</g>`;
-    s += c.hl(110, 62, 36, 5, -4, 0.5);
+    s += `<path d="M64 66 Q76 57 100 63 T150 61 T188 68" stroke="#b9a6ff" stroke-width="2.4" fill="none" stroke-dasharray="5 5" opacity=".7"/>`;
+    s += `<g fill="#ffd23d">${[[84, 78, 5], [104, 92, 4], [160, 74, 5], [166, 93, 4], [182, 80, 4]].map(([x, y, r]) => star4(x, y, r * 1.5)).join("")}</g>`;
+    s += mark(131, 82, 7.4, -5, "patch");
+    s += c.hl(110, 66, 36, 4, -4, 0.4);
     return s;
   });
-  def("st-rest-bg", 306, 216, null, (c) => {
+  def("st-rest-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="rsr"><rect width="${W}" height="${H}" rx="14"/></clipPath><linearGradient id="rsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1446"/><stop offset=".6" stop-color="#2b2a86"/><stop offset="1" stop-color="#7a4aa8"/></linearGradient></defs><g clip-path="url(#rsr)">`;
     s += `<rect width="${W}" height="${H}" fill="url(#rsg)"/>`;
@@ -229,8 +252,9 @@
     return s + `</g>`;
   });
 
-  /* ----- hurt: kid with a bandage on the knee, nurse's cross, worried teddy, sick-room wall ----- */
-  def("st-hurtkid", 170, 176, [84, 98, 10, 0], (c, mood) => {
+  /* ----- hurt: the kid with a bandage on the knee (crest on the left chest), the worried teddy (the mark is the tag of its bow),
+           the first-aid box of the nurse's room (the mark is printed next to the cross), sick-room wall ----- */
+  def("st-hurtkid", 170, 176, (c, mood) => {
     const happy = mood === "happy";
     let s = c.shadow(85, 172, 62, 6);
     s += `<rect x="22" y="132" width="11" height="36" rx="4" fill="#5d9fd6"/><rect x="137" y="132" width="11" height="36" rx="4" fill="#5d9fd6"/><rect x="14" y="114" width="142" height="22" rx="10" fill="${c.g("#8fd3ff")}"/>`;
@@ -240,8 +264,10 @@
     s += c.sphere(67, 142, 12, SKIN, 0.5) + c.sphere(103, 142, 12, SKIN, 0.5);
     s += `<g transform="rotate(-32 67 142)"><rect x="50" y="134" width="34" height="16" rx="8" fill="${c.g("#ffe3b8")}" stroke="#e0a870" stroke-width="1.5"/><rect x="60" y="136" width="14" height="12" rx="3" fill="#fff5e4"/><circle cx="55" cy="139" r="1.2" fill="#e0a870"/><circle cx="55" cy="145" r="1.2" fill="#e0a870"/><circle cx="79" cy="139" r="1.2" fill="#e0a870"/><circle cx="79" cy="145" r="1.2" fill="#e0a870"/></g>`;
     s += `<rect x="52" y="70" width="66" height="54" rx="20" fill="${c.g("#ff9a2e")}"/>`;
+    s += `<path d="M73 71 Q85 82 97 71" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".85"/>`; // collar
+    s += mark(98, 95, 6.2, 0, "patch");
     s += st("M56 82 Q40 96 54 120", "#ff9a2e", 14) + c.sphere(56, 122, 8.5, SKIN, 0.5);
-    s += st("M114 82 Q130 92 120 108 Q116 118 110 124", "#ff9a2e", 14) + c.sphere(70, 126, 0.1, SKIN);
+    s += st("M114 82 Q130 92 120 108 Q116 118 110 124", "#ff9a2e", 14);
     s += c.sphere(110, 128, 8.5, SKIN, 0.5);
     s += c.sphere(85, 40, 32, SKIN, 0.6);
     s += c.path("M52 40 Q50 6 85 6 Q120 6 118 40 Q108 20 86 24 Q64 20 52 40Z", "#3a2210") + c.sphere(60, 16, 9, "#3a2210", 0.3);
@@ -255,28 +281,31 @@
     }
     return s;
   });
-  def("st-teddy", 92, 100, [46, 80, 9, 0], (c) => {
+  def("st-teddy", 92, 100, (c) => {
     let s = c.shadow(46, 97, 34, 5);
     const B = "#b97a44";
     s += c.ell(22, 90, 15, 9, B, 0, 0.3) + c.ell(70, 90, 15, 9, B, 0, 0.3);
-    s += c.ell(46, 72, 28, 26, B, 0, 0.5) + c.ell(46, 78, 17, 16, "#f4d9b0", 0, 0.3);
+    s += c.ell(46, 72, 28, 26, B, 0, 0.5) + c.ell(46, 79, 17, 16, "#f4d9b0", 0, 0.3);
     s += c.sphere(20, 66, 10, B, 0.4) + c.sphere(72, 66, 10, B, 0.4);
     s += c.sphere(22, 22, 14, B, 0.4) + c.sphere(70, 22, 14, B, 0.4) + `<circle cx="22" cy="22" r="7" fill="#f4d9b0"/><circle cx="70" cy="22" r="7" fill="#f4d9b0"/>`;
     s += c.sphere(46, 38, 27, B, 0.6) + c.ell(46, 48, 14, 10, "#f4d9b0", 0, 0.4);
     s += `<ellipse cx="46" cy="44" rx="5" ry="3.6" fill="#3a2530"/>` + st("M46 47 V51 M39 53 Q46 57 53 53", "#3a2530", 2.6);
     s += st("M27 33 L41 27", "#3a2530", 3) + st("M65 33 L51 27", "#3a2530", 3) + c.eyes(46, 36, 13, 4.6) + `<path d="M26 40 Q24 48 27 52" stroke="#7fd0ff" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-    s += `<path d="M34 62 L46 68 L58 62 L58 72 L46 68 L34 72Z" fill="#ff5a7a"/>`;
+    s += mark(46, 83.2, 5.7, 0, "tag"); // hangs from the knot of the bow
+    s += `<path d="M33 61 L46 67.5 L59 61 L59 73 L46 67.5 L33 73Z" fill="${c.g("#ff5a7a")}" stroke="#d63a5c" stroke-width="1" stroke-linejoin="round"/><rect x="42.6" y="64" width="6.8" height="7.4" rx="2.4" fill="#ff8aa4" stroke="#d63a5c" stroke-width="1"/>`;
     s += `<g transform="rotate(-24 70 20)"><rect x="60" y="14" width="22" height="10" rx="5" fill="#ffe3b8" stroke="#e0a870" stroke-width="1.2"/><rect x="66" y="15.5" width="10" height="7" rx="2" fill="#fff5e4"/></g>`;
     return s;
   });
-  def("st-cross", 94, 100, [72, 78, 9, 8], (c) => {
-    let s = st("M30 6 L22 24 M64 6 L72 24", "#c9d3ea", 3.2);
-    s += `<rect x="8" y="20" width="78" height="76" rx="18" fill="${c.v("#ffffff", "#c9d9f2")}" stroke="#9fb4d8" stroke-width="3"/>`;
-    s += `<path d="M38 30 H56 V50 H76 V68 H56 V88 H38 V68 H18 V50 H38Z" fill="${c.g("#ff3d4f")}" stroke="#b81c2c" stroke-width="2" stroke-linejoin="round"/>`;
-    s += c.hl(30, 32, 16, 6, -20, 0.8) + star4(12, 24, 8, "#fff") + star4(82, 94, 5, "#fff");
+  def("st-cross", 94, 100, (c) => { // the first-aid box hanging on its nail
+    let s = `<circle cx="47" cy="5.4" r="3.4" fill="${c.g("#aab4cc")}"/>` + st("M31 28 Q31 9 47 9 Q63 9 63 28", "#9fb0d0", 6.4) + st("M31 28 Q31 9 47 9 Q63 9 63 28", "#e9f0ff", 3);
+    s += `<rect x="7" y="24" width="80" height="72" rx="14" fill="${c.v("#ffffff", "#c9d9f2")}" stroke="#9fb4d8" stroke-width="3"/>`;
+    s += `<path d="M9 42 H85" stroke="#9fb4d8" stroke-width="2"/><rect x="20" y="36" width="12" height="11" rx="3" fill="${c.g("#c3cde4")}" stroke="#8c9cc0" stroke-width="1"/><rect x="62" y="36" width="12" height="11" rx="3" fill="${c.g("#c3cde4")}" stroke="#8c9cc0" stroke-width="1"/>`;
+    s += `<path d="M26 54 H38 V63 H47 V75 H38 V84 H26 V75 H17 V63 H26Z" fill="${c.g("#ff3d4f")}" stroke="#b81c2c" stroke-width="1.6" stroke-linejoin="round"/>`;
+    s += mark(67, 69, 6.6, 0, "print");
+    s += c.hl(26, 31, 14, 4, -8, 0.8) + star4(10, 22, 7, "#fff") + star4(86, 94, 5, "#fff");
     return s;
   });
-  def("st-hurt-bg", 306, 216, null, (c) => {
+  def("st-hurt-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="hur"><rect width="${W}" height="${H}" rx="14"/></clipPath></defs><g clip-path="url(#hur)">`;
     s += `<rect width="${W}" height="${H}" fill="${c.v("#dcf8ec", "#b9ecd8")}"/>`;
@@ -284,19 +313,19 @@
     s += `<rect y="120" width="${W}" height="56" fill="#f6fffb"/><rect y="118" width="${W}" height="5" fill="#8fd7bd"/>`;
     for (let y = 176, r = 0; y < H; y += 20, r++) for (let x = -(r % 2) * 20; x < W; x += 40) s += `<rect x="${x}" y="${y}" width="20" height="20" fill="${(x / 20 + r) % 2 ? "#eef6f2" : "#cfe3da"}"/>`;
     s += `<rect x="18" y="20" width="62" height="58" rx="5" fill="${c.v("#8fd3ff", "#d8f1ff")}"/><ellipse cx="38" cy="38" rx="14" ry="5" fill="#fff"/><rect x="18" y="20" width="62" height="58" rx="5" fill="none" stroke="#fff" stroke-width="6"/><rect x="46" y="20" width="5" height="58" fill="#fff"/><rect x="18" y="46" width="62" height="5" fill="#fff"/>`;
-    s += `<rect x="232" y="108" width="6" height="8" fill="#8fd7bd"/>`;
     s += `<rect x="108" y="22" width="98" height="9" rx="4.5" fill="${c.v("#d9a066", "#8a5a32")}"/>`;
     [["#ff7aa8", 116], ["#4cc9ff", 134], ["#ffd23d", 152], ["#35e07a", 170], ["#9b6bff", 188]].forEach(([col, x], i) => (s += `<rect x="${x}" y="${4 + (i % 2) * 2}" width="14" height="18" rx="4" fill="${c.g(col)}"/><rect x="${x + 3}" y="${i % 2 ? 0 : -2}" width="8" height="6" rx="2" fill="#fff"/>`));
     return s + `</g>`;
   });
 
-  /* ----- bye: sunset, setting sun, hills + school, school bus full of waving kids, a big waving hand ----- */
-  def("st-sun", 110, 110, null, (c) => {
+  /* ----- bye: sunset, the setting sun, hills + the school (crest on the gable), the school bus full of waving kids (the mark is the
+           plate on its side), a big waving hand (a patch on the sleeve) ----- */
+  def("st-sun", 110, 110, (c) => {
     let s = `<circle cx="55" cy="55" r="52" fill="#ffd27a" opacity=".3"/><circle cx="55" cy="55" r="42" fill="#ffd27a" opacity=".35"/>`;
     for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2; s += `<path d="M${f1(55 + Math.cos(a - 0.08) * 38)} ${f1(55 + Math.sin(a - 0.08) * 38)} L${f1(55 + Math.cos(a) * 54)} ${f1(55 + Math.sin(a) * 54)} L${f1(55 + Math.cos(a + 0.08) * 38)} ${f1(55 + Math.sin(a + 0.08) * 38)}Z" fill="#fff0a0" opacity=".85"/>`; }
     return s + c.sphere(55, 55, 32, "#ffb02e") + `<ellipse cx="55" cy="58" rx="26" ry="20" fill="#ff8a2a" opacity=".3"/>`;
   });
-  def("st-bye-bg", 306, 216, null, (c) => {
+  def("st-bye-bg", 306, 216, (c) => {
     const W = 306, H = 216;
     let s = `<defs><clipPath id="byr"><rect width="${W}" height="${H}" rx="14"/></clipPath><linearGradient id="byg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b3a9c"/><stop offset=".35" stop-color="#ff7a9a"/><stop offset=".7" stop-color="#ffb25a"/><stop offset="1" stop-color="#ffe08a"/></linearGradient></defs><g clip-path="url(#byr)">`;
     s += `<rect width="${W}" height="${H}" fill="url(#byg)"/>`;
@@ -304,36 +333,40 @@
     s += st("M60 22 q4 -5 8 0 q4 -5 8 0 M84 34 q3 -4 6 0 q3 -4 6 0 M232 54 q4 -5 8 0 q4 -5 8 0", INK, 2, 'opacity=".7"');
     return s + `</g>`;
   });
-  def("st-ground", 306, 92, [226, 36, 11, 0], (c) => {
-    const W = 306;
-    let s = `<defs><clipPath id="gdr"><rect width="${W}" height="92" rx="0"/></clipPath></defs>`;
-    s += `<path d="M0 30 Q50 6 110 24 T230 16 T306 26 V92 H0Z" fill="${c.v("#4fae6a", "#256b3e")}"/>`;
-    s += `<rect x="186" y="30" width="98" height="38" rx="4" fill="${c.v("#fff4d6", "#e6cf9e")}"/><path d="M178 32 L235 6 L292 32Z" fill="${c.v("#ff7a5a", "#c8402a")}"/><rect x="224" y="46" width="22" height="22" fill="#8a5a32"/>`;
-    for (let i = 0; i < 4; i++) s += `<rect x="${194 + (i % 2) * 70 + (i > 1 ? 0 : 0)}" y="${36 + (i > 1 ? 0 : 0)}" width="12" height="12" rx="2" fill="#ffe58a"/>`;
-    s += st("M284 32 V-4", "#c9d3ea", 3) + `<path d="M285 -3 L300 2 L285 7Z" fill="#ff5a5a"/>`;
-    s += `<rect y="62" width="${W}" height="30" fill="${c.v("#59506a", "#3a3448")}"/><path d="M0 77 H${W}" stroke="#fff3b0" stroke-width="3" stroke-dasharray="16 12"/>`;
+  def("st-ground", 306, 100, (c) => {
+    const W = 306, X = 168; // X = left end of the school roof
+    let s = `<path d="M0 40 Q50 16 110 34 T230 26 T306 36 V100 H0Z" fill="${c.v("#4fae6a", "#256b3e")}"/>`;
+    s += `<rect x="${X + 9}" y="42" width="94" height="36" rx="3" fill="${c.v("#fff4d6", "#e6cf9e")}"/>`;
+    s += `<path d="M${X} 44 L${X + 56} 6 L${X + 112} 44Z" fill="${c.v("#ff7a5a", "#c8402a")}" stroke="#a83220" stroke-width="1.4" stroke-linejoin="round"/><path d="M${X + 8} 41 L${X + 56} 9" stroke="#ffb49c" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>`;
+    s += mark(X + 56, 28.6, 5.8, 0, "print"); // the school crest on the gable
+    s += `<rect x="${X + 45}" y="54" width="22" height="24" rx="2" fill="${c.v("#a8703a", "#7a4a24")}"/><path d="M${X + 56} 54 V78" stroke="#5a3418" stroke-width="1.2"/><circle cx="${X + 53}" cy="67" r="1.3" fill="#ffd23d"/><circle cx="${X + 59}" cy="67" r="1.3" fill="#ffd23d"/>`;
+    [16, 31, 71, 86].forEach((dx) => (s += `<rect x="${X + dx}" y="50" width="10" height="12" rx="2" fill="#ffe58a" stroke="#e6b84a" stroke-width="1"/>`));
+    s += st(`M${X + 104} 44 V8`, "#c9d3ea", 3) + `<path d="M${X + 105} 9 L${X + 120} 14 L${X + 105} 19Z" fill="#ff5a5a"/>`;
+    s += `<rect y="70" width="${W}" height="30" fill="${c.v("#59506a", "#3a3448")}"/><path d="M0 85 H${W}" stroke="#fff3b0" stroke-width="3" stroke-dasharray="16 12"/>`;
     return s;
   });
-  def("st-bus", 232, 104, [152, 71, 9, 0], (c) => {
+  def("st-bus", 232, 104, (c) => {
     let s = c.shadow(116, 98, 108, 5);
-    s += `<rect x="6" y="14" width="214" height="70" rx="20" fill="${c.g("#ffcf33")}"/>` + c.hl(86, 24, 80, 6, 0, 0.7);
-    s += `<rect x="6" y="56" width="214" height="9" fill="#ff8a1f"/><rect x="6" y="64" width="214" height="5" fill="#26293a" opacity=".55"/>`;
+    s += `<rect x="6" y="12" width="214" height="72" rx="20" fill="${c.g("#ffcf33")}"/>` + c.hl(70, 17, 60, 3.4, 0, 0.7);
+    s += `<text x="100" y="24.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="8.4" fill="${INK}" letter-spacing="2.4">SCHOOL BUS</text>`;
+    s += `<rect x="6" y="57" width="214" height="6" fill="#ff8a1f"/><rect x="6" y="63" width="214" height="2.6" fill="#26293a" opacity=".55"/>`;
     const kids = [["#5a3518", "#ff7ab0"], ["#3a2210", "#4cc9ff"], ["#8a5a2c", "#35e07a"], ["#2a1a10", "#ffd23d"]];
     kids.forEach(([hc, sc], i) => {
       const x = 16 + i * 40;
-      s += `<rect x="${x}" y="22" width="32" height="32" rx="7" fill="${c.v("#cdeeff", "#6ab8f0")}"/>`;
-      s += `<circle cx="${x + 16}" cy="42" r="9" fill="${SKIN}"/><path d="M${x + 7} 40 Q${x + 8} 31 ${x + 16} 32 Q${x + 24} 31 ${x + 25} 40 Q${x + 18} 35 ${x + 7} 40Z" fill="${hc}"/><circle cx="${x + 13}" cy="43" r="1.4" fill="${INK}"/><circle cx="${x + 19}" cy="43" r="1.4" fill="${INK}"/><path d="M${x + 13} 47 Q${x + 16} 50 ${x + 19} 47" stroke="${INK}" stroke-width="1.3" fill="none"/>`;
-      s += `<rect x="${x + 22}" y="28" width="5" height="12" rx="2.5" fill="${SKIN}" transform="rotate(${i % 2 ? 18 : -14} ${x + 24} 40)"/><rect x="${x + 2}" y="48" width="28" height="6" fill="${sc}" opacity=".9"/>`;
+      s += `<rect x="${x}" y="28" width="32" height="27" rx="6" fill="${c.v("#cdeeff", "#6ab8f0")}"/>`;
+      s += `<circle cx="${x + 16}" cy="44" r="8.6" fill="${SKIN}"/><path d="M${x + 7.4} 42 Q${x + 8} 33.6 ${x + 16} 34.4 Q${x + 24} 33.6 ${x + 24.6} 42 Q${x + 18} 37.4 ${x + 7.4} 42Z" fill="${hc}"/><circle cx="${x + 13}" cy="45" r="1.4" fill="${INK}"/><circle cx="${x + 19}" cy="45" r="1.4" fill="${INK}"/><path d="M${x + 13} 48.6 Q${x + 16} 51.4 ${x + 19} 48.6" stroke="${INK}" stroke-width="1.3" fill="none"/>`;
+      s += `<rect x="${x + 22}" y="31" width="5" height="12" rx="2.5" fill="${SKIN}" transform="rotate(${i % 2 ? 18 : -14} ${x + 24} 43)"/><rect x="${x + 2}" y="50" width="28" height="5" fill="${sc}" opacity=".9"/>`;
     });
-    s += `<path d="M178 22 H204 Q214 22 216 34 V54 H178Z" fill="${c.v("#cdeeff", "#6ab8f0")}"/><rect x="184" y="68" width="22" height="16" fill="#26293a" opacity=".25"/>`;
-    s += `<text x="92" y="78.5" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="9" fill="${INK}" letter-spacing="1.6">SCHOOL BUS</text>`;
-    s += `<rect x="216" y="62" width="12" height="9" rx="3" fill="${c.g("#9aa4c0")}"/><circle cx="222" cy="44" r="5" fill="#fff6a8"/><rect x="0" y="62" width="10" height="8" rx="3" fill="${c.g("#9aa4c0")}"/>`;
-    s += `<rect x="28" y="8" width="16" height="9" rx="3" fill="#ff5a5a"/><circle cx="52" cy="10" r="3" fill="#ffc83d"/>`;
+    s += `<path d="M178 28 H204 Q214 28 216 38 V55 H178Z" fill="${c.v("#cdeeff", "#6ab8f0")}"/><path d="M184 31 L196 31 L188 52 L181 52Z" fill="#fff" opacity=".35"/>`;
+    s += mark(113, 73.6, 6.4, 0, "plate"); // the school's plate on the side of the bus
+    s += `<rect x="216" y="62" width="12" height="9" rx="3" fill="${c.g("#9aa4c0")}"/><circle cx="221" cy="47" r="4.6" fill="#fff6a8" stroke="#e6b84a" stroke-width="1"/><rect x="0" y="62" width="10" height="8" rx="3" fill="${c.g("#9aa4c0")}"/>`;
+    s += `<rect x="28" y="6" width="16" height="9" rx="3" fill="#ff5a5a"/><circle cx="52" cy="8" r="3" fill="#ffc83d"/>`;
     s += c.wheel(54, 84, 17) + c.wheel(172, 84, 17);
     return s;
   });
-  def("st-hand", 78, 124, [40, 112, 11, 0], (c) => {
+  def("st-hand", 78, 124, (c) => {
     let s = `<path d="M6 124 L16 92 H62 L72 124Z" fill="${c.g("#ff5a5a")}"/>`;
+    s += mark(39, 110.4, 6.6, 0, "patch");
     s += `<rect x="10" y="82" width="58" height="14" rx="7" fill="${c.g("#fff")}"/>`;
     s += c.ell(39, 66, 24, 24, SKIN, 0, 0.5);
     [[14, 44, -24], [26, 32, -8], [40, 28, 4], [53, 33, 18]].forEach(([x, y, r]) => (s += c.ell(x + 1, y, 7, 17, SKIN, r, 0.35)));
@@ -342,23 +375,38 @@
     return s;
   });
 
+  /* ----- on the table beside the book: the apple wears a fruit sticker, the cookie lies on a napkin printed with the mark ----- */
+  TC.ART["st-apple"] = () => TC.ART.apple();
+  TC.SEAL["st-apple"] = [129, 126, 12.5, -10, "sticker"];
+  def("st-snack", 220, 200, (c) => {
+    let s = c.shadow(112, 186, 96, 9);
+    s += `<g transform="rotate(-9 110 104)"><rect x="24" y="26" width="172" height="158" rx="7" fill="${c.v("#fffdf6", "#f1e6cc")}" stroke="#e2d3b0" stroke-width="1.6"/>`;
+    s += `<rect x="33" y="35" width="154" height="140" rx="4" fill="none" stroke="#ff7a8a" stroke-width="5.4" stroke-dasharray="9 9"/><rect x="33" y="35" width="154" height="140" rx="4" fill="none" stroke="#ffd0d6" stroke-width="5.4" stroke-dasharray="9 9" stroke-dashoffset="9"/>`;
+    s += `<path d="M24 60 L60 26" stroke="#d9c9a4" stroke-width="1.4" opacity=".8"/>` + mark(160, 148, 12, 0, "print") + `</g>`;
+    s += `<ellipse cx="94" cy="104" rx="64" ry="60" fill="#5a3310" opacity=".22"/>`;
+    s += c.sphere(90, 94, 60, "#d9964a", 0.45) + `<circle cx="90" cy="94" r="50" fill="#e3a65a" opacity=".5"/>`;
+    [[66, 72], [106, 64], [122, 100], [76, 110], [98, 128], [52, 98], [96, 92]].forEach(([x, y], i) => (s += `<ellipse cx="${x}" cy="${y}" rx="8" ry="6.2" fill="${c.g("#4a2a17")}" transform="rotate(${i * 40} ${x} ${y})"/><circle cx="${x - 2.4}" cy="${y - 2}" r="1.4" fill="#fff" opacity=".45"/>`));
+    [[168, 62, 3.4], [180, 80, 2.4], [30, 150, 3], [44, 166, 2.2]].forEach(([x, y, r]) => (s += `<ellipse cx="${x}" cy="${y}" rx="${r * 1.3}" ry="${r}" fill="#c98a4f"/>`));
+    return s;
+  });
+
   /* ----- scenes: the same layers stitched on one page = the page pictures st-wake … st-bye ----- */
   // l = {id, x, y (page space), z (pop-up height in em), d (rise delay s), flat (the printed picture, not a pop-up), cls, args}
   const SCENES = {
     "st-wake": [{ id: "st-wake-bg", x: 12, y: 12, flat: 1 }, { id: "st-rooster", x: 118, y: 50, z: 5, d: 0.15, cls: "crow" }, { id: "st-clock", x: 236, y: 50, z: 4, d: 0.3, cls: "ring" }, { id: "st-wake-bed", x: 26, y: 120, s: 0.82, z: 3, d: 0, cls: "bedl" }],
-    "st-wash": [{ id: "st-wash-bg", x: 12, y: 12, flat: 1 }, { id: "st-sink", x: 77, y: 96, z: 3, d: 0 }, { id: "st-hands", x: 105, y: 108, z: 6, d: 0.25, cls: "scrub" }],
-    "st-clean": [{ id: "st-clean-bg", x: 12, y: 12, flat: 1 }, { id: "st-table", x: 34, y: 104, z: 3, d: 0 }, { id: "st-crumbs", x: 76, y: 114, z: 3.4, d: 0.2, cls: "crumbs" }, { id: "st-cloth", x: 180, y: 70, z: 6, d: 0.35, cls: "cloth" }],
-    "st-rest": [{ id: "st-rest-bg", x: 12, y: 12, flat: 1 }, { id: "st-moon", x: 224, y: 20, z: 4, d: 0.2, cls: "moon" }, { id: "st-sleepkid", x: 24, y: 94, s: 1.2, z: 4, d: 0, cls: "snooze" }],
-    "st-hurt": [{ id: "st-hurt-bg", x: 12, y: 12, flat: 1 }, { id: "st-cross", x: 226, y: 22, z: 4, d: 0.25, cls: "cross" }, { id: "st-teddy", x: 14, y: 134, z: 5, d: 0.35, cls: "teddy" }, { id: "st-hurtkid", x: 70, y: 56, z: 3, d: 0, cls: "hkid" }],
-    "st-bye": [{ id: "st-bye-bg", x: 12, y: 12, flat: 1 }, { id: "st-sun", x: 120, y: 64, z: 2, d: 0.1, cls: "sunl" }, { id: "st-ground", x: 12, y: 130, z: 3, d: 0 }, { id: "st-bus", x: 12, y: 140, s: 0.8, z: 5, d: 0.3, cls: "bus" }, { id: "st-hand", x: 250, y: 112, s: 0.85, z: 6, d: 0.45, cls: "hand" }]
+    "st-wash": [{ id: "st-wash-bg", x: 12, y: 12, flat: 1 }, { id: "st-sink", x: 77, y: 98, z: 3, d: 0 }, { id: "st-hands", x: 95, y: 100, z: 6, d: 0.25, cls: "scrub" }],
+    "st-clean": [{ id: "st-clean-bg", x: 12, y: 12, flat: 1 }, { id: "st-table", x: 34, y: 104, z: 3, d: 0 }, { id: "st-crumbs", x: 76, y: 114, z: 3.4, d: 0.2, cls: "crumbs" }, { id: "st-cloth", x: 180, y: 60, z: 6, d: 0.35, cls: "cloth" }],
+    "st-rest": [{ id: "st-rest-bg", x: 12, y: 12, flat: 1 }, { id: "st-moon", x: 220, y: 14, z: 4, d: 0.2, cls: "moon" }, { id: "st-sleepkid", x: 24, y: 94, s: 1.2, z: 4, d: 0, cls: "snooze" }],
+    "st-hurt": [{ id: "st-hurt-bg", x: 12, y: 12, flat: 1 }, { id: "st-cross", x: 222, y: 26, z: 4, d: 0.25, cls: "cross" }, { id: "st-teddy", x: 14, y: 134, z: 5, d: 0.35, cls: "teddy" }, { id: "st-hurtkid", x: 70, y: 56, z: 3, d: 0, cls: "hkid" }],
+    "st-bye": [{ id: "st-bye-bg", x: 12, y: 12, flat: 1 }, { id: "st-sun", x: 112, y: 52, z: 2, d: 0.1, cls: "sunl" }, { id: "st-ground", x: 12, y: 128, z: 3, d: 0 }, { id: "st-bus", x: 14, y: 150, s: 0.74, z: 5, d: 0.3, cls: "bus" }, { id: "st-hand", x: 264, y: 136, s: 0.72, z: 6, d: 0.45, cls: "hand" }]
   };
   Object.keys(SCENES).forEach((name) => {
     TC.ART[name] = () => {
       const c = TC.ArtCtx(); let s = "";
-      SCENES[name].forEach((l) => { const D = LAY[l.id]; s += `<g transform="translate(${l.x} ${l.y}) scale(${l.s || 1})">${D.draw(c, ...(l.args || []))}${D.pin ? TC.seal(D.pin[0], D.pin[1], D.pin[2], D.pin[3] || 0) : ""}</g>`; });
+      SCENES[name].forEach((l) => { s += `<g transform="translate(${l.x} ${l.y}) scale(${l.s || 1})">${LAY[l.id].draw(c, ...(l.args || []))}</g>`; });
       return c.out(s, `0 0 ${PW} ${PH}`);
     };
-    TC.SEAL[name] = [-999, -999, 1, 0]; // the layers already carry their pins
+    TC.SEAL[name] = "none"; // the layers already carry their marks
   });
 
   /* =====================================================================
@@ -395,12 +443,13 @@
   .g6-gut{position:absolute;left:58em;top:0;width:8em;height:45em;transform:translateZ(.3em);pointer-events:none;background:linear-gradient(90deg,transparent,rgba(90,50,10,.28) 50%,transparent)}
   .g6-book.closed .g6-gut{opacity:0}
   /* text page */
-  .tcard{position:absolute;inset:0;padding:11em 6em 5em 7em;display:flex;flex-direction:column;justify-content:center;gap:1.6em;transform-style:flat}
+  .tcard{position:absolute;inset:0;padding:10.2em 6em 7.6em 7em;display:flex;flex-direction:column;justify-content:center;gap:1.2em;transform-style:flat}
   .trk{position:absolute;left:7em;top:6em;display:flex;gap:5em}
   .trk i{display:block;width:3.4em;height:3.4em;border-radius:50%;background:#efe0bc;box-shadow:inset 0 .3em .4em rgba(120,80,20,.35)}
   .trk i.d{background:radial-gradient(circle at 35% 30%,#fff3a0,#ffc83d 60%,#d9961a);box-shadow:0 .2em .3em rgba(120,80,20,.4)}
   .trk i.c{background:#fff;box-shadow:0 0 0 .5em #ffc83d}
-  .sent{font-size:6.3em;font-weight:700;line-height:1.2;color:#4a2f1a;text-wrap:balance}
+  .sent{font-size:6em;font-weight:700;line-height:1.18;color:#4a2f1a;text-wrap:balance}
+  .sent.s1{font-size:10em}.sent.s2{font-size:7.6em}.sent.s3{font-size:6.6em}.sent.s5{font-size:5em} /* short sentences are set larger: readable from the back of the room */
   .sent .wd{display:inline-block;margin-right:.22em}
   .kw{display:inline-block;border-radius:.3em;padding:0 .15em;transition:color .3s,background .3s}
   .kw.blank{color:transparent;background:repeating-linear-gradient(45deg,rgba(255,200,61,.55) 0 .3em,rgba(255,224,130,.55) .3em .6em);box-shadow:inset 0 0 0 .1em #e8a21a;animation:g6blank 1.2s ease-in-out infinite}
@@ -409,13 +458,13 @@
   @keyframes g6done{from{transform:scale(.5)}}
   .szh{font-size:3.5em;color:#8a5a30;font-weight:600}
   .stag{position:absolute;right:2.6em;bottom:1.3em;font-size:2.3em;color:#b8946a;font-weight:600}
-  .pgn b{font-size:4em}
-  .pgn{position:absolute;left:7em;bottom:2.6em;width:6em;height:6em;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:radial-gradient(circle at 35% 30%,#ff9a8a,#e8453c 60%,#a8202a);box-shadow:0 .4em 0 #7a1520,0 1em 1em rgba(0,0,0,.3)}
+  .pgn b{font-size:3.2em}
+  .pgn{position:absolute;left:7em;bottom:2em;width:4.8em;height:4.8em;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:radial-gradient(circle at 35% 30%,#ff9a8a,#e8453c 60%,#a8202a);box-shadow:0 .4em 0 #7a1520,0 1em 1em rgba(0,0,0,.3)}
   .tcard .ol{position:absolute;right:4em;top:8em;width:11em;height:12em;opacity:.0}
   .tcard .doodle{position:absolute;right:5em;bottom:7em;width:7em;height:7em;opacity:.55}
   /* the ribbon bookmark */
-  .g6-rib{position:absolute;top:.4em;left:6.7em;width:4em;height:9.6em;transform:translateZ(3em);transition:left .9s cubic-bezier(.3,1.5,.5,1),opacity .5s;filter:drop-shadow(.3em .5em .3em rgba(0,0,0,.4))}
-  .g6-rib i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#ff5a6a,#d8283c);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+  .g6-rib{position:absolute;top:0;left:6.2em;width:5em;height:12em;transform:translateZ(3em);transition:left .9s cubic-bezier(.3,1.5,.5,1),opacity .5s;filter:drop-shadow(.3em .5em .3em rgba(0,0,0,.4))}
+  .g6-rib svg{display:block;width:100%;height:100%}
   .g6-book.closed .g6-rib{opacity:0}
   /* scene on the right page */
   .scene{position:absolute;inset:0;transform-style:preserve-3d}
@@ -425,6 +474,8 @@
   .pw .pu img{display:block;width:100%;height:100%;pointer-events:none;user-select:none}
   .pw:not(.flat) .pu img{filter:drop-shadow(.32em 0 0 #fff) drop-shadow(-.32em 0 0 #fff) drop-shadow(0 .32em 0 #fff) drop-shadow(0 -.32em 0 #fff) drop-shadow(0 .9em .6em rgba(60,30,0,.4))}
   .pw.flat .pu img{border-radius:2em}
+  .pw.crumbs .pu img{filter:none}
+  .scene.gone .crumbs,.scene.gone .bus{visibility:hidden}
   .pw .psh{position:absolute;left:4%;right:4%;bottom:-2%;height:9%;border-radius:50%;background:radial-gradient(rgba(50,25,0,.55),transparent 70%);opacity:0;transform:scale(.3)}
   .scene.up .pw:not(.flat) .pu{animation:g6rise .95s cubic-bezier(.25,1.5,.45,1) var(--d,0s) both}
   .scene.up .pw .psh{animation:g6sh .95s ease-out var(--d,0s) both}
@@ -533,34 +584,38 @@
   .leaf .fr .scene{inset:0}
   .leaf .fr,.leaf .bk{box-shadow:0 .6em 0 #f0e3c4}
   /* the cover */
-  .cv{position:absolute;inset:0;border-radius:.6em 3em 3em .6em;overflow:hidden;
+  .cv{position:absolute;inset:0;border-radius:.6em 3em 3em .6em;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5em;padding:2.6em 4em 2.2em 6em;text-align:center;
     background:radial-gradient(circle at 24% 18%,rgba(255,255,255,.35),transparent 40%),linear-gradient(135deg,#ff7a45,#e8453c 55%,#b8232f);
     box-shadow:inset 0 0 0 .7em #ffcf5a,inset 0 0 0 1.1em #a8202a,inset 0 0 0 1.5em #ffe58a,0 .9em 0 #7a1520}
   .cv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4em;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.18) 40%,rgba(0,0,0,.1));pointer-events:none}
   .cv::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 .4em,transparent .4em .8em);pointer-events:none}
-  .cv .top{position:absolute;left:0;right:0;top:3em;text-align:center;font-size:2.6em;font-weight:700;color:#ffe9a8;letter-spacing:.2em}
-  .cv .pin{position:absolute;left:50%;top:6.4em;width:11em;height:11em;margin-left:-5.5em;filter:drop-shadow(0 .6em .5em rgba(0,0,0,.4));animation:g6pin 3s ease-in-out infinite}
-  @keyframes g6pin{50%{transform:rotate(5deg) scale(1.05)}}
-  .cv .ttl{position:absolute;left:0;right:0;top:18em;text-align:center;font-size:7em;line-height:1;font-weight:700;color:#fff2b0;text-shadow:0 .1em 0 #a8202a,0 .2em 0 #7a1520,0 .5em .5em rgba(0,0,0,.4);letter-spacing:.01em}
-  .cv .czh{position:absolute;left:0;right:0;top:27.5em;text-align:center;font-size:3.6em;font-weight:700;color:#ffe9a8;text-shadow:0 .1em 0 #7a1520}
-  .cv .cast{position:absolute;left:0;right:0;bottom:2.4em;display:flex;justify-content:center;gap:1.4em}
-  .cv .cast img{height:8.6em;filter:drop-shadow(0 .4em .3em rgba(0,0,0,.4))}
-  .cv .endtag{position:absolute;right:3.5em;top:5em;width:12em;height:12em;border-radius:50%;display:none;place-items:center;text-align:center;font-size:3em;font-weight:700;color:#7a1520;line-height:1.05;transform:rotate(14deg);background:radial-gradient(circle at 35% 30%,#fff6c8,#ffd23d 60%,#e8a21a);box-shadow:0 .5em 0 #a3740b,0 1em 1em rgba(0,0,0,.4)}
+  .cv .crest{flex:none;width:12em;height:12em;filter:drop-shadow(0 .28em .18em rgba(70,0,0,.6)) drop-shadow(0 -.07em 0 rgba(255,255,255,.35))} /* the school's mark as the embossed crest of the cover */
+  .cv .crest svg{display:block;width:100%;height:100%}
+  .cv .top{font-size:2.1em;font-weight:700;color:#ffe9a8;letter-spacing:.24em;margin-top:.2em}
+  .cv .ttl{font-size:6.6em;line-height:1;font-weight:700;color:#fff2b0;text-shadow:0 .08em 0 #a8202a,0 .16em 0 #7a1520,0 .32em .3em rgba(0,0,0,.4);text-wrap:balance}
+  .cv .czh{font-size:3.4em;line-height:1.15;font-weight:700;color:#ffe9a8;text-shadow:0 .1em 0 #7a1520}
+  .cv .cast{display:flex;justify-content:center;align-items:flex-end;gap:1.6em;margin-top:.5em}
+  .cv .cast img{height:9em;filter:drop-shadow(0 .4em .3em rgba(0,0,0,.4))}
+  .cv .endtag{position:absolute;right:2.4em;top:2.4em;width:11em;height:11em;border-radius:50%;display:none;place-items:center;text-align:center;font-weight:700;color:#7a1520;transform:rotate(14deg);background:radial-gradient(circle at 35% 30%,#fff6c8,#ffd23d 60%,#e8a21a);box-shadow:0 .5em 0 #a3740b,0 1em 1em rgba(0,0,0,.4),inset 0 0 0 .5em rgba(255,255,255,.35)}
+  .cv .endtag b{font-size:3.3em;line-height:1.05}
   .cv.theend .endtag{display:grid}
   /* the cast that jumps out of the closed book */
-  .g6 .cst{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 1em .8em rgba(0,0,0,.45))}
+  .g6 .cbox{position:absolute;left:0;top:0;pointer-events:none;z-index:3}
+  .g6 .cst{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 1em .8em rgba(0,0,0,.45))}
   .g6 .cst.wv{animation:g6cwave .5s ease-in-out infinite alternate;animation-delay:var(--wd,0s)}
   @keyframes g6cwave{from{transform:rotate(-7deg) translateY(0)}to{transform:rotate(7deg) translateY(-3%)}}
-  .g6 .nice{position:absolute;left:50%;top:21em;transform:translateX(-50%) rotate(-3deg);z-index:5;text-align:center;padding:2em 7em 2.4em;border-radius:5em;color:#3a2300;white-space:nowrap;
+  .g6 .nice{position:absolute;left:50%;top:27em;transform:translateX(-50%) rotate(-3deg);z-index:5;text-align:center;padding:2em 7em 2.4em;border-radius:5em;color:#3a2300;white-space:nowrap;
     background:linear-gradient(180deg,#fff6b8,#ffd84a 45%,#ff9f1f);box-shadow:0 1.2em 0 #b86a00,0 3em 6em rgba(0,0,0,.55),inset 0 .5em 0 rgba(255,255,255,.7);animation:g6nice .7s cubic-bezier(.2,1.6,.4,1) both}
   .g6 .nice b{display:block;font-size:11em;line-height:1.05}
   .g6 .nice span{display:block;font-size:4em;margin-top:.2em}
   @keyframes g6nice{from{transform:translateX(-50%) scale(.2) rotate(-20deg);opacity:0}}
   .g6 .nice.out{animation:g6niceout .4s forwards}
   @keyframes g6niceout{to{transform:translateX(-50%) scale(.6);opacity:0}}
-  .chorus.g6c{background:radial-gradient(circle,rgba(20,10,60,.1),rgba(5,10,25,.5));justify-content:flex-start;padding-top:12rem;gap:1.4rem}
-  .chorus.g6c .c2{font-size:11rem!important}
-  canvas.g6-fw{position:fixed;inset:0;z-index:44;pointer-events:none}
+  .chorus.g6c{background:linear-gradient(180deg,rgba(8,6,30,.8),rgba(8,6,30,.55) 55%,rgba(8,6,30,.12));justify-content:flex-start;padding-top:16rem;gap:1rem;touch-action:manipulation;cursor:pointer}
+  .chorus.g6c .tap{font-size:3rem;font-weight:700;color:#ffe58a;text-shadow:0 .25rem 0 rgba(0,0,0,.4);animation:g6tap .7s ease-in-out infinite alternate}
+  @keyframes g6tap{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .chorus.g6c .c2{font-size:10rem!important}
+  canvas.g6-fw{position:fixed;inset:0;z-index:49;pointer-events:none}
   .g6 .idle-cast{position:absolute;pointer-events:none;opacity:.95;filter:drop-shadow(0 1em .8em rgba(0,0,0,.45));animation:float 3.4s ease-in-out infinite}
   `;
 
@@ -575,6 +630,18 @@
   const star4Svg = svgHtml("-12 -12 24 24", `<path d="M0 -11 Q2.4 -2.4 11 0 Q2.4 2.4 0 11 Q-2.4 2.4 -11 0 Q-2.4 -2.4 0 -11Z" fill="#fff6a8" stroke="#ffb020" stroke-width="1"/>`);
   const heartSvg = svgHtml("0 0 24 22", `<path d="M12 21 C-7 8 3 -3 12 5 C21 -3 31 8 12 21Z" fill="#ff5a7a" stroke="#c41e4a" stroke-width="1.2"/>`);
   const rnd = (a, b) => a + Math.random() * (b - a);
+  /** the cover's embossed gold crest: a scalloped foil rosette with a laurel ring around the school's mark */
+  function crestSvg() {
+    let d = "", leaves = "";
+    for (let i = 0; i < 20; i++) { const p = (k, r) => `${f1(Math.cos(((i + k) / 20) * 6.2832) * r)} ${f1(Math.sin(((i + k) / 20) * 6.2832) * r)}`; d += `${i ? "" : "M" + p(0, 45)}Q${p(0.5, 53)} ${p(1, 45)}`; }
+    for (let i = 0; i < 28; i++) { if (i % 14 === 3 || i % 14 === 10) continue; const a = (i / 28) * 360 + 6.4; leaves += `<ellipse cx="0" cy="-31.4" rx="1.9" ry="3.6" fill="url(#g6cg)" transform="rotate(${f1(a)}) rotate(${i % 14 < 7 ? 38 : -38} 0 -31.4)"/>`; }
+    return svgHtml("-54 -54 108 108", `<defs><linearGradient id="g6cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#f0bd3a"/><stop offset="1" stop-color="#a86f08"/></linearGradient>` +
+      `<linearGradient id="g6ch" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a86f08"/><stop offset=".55" stop-color="#f0bd3a"/><stop offset="1" stop-color="#fff6c8"/></linearGradient></defs>` +
+      `<path d="${d}Z" fill="url(#g6cg)" stroke="#8a5f08" stroke-width="1"/><circle r="40.6" fill="none" stroke="url(#g6ch)" stroke-width="2.2"/><circle r="37.4" fill="#a8202a"/>${leaves}<circle r="25.6" fill="url(#g6ch)"/>` + TC.seal(0, 0, 18, 0, "print"));
+  }
+  /** the satin ribbon bookmark; the school's mark is embroidered on its end */
+  const ribbonSvg = () => svgHtml("0 0 50 120", `<defs><linearGradient id="g6rb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff6a78"/><stop offset=".5" stop-color="#e8303f"/><stop offset="1" stop-color="#b81c2c"/></linearGradient></defs>` +
+    `<path d="M6 0 H44 V118 L25 103 L6 118Z" fill="url(#g6rb)"/><path d="M9.6 0 V109 M40.4 0 V109" stroke="#ffd0d4" stroke-width="1.1" stroke-dasharray="3 3" opacity=".7"/>` + TC.seal(25, 80, 11.4, 0, "patch"));
 
   /** the pop-up layers of one page picture: returns {el, alive} */
   function buildScene(name) {
@@ -650,8 +717,8 @@
     });
   }
   function textCard(i, n, P) {
-    const sent = h("div", { class: "sent" });
-    tokens(P).forEach((t) => sent.append(h("span", { class: "wd" }, t.pre, t.key ? h("span", { class: "kw blank" }, t.core) : t.core, t.suf)));
+    const len = String(P.say || "").length, sent = h("div", { class: "sent " + (len <= 10 ? "s1" : len <= 20 ? "s2" : len <= 26 ? "s3" : len <= 40 ? "s4" : "s5") });
+    tokens(P).forEach((t) => sent.append(h("span", { class: "wd" }, t.pre, t.key ? h("span", { class: TC.kid && TC.kid.level === 1 ? "kw" : "kw blank" }, t.core) : t.core, t.suf)));
     return h("div", { class: "tcard" },
       h("div", { class: "trk" }, ...Array.from({ length: n }, (_, k) => h("i", { class: k < i ? "d" : k === i ? "c" : "" }))),
       sent, h("div", { class: "szh zh" }, P.zh || ""),
@@ -659,14 +726,13 @@
       h("div", { class: "stag zh" }, P.no ? "護照 " + P.no : ""));
   }
   function coverEl(G, ended) {
-    const cv = h("div", { class: "cv" + (ended ? " theend" : "") },
+    return h("div", { class: "cv" + (ended ? " theend" : "") },
+      h("div", { class: "crest", html: crestSvg() }),
       h("div", { class: "top zh" }, "土城國小 · ENGLISH DAY"),
-      h("div", { class: "pin", html: svgHtml("-26 -26 52 52", TC.seal(0, 0, 17, 0)) }),
       h("div", { class: "ttl" }, G.title || "Storybook Day"),
       h("div", { class: "czh zh" }, G.zh || ""),
       h("div", { class: "cast" }, TC.artImg("st-rooster"), TC.artImg("ollie"), TC.artImg("st-teddy")),
-      h("div", { class: "endtag" }, "The", h("br"), "End"));
-    return cv;
+      h("div", { class: "endtag" }, h("b", {}, "The", h("br"), "End")));
   }
 
   /** mini fireworks over the book (own canvas, removed by kill()) */
@@ -675,11 +741,11 @@
     const W = (cv.width = innerWidth), H = (cv.height = innerHeight), g = cv.getContext("2d");
     let ps = [], rk = [], raf = 0, on = true;
     function burst(x, y, hue) {
-      const n = 80 + ((Math.random() * 30) | 0);
+      const n = ps.length > 1300 ? 28 : 80 + ((Math.random() * 30) | 0);
       for (let i = 0; i < n; i++) { const a = Math.random() * 6.283, v = 1.5 + Math.random() * 7.5; ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, hue: hue + rnd(-18, 18), r: 2 + Math.random() * 2.4 }); }
       TC.sfx("kick"); TC.sfx("sparkle");
     }
-    function shoot(x, y, hue) { rk.push({ x: x == null ? rnd(W * 0.25, W * 0.75) : x, y: H * 0.9, ty: y == null ? rnd(H * 0.1, H * 0.38) : y, vx: rnd(-1.2, 1.2), vy: -rnd(13, 17), hue: hue == null ? rnd(0, 360) : hue }); TC.sfx("whoosh"); }
+    function shoot(x, y, hue) { const aim = y != null; rk.push({ x: x == null ? rnd(W * 0.25, W * 0.75) : x, y: H * 0.92, ty: aim ? y : rnd(H * 0.1, H * 0.38), vx: aim ? 0 : rnd(-1.2, 1.2), vy: aim ? -Math.max(6, (H * 0.92 - y) * 0.015 + 4.5) : -rnd(13, 17), hue: hue == null ? rnd(0, 360) : hue }); TC.sfx("whoosh"); }
     (function loop() {
       g.globalCompositeOperation = "destination-out"; g.fillStyle = "rgba(0,0,0,.2)"; g.fillRect(0, 0, W, H); g.globalCompositeOperation = "lighter";
       rk.forEach((r) => { r.x += r.vx; r.y += r.vy; r.vy *= 0.985; g.fillStyle = `hsl(${r.hue},100%,75%)`; g.beginPath(); g.arc(r.x, r.y, 3, 0, 7); g.fill(); if (r.y <= r.ty || r.vy > -3) { r.dead = 1; burst(r.x, r.y, r.hue); } });
@@ -709,27 +775,27 @@
     if (!book) return;
     book.classList.add("closed");
     lp.replaceChildren(); rp.replaceChildren();
-    rib.style.left = "6.7em";
+    rib.style.left = "6.2em";
     book.querySelectorAll(".leaf").forEach((e) => e.remove());
     const leaf = h("div", { class: "leaf", style: "transform:translateZ(.3em)" }, h("div", { class: "fr" }, coverEl(api.G, false)), h("div", { class: "bk pgl" }));
     book.append(leaf);
   }
 
   TC.games.story = {
-    startArt: ["st-rooster", "st-clock", "st-teddy", "st-moon", "st-boy", "st-girl", "st-sun", "star"],
+    startArt: ["st-rooster", "st-clock", "st-teddy", "st-moon", "st-boy", "st-girl", "st-bus", "star"],
 
     mount(api) {
       const style = h("style", { id: "g6css" }, css); document.head.append(style);
       root = h("div", { class: "g6" });
       root.append(h("div", { class: "lamp" }));
       for (let i = 0; i < 14; i++) root.append(h("i", { class: "mote", style: `left:${rnd(40, 100)}%;top:${rnd(0, 60)}%;animation-delay:${-rnd(0, 9)}s;animation-duration:${rnd(7, 12)}s` }));
-      const apple = TC.artImg("apple", "prop"); apple.style.cssText = "left:5em;top:33em;width:14em;height:14em";
-      const cookie = TC.artImg("cookie", "prop"); cookie.style.cssText = "left:158em;top:36em;width:13em;height:13em";
+      const apple = TC.artImg("st-apple", "prop"); apple.style.cssText = "left:6em;top:34em;width:14em;height:14em"; // fruit sticker
+      const cookie = TC.artImg("st-snack", "prop"); cookie.style.cssText = "left:157.4em;top:35em;width:17.6em;height:16em"; // on its printed napkin
       root.append(apple, cookie);
       const world = h("div", { class: "g6-world" });
       book = h("div", { class: "g6-book closed" });
       lp = h("div", { class: "g6-pg g6-lp" }); rp = h("div", { class: "g6-pg g6-rp" });
-      rib = h("div", { class: "g6-rib" }, h("i"));
+      rib = h("div", { class: "g6-rib", html: ribbonSvg() });
       book.append(h("div", { class: "g6-bd g6-bl" }), h("div", { class: "g6-bd g6-br" }), lp, rp, h("div", { class: "g6-gut" }), rib);
       world.append(book); root.append(world);
       api.stage.append(root);
@@ -742,7 +808,7 @@
       resetBook(api);
       idleBits && idleBits.forEach((e) => e.remove());
       idleBits = ["st-boy", "st-rooster", "st-girl"].map((n, i) => {
-        const im = TC.artImg(n, "idle-cast"); const L = [[6, 30, 22], [160, 12, 18], [152, 36, 19]][i];
+        const im = TC.artImg(n, "idle-cast"); const L = [[20, 56, 24], [120, 64, 16], [147, 55, 24]][i];
         im.style.cssText = `left:${L[0]}em;top:${L[1]}em;height:${L[2]}em;animation-delay:${-i * 0.8}s`; root.append(im); return im;
       });
     },
@@ -791,12 +857,13 @@
         for (let i = 0; i < n && !api.aborted; i++) {
           const P = pages[i];
           api.progress(i, n);
-          rib.style.left = 6.7 + i * 8.4 + "em";
+          rib.style.left = 6.2 + i * 8.4 + "em";
           if (i > 0) {
             const nxt = buildScene(P.img), card = textCard(i, n, P);
-            const fr = h("div", { class: "fr pgr" }, h("div", { class: "shade" })); const old = cur.el.cloneNode(true); old.className = "scene set"; fr.prepend(old);
+            const fr = h("div", { class: "fr pgr" }, h("div", { class: "shade" })); const old = cur.el.cloneNode(true); old.className = "scene set gone"; fr.prepend(old);
             const bk = h("div", { class: "bk pgl" }, card.cloneNode(true), h("div", { class: "shade" }));
             const leaf = keep(h("div", { class: "leaf", style: "transform:translateZ(.3em)" }, fr, bk));
+            book.append(leaf); // the old picture lies on the front of the turning page, the next sentence on its back
             rp.replaceChildren(nxt.el); cur = nxt;
             await turn(leaf, () => { popUp(cur.el); });
             if (api.aborted) return null;
@@ -838,20 +905,21 @@
         fx = fireworks();
         fx.shoot(innerWidth * 0.5, innerHeight * 0.22, 45); await nap(350); fx.shoot(innerWidth * 0.33, innerHeight * 0.3, 200); fx.shoot(innerWidth * 0.68, innerHeight * 0.28, 320);
         // the whole cast jumps out of the book
-        const cast = [["st-boy", 21, 28], ["st-rooster", 15, 22], ["ollie", 22, 28], ["st-girl", 21, 30], ["st-teddy", 18, 20], ["st-hurtkid", 18, 26], ["st-clock", 13, 17]];
+        const cast = [["st-boy", 21], ["st-rooster", 17], ["ollie", 21], ["st-girl", 21], ["st-teddy", 18], ["st-hurtkid", 23], ["st-clock", 15]];
         const cx = innerWidth / 2, W = innerWidth, Hh = innerHeight, em = Math.min(Hh / 100, W / 177.8);
         for (let i = 0; i < cast.length; i++) {
-          const [nm, wd, hh] = cast[i];
+          const [nm, wd] = cast[i], D = LAY[nm], hh = wd * (D ? D.h / D.w : 1.16); // every picture keeps its own proportions: all feet on one line
           const im = TC.artImg(nm, "cst"); if (nm === "st-hurtkid") im.src = TC.art("st-hurtkid", "happy");
-          const tx = W * (0.1 + (i / (cast.length - 1)) * 0.8) - (wd * em) / 2, ty = Hh * 0.97 - hh * em;
-          im.style.cssText = `left:0;top:0;width:${wd}em;height:${hh}em;--wd:${(-i * 0.13).toFixed(2)}s;transform:translate(${cx - (wd * em) / 2}px,${Hh * 0.3}px) scale(.2)`;
-          root.append(keep(im));
-          const an = im.animate([
+          const tx = W * (0.1 + (i / (cast.length - 1)) * 0.8) - (wd * em) / 2, ty = Hh * 0.975 - hh * em - Math.sin((i / (cast.length - 1)) * Math.PI) * 2.4 * em;
+          const box = h("div", { class: "cbox", style: `width:${wd}em;height:${f1(hh)}em;transform:translate(${cx - (wd * em) / 2}px,${Hh * 0.3}px) scale(.2);opacity:0` }, im);
+          im.style.setProperty("--wd", (-i * 0.13).toFixed(2) + "s");
+          root.append(keep(box));
+          const an = box.animate([
             { transform: `translate(${cx - (wd * em) / 2}px,${Hh * 0.3}px) scale(.2)`, opacity: 0 },
-            { transform: `translate(${cx + (tx - cx) * 0.5 - (wd * em) / 2}px,${Hh * 0.04}px) scale(.8)`, opacity: 1, offset: 0.45 },
+            { transform: `translate(${cx + (tx + (wd * em) / 2 - cx) * 0.5 - (wd * em) / 2}px,${Hh * 0.06}px) scale(.8)`, opacity: 1, offset: 0.45 },
             { transform: `translate(${tx}px,${ty}px) scale(1)`, opacity: 1 }], { duration: 950, easing: "cubic-bezier(.3,.6,.4,1)", fill: "forwards" });
           TC.sfx("pop");
-          an.finished.then(() => { im.style.transform = `translate(${tx}px,${ty}px)`; im.style.left = "0"; an.cancel(); im.style.transform = `translate(${tx}px,${ty}px)`; im.classList.add("wv"); }).catch(() => {});
+          an.finished.then(() => { box.style.transform = `translate(${tx}px,${ty}px)`; box.style.opacity = "1"; an.cancel(); im.classList.add("wv"); }).catch(() => {});
           await nap(170);
           if (i % 2) fx.shoot();
         }
@@ -867,27 +935,30 @@
         await nap(500);
         nice.classList.add("out"); await nap(380); nice.remove();
 
-        // PARENT moment: the whole room says "Goodbye!" together (the louder, the more fireworks)
+        // PARENT moment: the whole room says "Goodbye!" together. Nothing listens: the bar fills by itself in about five seconds,
+        // and every tap on the screen launches a firework where the finger is and fills the bar faster. Enter = go on, Esc = stop.
         const last = pages[pages.length - 1], word = String(last.say || "Goodbye.").replace(/[.!?]+$/, "") + "!";
-        const bar = h("i"), ch = h("div", { class: "chorus g6c" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2" }, word), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:1.8rem;color:var(--ink2)" }, "越大聲，煙火越多！"));
+        const bar = h("i"), ch = h("div", { class: "chorus g6c" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2" }, word), h("div", { class: "bar" }, bar), h("div", { class: "tap zh" }, "👆 點螢幕放煙火！ Tap for fireworks!"));
+        let fill = 0, taps = 0, skip = false;
+        ch.addEventListener("pointerdown", (e) => { taps++; fill = Math.min(100, fill + 8); if (fx) fx.shoot(e.clientX, Math.min(e.clientY, innerHeight * 0.8), (taps * 47) % 360); });
         document.body.append(ch); TC.sfx("levelup");
         await said(word);
-        let peak = 0, loud = 0, nextBoom = 0, skip = false;
         TC.pending = () => { skip = true; };
-        const t0 = performance.now();
+        const t0 = performance.now(); let tPrev = t0, nextBoom = 700;
         await race(new Promise((res) => {
+          const safety = setTimeout(res, 6500); // a hidden tab stops requestAnimationFrame: never wait for ever
           (function loop() {
-            const el = performance.now() - t0, l = TC.Mic.level || 0; peak = Math.max(peak, l);
-            bar.style.width = Math.min(100, peak * 140) + "%";
-            if (l > 0.3) loud += 16; else loud = Math.max(0, loud - 8);
-            if (el > nextBoom && (l > 0.3 || el > 3000)) { fx && fx.shoot(); nextBoom = el + (l > 0.5 ? 300 : 800); }
-            if (api.aborted || el > 5200 || (skip && el > 1500) || (loud > 700 && el > 2500)) res(); else requestAnimationFrame(loop);
+            const now = performance.now(), el = now - t0;
+            fill = Math.min(100, fill + ((now - tPrev) / 5000) * 100); tPrev = now; bar.style.width = fill + "%";
+            if (el > nextBoom) { fx && fx.shoot(); nextBoom = el + 800; }
+            if (api.aborted || fill >= 100 || el > 5200 || (skip && el > 1500)) { clearTimeout(safety); res(); } else requestAnimationFrame(loop);
           })();
         }));
         if (TC.pending) TC.pending = null;
         if (api.aborted) return null;
+        bar.style.width = "100%";
         for (let i = 0; i < 5; i++) { fx.shoot(); await nap(180); }
-        TC.confetti(peak > 0.5 ? 260 : 140); TC.sfx(peak > 0.5 ? "fanfare" : "ding");
+        TC.confetti(taps > 4 ? 260 : 140); TC.sfx(taps > 4 ? "fanfare" : "ding");
         await nap(900);
         ch.remove();
         if (api.aborted) return null;

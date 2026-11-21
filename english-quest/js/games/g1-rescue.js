@@ -25,23 +25,26 @@
     const P = (deg, l) => `${(x + Math.sin(deg * Math.PI / 180) * l).toFixed(1)} ${(y - Math.cos(deg * Math.PI / 180) * l).toFixed(1)}`;
     let s = c.sphere(x, y, r, "#f0b429", 0.5) + `<circle cx="${x}" cy="${y}" r="${r * 0.8}" fill="#fffdf4"/><circle cx="${x}" cy="${y}" r="${r * 0.8}" fill="none" stroke="#e2d3a5" stroke-width="1.5"/>`;
     for (let i = 0; i < 12; i++) s += `<path d="M${P(i * 30, r * 0.62)} L${P(i * 30, r * 0.74)}" stroke="${i % 3 ? "#8a7a52" : "#2a2a3a"}" stroke-width="${i % 3 ? 1.4 : 2.8}" stroke-linecap="round"/>`;
+    s += TC.seal(x, y + r * 0.37, r * 0.16, 0, "print"); // the school's mark printed on the face, like a maker's logo (the hands pass over it)
     s += `<path d="M${x} ${y} L${P(hr % 12 * 30 + mn * 0.5, r * 0.45)}" stroke="#1b1d33" stroke-width="${r * 0.1}" stroke-linecap="round"/><path d="M${x} ${y} L${P(mn * 6, r * 0.66)}" stroke="#1b1d33" stroke-width="${r * 0.07}" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="${r * 0.07}" fill="#e63946"/>`;
     return s + c.hl(x - r * 0.35, y - r * 0.45, r * 0.4, r * 0.18, -30, 0.55);
   }
   /** a classroom door: dark frame, wooden leaf, panels, knob; optional window */
+  const DWIN = { y: 0.08, h: 0.31 }; // the door window (fractions of the door height)
   function doorSvg(c, x, y, w, hh, col, win) {
     let s = `<rect x="${x - 6}" y="${y - 6}" width="${w + 12}" height="${hh + 6}" rx="5" fill="${c.v("#8a5527", "#5a3414")}"/>`;
     s += `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="3" fill="${c.g(col)}"/>`;
-    s += `<rect x="${x + w * 0.12}" y="${y + hh * 0.52}" width="${w * 0.76}" height="${hh * 0.38}" rx="4" fill="#000" opacity=".12"/><rect x="${x + w * 0.12 + 1}" y="${y + hh * 0.52 + 1}" width="${w * 0.76 - 2}" height="${hh * 0.38 - 2}" rx="4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/>`;
-    if (win) s += `<rect x="${x + w * 0.16 - 3}" y="${y + hh * 0.1 - 3}" width="${w * 0.68 + 6}" height="${hh * 0.34 + 6}" rx="6" fill="#7a4a20"/><rect x="${x + w * 0.16}" y="${y + hh * 0.1}" width="${w * 0.68}" height="${hh * 0.34}" rx="4" fill="${c.v("#cdeeff", "#86c8f0")}"/>`;
-    return s + c.sphere(x + w * 0.86, y + hh * 0.56, 4.6, "#ffd23d") + c.hl(x + w * 0.3, y + hh * 0.3, w * 0.2, hh * 0.3, -10, 0.25);
+    s += `<rect x="${x + w * 0.12}" y="${y + hh * 0.62}" width="${w * 0.76}" height="${hh * 0.3}" rx="4" fill="#000" opacity=".12"/><rect x="${x + w * 0.12 + 1}" y="${y + hh * 0.62 + 1}" width="${w * 0.76 - 2}" height="${hh * 0.3 - 2}" rx="4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/>`;
+    if (win) s += `<rect x="${x + w * 0.16 - 3}" y="${y + hh * DWIN.y - 3}" width="${w * 0.68 + 6}" height="${hh * DWIN.h + 6}" rx="6" fill="#7a4a20"/><rect x="${x + w * 0.16}" y="${y + hh * DWIN.y}" width="${w * 0.68}" height="${hh * DWIN.h}" rx="4" fill="${c.v("#cdeeff", "#86c8f0")}"/>`;
+    s += c.sphere(x + w * 0.87, y + hh * 0.5, 4.6, "#ffd23d") + c.hl(x + w * 0.3, y + hh * 0.3, w * 0.2, hh * 0.3, -10, 0.25);
+    return s + TC.seal(x + w / 2, y + hh * 0.5, Math.min(w, hh * 0.5) * 0.1, 0, "plate"); // the school's brass door plate on the middle rail
   }
   /** the room behind a situation: wall, baseboard and wooden floor */
   const room = (c, w1, w2, f1, f2) => `<rect width="280" height="200" fill="${c.v(w1, w2)}"/><ellipse cx="90" cy="20" rx="140" ry="40" fill="#fff" opacity=".22"/>` +
     `<rect y="146" width="280" height="54" fill="${c.v(f1, f2)}"/><rect y="142" width="280" height="6" fill="#000" opacity=".16"/>` +
     `<path d="M0 162H280M0 178H280M0 195H280M70 148L18 200M140 148V200M210 148L262 200" stroke="#000" stroke-opacity=".1" stroke-width="1.5" fill="none"/>`;
   const bellShape = (c, x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-8 -26 Q0 -34 8 -26 L6 -18 H-6Z" fill="${c.g("#c98a14")}"/>` +
-    `<path d="M-22 16 C-22 -6 -12 -22 0 -22 C12 -22 22 -6 22 16 L30 24 H-30Z" fill="${c.g("#ffc83d")}"/><ellipse cx="0" cy="25" rx="30" ry="5" fill="${c.g("#e0a21a")}"/><circle cx="0" cy="31" r="7" fill="${c.g("#c98a14")}"/>${c.hl(-9, -6, 6, 13, -15, 0.8)}</g>`;
+    `<path d="M-22 16 C-22 -6 -12 -22 0 -22 C12 -22 22 -6 22 16 L30 24 H-30Z" fill="${c.g("#ffc83d")}"/><circle cx="0" cy="3.4" r="9.9" fill="#a86c08" opacity=".6"/>${TC.seal(0, 3.4, 6.6, 0, "print")}<ellipse cx="0" cy="25" rx="30" ry="5" fill="${c.g("#e0a21a")}"/><circle cx="0" cy="31" r="7" fill="${c.g("#c98a14")}"/>${c.hl(-9, -6, 6, 13, -15, 0.8)}</g>`;
 
   /** Ollie-bot drawn in a situation. o: eyes n/w(orried)/s(ad)/q(>_<)/h(appy), beak n/pant/o/cry, wl/wr wing angles, front = wings in front of the body */
   function ollieFig(c, x, y, s, o) {
@@ -66,7 +69,7 @@
       cry: `<path d="M82 108 Q100 152 118 108Z" fill="#7a1f2b"/>` + c.ell(100, 136, 10, 8, "#ff7aa8", 0, 0.4) + c.path("M88 105 L112 105 L100 116Z", "#ffb020")
     }[o.beak];
     b += c.blush(100, 119, 50);
-    b += `<rect x="62" y="136" width="76" height="52" rx="14" fill="${c.v("#1b2b5e", "#0a1633")}" stroke="#c9d6ff" stroke-width="4"/><text x="100" y="171" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${o.screen.length > 3 ? 22 : 26}" fill="#2ee6b6">${o.screen}</text>`;
+    b += `<rect x="62" y="134" width="76" height="43" rx="13" fill="${c.v("#1b2b5e", "#0a1633")}" stroke="#c9d6ff" stroke-width="4"/><text x="100" y="163.5" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${o.screen.length > 3 ? 20 : 23}" fill="#2ee6b6">${o.screen}</text>` + TC.seal(100, 196, 10.6, 0, "pin"); // the school's mark: the round "home button" under his screen
     b += c.hl(70, 60, 30, 12, -20, 0.7) + c.ell(80, 212, 14, 8, "#ffc83d", 0, 0.4) + c.ell(120, 212, 14, 8, "#ffc83d", 0, 0.4);
     if (o.plaster) b += `<g transform="rotate(-16 100 50)"><rect x="68" y="40" width="64" height="22" rx="11" fill="${c.g("#ffd9a0")}"/><rect x="88" y="40" width="24" height="22" fill="#fff3d6"/><circle cx="78" cy="51" r="1.8" fill="#c98a4a"/><circle cx="122" cy="51" r="1.8" fill="#c98a4a"/><circle cx="82" cy="46" r="1.8" fill="#c98a4a"/><circle cx="118" cy="56" r="1.8" fill="#c98a4a"/></g>`;
     if (o.bump) b += `<path d="${star5(152, 40, 24, 13)}" fill="${c.g("#ffb020")}" stroke="#ff8a00" stroke-width="2" stroke-linejoin="round"/>` + c.hl(146, 33, 9, 5, -30, 0.9);
@@ -77,7 +80,7 @@
   }
 
   /* ---------- the six situation pictures (viewBox 280 x 200) ---------- */
-  reg("sit-late", [252, 170, 15, -8], () => {
+  reg("sit-late", "none", () => {
     const c = Ctx();
     let s = room(c, "#c9f0e2", "#8fd9c0", "#e7b777", "#c48c4f");
     s += doorSvg(c, 196, 36, 70, 110, "#d9803a", true);
@@ -89,11 +92,11 @@
     s += ollieFig(c, 108, 56, 0.52, { eyes: "w", beak: "pant", sweat: 1, wl: 34, wr: -34, rot: -7, screen: "9:00" });
     return c.out(s, "0 0 280 200");
   });
-  reg("sit-in", [252, 170, 15, -8], () => {
+  reg("sit-in", "none", () => {
     const c = Ctx();
     let s = room(c, "#ffe3b0", "#ffc978", "#d9a05a", "#b9783a");
     s += doorSvg(c, 150, 22, 98, 126, "#c97b3a", true);
-    const wx = 150 + 98 * 0.16, wy = 22 + 126 * 0.1, ww = 98 * 0.68, wh = 126 * 0.34;
+    const wx = 150 + 98 * 0.16, wy = 22 + 126 * DWIN.y, ww = 98 * 0.68, wh = 126 * DWIN.h;
     s += `<defs><clipPath id="rqw"><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" rx="4"/></clipPath></defs><g clip-path="url(#rqw)"><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${c.v("#fff3d0", "#ffd98c")}"/>` +
       `<rect x="${wx + 4}" y="${wy + 4}" width="26" height="14" rx="2" fill="#2f6b4f"/><path d="M${wx + 7} ${wy + 14} H${wx + 24}" stroke="#fff" stroke-width="1.6"/>` +
       `<ellipse cx="${wx + ww / 2}" cy="${wy + wh + 6}" rx="26" ry="20" fill="${c.g("#4c78d9")}"/>` + c.sphere(wx + ww / 2, wy + wh / 2 + 2, 13, "#ffd1a8") +
@@ -111,48 +114,48 @@
     `<circle cx="${x + w * 0.3}" cy="${y + hh * 0.22}" r="${w * 0.07}" fill="#fff"/><rect x="${x + w * 0.22}" y="${y + hh * 0.32}" width="${w * 0.16}" height="${hh * 0.3}" rx="3" fill="#fff"/>` +
     `<circle cx="${x + w * 0.7}" cy="${y + hh * 0.22}" r="${w * 0.07}" fill="#fff"/><path d="M${x + w * 0.7} ${y + hh * 0.32} L${x + w * 0.57} ${y + hh * 0.64} H${x + w * 0.83}Z" fill="#fff"/>` +
     `<text x="${x + w / 2}" y="${y + hh * 0.9}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${hh * 0.2}" fill="#fff">WC</text>`;
-  reg("sit-restroom", [252, 170, 15, -8], () => {
+  reg("sit-restroom", "none", () => {
     const c = Ctx();
     let s = room(c, "#d6ecff", "#a7d3f7", "#e8c493", "#c99a62");
-    s += doorSvg(c, 176, 40, 74, 106, "#43c3a6", false) + wcPlaque(c, 188, 52, 50, 42);
-    s += `<circle cx="214" cy="112" r="7" fill="${c.g("#ff4f4f")}"/>`;
+    s += doorSvg(c, 176, 40, 74, 106, "#43c3a6", false) + wcPlaque(c, 190, 46, 46, 35);
+    s += `<circle cx="213" cy="26.5" r="6" fill="${c.g("#ff4f4f")}"/>`;
     s += `<g stroke="#3d8bff" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M64 150 Q80 168 96 150M104 158 Q118 170 132 158"/></g>`;
     s += `<g stroke="#ff9a2e" stroke-width="4" stroke-linecap="round"><path d="M50 106 L40 98M52 122 L40 122M52 138 L42 146M150 106 L160 98M148 122 L160 122M148 138 L158 146"/></g>`;
     s += ollieFig(c, 62, 50, 0.55, { eyes: "q", beak: "o", sweat: 2, wl: -26, wr: 26, front: 1, lift: 16, rot: 6 });
     s += `<text x="170" y="28" font-family="${FONT}" font-weight="700" font-size="28" fill="#ff4f4f" transform="rotate(10 170 28)">!</text>`;
     return c.out(s, "0 0 280 200");
   });
-  reg("sit-water", [252, 170, 15, -8], () => {
+  reg("sit-water", "none", () => {
     const c = Ctx();
     let s = room(c, "#ffe7a8", "#ffc765", "#e6b678", "#c48f52");
     s += c.sphere(38, 36, 20, "#ffcf3a") + `<g stroke="#ff9a2e" stroke-width="4" stroke-linecap="round">` + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<path d="M${38 + Math.cos(a * Math.PI / 180) * 27} ${36 + Math.sin(a * Math.PI / 180) * 27}L${38 + Math.cos(a * Math.PI / 180) * 35} ${36 + Math.sin(a * Math.PI / 180) * 35}"/>`).join("") + `</g>`;
     s += `<g stroke="#ff7a3a" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"><path d="M70 60 q4 -6 8 0 t8 0 t8 0M168 126 q4 -6 8 0 t8 0 t8 0"/></g>`;
     // the desk with an empty cup
     s += `<rect x="176" y="120" width="92" height="12" rx="5" fill="${c.g("#b9783a")}"/><rect x="184" y="130" width="8" height="40" fill="#8a5527"/><rect x="252" y="130" width="8" height="40" fill="#8a5527"/>`;
-    s += `<path d="M205 78 H243 L238 119 Q224 124 210 119Z" fill="#e8f8ff" fill-opacity=".55" stroke="#7cc4ee" stroke-width="3" stroke-linejoin="round"/><ellipse cx="224" cy="78" rx="19" ry="5" fill="#fff" fill-opacity=".6" stroke="#7cc4ee" stroke-width="2.5"/>` + c.hl(212, 96, 4, 14, 0, 0.9);
+    s += `<path d="M205 78 H243 L238 119 Q224 124 210 119Z" fill="#e8f8ff" fill-opacity=".55" stroke="#7cc4ee" stroke-width="3" stroke-linejoin="round"/><ellipse cx="224" cy="78" rx="19" ry="5" fill="#fff" fill-opacity=".6" stroke="#7cc4ee" stroke-width="2.5"/>` + c.hl(212, 96, 4, 14, 0, 0.9) + TC.seal(225, 101, 6.6, 0, "print"); // printed on the cup
     s += `<circle cx="150" cy="70" r="4" fill="#fff" opacity=".9"/><circle cx="160" cy="58" r="6" fill="#fff" opacity=".9"/>` + `<g><ellipse cx="204" cy="38" rx="38" ry="26" fill="#fff" stroke="#bfe3ff" stroke-width="3"/><circle cx="176" cy="50" r="9" fill="#fff"/><circle cx="232" cy="52" r="9" fill="#fff"/></g>` + dropSvg(c, 204, 36, 1.5);
     s += ollieFig(c, 52, 50, 0.57, { eyes: "w", beak: "pant", sweat: 2, wl: 14, wr: -14, rot: -3 });
     return c.out(s, "0 0 280 200");
   });
-  reg("sit-lunchbox", [252, 170, 15, -8], () => {
+  reg("sit-lunchbox", "none", () => {
     const c = Ctx();
     let s = room(c, "#ffd9e6", "#ffb3cf", "#e7bd8a", "#c6935d");
     s += clockSvg(c, 52, 42, 26, 12, 0);
     // the open, empty bag with a lonely spoon
     s += c.shadow(214, 172, 52, 8);
     s += `<path d="M168 82 Q214 66 262 82 L266 164 Q214 178 164 164Z" fill="${c.g("#ff9a2e")}"/><ellipse cx="214" cy="82" rx="48" ry="12" fill="#3a2410"/><ellipse cx="214" cy="84" rx="40" ry="8" fill="#1a0f06"/>`;
-    s += `<path d="M168 88 Q214 108 262 88 L264 164 Q214 176 166 164Z" fill="${c.g("#ffb454")}"/><rect x="190" y="122" width="48" height="30" rx="8" fill="#e07b1a" opacity=".55"/>`;
+    s += `<path d="M168 88 Q214 108 262 88 L264 164 Q214 176 166 164Z" fill="${c.g("#ffb454")}"/><rect x="190" y="122" width="48" height="30" rx="8" fill="#e07b1a" opacity=".55"/>` + TC.seal(214, 137, 8.2, 0, "patch"); // embroidered patch on the bag pocket
     s += `<path d="M180 80 Q176 52 196 48M248 80 Q252 52 232 48" stroke="#c0661a" stroke-width="6" fill="none" stroke-linecap="round"/>`;
     s += `<g transform="rotate(24 222 64)"><rect x="219" y="40" width="6" height="40" rx="3" fill="${c.v("#f4f6fb", "#a9b2c6")}"/><ellipse cx="222" cy="36" rx="10" ry="13" fill="${c.g("#dfe5f2")}"/></g>`;
     s += `<rect x="186" y="24" width="64" height="40" rx="12" fill="#fff" fill-opacity=".3" stroke="#fff" stroke-width="3.5" stroke-dasharray="7 6"/><text x="218" y="53" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="30" fill="#fff">?</text>`;
     s += ollieFig(c, 40, 50, 0.57, { eyes: "s", beak: "o", tear: 1, wl: 36, wr: -36, rot: 2 });
     return c.out(s, "0 0 280 200");
   });
-  reg("sit-hurt", [252, 170, 15, -8], () => {
+  reg("sit-hurt", "none", () => {
     const c = Ctx();
     let s = room(c, "#e3f6e6", "#b6e6bf", "#ead1a6", "#cfaa72");
     // first-aid box
-    s += c.shadow(222, 172, 40, 6) + `<rect x="184" y="118" width="76" height="52" rx="10" fill="${c.g("#ffffff")}" stroke="#d62839" stroke-width="3"/><path d="M212 130 h20 v10 h10 v20 h-10 v10 h-20 v-10 h-10 v-20 h10Z" fill="${c.g("#e63946")}" transform="translate(-2 -6) scale(.95)"/><path d="M206 118 Q222 100 238 118" stroke="#b0b8c8" stroke-width="5" fill="none"/>`;
+    s += c.shadow(222, 172, 40, 6) + `<rect x="184" y="118" width="76" height="52" rx="10" fill="${c.g("#ffffff")}" stroke="#d62839" stroke-width="3"/><path d="M202 129 h10 v10 h10 v10 h-10 v10 h-10 v-10 h-10 v-10 h10Z" fill="${c.g("#e63946")}"/>${TC.seal(241, 144, 8, 0, "print")}<path d="M206 118 Q222 100 238 118" stroke="#b0b8c8" stroke-width="5" fill="none"/>`;
     s += `<g transform="translate(230 98) rotate(-18)"><rect x="-26" y="-8" width="52" height="16" rx="8" fill="${c.g("#ffd9a0")}"/><rect x="-8" y="-8" width="16" height="16" fill="#fff3d6"/></g>`;
     // dizzy stars around the head
     s += `<path d="${star5(70, 28, 9, 4)}" fill="#ffc83d"/><path d="${star5(138, 22, 8, 4)}" fill="#ffc83d"/><path d="${star5(104, 12, 7, 3.5)}" fill="#fff"/><path d="${star5(36, 54, 7, 3.5)}" fill="#ffe27a"/>`;
@@ -161,10 +164,10 @@
   });
 
   /* ---------- rescue props and classroom pieces ---------- */
-  reg("rq-door", [60, 160, 16], (col, wc) => { const c = Ctx(); let s = c.shadow(60, 212, 50, 6) + doorSvg(c, 14, 10, 92, 196, col || "#d9803a", !wc); if (wc) s += wcPlaque(c, 26, 26, 68, 60); return c.out(s, "0 0 120 220"); });
-  reg("rq-bell", [80, 104, 17], () => { const c = Ctx(); return c.out(c.shadow(80, 170, 44, 6) + `<rect x="68" y="6" width="24" height="10" rx="5" fill="#8a5527"/>` + bellShape(c, 80, 86, 2.1), "0 0 160 180"); });
-  reg("rq-clock", [100, 152, 20], () => { const c = Ctx(); return c.out(clockSvg(c, 100, 100, 92, 9, 0), "0 0 200 200"); });
-  reg("rq-window", [75, 178, 15], () => {
+  reg("rq-door", "none", (col, wc) => { const c = Ctx(); let s = c.shadow(60, 212, 50, 6) + doorSvg(c, 14, 10, 92, 196, col || "#d9803a", !wc); if (wc) s += wcPlaque(c, 28, 24, 64, 54); return c.out(s, "0 0 120 220"); });
+  reg("rq-bell", "none", () => { const c = Ctx(); return c.out(c.shadow(80, 170, 44, 6) + `<rect x="68" y="6" width="24" height="10" rx="5" fill="#8a5527"/>` + bellShape(c, 80, 86, 2.1), "0 0 160 180"); });
+  reg("rq-clock", "none", () => { const c = Ctx(); return c.out(clockSvg(c, 100, 100, 92, 9, 0), "0 0 200 200"); });
+  reg("rq-window", [104, 138, 11, -8, "sticker"], () => {
     const c = Ctx();
     let s = `<rect x="4" y="4" width="142" height="186" rx="10" fill="${c.v("#c98a4a", "#8a5527")}"/><rect x="14" y="14" width="122" height="150" rx="5" fill="${c.v("#7fd0ff", "#d8f3ff")}"/>`;
     s += c.sphere(108, 44, 18, "#ffd23d") + `<ellipse cx="50" cy="52" rx="26" ry="10" fill="#fff"/><ellipse cx="64" cy="46" rx="16" ry="9" fill="#fff"/><path d="M14 150 Q50 112 90 142 Q116 124 136 140 V164 H14Z" fill="${c.g("#58c46a")}"/>`;
@@ -172,42 +175,49 @@
     s += `<path d="M14 14 Q34 64 14 130Z" fill="#ff7aa8" opacity=".85"/><path d="M136 14 Q116 64 136 130Z" fill="#ff7aa8" opacity=".85"/>` + c.hl(40, 40, 22, 10, -20, 0.5);
     return c.out(s, "0 0 150 200");
   });
-  reg("rq-desk", [100, 136, 13], () => {
+  reg("rq-desk", "none", (flip) => {
     const c = Ctx();
-    let s = c.shadow(100, 166, 78, 8) + `<rect x="46" y="40" width="82" height="62" rx="9" fill="${c.g("#ff6b6b")}"/><rect x="50" y="102" width="9" height="56" rx="3" fill="${c.g("#5a6aa8")}"/><rect x="141" y="102" width="9" height="56" rx="3" fill="${c.g("#5a6aa8")}"/>`;
-    s += `<path d="M24 84 L176 84 L160 52 L40 52Z" fill="${c.g("#ffd58a")}"/><rect x="24" y="84" width="152" height="14" rx="4" fill="${c.g("#e0a14a")}"/><rect x="84" y="112" width="32" height="34" rx="6" fill="#c9833a" opacity=".6"/>`;
+    let s = `<rect x="46" y="40" width="82" height="62" rx="9" fill="${c.g("#ff6b6b")}"/><rect x="50" y="102" width="9" height="56" rx="3" fill="${c.g("#5a6aa8")}"/><rect x="141" y="102" width="9" height="56" rx="3" fill="${c.g("#5a6aa8")}"/>`;
+    s += `<path d="M24 84 L176 84 L160 52 L40 52Z" fill="${c.g("#ffd58a")}"/><rect x="24" y="84" width="152" height="14" rx="4" fill="${c.g("#e0a14a")}"/><rect x="59" y="98" width="82" height="42" rx="5" fill="${c.v("#e6ad62", "#c48a3e")}"/><rect x="61.5" y="100.5" width="77" height="37" rx="3.5" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2"/>`;
     s += `<path d="M62 56 L100 62 L138 56 L134 78 L100 84 L66 78Z" fill="#fff"/><path d="M100 62 V84" stroke="#9db7ee" stroke-width="2"/><rect x="146" y="40" width="16" height="22" rx="4" fill="${c.g("#4cc9ff")}"/><path d="M150 40 L152 30M156 40 L158 28" stroke="#ffc83d" stroke-width="3" stroke-linecap="round"/>`;
-    return c.out(s, "0 0 200 170");
+    if (flip) s = `<g transform="translate(200 0) scale(-1 1)">${s}</g>`; // the second desk is drawn mirrored in the art, so its plate still reads 土城
+    return c.out(c.shadow(100, 166, 78, 8) + s + TC.seal(100, 119, 9.4, 0, "plate"), "0 0 200 170"); // brass plate on the front panel
   });
-  reg("rq-lunchbox", [52, 98, 16], () => {
+  reg("rq-lunchbox", [50, 91, 12, -8, "sticker"], () => {
     const c = Ctx();
     let s = c.shadow(85, 122, 66, 7) + `<path d="M62 30 Q85 -2 108 30" stroke="#2a9bd0" stroke-width="9" fill="none" stroke-linecap="round"/>`;
-    s += `<rect x="14" y="46" width="142" height="72" rx="16" fill="${c.g("#4cc9ff")}"/><rect x="8" y="30" width="154" height="28" rx="14" fill="${c.g("#9ae8ff")}"/><rect x="14" y="86" width="142" height="9" fill="#fff" opacity=".35"/>`;
+    s += `<rect x="14" y="46" width="142" height="72" rx="16" fill="${c.g("#4cc9ff")}"/><rect x="8" y="30" width="154" height="28" rx="14" fill="${c.g("#9ae8ff")}"/>`;
     s += `<rect x="70" y="42" width="30" height="20" rx="7" fill="${c.g("#ffc83d")}"/><path d="${star5(124, 94, 12, 5.5)}" fill="${c.g("#ff5fa2")}"/>` + c.hl(44, 62, 30, 9, -8, 0.8);
     return c.out(s, "0 0 170 130");
   });
-  reg("rq-bag-f", [100, 122, 20], () => { const c = Ctx(); return c.out(`<path d="M10 60 Q100 86 190 60 L186 160 Q100 176 14 160Z" fill="${c.g("#ff9a2e")}"/><rect x="48" y="110" width="104" height="38" rx="12" fill="#e07b1a" opacity=".55"/><path d="M10 60 Q100 86 190 60" stroke="#ffd08a" stroke-width="5" fill="none"/>` + c.hl(50, 100, 36, 14, -10, 0.45), "0 0 200 170"); });
+  reg("rq-bag-f", [100, 127, 13.5, 0, "patch"], () => { const c = Ctx(); return c.out(`<path d="M10 60 Q100 86 190 60 L186 160 Q100 176 14 160Z" fill="${c.g("#ff9a2e")}"/><rect x="46" y="103" width="108" height="48" rx="12" fill="#e07b1a" opacity=".55"/><path d="M10 60 Q100 86 190 60" stroke="#ffd08a" stroke-width="5" fill="none"/>` + c.hl(50, 100, 36, 14, -10, 0.45), "0 0 200 170"); });
   TC.ART["rq-bag-b"] = () => { const c = Ctx(); return c.out(`<path d="M16 34 Q100 10 184 34 L190 152 Q100 172 10 152Z" fill="${c.g("#c0661a")}"/><ellipse cx="100" cy="44" rx="86" ry="18" fill="#3a2410"/><ellipse cx="100" cy="48" rx="76" ry="12" fill="#1a0f06"/>`, "0 0 200 170"); };
-  TC.SEAL["rq-bag-b"] = [-90, -90, 1];
-  reg("rq-bandage", [100, 50, 14], () => {
+  TC.SEAL["rq-bag-b"] = "none"; // the back of the bag: the mark is the patch on its front piece
+  reg("rq-bandage", [100, 50, 14, 0, "print"], () => {
     const c = Ctx();
     let s = `<rect x="8" y="16" width="184" height="68" rx="34" fill="${c.g("#ffd39a")}"/><rect x="70" y="16" width="60" height="68" fill="#fff4dc"/><rect x="70" y="16" width="60" height="68" fill="none" stroke="#e8c690" stroke-width="2"/>`;
     for (let i = 0; i < 5; i++) s += `<circle cx="${30 + i * 5}" cy="${34 + (i % 2) * 14}" r="2.2" fill="#c98a4a"/><circle cx="${170 - i * 5}" cy="${34 + (i % 2) * 14}" r="2.2" fill="#c98a4a"/>`;
     return c.out(s + c.hl(40, 30, 30, 8, -6, 0.8), "0 0 200 100");
   });
-  reg("rq-heart", [100, 96, 20], () => {
+  reg("rq-heart", "none", () => {
     const c = Ctx();
     return c.out(c.shadow(100, 176, 56, 6) + `<path d="M100 168 C20 112 4 70 26 42 C50 14 88 24 100 52 C112 24 150 14 174 42 C196 70 180 112 100 168Z" fill="${c.g("#ff4f7b")}"/>` + c.hl(62, 50, 26, 12, -35, 0.9) + `<path d="${star5(158, 38, 10, 4.5)}" fill="#fff" opacity=".9"/>`, "0 0 200 184");
   });
-  reg("rq-tap", [40, 60, 13], () => {
+  reg("rq-tap", [46, 35, 8.2, 0, "print"], () => {
     const c = Ctx();
     return c.out(`<rect x="0" y="22" width="86" height="26" rx="8" fill="${c.g("#cfd8e8")}"/><rect x="8" y="14" width="16" height="42" rx="6" fill="${c.g("#9fb0cc")}"/><path d="M70 30 H126 Q150 30 150 56 V76 H122 V60 Q122 56 118 56 H70Z" fill="${c.g("#cfd8e8")}"/><rect x="118" y="72" width="36" height="12" rx="5" fill="${c.g("#9fb0cc")}"/><rect x="92" y="6" width="28" height="22" rx="7" fill="${c.g("#4cc9ff")}"/>` + c.hl(46, 30, 26, 5, -3, 0.8), "0 0 160 100");
   });
-  const rawGlass = () => raw("glass", () => { const c = Ctx(); return c.out(`<path d="M14 16 H106 L92 144 Q60 156 28 144Z" fill="#e8f8ff" fill-opacity=".28" stroke="#9ad6ff" stroke-width="5" stroke-linejoin="round"/><ellipse cx="60" cy="16" rx="46" ry="9" fill="#fff" fill-opacity=".35" stroke="#9ad6ff" stroke-width="4"/>` + c.hl(30, 70, 5, 40, 6, 0.9) + TC.seal(60, 110, 15), "0 0 120 160"); });
+  const rawGlass = () => raw("glass", () => { const c = Ctx(); return c.out(`<path d="M14 16 H106 L92 144 Q60 156 28 144Z" fill="#e8f8ff" fill-opacity=".28" stroke="#9ad6ff" stroke-width="5" stroke-linejoin="round"/><ellipse cx="60" cy="16" rx="46" ry="9" fill="#fff" fill-opacity=".35" stroke="#9ad6ff" stroke-width="4"/>` + c.hl(30, 70, 5, 40, 6, 0.9) + TC.seal(60, 104, 15, 0, "print"), "0 0 120 160"); });
   const rawFlame = () => raw("flame", () => { const c = Ctx(); return c.out(`<path d="M8 0 H52 C58 40 44 84 30 118 C16 84 2 40 8 0Z" fill="${c.v("#ff6a00", "#ff2d2d")}"/><path d="M16 0 H44 C48 34 38 66 30 92 C22 66 12 34 16 0Z" fill="${c.v("#ffd23d", "#ff9a2e")}"/><path d="M23 0 H37 C39 24 34 44 30 60 C26 44 21 24 23 0Z" fill="#fff6c8"/>`, "0 0 60 120"); });
   const rawSpark = () => raw("spark", () => { const c = Ctx(); return c.out(`<path d="M20 0 Q23 17 40 20 Q23 23 20 40 Q17 23 0 20 Q17 17 20 0Z" fill="${c.v("#ffffff", "#ffd23d")}"/>`, "0 0 40 40"); });
   const rawDrop = () => raw("drop", () => { const c = Ctx(); return c.out(dropSvg(c, 20, 20, 1.2), "0 0 40 40"); });
   const rawGlasses = () => raw("shades", () => { const c = Ctx(); return c.out(`<rect x="6" y="14" width="76" height="46" rx="18" fill="${c.v("#3b3f5c", "#0a0c1a")}"/><rect x="118" y="14" width="76" height="46" rx="18" fill="${c.v("#3b3f5c", "#0a0c1a")}"/><path d="M82 28 Q100 18 118 28" stroke="#0a0c1a" stroke-width="7" fill="none"/><path d="M6 26 L-4 20M194 26 L204 20" stroke="#0a0c1a" stroke-width="6" stroke-linecap="round"/>` + c.hl(30, 26, 16, 6, -20, 0.8) + c.hl(142, 26, 16, 6, -20, 0.8), "0 0 200 74"); });
+
+  // Ollie as he stands in this classroom (same robot owl; the school's mark is the "home button" under his screen)
+  reg("rq-ollie", "none", () => { const c = Ctx(); return c.out(ollieFig(c, 0, 0, 1, {}), "0 0 200 232"); });
+  const rawHub = () => raw("hub", () => { const c = Ctx(); return c.out(c.sphere(30, 30, 29, "#aab4cf", 0.5) + TC.seal(30, 30, 18, 0, "print"), "0 0 60 60"); }); // the fan's hub cap
+  const rawLogo = () => raw("logo", () => Ctx().out(TC.seal(22, 22, 17, 0, "print"), "0 0 44 44")); // printed mark (card corner, chalkboard corner)
+  const rawStar = () => raw("star", () => { const c = Ctx(); return c.out(`<path d="${star5(50, 52, 46, 21)}" fill="${c.g("#ffd23d")}" stroke="#e8a21a" stroke-width="3" stroke-linejoin="round"/>` + c.hl(37, 36, 13, 7, -30, 0.8) + c.eyes(50, 54, 9, 4.6) + c.smile(50, 62, 6), "0 0 100 100"); }); // rescue-meter star (repeated, so it carries no mark)
 
   /* ======================================================================
      STYLE
@@ -226,15 +236,17 @@
   .rq .win{position:absolute;left:15.8%;top:32%;width:11vh;height:14.7vh;z-index:2}
   .rq .doorbg{position:absolute;left:.6%;top:29.5%;width:12.8%;z-index:2}
   .rq .desk{position:absolute;width:20vh;z-index:3}
-  .rq .board{position:absolute;left:21.5%;top:12.6%;width:31%;height:20.4%;border-radius:1.2rem;z-index:2;padding:.6rem 1.6rem .4rem;
+  .rq .board{position:absolute;left:21.5%;top:12.6%;width:31%;height:23.4%;border-radius:1.2rem;z-index:2;padding:.5rem 1.4rem .5rem;
     background:radial-gradient(90% 120% at 30% 20%,#3f8a69,#245a43 60%,#1c4634);border:.95rem solid #c98a4a;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
     box-shadow:inset 0 0 2.6rem rgba(0,0,0,.5),inset .2rem .2rem 0 rgba(255,255,255,.18),0 .9rem 0 #8a5527,0 2rem 2.6rem rgba(0,0,0,.3)}
   .rq .board:after{content:"";position:absolute;inset:0;border-radius:.4rem;background:linear-gradient(115deg,rgba(255,255,255,.16),rgba(255,255,255,0) 40%);pointer-events:none}
-  .rq .bt{font-family:"Comic Sans MS","Marker Felt","Chalkboard SE",var(--font);color:#f7fbef;font-weight:700;font-size:2.6rem;line-height:1;letter-spacing:.08em;text-shadow:0 0 .5rem rgba(255,255,255,.4);margin-top:.1rem;display:flex;flex-direction:column;align-items:center;gap:.35rem;flex:none}
+  .rq .bt{font-family:"Comic Sans MS","Marker Felt","Chalkboard SE",var(--font);color:#f7fbef;font-weight:700;font-size:2.3rem;line-height:1;letter-spacing:.08em;text-shadow:0 0 .5rem rgba(255,255,255,.4);margin-top:.1rem;display:flex;flex-direction:column;align-items:center;gap:.35rem;flex:none}
+  .rq .board .blogo{position:absolute;left:.7rem;top:.6rem;width:3.5rem;height:3.5rem;opacity:.95}
+  .rq .bt .zh{line-height:1}
   .rq .bt small{font-size:1.15rem;letter-spacing:.12em;color:#ffe58a;font-weight:600}
-  .rq .meter{flex:none;display:flex;gap:.6rem;align-items:center;justify-content:center;margin-bottom:.2rem}
-  .rq .meter .lab{font-size:1.2rem;color:#ffe58a;font-weight:700;letter-spacing:.04em;margin-right:.3rem;text-align:center;line-height:1.15}
-  .rq .slot{position:relative;flex:none;width:4.5rem;height:4.5rem;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2f6f56,#143a2b);box-shadow:inset 0 .3rem .8rem rgba(0,0,0,.55),0 0 0 .22rem rgba(255,255,255,.25);display:grid;place-items:center}
+  .rq .rmeter{flex:none;display:flex;gap:.6rem;align-items:center;justify-content:center;margin-bottom:.2rem}
+  .rq .rmeter .lab{font-size:1.2rem;color:#ffe58a;font-weight:700;letter-spacing:.04em;margin-right:.3rem;text-align:center;line-height:1.15}
+  .rq .slot{position:relative;flex:none;width:4.2rem;height:4.2rem;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2f6f56,#143a2b);box-shadow:inset 0 .3rem .8rem rgba(0,0,0,.55),0 0 0 .22rem rgba(255,255,255,.25);display:grid;place-items:center}
   .rq .slot img{width:80%;height:80%;filter:grayscale(1) brightness(.5) opacity(.55);transition:filter .3s}
   .rq .slot.on{box-shadow:inset 0 .2rem .6rem rgba(0,0,0,.3),0 0 0 .22rem #ffe58a,0 0 2.4rem 1rem rgba(255,214,61,.8);background:radial-gradient(circle at 35% 30%,#fff6c8,#ffc83d)}
   .rq .slot.on img{filter:drop-shadow(0 .3rem .3rem rgba(0,0,0,.3));animation:rqpopstar .7s cubic-bezier(.2,1.8,.4,1)}
@@ -243,7 +255,7 @@
   .rq .clk img{width:100%;height:100%}
   .rq .clk i{position:absolute;left:50%;bottom:50%;width:.22rem;height:41%;margin-left:-.11rem;background:#e63946;border-radius:.2rem;transform-origin:50% 100%;animation:rqsec 60s steps(60) infinite}
   @keyframes rqsec{to{transform:rotate(360deg)}}
-  .rq .ollie{position:absolute;left:29%;top:34.5%;width:22.4vh;height:26vh;z-index:5;transform-origin:50% 100%}
+  .rq .ollie{position:absolute;left:29%;top:36.3%;width:22.4vh;height:26vh;z-index:5;transform-origin:50% 100%}
   .rq .ollie .ollie3d{position:relative}
   .rq .ollie.worry{animation:rqworry .8s ease-in-out infinite}
   @keyframes rqworry{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg) translateY(-1%)}}
@@ -259,12 +271,13 @@
   .rq .flame{position:absolute;left:35%;top:92%;width:30%;transform-origin:50% 0;animation:rqflame .08s linear infinite alternate;opacity:0}
   .rq .rk .flame{opacity:1}
   @keyframes rqflame{from{transform:scaleY(.8) scaleX(1.05)}to{transform:scaleY(1.2) scaleX(.9)}}
-  .rq .bub{position:absolute;left:43.4%;top:29.5%;width:11.5vh;height:10.5vh;z-index:7;opacity:0;transform-origin:0 100%;pointer-events:none}
+  .rq .bub{position:absolute;left:42.4%;top:37.4%;width:11.5vh;height:10.5vh;z-index:7;opacity:0;transform-origin:0 100%;pointer-events:none}
   .rq .bub b{display:grid;place-items:center;width:100%;height:100%;background:linear-gradient(180deg,#fff,#e6ebff);border:.45rem solid #fff;border-radius:50% 50% 50% 50%;font-size:7.4rem;line-height:1;color:#ff3d57;font-weight:700;text-shadow:0 .4rem 0 rgba(0,0,0,.16);box-shadow:0 .7rem 0 rgba(0,0,0,.16),0 1.4rem 2rem rgba(0,0,0,.25)}
   .rq .bub:after{content:"";position:absolute;left:-1.4rem;bottom:.2rem;width:3rem;height:2.6rem;background:#fff;clip-path:polygon(100% 0,100% 100%,0 70%)}
   .rq .bub.show{opacity:1;animation:rqpop .55s cubic-bezier(.2,1.6,.4,1) both,rqbub 1.2s ease-in-out .55s infinite}
   @keyframes rqbub{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.07) rotate(3deg)}}
   @keyframes rqpop{from{transform:scale(.2);opacity:0}to{transform:none;opacity:1}}
+  @keyframes rqpopr{from{transform:scale(.2) rotate(-3deg);opacity:0}to{transform:rotate(-3deg);opacity:1}}
   .rq .siren{position:absolute;left:53.2%;top:13%;width:6.4vh;height:10.5vh;z-index:3}
   .rq .siren .dome{position:absolute;left:8%;right:8%;top:6%;height:68%;border-radius:50% 50% 12% 12%/72% 72% 12% 12%;overflow:hidden;background:radial-gradient(circle at 35% 30%,#ff9a9a,#e61e32 55%,#7d0010);box-shadow:inset 0 -.5rem .8rem rgba(0,0,0,.35)}
   .rq .siren .dome i{position:absolute;left:50%;top:50%;width:220%;height:220%;margin:-110% 0 0 -110%;background:conic-gradient(from 0deg,rgba(255,255,255,.95) 0 16deg,rgba(255,255,255,0) 40deg 340deg,rgba(255,255,255,.95) 360deg);animation:rqsp 1s linear infinite}
@@ -277,16 +290,16 @@
   .rq .bellw{position:absolute;left:57.2%;top:12.6%;width:8.6vh;z-index:3;transform-origin:50% 8%}
   .rq .bellw.ring{animation:rqring .16s ease-in-out 8 alternate}
   @keyframes rqring{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
-  .rq .fan{position:absolute;left:15.9%;top:14%;width:9.4vh;height:9.4vh;z-index:3;border-radius:50%;border:.3rem solid #7f8aa6;background:radial-gradient(circle at 40% 35%,#ffffff,#dfe7fa 70%);box-shadow:0 .5rem .9rem rgba(0,0,0,.28),inset 0 0 0 .35rem #c8d2ea}
+  .rq .fan{position:absolute;left:15.5%;top:13.6%;width:10.4vh;height:10.4vh;z-index:3;border-radius:50%;border:.3rem solid #7f8aa6;background:radial-gradient(circle at 40% 35%,#ffffff,#dfe7fa 70%);box-shadow:0 .5rem .9rem rgba(0,0,0,.28),inset 0 0 0 .35rem #c8d2ea}
   .rq .fan .bl{position:absolute;inset:6%;animation:rqsp .35s linear infinite}
   .rq .fan .bl i{position:absolute;left:50%;top:50%;width:46%;height:26%;margin:-13% 0 0 0;border-radius:0 90% 90% 0;background:linear-gradient(90deg,#7ec8ff,#2f8fe0);transform-origin:0 50%}
-  .rq .fan .hub{position:absolute;left:50%;top:50%;width:22%;height:22%;margin:-11% 0 0 -11%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#8995b3);z-index:2}
+  .rq .fan .hub{position:absolute;left:50%;top:50%;width:42%;height:42%;margin:-21% 0 0 -21%;border-radius:50%;z-index:2;box-shadow:0 .15rem .3rem rgba(0,0,0,.3)}
   .rq .fan:after{content:"";position:absolute;inset:8%;border-radius:50%;background:repeating-radial-gradient(circle,rgba(127,138,166,.0) 0 .5rem,rgba(127,138,166,.55) .5rem .6rem);pointer-events:none}
   .rq .redflash{position:absolute;inset:0;z-index:30;pointer-events:none;opacity:0;box-shadow:inset 0 0 16rem 4rem rgba(255,0,40,.8)}
   .rq .redflash.on{animation:rqred .5s ease-in-out 4}
   @keyframes rqred{0%,100%{opacity:0}50%{opacity:1}}
   /* the situation card (front = the situation, back = the rescue) */
-  .rq .card{position:absolute;left:63%;top:13.8%;width:35%;height:44%;perspective:110rem;z-index:6}
+  .rq .card{position:absolute;right:2%;top:13.8%;width:33.6vw;height:27.6vw;perspective:110rem;z-index:6}
   .rq .card .tilt{position:absolute;inset:0;opacity:0;transform-style:preserve-3d}
   .rq .card.show .tilt{opacity:1;animation:rqdrop .95s cubic-bezier(.2,1.2,.4,1) both,rqfloat 5s ease-in-out .95s infinite}
   .rq .card.out .tilt{opacity:1;animation:rqout .6s ease-in forwards}
@@ -297,7 +310,8 @@
   .rq .card.flip .in{transform:rotateY(180deg)}
   .rq .face{position:absolute;inset:0;border-radius:2.2rem;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:.75rem solid #fff;box-shadow:0 1.3rem 0 rgba(0,0,0,.2),0 2.6rem 4rem rgba(0,0,0,.42)}
   .rq .front{background:#fff}
-  .rq .front .hd{position:absolute;left:0;right:0;top:0;height:3.7rem;z-index:2;display:flex;align-items:center;gap:.8rem;padding:0 1.2rem;background:linear-gradient(180deg,#ff6a6a,#d62839);color:#fff;font-weight:700;font-size:1.9rem;letter-spacing:.05em;text-shadow:0 .2rem 0 rgba(0,0,0,.3)}
+  .rq .front .hd{position:absolute;left:0;right:0;top:0;height:3.7rem;z-index:2;display:flex;align-items:center;gap:.8rem;padding:0 1.2rem 0 4.5rem;background:linear-gradient(180deg,#ff6a6a,#d62839);color:#fff;font-weight:700;font-size:1.9rem;letter-spacing:.05em;text-shadow:0 .2rem 0 rgba(0,0,0,.3)}
+  .rq .front .hd .logo{position:absolute;left:-.3rem;top:-.3rem;width:4.1rem;height:4.1rem;padding:.35rem;border-radius:50%;background:#fff}
   .rq .front .hd i{width:1.5rem;height:1.5rem;border-radius:50%;background:#fff;box-shadow:0 0 .9rem #fff;animation:rqblink .5s steps(2) infinite}
   .rq .front .hd span{margin-left:auto;font-size:1.3rem;opacity:.9}
   @keyframes rqblink{50%{opacity:.15}}
@@ -306,8 +320,8 @@
   .rq .back{transform:rotateY(180deg);background:linear-gradient(180deg,#8fe3ff,#e8fbff)}
   .rq .pbox{position:absolute;inset:0;overflow:hidden;perspective:60rem;background:radial-gradient(70% 70% at 50% 62%,#fffbe0,#cdf3ff)}
   .rq .rays{position:absolute;left:50%;top:60%;width:260%;height:260%;margin:-130% 0 0 -130%;background:repeating-conic-gradient(rgba(255,230,120,.5) 0 9deg,rgba(255,255,255,0) 9deg 18deg);animation:rqsp 14s linear infinite}
-  .rq .rbn{position:absolute;left:50%;bottom:5%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;padding:.2rem 2.4rem .5rem;border-radius:2rem;border:.4rem solid #fff;text-align:center;color:#fff;line-height:1.05;
-    background:linear-gradient(180deg,#ff7aa8,#ff3d77);box-shadow:0 .5rem 0 #b01c4d,0 1.2rem 1.6rem rgba(0,0,0,.3);animation:rqpop .5s cubic-bezier(.2,1.6,.4,1) both}
+  .rq .rbn{position:absolute;left:0;right:0;margin:0 auto;width:max-content;bottom:5%;white-space:nowrap;padding:.2rem 2.4rem .5rem;border-radius:2rem;border:.4rem solid #fff;text-align:center;color:#fff;line-height:1.05;
+    background:linear-gradient(180deg,#ff7aa8,#ff3d77);box-shadow:0 .5rem 0 #b01c4d,0 1.2rem 1.6rem rgba(0,0,0,.3);animation:rqpopr .5s cubic-bezier(.2,1.6,.4,1) both}
   .rq .rbn b{display:block;font-size:3.3rem;letter-spacing:.06em;text-shadow:0 .25rem 0 rgba(0,0,0,.25)}
   .rq .rbn span{display:block;font-size:1.6rem;font-weight:700}
   .rq .fx{position:absolute;inset:0;z-index:20;pointer-events:none}
@@ -320,24 +334,21 @@
   .rq .disco .dim{position:absolute;inset:0;background:radial-gradient(70% 70% at 50% 55%,rgba(40,10,90,.15),rgba(10,4,40,.8))}
   .rq .disco .sp{position:absolute;top:-6%;width:34%;height:130%;mix-blend-mode:screen;clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);transform-origin:50% 0;animation:rqsw 3s ease-in-out infinite;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,0))}
   @keyframes rqsw{0%,100%{transform:rotate(-26deg)}50%{transform:rotate(26deg)}}
-  .rq .disco .ball{position:absolute;left:50%;top:-1.5vh;width:15vh;height:15vh;margin-left:-7.5vh;border-radius:50%;animation:rqspin2 5s linear infinite;
+  .rq .disco .ball{position:absolute;left:24%;top:13vh;width:15vh;height:15vh;margin-left:-7.5vh;border-radius:50%;animation:rqspin2 5s linear infinite;
     background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.95),transparent 28%),repeating-conic-gradient(#e5ecff 0 9deg,#7b8be0 9deg 18deg),#a5b4ff;box-shadow:0 0 5rem 1.5rem rgba(201,214,255,.85)}
-  .rq .disco .ball:before{content:"";position:absolute;left:50%;top:-30vh;width:.4rem;height:30vh;background:#c9d6ff}
   @keyframes rqspin2{to{transform:rotate(360deg)}}
   .rq .disco .tiles{position:absolute;left:-30%;right:-30%;bottom:-2%;height:50%;display:grid;grid-template-columns:repeat(14,1fr);grid-template-rows:repeat(6,1fr);gap:.5vh;transform-origin:50% 100%;transform:perspective(60rem) rotateX(56deg)}
   .rq .disco .tiles i{border-radius:.6vh;animation:rqtile .8s infinite}
   @keyframes rqtile{0%{background:#ff2d95}25%{background:#ffd23d}50%{background:#2ee6b6}75%{background:#4cc9ff}100%{background:#ff2d95}}
-  .rq .disco .orbit{position:absolute;left:50%;top:48%;width:0;height:0;animation:rqspin2 6s linear infinite}
+  .rq .disco .orbit{position:absolute;left:50%;top:42%;width:0;height:0;animation:rqspin2 6s linear infinite}
   .rq .disco .orbit img{position:absolute;width:9vh;height:9vh;margin:-4.5vh;animation:rqspin2 2s linear infinite reverse;filter:drop-shadow(0 0 1.4rem #ffd23d)}
   .rq .disco .ban{position:absolute;left:0;right:0;top:75%;text-align:center;color:#fff;line-height:1;text-shadow:0 .5rem 0 #9b2cff,0 0 2.4rem rgba(255,95,162,.9);animation:rqbeat .5s ease-in-out infinite}
   .rq .disco .ban b{display:block;font-size:7.4rem;letter-spacing:.06em}
   .rq .disco .ban span{display:block;font-size:2.6rem;margin-top:.4rem;color:#ffd23d;font-weight:700}
   @keyframes rqbeat{50%{transform:scale(1.05) rotate(-1deg)}}
-  .rq.disc .wall,.rq.disc .wains,.rq.disc .floor,.rq.disc .board{animation:rqhue 2.4s linear infinite}
-  @keyframes rqhue{to{filter:hue-rotate(360deg) saturate(1.5)}}
-  .rq .ollie.big{left:50%;top:10%;width:26vh;height:30vh;margin-left:-13vh;z-index:14;transform:scale(1.9)}
+  .rq .ollie.big{left:50%;top:37%;width:26vh;height:30vh;margin-left:-13vh;z-index:14;transform:scale(1.7)}
   .rq .ollie.dance{animation:rqdance .5s ease-in-out infinite}
-  @keyframes rqdance{0%,100%{transform:scale(1.9) rotate(-9deg) translateY(0)}25%{transform:scale(1.9) rotate(0) translateY(-6%)}50%{transform:scale(1.9) rotate(9deg) translateY(0)}75%{transform:scale(1.9) rotate(0) translateY(-6%)}}
+  @keyframes rqdance{0%,100%{transform:scale(1.7) rotate(-9deg) translateY(0)}25%{transform:scale(1.7) rotate(0) translateY(-6%)}50%{transform:scale(1.7) rotate(9deg) translateY(0)}75%{transform:scale(1.7) rotate(0) translateY(-6%)}}
   .rq .ollie.big{transition:left .6s,top .6s}
   .rq .card.gone,.rq .bub.gone{display:none}
   `;
@@ -393,17 +404,17 @@
       <div class="beam"></div>
       <div class="siren calm off"><div class="dome"><i></i></div><div class="sb"></div></div>
       <img class="bellw" src="${TC.art("rq-bell")}" alt="">
-      <div class="fan"><div class="bl"><i></i><i style="transform:rotate(120deg)"></i><i style="transform:rotate(240deg)"></i></div><div class="hub"></div></div>
+      <div class="fan"><div class="bl"><i></i><i style="transform:rotate(120deg)"></i><i style="transform:rotate(240deg)"></i></div><img class="hub" src="${rawHub()}" alt=""></div>
       <img class="win" src="${TC.art("rq-window")}" alt="">
       <img class="doorbg" src="${doorUrl}" alt="">
-      <div class="board"><div class="bt"><span class="zh">土城國小</span><small>TUCHENG ENGLISH DAY</small></div><div class="meter"></div></div>
+      <div class="board"><img class="blogo" src="${rawLogo()}" alt=""><div class="bt"><span class="zh">土城國小</span><small>TUCHENG ENGLISH DAY</small></div><div class="rmeter"></div></div>
       <img class="desk" style="left:17%;top:46.5%" src="${TC.art("rq-desk")}" alt="">
-      <img class="desk" style="left:46%;top:46.5%;transform:scaleX(-1)" src="${TC.art("rq-desk")}" alt="">
+      <img class="desk" style="left:46%;top:46.5%" src="${TC.art("rq-desk", 1)}" alt="">
       <div class="clk"><img src="${TC.art("rq-clock")}" alt=""><i></i></div>
-      <div class="ollie worry">${TC.ollieSVG()}<img class="shades" src="${rawGlasses()}" alt=""><img class="flame" src="${rawFlame()}" alt=""><img class="sw" style="left:76%;top:4%" src="${rawDrop()}" alt=""><img class="sw" style="left:8%;top:14%;animation-delay:.5s" src="${rawDrop()}" alt=""></div>
+      <div class="ollie worry"><div class="ollie3d"><img src="${TC.art("rq-ollie")}" alt="Ollie-Bot" draggable="false"></div><img class="shades" src="${rawGlasses()}" alt=""><img class="flame" src="${rawFlame()}" alt=""><img class="sw" style="left:76%;top:4%" src="${rawDrop()}" alt=""><img class="sw" style="left:8%;top:14%;animation-delay:.5s" src="${rawDrop()}" alt=""></div>
       <div class="bub"><b>?</b></div>
       <div class="card"><div class="tilt"><div class="in">
-        <div class="face front"><div class="hd"><i></i>SOS<span class="zh">教室求救！</span></div><img class="pic" alt=""></div>
+        <div class="face front"><div class="hd"><img class="logo" src="${rawLogo()}" alt=""><i></i>SOS<span class="zh">教室求救！</span></div><img class="pic" alt=""></div>
         <div class="face back"><div class="pbox"></div></div>
       </div></div></div>
       <div class="disco"><div class="dim"></div>
@@ -414,17 +425,17 @@
         <div class="ban"><b>ALL RESCUED!</b><span class="zh">教室大救援成功！</span></div></div>
       <div class="fx"></div><div class="redflash"></div>`;
     api.stage.append(root);
-    card = q(".card"); pic = q(".front .pic"); pbox = q(".pbox"); fx = q(".fx"); bub = q(".bub"); ollie = q(".ollie"); siren = q(".siren"); bellw = q(".bellw"); redflash = q(".redflash"); disco = q(".disco"); meter = q(".meter");
+    card = q(".card"); pic = q(".front .pic"); pbox = q(".pbox"); fx = q(".fx"); bub = q(".bub"); ollie = q(".ollie"); siren = q(".siren"); bellw = q(".bellw"); redflash = q(".redflash"); disco = q(".disco"); meter = q(".rmeter");
     const tiles = q(".tiles"); for (let i = 0; i < 84; i++) tiles.append(h("i", { style: `animation-delay:${-((i * 7) % 13) * 0.12}s` }));
-    const orb = q(".orbit"); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283, st = TC.artImg("star"); st.style.left = Math.cos(a) * 34 + "vh"; st.style.top = Math.sin(a) * 22 + "vh"; orb.append(st); }
+    const orb = q(".orbit"); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283, st = rimg(rawStar()); st.style.left = Math.cos(a) * 34 + "vh"; st.style.top = Math.sin(a) * 22 + "vh"; orb.append(st); }
     buildMeter(5);
   }
   function buildMeter(n) {
     meter.innerHTML = ""; slots = [];
     meter.append(h("div", { class: "lab zh" }, "救援能量", h("br"), "RESCUE"));
-    for (let i = 0; i < n; i++) { const s = h("div", { class: "slot" }, TC.artImg("star")); meter.append(s); slots.push(s); }
+    for (let i = 0; i < n; i++) { const s = h("div", { class: "slot" }, rimg(rawStar())); meter.append(s); slots.push(s); }
   }
-  function fillMeter(i) { const s = slots[i]; if (!s) return; s.classList.add("on"); TC.sfx("levelup"); burst(fx, 38 + (slots.indexOf(s)) * 4, 24, 10, 3, 9); }
+  function fillMeter(i) { const s = slots[i]; if (!s) return; s.classList.add("on"); TC.sfx("levelup"); const r = s.getBoundingClientRect(); burst(fx, (r.left + r.width / 2) / innerWidth * 100, (r.top + r.height / 2) / innerHeight * 100, 10, 3, 9); }
 
   /** show / hide pieces of the scene ------------------------------------------------ */
   /** put Ollie back in his place (cancels leftover WAAPI animations, e.g. the rocket flight) */
@@ -473,7 +484,7 @@
     late: async (b) => {
       const bl = put(b, art("rq-bell"), "position:absolute;left:5%;top:7%;width:30%");
       const dw = doorway(b, "left:56%;top:8%;width:30%", "#d9803a");
-      const ol = put(b, art("ollie"), "position:absolute;left:4%;bottom:5%;width:22%");
+      const ol = put(b, art("rq-ollie"), "position:absolute;left:4%;bottom:5%;width:22%");
       bl.animate([{ transform: "rotate(-18deg)" }, { transform: "rotate(18deg)" }], { duration: 130, iterations: 11, direction: "alternate" });
       bellSound(4); ringAt(b, 20, 24, 12); later(() => ringAt(b, 20, 24, 12), 350); later(() => ringAt(b, 20, 24, 12), 700);
       await wait(1450);
@@ -488,7 +499,7 @@
     in: async (b) => {
       const dw = doorway(b, "left:6%;top:8%;width:30%", "#c97b3a");
       const pals = ["cat", "dog", "bear"].map((n, i) => put(b, art(n), `position:absolute;left:${34 + i * 21}%;bottom:12%;width:24%;transform:scale(0);transform-origin:50% 100%`));
-      const ol = put(b, art("ollie"), "position:absolute;left:7%;bottom:5%;width:22%");
+      const ol = put(b, art("rq-ollie"), "position:absolute;left:7%;bottom:5%;width:22%");
       TC.sfx("click"); await wait(300);
       TC.sfx("whoosh"); dw.open(); burst(b, 21, 50, 14, 3, 12);
       await wait(500);
@@ -526,7 +537,7 @@
       lv.innerHTML = `<i style="position:absolute;left:10%;right:10%;top:-4%;height:8%;border-radius:50%;background:#c9f0ff"></i>`; wat.append(lv);
       gl.append(wat, rimg(rawGlass(), "position:absolute;inset:0;width:100%;height:100%")); b.append(gl);
       const stream = put(b, box("left:35.2%;top:19%;width:2.2%;height:0;border-radius:1rem;background:linear-gradient(90deg,#9fe0ff,#3aa7ff);z-index:1"));
-      const ol = put(b, art("ollie"), "position:absolute;right:4%;bottom:12%;width:25%");
+      const ol = put(b, art("rq-ollie"), "position:absolute;right:4%;bottom:12%;width:25%");
       TC.sfx("click");
       an(stream, [{ height: "0" }, { height: "56%" }], { duration: 300 });
       await wait(250);
@@ -566,7 +577,7 @@
       TC.sfx("stamp"); burst(b, 50, 42, 26, 3.2, 14); ringAt(b, 50, 42, 14);
       ht.animate([{ transform: "scale(1)" }, { transform: "scale(1.1)" }, { transform: "scale(1)" }], { duration: 420, iterations: 3 });
       bd.animate([{ transform: "rotate(-24deg) scale(1)" }, { transform: "rotate(-24deg) scale(1.08)" }, { transform: "rotate(-24deg) scale(1)" }], { duration: 420, iterations: 3 });
-      put(b, h("div", { class: "abs", style: "left:50%;top:6%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;padding:.1rem 1.8rem;border-radius:2rem;background:#fff;color:#ff3d77;font-weight:700;font-size:2.8rem;box-shadow:0 .4rem 0 rgba(0,0,0,.15);animation:rqpop .4s both" }, "Get well soon!"));
+      put(b, h("div", { class: "abs", style: "left:0;right:0;margin:0 auto;width:max-content;top:6%;white-space:nowrap;padding:.1rem 1.8rem;border-radius:2rem;background:#fff;color:#ff3d77;font-weight:700;font-size:2.8rem;box-shadow:0 .4rem 0 rgba(0,0,0,.15);animation:rqpopr .4s both" }, "Get well soon!"));
       for (let k = 0; k < 3; k++) later(() => { TC.sfx("sparkle"); burst(b, 30 + Math.random() * 40, 30 + Math.random() * 30, 8, 2.6, 10); }, 300 + k * 380);
       await wait(1300);
     }
