@@ -1097,24 +1097,6 @@
   "sha1": "2a59707df58529f8364dabb2542bbd1f28675f86",
   "durationSec": 1.41
  },
- "open your passport": {
-  "file": "ai/open-your-passport.mp3",
-  "text": "Open your passport!",
-  "ai": true,
-  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
-  "voice": "Bella - Professional, Bright, Warm",
-  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
-  "voiceKind": "ElevenLabs premade voice",
-  "accent": "American (ElevenLabs label: Standard American)",
-  "model": "eleven_multilingual_v2",
-  "generationId": "iUX92YQatm4C9Z8AlHiK",
-  "generated": "2026-11-17T09:11:49Z",
-  "downloaded": "2026-11-17T09:17:45Z",
-  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
-  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "0538b9233b8f8f2151d7fae855785cd76cf91412",
-  "durationSec": 1.28
- },
  "we are friends": {
   "file": "ai/we-are-friends.mp3",
   "text": "We are friends!",
@@ -1133,24 +1115,6 @@
   "sha1": "d0962fa66f109b01d2e2b3e11d6ab9074af3c314",
   "durationSec": 1.25
  },
- "five points": {
-  "file": "ai/five-points.mp3",
-  "text": "Five points!",
-  "ai": true,
-  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
-  "voice": "Bella - Professional, Bright, Warm",
-  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
-  "voiceKind": "ElevenLabs premade voice",
-  "accent": "American (ElevenLabs label: Standard American)",
-  "model": "eleven_multilingual_v2",
-  "generationId": "iUX92YQatm4C9Z8AlHiK",
-  "generated": "2026-11-17T09:11:49Z",
-  "downloaded": "2026-11-17T09:17:45Z",
-  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
-  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "6060fc3f23343369a08ee97417518783f3fa6825",
-  "durationSec": 1.02
- },
  "ten points": {
   "file": "ai/ten-points.mp3",
   "text": "Ten points!",
@@ -1168,24 +1132,6 @@
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
   "sha1": "43cba9cb829f7e4fd23cc6e376b052b3579d31e8",
   "durationSec": 0.99
- },
- "fifteen points": {
-  "file": "ai/fifteen-points.mp3",
-  "text": "Fifteen points!",
-  "ai": true,
-  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
-  "voice": "Bella - Professional, Bright, Warm",
-  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
-  "voiceKind": "ElevenLabs premade voice",
-  "accent": "American (ElevenLabs label: Standard American)",
-  "model": "eleven_multilingual_v2",
-  "generationId": "iUX92YQatm4C9Z8AlHiK",
-  "generated": "2026-11-17T09:11:49Z",
-  "downloaded": "2026-11-17T09:17:45Z",
-  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
-  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "7e4bd0fcae0fd4edaebf3d2e552b4c5f90d0eb97",
-  "durationSec": 1.28
  },
  "twenty points": {
   "file": "ai/twenty-points.mp3",
@@ -1222,24 +1168,6 @@
   "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
   "sha1": "2813ee30f6ed26a6d6b2b167e3f30483daa8f366",
   "durationSec": 1.04
- },
- "fifty points": {
-  "file": "ai/fifty-points.mp3",
-  "text": "Fifty points!",
-  "ai": true,
-  "source": "ElevenLabs text-to-speech — AI voice, NOT a human recording",
-  "voice": "Bella - Professional, Bright, Warm",
-  "voiceId": "hpp4J3VqNfWAUOO0d1Us",
-  "voiceKind": "ElevenLabs premade voice",
-  "accent": "American (ElevenLabs label: Standard American)",
-  "model": "eleven_multilingual_v2",
-  "generationId": "iUX92YQatm4C9Z8AlHiK",
-  "generated": "2026-11-17T09:11:49Z",
-  "downloaded": "2026-11-17T09:17:45Z",
-  "licence": "ElevenLabs Starter (paid) plan output — see credits.html for the terms",
-  "changes": "cut from a batch generation between its pauses (50 ms before, 120 ms after the speech, short fades), converted to MP3 96 kbps mono, peak level set to -1.5 dB",
-  "sha1": "784d3c748d8b997c1823da37545c0052c6720673",
-  "durationSec": 1.33
  },
  "good job": {
   "file": "ai/good-job.mp3",

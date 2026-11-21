@@ -295,7 +295,7 @@
     await TC.speak(c.say); await sleep(Math.max(0, ms - 1200)); b.classList.add("out"); await sleep(400); b.remove();
   };
   /** number of points on the scratch card: the number word is a human recording */
-  TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
+  TC.sayPoints = (n) => { const w = { 10: "ten", 20: "twenty", 30: "thirty" }[n]; /* a scratch card is 10, 20 or 30 points */ return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
   /** Model the answer: first the answer word (or the whole phrase, "Good morning!") from its human recording,
       then — when the answer is a sentence — the whole sentence read in one go by the computer voice. */
   TC.model = async function (sentence, word) {
