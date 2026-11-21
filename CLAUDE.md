@@ -22,6 +22,7 @@
   never get stuck in front of guests, but the CHILD always says the line first (the teacher, 2026-11-21): Ollie asks the question
   and never reads the answer by himself — he models it only when the teacher presses 🔊 聽示範 (or H). No automatic model, no timer.
 - Levels: 低年級 = big/small letters and "Ollie says a word, do the action" only (no booklet sentence in the question bar);
+  (Every gate screen has the 低／中／高年級 switch at the top, usable at any time; the home campus flags 1–6 link to the gates.)
   中年級 = booklet sentences shown in full, never a blank — the child reads the sentence out;
   高年級 = booklet answer sentences with the answer word blank and two word buttons — tap the right word, then read it out.
 - The home page (and the backup launcher) is ONE screen with exactly the six gates plus the level buttons; nothing else can be

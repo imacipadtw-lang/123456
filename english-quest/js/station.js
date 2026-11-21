@@ -85,22 +85,36 @@
   // 115.11.21: the level is chosen on the home page only (?lv= in the gate's address); here it is just shown
   function showLevel() {
     const L = TC.LEVELS[nextLevel], box = $("#lvlPick");
-    if (!ROOM) { box.innerHTML = `題目：<b>${L.zh}</b>（${L.tip}）<small>要換年級請按左邊校徽的「回首頁 HOME」重選</small>`; return; }
+    if (!ROOM) { box.innerHTML = `題目：<b>${L.zh}</b>（${L.tip}）<small>要換年級，按畫面上方的 低年級／中年級／高年級</small>`; if (typeof paintLvSwitch === "function") paintLvSwitch(); return; }
     // classroom edition: no home page, so the three levels are chosen right here on the START screen
     box.classList.add("lvl-room"); box.innerHTML = "";
     box.append(h("span", { class: "lr-t" }, "選年級："), ...[1, 2, 3].map((n) => h("button", { type: "button", class: "lr-b" + (n === nextLevel ? " on" : ""), "aria-pressed": String(n === nextLevel),
-      onclick: (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); nextLevel = n; TC.cfg.level = n; TC.saveCfg(); showLevel(); } }, h("b", {}, TC.LEVELS[n].zh), h("i", {}, TC.LEVELS[n].tip))));
+      onclick: (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); setLevel(n); } }, h("b", {}, TC.LEVELS[n].zh), h("i", {}, TC.LEVELS[n].tip))));
   }
   showLevel();
   let players = 0;
   function newPlayer() { players++; return { id: "p" + Date.now().toString(36), name: "", level: nextLevel, grade: [0, 2, 4, 6][nextLevel], color: ["#ffc83d", "#2ee6b6", "#4cc9ff", "#ff5fa2", "#9b6bff", "#ff9a2e"][players % 6] }; }
 
   function setKidChip(kid) {
-    $("#kidChip").classList.remove("hidden");
+    // (the 低／中／高年級 switch next to it shows the level)
     $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color;
     $("#kName").textContent = "PLAYER";
-    $("#lvlTag").textContent = TC.LEVELS[kid.level].zh;
+    paintLvSwitch();
   }
+  /* 低／中／高年級: three buttons at the top of every gate screen (the teacher, 2026-11-21) — they can be changed at any time,
+     even while a child is playing: the next question already uses the new level. */
+  function setLevel(n) {
+    nextLevel = n; TC.cfg.level = n; TC.saveCfg();
+    if (TC.kid) { TC.kid.level = n; TC.kid.grade = [0, 2, 4, 6][n]; }
+    paintLvSwitch(); showLevel(); TC.toast("已換成 " + TC.LEVELS[n].zh + "（下一題開始）", 1800);
+  }
+  function paintLvSwitch() {
+    const cur = TC.kid ? TC.kid.level : nextLevel;
+    document.querySelectorAll("#lvSwitch button").forEach((b) => { const on = +b.dataset.l === cur; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+  }
+  { const box = $("#lvlBtns"); box.innerHTML = ""; box.id = "lvSwitch"; box.classList.add("lv-switch"); box.setAttribute("role", "group"); box.setAttribute("aria-label", "年級");
+    [1, 2, 3].forEach((n) => box.append(h("button", { type: "button", "data-l": n, class: "zh", title: TC.LEVELS[n].tip, onclick: (e) => { e.stopPropagation(); TC.ac(); TC.sfx("pop"); setLevel(n); } }, TC.LEVELS[n].zh)));
+    setTimeout(paintLvSwitch, 0); }
 
   async function start() {
     if (running) return;

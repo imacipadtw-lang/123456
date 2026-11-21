@@ -50,7 +50,7 @@ const fit = () => {
         while (Date.now() - t0 < 170000) {
           const st = await p.evaluate(() => ({ stamp: !!document.querySelector(".overlay .stamp"), k: (document.querySelector("#talk.show #kLine") || {}).innerText || "", ab: !!document.querySelector(".ab"), sc: !!document.querySelector(".sc-ov") }));
           const where = st.stamp ? "stamp" : st.sc ? "scratch card" : st.ab ? "action" : st.k ? "question" : "game";
-          if (where !== last || where === "question") { await p.waitForTimeout(where === "game" ? 0 : 750); await add(where); last = where; } // let the bar or card finish sliding in before measuring
+          if (where !== last || where === "question") { await p.waitForTimeout(where === "game" ? 0 : 1600); await add(where); last = where; } // let the bar or card finish sliding in before measuring
           if (st.stamp) { done = true; break; }
           await p.keyboard.press("Enter"); await p.waitForTimeout(350);
         }

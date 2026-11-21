@@ -29,7 +29,7 @@ const { chromium } = require("playwright");
       let textCut = 0;
       for (const el of document.querySelectorAll(".hero h1, .hero h1 span, .hero .sch, #lvHome b, #lvHome i, a.gate .th, a.gate h2, a.gate .zh")) { const q = el.getBoundingClientRect(); if (q.right > vw + 0.5 || q.bottom > vh + 0.5 || el.scrollWidth > el.clientWidth + 1) textCut++; }
       const hero = document.querySelector(".hero").getBoundingClientRect();
-      return { tiles: tiles.length, links: document.querySelectorAll("a[href]").length, cut, clipped, minFont: Math.round(minFont), scroll: document.documentElement.scrollHeight > vh + 1 || document.documentElement.scrollWidth > vw + 1, lvCut: lv, heroCut: hero.right > vw + 0.5, textCut };
+      return { tiles: tiles.length, links: document.querySelectorAll("a[href]:not(.flag-link)").length, flags: document.querySelectorAll("a.flag-link").length, cut, clipped, minFont: Math.round(minFont), scroll: document.documentElement.scrollHeight > vh + 1 || document.documentElement.scrollWidth > vw + 1, lvCut: lv, heroCut: hero.right > vw + 0.5, textCut };
     });
     const ok = r.tiles === 6 && r.links === 6 && !r.cut && !r.clipped && !r.scroll && !r.lvCut && !r.heroCut && !r.textCut && !errs.length;
     if (!ok) bad++;

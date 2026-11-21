@@ -64,6 +64,8 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
 .has-campus .gate .no { font-size: calc(var(--u) * 2.2) }
 .has-campus .gate h2 { font-size: calc(var(--u) * 3.3); margin: calc(var(--u) * .4) 0 calc(var(--u) * .2) }
 .has-campus .gate .zh { font-size: calc(var(--u) * 2.3) }
+.flag-link{position:absolute;left:0;top:0;z-index:2;width:calc(var(--u) * 5.6);height:calc(var(--u) * 5.6);border-radius:50%;display:grid;place-items:center;text-decoration:none;color:transparent;font-size:1px;cursor:pointer;touch-action:manipulation}
+.flag-link:hover,.flag-link:focus-visible{box-shadow:0 0 0 calc(var(--u) * .5) #fff,0 0 calc(var(--u) * 2.4) #fff;outline:none}
 .campus .cap { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); white-space: nowrap; font-size: calc(var(--u) * 2); font-weight: 700; color: var(--muted); pointer-events: none }
 @media (orientation: portrait) {
   .has-campus .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1.9fr) repeat(3, minmax(0, 1fr)) }
@@ -91,7 +93,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     <button type="button" role="radio" data-l="3"><b>高年級</b><span>5–6 年級 · 點字填空再念</span></button>
   </div>
 
-  <div class="gates" id="gates" aria-label="六關"><div class="campus" id="campus"><span class="cap">土城國小校園 · 六面旗子是六關 · 用手指左右滑可以轉 360 度</span></div></div>
+  <div class="gates" id="gates" aria-label="六關"><div class="campus" id="campus"><span class="cap">土城國小校園 · 點旗子 1–6 就進入那一關 · 用手指左右滑可以轉 360 度</span></div></div>
 </div>
 
 <script src="js/content.js"></script>
@@ -120,7 +122,15 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
   try { TC.O3.mount(document.getElementById("o3"), { action: "wave", spin: "auto", every: 6, zoom: 1.12 }); } catch (e) {}
 
   // the school from the air, turning through 360°: the six gates stand round it, and its six flags carry the gate numbers
-  try { if (TC.Campus && TC.Campus.supported()) { document.querySelector(".wrap").classList.add("has-campus"); TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；六面旗子是六關" }); } } catch (e) {}
+
+  // the six flags on the model are links too: a round button sits on every flag and follows it as the campus turns
+  function campusFlags(ctl, hrefOf) {
+    var host = ctl.el.parentElement, links = [];
+    for (var n = 1; n <= 6; n++) { var a = document.createElement("a"); a.className = "flag-link"; a.dataset.gate = n; a.textContent = n; a.setAttribute("aria-label", "第 " + n + " 關"); a.href = hrefOf(n); host.append(a); links.push(a); }
+    ctl.onFrame(function () { links.forEach(function (a, i) { var q = ctl.project(i + 1); a.style.display = q && q.visible ? "" : "none"; if (q) a.style.transform = "translate(" + q.x.toFixed(1) + "px," + q.y.toFixed(1) + "px) translate(-50%,-50%)"; a.href = hrefOf(i + 1); }); });
+  }
+  try { if (TC.Campus && TC.Campus.supported()) { document.querySelector(".wrap").classList.add("has-campus"); var cc = TC.Campus.mount(document.getElementById("campus"), { spin: true, speed: 8, drag: true, flags: true, tilt: 36, label: "土城國小校園的立體模型，可以轉 360 度；點旗子 1–6 進入那一關" });
+    if (cc && cc.ok) campusFlags(cc, function (n) { return "station.html?gate=" + n + "&lv=" + (saved() || 2) + "#gate-" + n; }); } } catch (e) {}
 
   var box = document.getElementById("gates");
   function tile(href, color, badge, no, title, zh, gate) {

@@ -516,6 +516,12 @@ body:has(.pz) #cap.show{transform:none}
 @keyframes scanTurn{0%{transform:perspective(60rem) rotateY(0)}14%{transform:perspective(60rem) rotateY(360deg)}35%{transform:perspective(60rem) rotateY(360deg) translateY(-3%) rotate(2deg)}57%{transform:perspective(60rem) rotateY(360deg) rotate(-2deg)}78%{transform:perspective(60rem) rotateY(360deg) translateY(-3%) rotate(2deg)}100%{transform:perspective(60rem) rotateY(360deg)}}
 #scan .scan-badge.bob svg{animation:scanTurn 8s cubic-bezier(.4,0,.2,1) 1.5s infinite;transform-origin:50% 55%}
 @media (prefers-reduced-motion:reduce){.turn360,#scan .scan-badge.bob svg{animation:none}}
+/* 低／中／高年級 switch at the top of every gate screen */
+.lv-switch{display:flex;gap:.5rem;align-items:center;pointer-events:auto;position:relative;z-index:43}
+.lv-switch button{font:inherit;font-size:1.9rem;font-weight:700;padding:.5rem 1.3rem;border:0;border-radius:2rem;cursor:pointer;touch-action:manipulation;color:#dfe7ff;background:rgba(36,52,107,.92);box-shadow:0 .35rem 0 #121c42}
+.lv-switch button.on{background:linear-gradient(180deg,#7dffd8,#2ee6b6);color:#063a2c;box-shadow:0 .35rem 0 #0b7a5c}
+.lv-switch button.on::before{content:"✓ "}
+.lv-switch button:active{transform:translateY(.25rem);box-shadow:0 .1rem 0 #121c42}
 /* the tag on every badge that goes back home */
 .home-tag{position:absolute;left:50%;bottom:-.5rem;transform:translateX(-50%);z-index:3;white-space:nowrap;padding:.3rem 1.1rem .35rem;border-radius:2rem;background:#fff;color:#152a63;
   font:700 1.45rem/1.2 "Microsoft JhengHei","PingFang TC","Noto Sans TC",var(--font);box-shadow:0 .3rem 0 rgba(0,0,0,.4);pointer-events:none}
