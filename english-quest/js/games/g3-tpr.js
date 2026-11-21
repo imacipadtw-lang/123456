@@ -86,7 +86,9 @@
   .tpr .bg{position:absolute;inset:0;width:100%;height:100%;display:block}
   .tpr .dim{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.4s;background:radial-gradient(90% 80% at 50% 45%,rgba(18,26,86,.78),rgba(3,6,28,.94))}
   .tpr.night .dim{opacity:1}
-  .tpr .scene{position:absolute;left:0;top:9.2rem;z-index:3;width:100%;height:calc(100% - 9.2rem - 21.5vh);display:block;overflow:visible;transition:filter 1.2s}
+  .tpr .scene{position:absolute;left:0;top:9.2rem;z-index:3;width:100%;height:calc(100% - 9.2rem - 21.5vh);display:block;overflow:visible;transition:filter 1.2s,height .35s}
+  /* 中／高年級 give the orders with the teacher bar on screen: the scene shrinks so Ollie stands clear above the bar */
+  body:has(#talk.show) .tpr .scene{height:calc(100% - 9.2rem - 34vh)}
   .tpr.night .scene{filter:brightness(.78) saturate(.8) hue-rotate(-10deg)}
   .tpr.sizzle .scene,.tpr.sizzle .dim{transition:none}
   .tpr .rays2{position:absolute;left:50%;top:42%;width:150vmin;height:150vmin;margin:-75vmin 0 0 -75vmin;z-index:2;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .6s;
