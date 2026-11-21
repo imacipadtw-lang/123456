@@ -495,6 +495,11 @@ void main(){
     raf = requestAnimationFrame(frame);
     return ctl;
   };
+  /* The renderer and its building blocks, for other original 3D scenes of the project (js/campus3d.js: the school from the air).
+     Renderer(canvas) → { gl, render(rootNode, viewProjection, eyePosition, lightDirection), lose() } or null without WebGL;
+     node(o) / add(parent, o): { p, r (degrees), s, mesh, col [r,g,b], spec, emis, alpha, mode, tex (a canvas), vis, kids };
+     MESH: sphere, cone, cyl, box, disc, quad, ring, ringThin, star · build(fn) makes a new mesh · torus(r) a ring. */
+  O3.kit = { Renderer, MESH, build, torus, node, add, m4, mMul, mTRS, mPersp, mLook, hex, paint, emblem, clamp, lerp, sm, seg, wave, up, RAD, TAU };
   /** Ollie speaks: every 3D Ollie on the page moves his beak (called from TC.ollie) */
   O3.state = function (state) { live.forEach((c) => c.talk(state === "talk")); };
 })();

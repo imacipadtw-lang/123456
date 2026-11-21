@@ -547,11 +547,22 @@
     for (let i = 0; i < lines.length; i++) {
       const x = lines[i]; api.progress(i, N); curLine = x;
       const mv = MOVES[x.move] ? x.move : "run";
+      // 中／高年級: the CHILD reads the line first (the teacher's rule: Ollie never reads the answer before the child);
+      // then Ollie and everybody chant it over the beat and dance. 低年級 (no sentence to say): Ollie chants first.
+      const kidFirst = api.level >= 2;
+      const askKid = async () => {
+        music(0, 0.06); root.classList.add("asking"); setChip("");
+        const r = await api.ask({ teacher: "Your turn!", tzh: kidFirst ? "你先唸！" : "換你唸！", say: x.say, zh: x.zh, keys: [[x.w]], word: x.w, hideKey: true });
+        if (aborted()) return false;
+        if (r && r.ok) { TC.confetti(110); TC.floatText("YEAH!", 50, 30, MOVES[mv].c); ripple(MOVES[mv].c); await TC.praise(); if (aborted()) return false; }
+        TC.hideTalk(); return true;
+      };
+      if (kidFirst) { setMove(mv); setLyric(x, "YOUR TURN 你先唸！", ""); if (!(await askKid())) return quit(); }
       /* the bar restarts here (the music is silent after a question) */
-      const bp = i === 0 ? Promise.resolve(b0 + 4) : barStart(); // first line follows the count-in bar
-      if (i > 0) { root.classList.remove("asking"); music(0.85, 0.05); }
+      const bp = i === 0 && !kidFirst ? Promise.resolve(b0 + 4) : barStart(); // 低年級: the first line follows the count-in bar
+      if (i > 0 || kidFirst) { root.classList.remove("asking"); music(0.85, 0.05); }
       const B0 = await bp; if (aborted() || B0 < 0) return quit();
-      setMove(mv); setLyric(x, "LISTEN 聽 Ollie 唸！", "");
+      setMove(mv); setLyric(x, kidFirst ? "ALL TOGETHER! 跟歐力一起唸！" : "LISTEN 聽 Ollie 唸！", "");
       const D0 = B0 + 4, DEND = D0 + 4 * BREAK_BARS;
       // 1. Ollie chants the line over the beat (words light up on the beat)
       for (let k = 0; k < 4; k++) cueAt(B0 + k, () => lyricAt(k));
@@ -570,12 +581,8 @@
         if (got >= 4) { TC.floatText(got >= 7 ? "AMAZING BEAT!" : "GREAT BEAT!", 50, 30, "#ffe58a"); TC.confetti(70); TC.sfx("levelup"); } });
       await Promise.all([said, waitBeat(D0)]); if (aborted()) return quit();
       await waitBeat(DEND); if (aborted()) return quit();
-      // 3. your turn: say the last word
-      music(0, 0.06); root.classList.add("asking"); setChip("");
-      const r = await api.ask({ teacher: "Your turn!", tzh: "換你唸！", say: x.say, zh: x.zh, keys: [[x.w]], word: x.w, hideKey: true });
-      if (aborted()) return quit();
-      if (r && r.ok) { TC.confetti(110); TC.floatText("YEAH!", 50, 30, MOVES[mv].c); ripple(MOVES[mv].c); await TC.praise(); if (aborted()) return quit(); }
-      TC.hideTalk();
+      // 3. 低年級: now it is the child's turn (letters + the action)
+      if (!kidFirst && !(await askKid())) return quit();
     }
 
     /* finale */

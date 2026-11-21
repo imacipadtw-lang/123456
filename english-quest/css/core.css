@@ -75,6 +75,8 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 .big-btn:active{transform:translateY(.3rem);box-shadow:0 .05rem 0 rgba(0,0,0,.35)}
 .btn-ok{background:var(--ok);color:#06331a;flex:1.4}
 .btn-ok.glow{animation:glow 1s infinite}
+.btn-hear.glow{animation:glowHear 1s infinite} /* the child is stuck: the teacher may press 🔊 for Ollie's model line */
+@keyframes glowHear{50%{box-shadow:0 0 2.2rem #7fb4ff,0 .35rem 0 rgba(0,0,0,.35);filter:brightness(1.25)}}
 .btn-hear{background:#2b3f7a}
 .btn-skip{background:#2b3f7a;font-size:1.2rem;padding:.5rem}
 .src-tag{font-size:.9rem;font-weight:600;border-radius:.6rem;padding:.1rem .45rem;background:rgba(255,255,255,.15)}

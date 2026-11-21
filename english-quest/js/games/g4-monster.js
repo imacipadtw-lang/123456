@@ -621,7 +621,8 @@
       anim(fly, [{ transform: "translate(-50%,-50%) scale(.15)", opacity: 0 }, { transform: `translate(calc(-50% + ${((bq.x - mp.x) * 0.5).toFixed(0)}px),calc(-50% + ${((bq.y - mp.y) * 0.5 - 80).toFixed(0)}px)) scale(1.2) rotate(-12deg)`, opacity: 1, offset: 0.5 }, { transform: `translate(calc(-50% + ${(bq.x - mp.x).toFixed(0)}px),calc(-50% + ${(bq.y - mp.y).toFixed(0)}px)) scale(.86)`, opacity: 1 }], { duration: 520, easing: "ease-in-out", fill: "forwards" })
         .then(() => { fly.remove(); if (dead(my) || !box.isConnected) return; box.classList.add("full"); box.append(h("img", { src: TC.art(d.w.img), alt: "" })); });
       TC.confetti(26, [M.col, "#ffd23d", "#fff"]);
-      const sp = TC.speak(cap(d.w.w) + "!");
+      // 低年級 hear the word as the monster eats it. 中／高年級 must say "It's a ___." themselves next, so Ollie does not name it first.
+      const sp = TC.kid && TC.kid.level >= 2 ? Promise.resolve() : TC.speak(cap(d.w.w) + "!");
       await wait(850); if (dead(my)) return;
       await sp; if (dead(my)) return;
       mon.classList.remove("giggle"); mouth(mon, "half");

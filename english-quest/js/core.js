@@ -36,7 +36,7 @@
   if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
   { const q = +(new URLSearchParams(location.search).get("lv") || 0); if (q >= 1 && q <= 3) TC.cfg.level = q; }
   if (!(TC.cfg.level >= 1 && TC.cfg.level <= 3)) TC.cfg.level = 2;
-  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 大小寫字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 聽歐力說再跟著說" }, 3: { zh: "高年級", tip: "5–6 年級 · 點字填空再說" } };
+  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 大小寫字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 點字填空再念" } };
   try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {}
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -536,7 +536,8 @@
         }));
       }
       // 高年級 (5–6 年級): the answer sentence has one blank. To keep it easy in front of guests, two words are offered:
-      //   the child taps the right one, the blank fills in, Ollie says the whole sentence, and the child says it after him.
+      //   the child taps the right one, the blank fills in, and the CHILD reads the sentence out. Ollie does not read it
+      //   first (the teacher's rule, 2026-11-21): he models a line only when the teacher presses 🔊 聽示範.
       const blanks = lowLine ? [] : [...$("#kLine").querySelectorAll(".w.blank")];
       if (blanks.length && TC.kid && TC.kid.level === 3 && spec.pick !== false) {
         const bare = (t) => String(t).replace(/[^A-Za-z' ]/g, "").trim();
@@ -550,20 +551,20 @@
         const zhEl = $("#kLine").querySelector(".t-zh"); if (zhEl) $("#kLine").insertBefore(row, zhEl); else $("#kLine").append(row);
         row.querySelectorAll(".pick-btn").forEach((b) => b.addEventListener("click", () => {
           TC.ac();
-          if (b.dataset.ok === "1") { if (b.classList.contains("ok")) return; b.classList.add("ok"); row.classList.add("done"); TC.sfx("coin"); revealKey(); setTimeout(() => { if (!finished) TC.model(spec.say, spec.word); }, 350); }
+          if (b.dataset.ok === "1") { if (b.classList.contains("ok")) return; b.classList.add("ok"); row.classList.add("done"); TC.sfx("coin"); revealKey(); }
           else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
         }));
       }
       $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
-      $("#okBtn").classList.remove("glow");
+      $("#okBtn").classList.remove("glow"); { const hb = $("#hearBtn"); if (hb) hb.classList.remove("glow"); }
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
       let asked = null;
       if (lowLine) asked = TC.speak(lowLine); // 低年級: Ollie only says the letter task, not the booklet question
       else if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) asked = TC.speak(spec.teacher.replace(/___/g, ""));
-      // 中年級 (3–4 年級): the whole sentence is on screen and Ollie says it first — listen, then say it. Nobody gets stuck.
-      if (!lowLine && TC.kid && TC.kid.level === 2 && spec.autoModel !== false && spec.say)
-        Promise.resolve(asked).catch(() => {}).then(() => sleep(500)).then(() => { if (!finished && turn && turn.spec === spec) return TC.model(spec.say, spec.word); }).catch(() => {});
+      // The child says the line FIRST (the teacher's rule, 2026-11-21). Ollie only asks the question; he never reads the
+      // answer by himself. He models it when — and only when — the teacher presses 🔊 聽示範 (or H).
+      void asked;
       const wrongSeen = new Set();
       let finished = false, hintT = null, best = 0;
       const t0 = Date.now();
@@ -608,7 +609,7 @@
           }
         }
       });
-      hintT = setTimeout(() => { if (!finished) { $("#okBtn").classList.add("glow"); revealKey(); if (spec.autoModel !== false) TC.model(spec.say, spec.word); } }, (TC.cfg.hintAfter || 9) * 1000 * (spec.hideKey ? 1.4 : 1));
+      hintT = setTimeout(() => { if (!finished) { $("#okBtn").classList.add("glow"); const hb = $("#hearBtn"); if (hb) hb.classList.add("glow"); } }, (TC.cfg.hintAfter || 9) * 1000 * (spec.hideKey ? 1.4 : 1));
     });
   };
   /** the key words of the gate on screen (the wrong choice for a 高年級 blank comes from here) */

@@ -8,14 +8,14 @@
      (7) When Students Are Sick 學生生病時 · (8) Speech 上台朗讀或說故事 · (9) Others 其他.
    "no" = "(unit)-line" so a teacher can check each sentence in the booklet.
    Only the shortest, easiest lines are used: the children know the booklet, but they must not get stuck in
-   front of parents and guests.  Ollie always says the line first; the child says it after him.
+   front of parents and guests.  The child says the line first; Ollie models it only when the teacher presses 🔊 聽示範.
 
    One theme per gate (the principal's wish: situations, dialogue, TPR, phonics, song & dance, story):
      1 situations  2 dialogue  3 TPR actions  4 phonics  5 chant (sing & dance)  6 story
    Each gate has its own game engine, found by `key`; code must never hard-code gate numbers.
 
    Levels:  1 = 低年級 (grades 1–2): big and small letters + do the action with Ollie (no sentence to say)
-            2 = 中年級 (grades 3–4): the whole sentence is shown — listen, then say it
+            2 = 中年級 (grades 3–4): the whole sentence is shown — the child reads it out
             3 = 高年級 (grades 5–6): the answer sentence has one blank — tap the right word, then say it
    "say" = the sentence shown on screen · "w" = the key word (the blank) · "keys" = words the AI accepts
    (the microphone is off at the venue; the teacher presses ✓).

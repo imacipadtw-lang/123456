@@ -16,20 +16,23 @@ const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3
     });
     await p.goto(`${base}/station.html?gate=${g}&lv=${L}`); await p.waitForTimeout(900);
     await p.click("#startBtn", { force: true }); await p.waitForTimeout(700);
-    const t0 = Date.now(), slow = +process.env.SLOW || 0; let done = false, scratch = false, last = "", picked = 0;
+    const t0 = Date.now(), slow = +process.env.SLOW || 0; let done = false, scratch = false, last = "", picked = 0, auto = 0;
     while (Date.now() - t0 < (slow ? 420000 : 170000)) {
       const st = await p.evaluate(() => ({ stamp: !!document.querySelector(".overlay .stamp"), sc: !!document.querySelector(".sc-ov"), k: (document.querySelector("#talk.show #kLine") || {}).innerText || "", t: (document.querySelector("#talk.show #tLine") || {}).innerText || "" }));
       if (st.stamp) { done = true; break; }
       if (st.sc) scratch = true;
       if (st.k && st.t + "→" + st.k !== last) { last = st.t + "→" + st.k; asked.push(last.replace(/\s+/g, " ").slice(0, 70));
-        // SLOW=<ms>: let Ollie finish his model line before the teacher's ✓ (shows any line that would fall back to the computer voice);
-        // 高年級: tap the right word for the blank first, like a child would
-        if (slow) { const ok = await p.$('.pick-btn[data-ok="1"]'); if (ok) { await ok.click().catch(() => {}); picked++; } await p.waitForTimeout(slow); } }
+        // SLOW=<ms>: 高年級 taps the right word for the blank like a child would; then the teacher presses 🔊 聽示範 (H) and
+        // Ollie's model line plays to the end before the ✓ (shows any line that would fall back to the computer voice).
+        // Ollie must NOT read the answer by himself: `auto` counts model lines that started before 🔊 was pressed.
+        if (slow) { const ok = await p.$('.pick-btn[data-ok="1"]'); if (ok) { await ok.click().catch(() => {}); picked++; }
+          await p.waitForTimeout(1500); if (await p.evaluate(() => !!document.querySelector("#kLine .w.saying"))) auto++;
+          await p.keyboard.press("h"); await p.waitForTimeout(slow); } }
       await p.keyboard.press("Enter"); await p.waitForTimeout(350);
     }
     const pts = done ? await p.locator(".pts-chip b").innerText().catch(() => "?") : "-";
-    const ok = done && scratch && !errs.length; if (!ok) fail++;
-    console.log(`${ok ? "PASS" : "FAIL"} gate ${g} level ${L}: ${Math.round((Date.now() - t0) / 1000)}s, ${asked.length} questions, scratch ${scratch}, points ${pts}${slow ? ", word buttons tapped " + picked : ""}${errs.length ? " | " + errs.slice(0, 3).join(" | ") : ""}`);
+    const ok = done && scratch && !errs.length && !auto; if (!ok) fail++;
+    console.log(`${ok ? "PASS" : "FAIL"} gate ${g} level ${L}: ${Math.round((Date.now() - t0) / 1000)}s, ${asked.length} questions, scratch ${scratch}, points ${pts}${slow ? ", word buttons tapped " + picked + ", answers read by Ollie before 🔊: " + auto : ""}${errs.length ? " | " + errs.slice(0, 3).join(" | ") : ""}`);
     if (process.env.VERBOSE) asked.forEach((a) => console.log("     " + a));
     if (process.env.FAKE_TTS) { const said = await p.evaluate(() => [...new Set(window.__tts || [])]); console.log("     computer voice read " + said.length + " different lines: " + said.join(" | ")); }
     await p.close();

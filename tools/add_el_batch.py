@@ -10,6 +10,8 @@ batches, raw, AUD = json.load(open(sys.argv[1])), sys.argv[2], sys.argv[3]
 SUB = sys.argv[4] if len(sys.argv) > 4 else "ai"; MAN = sys.argv[5] if len(sys.argv) > 5 else "ai-sentences"; VAR = sys.argv[6] if len(sys.argv) > 6 else "TC_AI_AUDIO"
 OUT = os.path.join(AUD, SUB); os.makedirs(OUT, exist_ok=True)
 VOICE = {"name": "Bella - Professional, Bright, Warm", "id": "hpp4J3VqNfWAUOO0d1Us", "kind": "ElevenLabs premade voice", "accent": "American (ElevenLabs label: Standard American)"}
+# another voice: EL_VOICE_NAME / EL_VOICE_ID (and EL_VOICE_ACCENT) in the environment, e.g. the male voice of the second set
+if os.environ.get("EL_VOICE_ID"): VOICE = {"name": os.environ["EL_VOICE_NAME"], "id": os.environ["EL_VOICE_ID"], "kind": "ElevenLabs premade voice", "accent": os.environ.get("EL_VOICE_ACCENT", "American (ElevenLabs label)")}
 def key(t): return re.sub(r"[^a-z0-9' -]", "", t.lower().replace("’", "'")).strip()
 def slug(t): return re.sub(r"[^a-z0-9]+", "-", t.lower().replace("'", "")).strip("-")
 _mp = os.path.join(AUD, MAN + ".json")
