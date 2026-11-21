@@ -1,8 +1,6 @@
 /* =====================================================================
-   Passport puzzles (touch + speaking), shared by every gate
-   1. TC.bookletHunt(gate)    → "Open your passport! page (4), line 7" → child
-      reads that line and says its key word
-   2. TC.sentencePuzzle(s, zh)   → tap word tiles into order, then read it aloud
+   Sentence puzzle (touch + speaking), shared by every gate (the passport hunt was removed: children do not carry the booklet)
+   TC.sentencePuzzle(s, zh)   → tap word tiles into order, then read it aloud
    ===================================================================== */
 (function () {
   "use strict";
@@ -35,26 +33,6 @@
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
 
-  /** Booklet Hunt: the child opens the 《校園生活英語》 booklet to the page and line named on screen, reads that line and says its key word. */
-  TC.bookletHunt = async function (gate, api) {
-    const e = TC_CONTENT.hunt[gate]; if (!e) return;
-    const ans = h("div", { class: "ans" }, "");
-    const box = h("div", { class: "pz" },
-      h("h3", {}, h("div", { class: "book" }, h("i"), h("i")), "Open your passport!", h("span", { class: "zh" }, "護照尋寶")),
-      h("div", { class: "sub zh" }, `打開你的護照，翻到第 ${e.page} 頁，找到第 ${e.line} 句，把它念出來！`),
-      h("div", { class: "num" }, e.page, h("b", {}, e.line)),
-      ans);
-    document.body.append(box); TC.sfx("levelup");
-    await TC.speak("Open your passport!");
-    const r = await TC.ask({ teacher: `Page ${e.page}, number ${e.line}!`, tzh: `第 ${e.page} 頁第 ${e.line} 句是什麼？`, say: e.text, zh: "", keys: e.keys, word: e.w, hideKey: true, hideAlways: true, guideKid: "找到這一句，說出「?」的那個字", guideTeacher: "孩子找不到就按 🔊 或 ✓" });
-    if (api && api.aborted) { box.remove(); return; }
-    TC.hideTalk();
-    ans.innerHTML = ""; ans.append(h("span", { class: "zh", style: "font-size:2.2rem;display:block;margin-bottom:.4rem" }, e.zh), e.text);
-    TC.sfx("coin"); await TC.speak(e.text, { human: e.w });
-    await sleep(700); box.remove();
-    TC.log({ type: "code", say: e.w, heard: r.heard || "", by: r.by || "" });
-  };
-
   /** Sentence Builder: tap tiles in order, then read the sentence aloud. */
   TC.sentencePuzzle = async function (sentence, zh, keys, api) {
     const words = sentence.split(/\s+/);
@@ -63,7 +41,7 @@
     const slots = h("div", { class: "slots" }), bank = h("div", { class: "bank" });
     const box = h("div", { class: "pz" },
       h("h3", {}, "🧩 Sentence Builder", h("span", { class: "zh" }, "句子拼拼看")),
-      h("div", { class: "sub zh" }, "依順序點單字，排出護照裡的句子！"), slots, bank, h("div", { class: "zh2 zh" }, zh || ""));
+      h("div", { class: "sub zh" }, "依順序點單字，排出句子！"), slots, bank, h("div", { class: "zh2 zh" }, zh || ""));
     document.body.append(box);
     let done;
     const finished = new Promise((r) => (done = r));

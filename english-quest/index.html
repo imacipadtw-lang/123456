@@ -21,7 +21,21 @@
   a.card .zh{color:var(--ink2);font-size:1.1rem}
   a.card .g{font-size:1rem;color:var(--ink2);margin-top:.6rem}
   a.card img{position:absolute;right:.8rem;top:.6rem;width:6.4rem;height:6.4rem;filter:drop-shadow(0 .6rem .8rem rgba(0,0,0,.4));transition:transform .2s}
-  a.card .bdg{position:absolute;right:.4rem;top:-.6rem;width:9.6rem;height:11rem;line-height:0;transition:transform .2s}a.card .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .6rem .8rem rgba(0,0,0,.4))}a.card:hover .bdg{transform:scale(1.08) rotate(-4deg)}
+  .grid.gates{grid-template-columns:repeat(3,1fr);gap:1.5rem}
+  @media (max-width:1100px){.grid.gates{grid-template-columns:repeat(2,1fr)}} @media (max-width:700px){.grid.gates{grid-template-columns:1fr}}
+  a.card.gate{display:grid;grid-template-columns:10.4rem 1fr;align-items:center;gap:1.1rem;padding:1.1rem 1.4rem 1.1rem .9rem;overflow:visible;border:.2rem solid color-mix(in srgb,var(--c) 60%,transparent);
+    background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,#142460),#0f1a47 70%);box-shadow:0 .45rem 0 rgba(4,10,35,.75),0 1.4rem 2.4rem rgba(0,0,0,.35),inset 0 .12rem 0 rgba(255,255,255,.22)}
+  a.card.gate:hover{transform:translateY(-.35rem);box-shadow:0 .8rem 0 rgba(4,10,35,.75),0 2rem 3rem rgba(0,0,0,.4),0 0 2.6rem color-mix(in srgb,var(--c) 55%,transparent),inset 0 .12rem 0 rgba(255,255,255,.22)}
+  a.card.gate:active{transform:translateY(.2rem);box-shadow:0 .15rem 0 rgba(4,10,35,.75)}
+  a.card.gate .bdg{width:10.4rem;height:12rem;line-height:0;transition:transform .2s}a.card.gate .bdg svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .7rem .9rem rgba(0,0,0,.45))}a.card.gate:hover .bdg{transform:scale(1.07) rotate(-3deg)}
+  a.card.gate .tx{min-width:0}
+  a.card.gate .top{display:flex;align-items:center;gap:.7rem}
+  a.card.gate .n{width:2.7rem;height:2.7rem;font-size:1.5rem;flex:none;box-shadow:0 .2rem 0 rgba(0,0,0,.35)}
+  a.card.gate .th{font-size:1.05rem;font-weight:700;color:var(--c);letter-spacing:.04em}
+  a.card.gate h2{margin:.45rem 0 .1rem;font-size:1.85rem;line-height:1.1}
+  a.card.gate .zh{font-size:1.25rem;color:#fff;font-weight:700}
+  a.card.gate .g{font-size:.95rem;margin-top:.35rem;line-height:1.4}
+  a.card.gate .go{display:inline-flex;align-items:center;gap:.4rem;margin-top:.6rem;padding:.35rem 1rem;border-radius:2rem;background:var(--c);color:#0a1633;font-weight:700;font-size:1.05rem;box-shadow:0 .22rem 0 rgba(0,0,0,.35)}
   a.card:hover img{transform:scale(1.12) rotate(-6deg)}
   h3{max-width:90rem;margin:2.4rem auto .8rem;font-size:1.4rem;color:var(--sun)}
   .tools a.card{--c:#ffc83d}
@@ -34,15 +48,16 @@
   <div class="o" id="o"></div>
   <div>
     <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:2.4rem;color:#ffe58a;letter-spacing:.06em;margin-bottom:.6rem"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:5.4rem;height:5.4rem;flex:none">南投縣草屯鎮土城國民小學</div>
-    <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 英語護照闖關</span></h1>
-    <p class="zh">6 間教室 × 6 個遊戲關卡 · 句子全部來自《校園生活英語》護照 · 老師按 START → 歐力或老師用英文問、孩子看圖說一個英文字 → AI 聽懂就過關 → 翻護照尋寶 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙貼在護照上 → 終點登機門解碼拿獎狀、換獎品</p>
+    <h1>Tucheng English Day<br><span class="zh" style="font-size:2.2rem">土城國小 運動會英語日 · 校園生活英語闖關</span></h1>
+    <p class="zh">6 間教室 × 6 個遊戲關卡 · 句子全部來自《校園生活英語》護照 · 老師按 START → 歐力或老師用英文問、孩子看圖說一個英文字 → 老師按 ✓ 就過關 → 刮刮卡刮出 10／20／30 點，老師發點數貼紙貼在闖關小卡上 → 終點登機門解碼拿獎狀、換獎品</p>
   </div>
 </div>
-<div class="grid" id="gates"></div>
+<div class="grid gates" id="gates"></div>
 <h3 class="zh">工具 Tools</h3>
 <div class="grid tools">
   <a class="card" href="opening.html"><span class="n">🎬</span><h2>Opening Show</h2><div class="zh">開場動畫：歐力在大廳大螢幕介紹闖關規則（七個畫面，可自動播放）</div></a>
   <a class="card" href="control.html"><span class="n">★</span><h2>Final Gate · Mission Control</h2><div class="zh">終點登機門（解密碼、獎狀）＋即時看板（放大廳給家長看）</div></a>
+  <a class="card" href="quest-card.html"><span class="n">🎫</span><h2>Quest Card</h2><div class="zh">闖關小卡：每位孩子一張（寫六個秘密字母、貼點數貼紙），不用帶護照；一張 A4 印兩張</div></a>
   <a class="card" href="teacher-cards.html"><span class="n">🧾</span><h2>Gate Host Cards</h2><div class="zh">關主一頁卡：每關一張 A4（開機、流程、台詞、狀況處理），貼在電視旁</div></a>
   <a class="card" href="guide.html"><span class="n">📘</span><h2>活動手冊 Guide</h2><div class="zh">流程、六關玩法、各關台詞、設備檢查、部長參訪路線</div></a>
   <a class="card" href="links.html"><span class="n">🔗</span><h2>Links · 網址總表</h2><div class="zh">每個畫面兩個網址：GitHub 主網址＋Claude 備用網址</div></a>
@@ -50,8 +65,9 @@
 </div>
 <footer class="zh">
   所有句子都來自學校的《校園生活英語》護照第 (4)–(9) 頁（提問、給回饋與下課、午餐與午休、生病、上台朗讀、其他），是孩子在教室就會用的句子；每一句都標「(頁)-句」，例如 (4)-7。六關六個主題：情境題、對話、動作（TPR）、字母與發音、唱跳、故事；孩子每一題只要說一個字，第 3 關只要跟著做動作。分兩級：初級（1–2 年級）直接顯示答案字，中級（3–6 年級）是填空。開始畫面可選「電腦問」（歐力用語音問，給不會說英文的關主）或「老師問」。每關的台詞見<a href="guide.html#lines">活動手冊</a>。
-  歐力的六句誇獎（Good job! 等）是 ElevenLabs 的 AI 語音檔；新內容其他大約 88 句還沒有音檔，目前由那台電視的電腦語音唸（標示「電腦語音」），預計 2026-12-17 ElevenLabs 點數重置後補做（來源見 <a href="credits.html">Credits</a>）。電視不把單字錄音接成句子。語音辨識使用瀏覽器內建 Web Speech API（Chrome / Edge，需要網路）；沒有網路時由老師按 ✓ 判定，遊戲照常進行。
-  程式不錄下孩子的聲音；照片只存在各台電腦，不上傳（Google 試算表同步的內容不含照片）。
+  現場不用麥克風：孩子說完，關主老師按 ✓（或 Enter）就過關。學生不用帶護照，秘密字母和點數貼紙記在<a href="quest-card.html">闖關小卡</a>上。任何畫面按左上角的大校徽，都會回到這一頁。
+  歐力的六句誇獎（Good job! 等）是 ElevenLabs 的 AI 語音檔；新內容其他大約 74 句還沒有音檔，目前由那台電視的電腦語音唸（標示「電腦語音」），預計 2026-12-17 ElevenLabs 點數重置後補做（來源見 <a href="credits.html">Credits</a>）。電視不把單字錄音接成句子。
+  程式不錄音、預設也不開麥克風；照片只存在各台電腦，不上傳（Google 試算表同步的內容不含照片）。
 </footer>
 <script src="js/content.js"></script>
 <script src="js/core.js"></script>
@@ -60,11 +76,11 @@
 <script src="js/art-body.js"></script>
 <script>
   document.getElementById("o").innerHTML = TC.ollieSVG();
-  const ICON = { rescue: "trophy", talk: "mic", tpr: "medal", monster: "mystegg", chant: "star", story: "gift" }, icons = new Proxy({}, { get: (_, n) => ICON[TC_CONTENT.gates[n].key] });
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {
     const G = TC_CONTENT.gates[n];
-    g.insertAdjacentHTML("beforeend", `<a class="card" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : `<img src="${TC.art(icons[n])}" alt="">`}</div><span class="n">${n}</span><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">${G.genre}<br>${G.passport}</div></a>`);
+    g.insertAdjacentHTML("beforeend", `<a class="card gate" style="--c:${G.color}" href="station.html?gate=${n}#gate-${n}"><div class="bdg">${TC.badgeSVG(n)}</div>
+      <div class="tx"><div class="top"><span class="n">${n}</span><span class="th">${G.genre}</span></div><h2>${G.title}</h2><div class="zh">${G.zh} · ${G.city}</div><div class="g">《校園生活英語》${G.passport}</div><span class="go">▶ <span class="zh" style="color:inherit;font-size:inherit">進入這一關</span></span></div></a>`);
   });
 </script>
 <script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>

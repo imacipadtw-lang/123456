@@ -281,7 +281,7 @@
     return c.out(s); };
   A.cloud = () => { const c = Ctx(); return c.out(c.sphere(70, 120, 40, "#ffffff", 0.3) + c.sphere(110, 98, 52, "#ffffff", 0.4) + c.sphere(150, 124, 36, "#ffffff", 0.3) + `<rect x="40" y="120" width="140" height="40" rx="20" fill="${c.g("#ffffff")}"/>`); };
   A.medal = () => { const c = Ctx(); let s = c.path("M60 10 L90 90 L110 90 L80 10Z", "#3d8bff") + c.path("M140 10 L110 90 L90 90 L120 10Z", "#ff5a5a");
-    s += c.sphere(100, 128, 56, "#ffc83d") + `<circle cx="100" cy="128" r="40" fill="none" stroke="#e8a21a" stroke-width="5"/><text x="100" y="146" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="48" fill="#b8740a">1</text>`;
+    s += c.sphere(100, 128, 56, "#ffc83d") + `<circle cx="100" cy="128" r="44" fill="none" stroke="#e8a21a" stroke-width="4"/>` + seal(100, 128, 27, 0, "pin");
     return c.out(s); };
   A.mic = () => { const c = Ctx(); return c.out(c.shadow(100, 188, 34, 6) + `<rect x="88" y="100" width="24" height="80" rx="10" fill="${c.g("#26293a")}"/>` + c.sphere(100, 66, 48, "#c9d6ff") + `<g stroke="#8a94b8" stroke-width="3" opacity=".7"><path d="M64 56 H136 M58 72 H142 M66 88 H134"/></g>`); };
 
@@ -347,7 +347,10 @@
     s += c.path("M36 110 Q4 140 22 190 Q42 162 50 132Z", "#6f7fd8") + c.path("M164 110 Q196 140 178 190 Q158 162 150 132Z", "#6f7fd8");
     s += c.path("M100 34 C30 34 30 90 34 140 C38 196 66 214 100 214 C134 214 162 196 166 140 C170 90 170 34 100 34Z", "#8fa2ff");
     s += c.path("M42 56 L58 26 L80 50Z", "#8fa2ff") + c.path("M158 56 L142 26 L120 50Z", "#8fa2ff");
+    // sports-day headband (gold, like his star and feet); the school's mark is the crest in the middle
+    s += `<path d="M40 72 Q100 40 160 72" fill="none" stroke="#c98a0c" stroke-width="15"/><path d="M40 72 Q100 40 160 72" fill="none" stroke="#ffd23d" stroke-width="11"/><path d="M43 67 Q100 37 157 67" fill="none" stroke="#fff6c8" stroke-width="2" opacity=".75"/>`;
     s += c.sphere(72, 92, 28, "#ffffff", 0.3) + c.sphere(128, 92, 28, "#ffffff", 0.3) + c.eyes(100, 92, 28, 13);
+    s += seal(100, 56, 11.5, 0, "pin");
     s += c.path("M90 110 L110 110 L100 126Z", "#ffb020") + c.blush(100, 118, 50);
     s += `<rect x="62" y="136" width="76" height="52" rx="14" fill="${c.v("#1b2b5e", "#0a1633")}" stroke="#c9d6ff" stroke-width="4"/><text x="100" y="171" text-anchor="middle" font-family="Fredoka,Arial Rounded MT Bold,Arial" font-weight="700" font-size="26" fill="#2ee6b6">ABC</text>`;
     s += c.hl(70, 60, 30, 12, -20, 0.7) + c.ell(80, 212, 14, 8, "#ffc83d", 0, 0.4) + c.ell(120, 212, 14, 8, "#ffc83d", 0, 0.4);
@@ -355,23 +358,50 @@
 
   /* ---------- 土城 badge: every character, vehicle and object wears the school's mark ----------
      A small original pin based on the school emblem (mint sky, green hills, cream field, red 「土城」).
-     SEAL[name] = [x, y, radius, tilt°] in that picture's own coordinates; anything not listed gets a pin at the lower right. */
+     SEAL[name] = [x, y, radius, tilt°, kind] in that picture's own coordinates (kind: see seal()); SEAL[name] = "none" when the picture
+     draws its own mark with TC.seal(...) inside the art; anything not listed gets a pin at the lower right. */
   let sealN = 0;
-  function seal(x, y, r, rot = 0) {
-    const id = "tcs" + sealN++, k = (r * 1.3) / 20; // drawn for r = 20, scaled (×1.3: bigger, clearer 土城 pins)
-    return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k})"><defs><clipPath id="${id}"><circle r="17.2"/></clipPath>` +
-      `<linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#f0bd3a"/><stop offset="1" stop-color="#b9820f"/></linearGradient></defs>` +
-      `<circle r="21" cy="1.6" fill="#000" opacity=".22"/><circle r="20" fill="url(#${id}r)"/><circle r="18" fill="#14401f"/>` +
-      `<g clip-path="url(#${id})"><rect x="-18" y="-18" width="36" height="17" fill="#8ff7dc"/><rect x="-18" y="-1" width="36" height="19" fill="#eef0d6"/>` +
-      `<path d="M-19 -1 L-10 -13 L-3 -1Z M3 -1 L10 -12 L19 -1Z" fill="#3f9a12"/><path d="M-9 -1 L0 -16 L9 -1Z" fill="#7ad94e"/>` +
-      `<text x="0" y="13.2" text-anchor="middle" font-family="'Noto Sans TC','Microsoft JhengHei','PingFang TC','Heiti TC','Noto Sans CJK TC',sans-serif" font-weight="900" font-size="14.5" fill="#c4170c" stroke="#fff" stroke-width="1.6" paint-order="stroke" letter-spacing="-.5">土城</text>` +
+  /* seal(x, y, r, tilt°, kind) — the school's mark, drawn so that it BELONGS to the thing it is on:
+       "pin"     (default) glossy enamel pin with a gold rim — on clothes, bags, straps
+       "patch"   embroidered cloth patch with a stitched edge — on fabric: caps, shirts, pyjamas, cushions, towels
+       "print"   flat printed logo, no rim or shadow — on cups, boxes, books, paper, screens, walls
+       "plate"   engraved brass plate with two screws — on doors, furniture, machines, frames
+       "tag"     round tag hanging from a small ring — on collars, necklaces, zips, handles (draw the cord yourself, ending at y - r*1.25)
+       "sticker" white-edged sticker, slightly peeled — only on smooth hard things (lunchbox, toolbox, laptop)
+     r is the radius of the round mark in the picture's units. Place it where a designer would put a logo
+     (chest, cap front, door plate, cover corner, cup front), never over a face, a hand, a limb or the outline. */
+  function seal(x, y, r, rot = 0, kind = "pin") {
+    const id = "tcs" + sealN++, k = (r * 1.3) / 20; // drawn for r = 20, scaled
+    const txt = `<text x="0" y="13.2" text-anchor="middle" font-family="'Noto Sans TC','Microsoft JhengHei','PingFang TC','Heiti TC','Noto Sans CJK TC',sans-serif" font-weight="900" font-size="14.5" fill="#c4170c" stroke="#fff" stroke-width="1.6" paint-order="stroke" letter-spacing="-.5">土城</text>`;
+    const scene = `<g clip-path="url(#${id})"><rect x="-18" y="-18" width="36" height="17" fill="#8ff7dc"/><rect x="-18" y="-1" width="36" height="19" fill="#eef0d6"/>` +
+      `<path d="M-19 -1 L-10 -13 L-3 -1Z M3 -1 L10 -12 L19 -1Z" fill="#3f9a12"/><path d="M-9 -1 L0 -16 L9 -1Z" fill="#7ad94e"/>${txt}`;
+    const defs = `<defs><clipPath id="${id}"><circle r="17.2"/></clipPath>` +
+      `<linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#f0bd3a"/><stop offset="1" stop-color="#b9820f"/></linearGradient></defs>`;
+    const open = `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${k})">${defs}`;
+    if (kind === "patch") return open + // cloth: soft edge, stitches, no gloss
+      `<circle r="21.5" fill="#0a3d2a" opacity=".9"/><circle r="20" fill="#1c6a45"/><circle r="18" fill="#14401f"/>${scene}</g>` +
+      `<circle r="19.6" fill="none" stroke="#ffe9a8" stroke-width="1.5" stroke-dasharray="3.2 2.6" stroke-linecap="round"/><circle r="17.2" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="2"/></g>`;
+    if (kind === "print") return open + // flat ink on a surface
+      `<circle r="19" fill="#fff" opacity=".92"/><circle r="18" fill="#14401f"/>${scene}</g></g>`;
+    if (kind === "plate") return open + // brass plate with screws
+      `<rect x="-27" y="-23.5" width="54" height="48" rx="7" fill="#000" opacity=".2" transform="translate(0 1.6)"/><rect x="-27" y="-23.5" width="54" height="47" rx="7" fill="url(#${id}r)"/>` +
+      `<rect x="-24.5" y="-21" width="49" height="42" rx="5" fill="none" stroke="#8a5f08" stroke-width="1" opacity=".6"/><circle r="18.6" fill="#8a5f08"/><circle r="18" fill="#14401f"/>${scene}</g>` +
+      `<circle cx="-22" cy="0" r="1.9" fill="#8a5f08"/><circle cx="22" cy="0" r="1.9" fill="#8a5f08"/><path d="M-23.2 0h2.4M20.8 0h2.4" stroke="#fff3c4" stroke-width=".7"/></g>`;
+    if (kind === "tag") return open + // hanging tag: ring on top
+      `<circle cx="0" cy="-23" r="4.6" fill="none" stroke="url(#${id}r)" stroke-width="2.6"/><circle r="21" cy="1.6" fill="#000" opacity=".2"/><circle r="20" fill="url(#${id}r)"/><circle r="18" fill="#14401f"/>${scene}` +
+      `<path d="M-17 -6 A18 18 0 0 1 17 -6 Q0 -12 -17 -6Z" fill="#fff" opacity=".28"/></g></g>`;
+    if (kind === "sticker") return open + // white-edged sticker with a peeled corner
+      `<circle r="21.5" cy="1" fill="#000" opacity=".16"/><circle r="21" fill="#fff"/><circle r="18" fill="#14401f"/>${scene}</g>` +
+      `<path d="M14.8 14.8 A21 21 0 0 0 21 0 Q19.5 9.5 14.8 14.8Z" fill="#dfe6f2"/></g>`;
+    return open + // "pin"
+      `<circle r="21" cy="1.6" fill="#000" opacity=".22"/><circle r="20" fill="url(#${id}r)"/><circle r="18" fill="#14401f"/>${scene}` +
       `<path d="M-17 -6 A18 18 0 0 1 17 -6 Q0 -12 -17 -6Z" fill="#fff" opacity=".28"/></g></g>`;
   }
   const chest = [100, 150, 19], SEAL = {
     cat: chest, dog: chest, bear: chest, pig: chest, rabbit: chest, tiger: chest, lion: [100, 152, 19], monkey: chest, elephant: [100, 154, 19], zebra: [100, 152, 18], horse: [100, 152, 18],
     duck: [92, 150, 19], bird: [104, 138, 19], turtle: [70, 138, 20, -8],
     bus: [100, 122, 19], taxi: [100, 130, 18], train: [78, 118, 17], plane: [104, 108, 16, -6], bike: [96, 132, 17], boat: [78, 96, 19, -8], truck: [66, 114, 20], scooter: [118, 150, 16], kart: [96, 150, 16],
-    trophy: [100, 86, 19], gift: [100, 150, 20], mystegg: [100, 128, 24], medal: [150, 60, 19, 10], mic: [100, 74, 19], tree: [100, 86, 19], rainbow: [100, 150, 20], ollie: [100, 55, 16],
+    trophy: [100, 84, 17], gift: [100, 150, 17, 0, "sticker"], mystegg: [100, 128, 22, 0, "print"], medal: "none", mic: [100, 66, 17, 0, "print"], tree: [100, 86, 19], rainbow: [38, 170, 11, 0, "print"], ollie: "none", star: [100, 66, 8.5],
     tower: [150, 40, 20, 8], eiffel: [150, 40, 20, 8], pyramids: [160, 60, 20, 8], palm: [160, 150, 20, 8], opera: [170, 40, 20, 8], mountains: [40, 44, 20, -8],
     "pose-stand": [100, 132, 11], "pose-sit": [100, 138, 11], "pose-clap": [100, 150, 11], "pose-raise": [100, 132, 11], "pose-jump": [100, 112, 11], "pose-dance": [100, 132, 11], "pose-sing": [100, 132, 11], "pose-run": [100, 128, 11],
   };
@@ -379,7 +409,8 @@
   function withSeal(name, svg) {
     const vb = (svg.match(/viewBox="([^"]+)"/) || [0, "0 0 200 200"])[1].split(/\s+/).map(Number);
     const p = SEAL[name] || [vb[0] + vb[2] - 34, vb[1] + vb[3] - 40, 19, -10];
-    return svg.replace(/<\/svg>\s*$/, seal(p[0], p[1], p[2], p[3] || 0) + "</svg>");
+    if (p === "none" || p[2] === 0) return svg; // the picture draws its own mark (TC.seal inside the art)
+    return svg.replace(/<\/svg>\s*$/, seal(p[0], p[1], p[2], p[3] || 0, p[4] || "pin") + "</svg>");
   }
 
   /* ---------- public API ---------- */

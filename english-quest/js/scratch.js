@@ -74,7 +74,7 @@
       const card = h("div", { class: "sc-card" },
         h("div", { class: "sc-head" }, TC.badgeEl ? TC.badgeEl(opt.gate, "sc-badge") : h("img", { src: S.emblem, alt: "" }), h("div", {}, h("b", { class: "zh" }, S.zh), h("span", {}, "ENGLISH DAY · SCRATCH CARD"))),
         h("div", { class: "sc-title" }, "Scratch & Win!"),
-        h("div", { class: "sc-sub zh" }, `${opt.name || ""}，用手指把銀色的地方刮開！ Scratch it!`),
+        h("div", { class: "sc-sub zh" }, `${opt.name ? opt.name + "，" : ""}用手指把銀色的地方刮開！ Scratch it!`),
         win,
         h("div", { class: "sc-foot" }, h("span", {}, `GATE ${opt.gate}${opt.city ? " · " + opt.city.toUpperCase() : ""}`), h("span", { class: "tot zh", style: "visibility:hidden" }, "")),
         next);

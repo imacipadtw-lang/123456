@@ -12,7 +12,7 @@ const base = process.argv[2] || "http://localhost:8767", secs = +(process.argv[3
     const keys = ["Enter", "Enter", "Enter", " ", "n", "h", "Escape", "c", "m", "s", "g", "ArrowLeft", "ArrowRight"];
     while (Date.now() - t0 < secs * 1000) {
       const r = Math.random();
-      if (r < 0.45) await p.mouse.click(20 + Math.random() * 1320, 80 + Math.random() * 660).catch(() => {});
+      if (r < 0.45) { const x = 20 + Math.random() * 1320, y = 80 + Math.random() * 660; if (!(x < 300 && y < 300)) await p.mouse.click(x, y).catch(() => {}); } // the top-left emblem is the Home button: not part of random play
       else if (r < 0.9) await p.keyboard.press(keys[(Math.random() * keys.length) | 0]).catch(() => {});
       else { await p.keyboard.type("abc", { delay: 5 }); await p.keyboard.press("Enter"); }
       n++; await p.waitForTimeout(60 + Math.random() * 120);

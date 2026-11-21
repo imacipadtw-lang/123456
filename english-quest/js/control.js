@@ -1,6 +1,6 @@
 /* Final Gate + Mission Control: decode the secret word, say the final line, get a certificate; live board for parents */
 (function () {
-  { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; document.body.append(b); }
+  { const e = document.querySelector(".gate-badge .emb"); if (e) e.remove(); const b = document.createElement("div"); b.className = "big-emb big-emb-plain"; b.innerHTML = '<img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">'; b.title = "回首頁 Home"; b.onclick = () => TC.goHome(document.body.classList.contains("playing")); document.body.append(b); }
   "use strict";
   const { h, $, sleep } = TC;
   TC.gate = 7;
@@ -59,9 +59,8 @@
     const b = $("#board"); b.innerHTML = "";
     kids.sort((a, z) => a[0].localeCompare(z[0])).forEach(([id, k]) => {
       const col = TC.mkKid(id, k.name || id, +k.grade || 3).color;
-      const EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
       const done = k.final ? [1, 2, 3, 4, 5, 6] : (k.gates || []);
-      const dots = h("div", { class: "dots" }, ...GATES.map((g) => done.includes(g.n) ? Object.assign(TC.artImg(EMB[g.n]), { className: "emb", title: g.city }) : h("i", { title: g.city })));
+      const dots = h("div", { class: "dots" }, ...GATES.map((g) => done.includes(g.n) ? Object.assign(TC.badgeEl(g.n, "emb"), { title: g.city }) : h("i", { title: g.city })));
       b.append(h("div", { class: "kc" + (k.final ? " fin" : "") }, h("div", { class: "av", style: `background:${col}` }, (k.name || "?")[0]), h("div", {}, h("b", {}, `${id} ${k.name || ""} ${k.final ? "🏆" : ""}`), dots)));
     });
     if (!kids.length) b.append(h("div", { class: "zh", style: "font-size:2rem;color:var(--ink2)" }, "還沒有資料。孩子完成關卡後會出現在這裡。"));
@@ -111,7 +110,7 @@
     const kid = { id: "p" + Date.now().toString(36), name: "", level: TC.cfg.level === 2 ? 2 : 1, grade: 3, color: "#ffc83d" };
     busy = true; TC.kid = kid; TC.stats = { lines: 0, stars: 0, turns: 0 };
     $("#kidChip").classList.remove("hidden"); $("#kAv").textContent = "★"; $("#kAv").style.background = kid.color; $("#kName").textContent = "PLAYER";
-    await TC.Mic.init();
+    if (TC.cfg.listen) await TC.Mic.init();
     document.body.classList.add("playing");
     $("#attract").classList.add("hidden"); $("#dec").classList.remove("hidden"); document.body.classList.add("decoding");
     typed = new Array(SECRET.length).fill(null); renderSlots();
@@ -168,14 +167,15 @@
         h("img", { class: "cert-emb", src: "assets/img/tucheng-emblem.svg", alt: "土城國小校徽" }),
         h("div", { class: "k1" }, "南投縣草屯鎮土城國民小學 · TUCHENG ELEMENTARY SCHOOL · ENGLISH DAY"),
         h("h1", {}, "World English Traveler"),
-        h("div", { class: "zh" }, "環遊世界英語小達人"),
+        h("div", { class: "zh sub" }, "環遊世界英語小達人"),
+        h("p", { class: "k2" }, "This certificate is proudly presented to　", h("span", { class: "zh" }, "茲頒發給")),
         h("div", { class: "nm nm-line" }, "\u00a0"),
-        h("p", {}, "spoke English at all six gates and cracked the secret code!"),
-        h("p", { class: "zh" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
-        h("div", { class: "st" }, ...GATES.map((g) => h("div", { style: `--c:${g.color}` }, g.city.toUpperCase(), h("br"), `GATE ${g.n}`))),
-        h("p", { style: "font-size:2.6rem;font-weight:700;color:#d6337a" }, "“We are friends!”"),
-        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "護照點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
-        h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學"), h("span", {}, "Ollie-Bot ✈"))),
+        h("p", { class: "why" }, "for speaking English at all six gates and cracking the secret code!"),
+        h("p", { class: "zh why" }, "勇敢開口說英文，完成六關挑戰並解開秘密密碼！"),
+        h("div", { class: "st" }, ...GATES.map((g) => h("div", { class: "cg", style: `--c:${g.color}` }, TC.badgeEl(g.n, "cb"), h("b", {}, g.city)))),
+        h("p", { class: "motto" }, "“We are friends!”"),
+        h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "點數貼紙合計 "), h("b", { class: "pts-line" }, "\u00a0"), h("span", { class: "zh" }, " 點 points　憑這張獎狀兌換獎品")),
+        h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學 · 運動會英語日"), h("span", { class: "by" }, h("i", {}), h("span", { class: "zh" }, "頒發人 Presented by")))),
       h("div", { class: "res-actions" }, h("button", { class: "big-btn", onclick: () => print() }, "🖨 ", h("span", { class: "zh" }, "列印獎狀")), next));
     document.body.append(ov); TC.sfx("fanfare"); TC.confetti(260); TC.ollie("cheer");
     await TC.speak("Great! Friends!");

@@ -39,23 +39,34 @@
   .attract .start3d b{font-size:7rem}.attract .start3d .ic{width:7.6rem;height:7.6rem;font-size:4rem}.attract .start3d i{font-size:2.6rem}
   .attract{top:50%!important}
   /* certificate */
-  .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:#fffdf5;color:#0a1633;border-radius:1.6em;padding:3% 4%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5);border:1.2em solid #ffc83d;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
-  .cert .k1{font-size:1.5em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
-  .cert .cert-emb{position:absolute;left:3.2%;top:3.5%;width:14em;height:14em}
-  .cert .cert-pts{display:inline-block;font-size:2.2em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;margin-top:.2em}
+  .cert{width:min(120rem,94vw,calc((100vh - 9rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 9rem) / 88));background:radial-gradient(120% 90% at 50% 0%,#fffef9,#fff6dc);color:#0a1633;border-radius:1.6em;padding:3.2% 4.4% 2.6%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5),inset 0 0 0 .25em #fff3c4;border:1.2em solid #ffc83d;border-image:linear-gradient(135deg,#ffe58a,#f2a900 30%,#ffe9a0 50%,#e59a00 72%,#ffd65a) 1;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
+  .cert::before{content:"";position:absolute;inset:1.1em;border:.22em solid #e9b530;border-radius:.6em;pointer-events:none}
+  .cert::after{content:"";position:absolute;inset:1.75em;border:.08em solid #f0cf78;border-radius:.3em;pointer-events:none}
+  .cert .k1{font-size:1.7em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
+  .cert .cert-emb{position:absolute;left:4.2%;top:6%;width:13em;height:13em;filter:drop-shadow(0 .5em .8em rgba(0,0,0,.25))}
+  .cert .cert-pts{display:inline-block;font-size:2.3em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;margin-top:.5em}
   .cert .cert-pts b{font-size:1.5em;color:#d6337a}.cert .cert-pts .zh{font-size:1em}
-  .cert h1{font-size:5.6em;margin:.1em 0 0;line-height:1}
+  .cert h1{font-size:7.4em;margin:.12em 0 .04em;line-height:1;color:#152a63;text-shadow:0 .05em 0 #fff,0 .09em 0 rgba(242,169,0,.55)}
   .cert .zh{font-size:2.4em}
+  .cert .sub{font-size:3.4em;font-weight:700;color:#d6337a;letter-spacing:.2em}
+  .cert .k2{font-size:2em;color:#5a6aa8;margin:1.1em 0 0}.cert .k2 .zh{font-size:1em}
   .cert .nm{font-size:8em;font-weight:700;color:#d6337a;margin:.18em 0 .05em;line-height:1}
-  .cert .nm-line{width:55%;height:1.05em;border-bottom:.08em dashed #d6337a;margin:.1em 0 .1em}
+  .cert .nm-line{width:52%;height:1.05em;border-bottom:.06em solid #152a63;margin:0 0 .16em}
   .cert .pts-line{display:inline-block;width:3.6em;border-bottom:.1em dashed #d6337a;margin:0 .2em}
-  .cert p{font-size:2em;margin:.2em 0}
-  .cert .st{display:flex;gap:1.4em;margin:1.6em 0}
-  .cert .st div{width:6.4em;height:6.4em;border-radius:50%;border:.35em double var(--c);color:var(--c);display:grid;place-items:center;font-weight:700;font-size:1.4em;transform:rotate(-10deg);line-height:1.1}
-  .cert .ft{margin-top:auto;display:flex;justify-content:space-between;width:100%;font-size:1.6em;color:#5a6aa8}
-  .cert .ph{position:absolute;left:4%;top:28%;width:11em;height:11em;border-radius:50%;object-fit:cover;border:.6em solid #ffc83d;box-shadow:0 .6em 1.4em rgba(0,0,0,.25);background:#eef2ff}
+  .cert p{font-size:2em;margin:.15em 0}
+  .cert .why{font-size:2.2em}.cert .zh.why{font-size:2.5em;font-weight:700}
+  .cert .st{display:flex;gap:2.4em;margin:1.5em 0 .5em}
+  .cert .cg{display:flex;flex-direction:column;align-items:center;gap:.2em}
+  .cert .cg .cb{width:11em;height:12.6em;line-height:0}.cert .cg .cb svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .4em .5em rgba(0,0,0,.22))}
+  .cert .cg b{font-size:1.7em;color:#fff;background:var(--c);border-radius:1em;padding:0 .8em;text-shadow:0 .06em 0 rgba(0,0,0,.25)}
+  .cert .motto{font-size:4.2em;font-weight:700;color:#d6337a;margin:.25em 0 0}
+  .cert .ft{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;width:100%;font-size:1.8em;color:#5a6aa8;padding:0 1.2em}
+  .cert .ft .zh{font-size:1.25em;font-weight:700;color:#152a63}
+  .cert .ft .by{display:flex;flex-direction:column;align-items:center;gap:.2em}.cert .ft .by i{display:block;width:13em;border-bottom:.08em solid #152a63;height:1.6em}.cert .ft .by .zh{font-size:.95em;font-weight:400;color:#5a6aa8}
+  .cert .ph{position:absolute;left:4.6%;top:33%;width:11em;height:11em;border-radius:50%;object-fit:cover;border:.6em solid #ffc83d;box-shadow:0 .6em 1.4em rgba(0,0,0,.25);background:#eef2ff}
   .cert .ph-o{padding:1em}
-  .cert .ow{position:absolute;right:3%;top:13%;width:9em;height:10.4em}
+  body:has(.cert) #cap{display:none}
+  .cert .ow{position:absolute;right:4.4%;top:8%;width:10em;height:11.6em}
   /* live board */
   .bb{position:absolute;left:2rem;right:2rem;top:.6rem;height:9rem;display:flex;align-items:center;gap:1.6rem;background:var(--panel);border:2px solid var(--line);border-radius:1.6rem;padding:0 1.6rem}
   .bb-o{width:7rem;height:8rem}
@@ -70,13 +81,14 @@
   .kc b{font-size:1.6rem;display:block}
   .kc .dots{display:flex;gap:.35rem;margin-top:.3rem}
   .kc .dots i{width:2.4rem;height:2.4rem;border-radius:50%;background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.25)}
-  .kc .dots img.emb{width:2.6rem;height:2.6rem;animation:pop .4s}
+  .kc .dots img.emb,.kc .dots .emb{width:2.6rem;height:3rem;animation:pop .4s}
+  .kc .dots .emb svg{width:100%;height:100%}
   .kc.fin{border-color:var(--sun);box-shadow:0 0 1.2rem rgba(255,200,61,.4)}
   .src{position:absolute;right:2rem;bottom:1rem;font-size:1.2rem;color:var(--ink2)}
   @media print{
     body *{visibility:hidden}
     .cert,.cert *{visibility:visible}
-    .cert{position:fixed;left:0;top:0;width:297mm;height:210mm;aspect-ratio:auto;font-size:3.3mm;border-width:7mm;border-radius:0;box-shadow:none;animation:none;padding:9mm 14mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .cert{position:fixed;left:0;top:0;width:297mm;height:210mm;aspect-ratio:auto;font-size:2.32mm;border-width:6mm;border-radius:0;box-shadow:none;animation:none;padding:9mm 13mm 7mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     @page{size:A4 landscape;margin:0}
   }
 </style>
@@ -94,7 +106,7 @@
       <h2 id="decTitle">What's the secret word?</h2>
       <div class="slots" id="slots"></div>
       <div class="keys" id="keys"></div>
-      <div class="hint zh">看你護照卡上的 6 個字母，依序按下去！也可以直接用英文說出這個字。 <button class="big-btn" id="assistBtn" style="display:inline-flex;padding:.3rem 1rem;font-size:1.2rem;background:#2b3f7a;margin-left:1rem">🧑‍🏫 老師協助解碼</button></div>
+      <div class="hint zh">看闖關小卡：把第 1 到第 6 格的秘密字母，依序按下去！ <button class="big-btn" id="assistBtn" style="display:inline-flex;padding:.3rem 1rem;font-size:1.2rem;background:#2b3f7a;margin-left:1rem">🧑‍🏫 老師協助解碼</button></div>
     </div>
   </section>
   <section class="view hidden" id="vBoard">

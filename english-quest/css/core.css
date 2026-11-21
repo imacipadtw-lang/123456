@@ -465,3 +465,27 @@ body:not(.playing) .big-emb:not(.big-emb-plain){display:none}
 .lvl-pick{margin-top:.6rem}
 .lvl-pick button{padding:.8rem 2.2rem}
 .lvl-pick button b{font-size:3rem}
+
+/* the top-left emblem is the HOME button (asks first while a child is playing) */
+.big-emb{pointer-events:auto;cursor:pointer}
+.big-emb:active{filter:brightness(1.15) drop-shadow(0 .5rem 0 rgba(0,0,0,.28))}
+#scan .scan-badge{pointer-events:auto!important;cursor:pointer}
+.big-emb::after,#scan .scan-badge::after{content:"🏠";position:absolute;right:-.2rem;bottom:.6rem;width:3.4rem;height:3.4rem;border-radius:50%;display:grid;place-items:center;font-size:1.9rem;
+  background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 .3rem 0 #8fa2ff,0 .6rem 1rem rgba(0,0,0,.35)}
+#scan .scan-badge::after{right:6%;bottom:8%;width:4.6rem;height:4.6rem;font-size:2.6rem}
+.home-ask{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:rgba(5,10,25,.82);backdrop-filter:blur(4px)}
+.home-ask .card{background:linear-gradient(180deg,#24367c,#0f1a45);border:3px solid #ffc83d;border-radius:3rem;padding:3rem 4rem;text-align:center;box-shadow:0 2rem 5rem rgba(0,0,0,.6);animation:zoomIn .3s cubic-bezier(.2,1.4,.4,1)}
+.home-ask .q{font-size:5rem;font-weight:700}.home-ask .s{font-size:2.4rem;color:var(--ink2);margin:.6rem 0 2.2rem}
+.home-ask .row{display:flex;gap:2rem;justify-content:center}
+.home-ask .big-btn{font-size:3.4rem;padding:1.4rem 3.4rem;border-radius:2rem}
+.home-ask .stay{background-color:#35e07a;color:#06331a;box-shadow:0 .8rem 0 #148a42,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.5)}
+.home-ask .leave{background-color:#4a557c;box-shadow:0 .8rem 0 #252c45,0 1.2rem 2rem rgba(0,0,0,.35),inset 0 .3rem 0 rgba(255,255,255,.25)}
+
+/* compact talk bar: ✓ on top, 🔊 and ⏭ side by side — the game scene gets the freed space */
+#talk{grid-template-columns:minmax(0,1fr) 25rem;align-items:stretch}
+.talk-side{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.25fr 1fr;gap:.9rem}
+.talk-side .btn-ok{grid-column:1 / 3}
+.talk-side .btn-hear{grid-column:1;flex-direction:column;gap:.1rem;font-size:2.3rem!important;line-height:1.1}
+.talk-side .btn-skip{grid-column:2;font-size:2.1rem!important}
+.talk-side #wave,.talk-side .meter{display:none}
+.talk-side .src-tag{font-size:1.1rem}

@@ -28,7 +28,7 @@
   TC.esc = esc;
 
   /* ---------------- settings (stored on this device only) ---------------- */
-  const DEF = { syncUrl: "", asr: true, volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
+  const DEF = { syncUrl: "", listen: false, /* no microphone at the venue: the host presses ✓ */ volume: 0.9, voice: "", roster: "", hintAfter: 9, rounds: 0, ollieAsks: true, sentence: "auto", level: 1 };
   TC.cfg = Object.assign({}, DEF, safeJSON(localStorage.getItem("tc_cfg")) || {});
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -214,12 +214,16 @@
   function loadVoices() { voices = (window.speechSynthesis && speechSynthesis.getVoices()) || []; }
   if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
   TC.voices = () => voices.filter((v) => /^en[-_]US/i.test(v.lang));
+  /* Online voices (Edge "Natural", Chrome "Google US English") sound best but need the internet. Without a
+     connection — or after one of them has failed — only voices installed on this computer are used. */
+  let remoteDown = false;
   TC.pickVoice = function () {
-    const us = TC.voices();
-    if (TC.cfg.voice) { const v = voices.find((x) => x.name === TC.cfg.voice); if (v) return v; }
+    const local = remoteDown || navigator.onLine === false, ok = (v) => !local || v.localService !== false;
+    const us = TC.voices().filter(ok);
+    if (TC.cfg.voice) { const v = voices.find((x) => x.name === TC.cfg.voice); if (v && ok(v)) return v; }
     const pref = [/Aria.*Natural/i, /Jenny.*Natural/i, /Ana.*Natural/i, /Natural/i, /Google US English/i, /Samantha/i, /Zira/i];
     for (const p of pref) { const v = us.find((x) => p.test(x.name)); if (v) return v; }
-    return us[0] || voices.find((v) => /^en/i.test(v.lang)) || null;
+    return us[0] || voices.find((v) => /^en/i.test(v.lang) && ok(v)) || null;
   };
   function ttsSpeak(text, opt = {}) {
     if (!window.speechSynthesis || !text) return Promise.resolve();
@@ -228,9 +232,15 @@
       const u = new SpeechSynthesisUtterance(text);
       const v = TC.pickVoice(); if (v) u.voice = v;
       u.lang = "en-US"; u.rate = opt.rate || 0.9; u.pitch = opt.pitch || 1; u.volume = TC.cfg.volume;
-      let done = false; const fin = () => { if (!done) { done = true; TC.quiet(false); TC.ollie && TC.ollie("idle"); res(); } };
+      let done = false, started = false; const fin = () => { if (!done) { done = true; TC.quiet(false); TC.ollie && TC.ollie("idle"); res(); } };
       TC.quiet(true);
-      u.onend = fin; u.onerror = fin; setTimeout(fin, 1500 + text.length * 120);
+      u.onstart = () => { started = true; };
+      u.onend = fin;
+      u.onerror = (e) => { // an online voice with no connection: say it once more with a voice on this computer
+        const err = e && e.error;
+        if (!started && !opt.retry && v && v.localService === false && err !== "canceled" && err !== "interrupted") { remoteDown = true; done = true; ttsSpeak(text, Object.assign({}, opt, { retry: true })).then(res); } else fin();
+      };
+      setTimeout(fin, 1500 + text.length * 120);
       TC.ollie && TC.ollie("talk");
       speechSynthesis.speak(u);
     });
@@ -275,6 +285,17 @@
     const c = TC_CONTENT.clap, b = h("div", { class: "clap-banner" }, h("div", { class: "hands" }, "👏"), h("div", { class: "en" }, c.say), h("div", { class: "zh" }, c.zh + "　拍拍手！"));
     document.body.append(b); TC.sfx("fanfare"); TC.confetti(160);
     await TC.speak(c.say); await sleep(Math.max(0, ms - 1200)); b.classList.add("out"); await sleep(400); b.remove();
+  };
+  /** Back to the home page (the list of all gates). While a child is playing, ask first so that a stray tap cannot end the game. */
+  TC.goHome = function (ask) {
+    const go = () => { location.href = "index.html"; };
+    if (!ask) return go();
+    if (document.querySelector(".home-ask")) return;
+    const close = () => wrap.remove();
+    const wrap = h("div", { class: "home-ask", onclick: (e) => { if (e.target === wrap) close(); } },
+      h("div", { class: "card" }, h("div", { class: "q zh" }, "要回首頁嗎？"), h("div", { class: "s zh" }, "這位小朋友的遊戲會結束"),
+        h("div", { class: "row" }, h("button", { class: "big-btn stay", onclick: close }, "▶ ", h("span", { class: "zh" }, "繼續玩")), h("button", { class: "big-btn leave", onclick: go }, "🏠 ", h("span", { class: "zh" }, "回首頁")))));
+    document.body.append(wrap);
   };
   /** number of points on the scratch card: the number word is a human recording */
   TC.sayPoints = (n) => { const w = { 5: "five", 10: "ten", 15: "fifteen", 20: "twenty", 30: "thirty", 50: "fifty" }[n]; return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
@@ -352,7 +373,7 @@
   const ASR = (TC.ASR = { supported: !!SR, state: SR ? "idle" : "unsupported", rec: null, want: false, handler: null });
   ASR.start = function (handler) {
     ASR.handler = handler;
-    if (!SR || !TC.cfg.asr) { setAIPill(); return; }
+    if (!SR || !TC.cfg.listen) { setAIPill(); return; }
     ASR.want = true;
     if (ASR.rec) return;
     const r = new SR();
@@ -379,11 +400,12 @@
   ASR.stop = function () { ASR.want = false; ASR.handler = null; if (ASR.rec) try { ASR.rec.abort(); } catch (e) {} ASR.rec = null; };
   function setAIPill() {
     const p = $("#aiPill"); if (!p) return;
+    p.style.display = TC.cfg.listen ? "" : "none"; // no microphone in use: no AI status at all
     const map = {
       on: ["on", "AI 正在聽 Listening"], idle: ["", "AI 待命"], unsupported: ["off", "老師判定模式（此瀏覽器無語音辨識）"],
       denied: ["off", "麥克風未授權 · 老師判定"], network: ["off", "AI 需網路 · 老師判定"]
     };
-    const st = !TC.cfg.asr ? ["off", "AI 關閉 · 老師判定"] : map[ASR.state] || map.idle;
+    const st = !TC.cfg.listen ? ["off", "AI 關閉 · 老師判定"] : map[ASR.state] || map.idle;
     p.className = "ai-pill " + st[0]; p.innerHTML = `<i></i>${st[1]}`;
   }
   TC.setAIPill = setAIPill;
@@ -466,7 +488,7 @@
         return `<span class="w${isKey ? " key" : ""}${hide ? " blank" : ""}" data-n="${esc(n)}" data-t="${esc(w)}">${hide ? "?" + w.replace(/[a-z]/gi, "").slice(-1) : esc(w)}</span>`;
       }).join(" ") + (spec.zh ? `<span class="t-zh">${esc(spec.zh)}</span>` : "");
       // a one-line guide for the child and the gate host until something is heard
-      $("#heard").innerHTML = `<span class="guide">👦 ${esc(spec.guideKid || (spec.hideKey ? "看圖片，說出「?」的那個字" : "說出亮黃色的字就可以"))}　👩‍🏫 ${esc(spec.guideTeacher || "AI 沒反應時按 ✓（Enter）· 🔊 聽示範（H）")}</span>`;
+      $("#heard").innerHTML = `<span class="guide">👦 ${esc(spec.guideKid || (spec.hideKey ? "看圖片，說出「?」的那個字" : "說出亮黃色的字就可以"))}　👩‍🏫 ${esc(spec.guideTeacher || (TC.cfg.listen ? "AI 沒反應時按 ✓（Enter）· 🔊 聽示範（H）" : "孩子說完，老師按 ✓ 說得好（Enter）· 🔊 聽示範（H）"))}</span>`;
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
@@ -633,7 +655,7 @@
     const wrap = h("div", { class: "settings" }, card);
     card.innerHTML = `<h2>⚙ 設定 Settings <small>（只存在這台電腦 · stored on this device）</small></h2>
       <label><span>關卡 Gate</span><select id="sGate">${[1, 2, 3, 4, 5, 6].map((g) => `<option value="${g}" ${g === TC.gate ? "selected" : ""}>Gate ${g} · ${TC_CONTENT.gates[g].title}</option>`).join("")}</select></label>
-      <label><span>AI 語音辨識</span><select id="sAsr"><option value="1">開 ON（Chrome / Edge，需要網路）</option><option value="0">關 OFF（老師按 ✓ 判定）</option></select></label>
+      <label><span>麥克風／AI 語音辨識</span><select id="sAsr"><option value="0">關（建議：現場不收音，孩子說完老師按 ✓）</option><option value="1">開（需要麥克風和網路，Chrome / Edge）</option></select></label>
       <label><span>每位孩子回合數</span><select id="sRounds"><option value="0">標準（約 3 分鐘／人）</option><option value="3">快速 3 回合（約 2 分鐘／人）</option></select></label>
       <label><span>誰來問問題</span><select id="sOllie"><option value="1">電腦問：歐力用語音唸出問題（建議，關主不用說英文）</option><option value="0">老師問：關主自己用英文問</option></select></label>
       <label><span>整句怎麼唸</span><select id="sVMode"><option value="auto">整句一次唸完：有 ElevenLabs 錄音就用錄音，沒有就用電腦語音（建議）</option><option value="off">只唸單字，整句由老師親口示範</option></select></label>
@@ -646,12 +668,12 @@
       <p><small>快捷鍵：Enter/空白鍵＝START／老師判定通過 ✓ · H＝聽示範 · N＝跳過 · Esc＝回到開始畫面</small></p>
       <div class="row"><button id="sTest">🎤 測試麥克風</button><button id="sCsv">⬇ 匯出紀錄 CSV</button><button id="sClose">取消</button><button class="save" id="sSave">儲存 Save</button></div>`;
     document.body.append(wrap);
-    $("#sAsr").value = TC.cfg.asr ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sWord").value = TC.cfg.wordVoice === "human" ? "human" : "el";
+    $("#sAsr").value = TC.cfg.listen ? "1" : "0"; $("#sRounds").value = String(TC.cfg.rounds || 0); $("#sOllie").value = TC.cfg.ollieAsks ? "1" : "0"; $("#sVMode").value = TC.cfg.sentence === "off" ? "off" : "auto"; $("#sWord").value = TC.cfg.wordVoice === "human" ? "human" : "el";
     $("#sClose").onclick = () => wrap.remove();
     $("#sCsv").onclick = () => TC.exportCSV();
     $("#sTest").onclick = async () => { const ok = await Mic.init(); TC.toast(ok ? "🎤 麥克風 OK，請說話看下方音量條" : "❌ 麥克風無法開啟"); };
     $("#sSave").onclick = () => {
-      Object.assign(TC.cfg, { asr: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
+      Object.assign(TC.cfg, { listen: $("#sAsr").value === "1", voice: $("#sVoice").value, volume: +$("#sVol").value, hintAfter: Math.max(3, +$("#sHint").value || 9), rounds: +$("#sRounds").value || 0, ollieAsks: $("#sOllie").value === "1", sentence: $("#sVMode").value, wordVoice: $("#sWord").value, syncUrl: $("#sSync").value.trim() });
       TC.saveCfg(); setAIPill();
       const g = +$("#sGate").value; wrap.remove();
       if (TC.gate >= 1 && TC.gate <= 6 && g !== TC.gate) location.href = "station.html?gate=" + g + "#gate-" + g;

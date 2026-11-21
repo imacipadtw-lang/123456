@@ -21,7 +21,7 @@
 <body>
 <div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
 <h1>🔊 發音與素材來源 Credits</h1>
-<p class="note"><b>聲音的現況（新版內容：《校園生活英語》護照）</b>：歐力的六句誇獎 <b>Good job!、Well done!、Awesome!、Excellent!、That's right!、You got it!</b>（護照 (5)）是新做的 <b>ElevenLabs AI 語音</b>檔（Bella，美式口音；不是真人錄音），已用語音辨識程式檢查過，列在最下面的 AI 語音表。新內容其他<b>大約 88 句／字（32 個單字、56 個句子，約 1,070 個字元）還沒有音檔</b>，目前由那台電視瀏覽器的<b>電腦語音</b>唸，畫面標示「電腦語音」。學校的 ElevenLabs 點數已用完，預計 <b>2026-12-17 點數重置後</b>再用 ElevenLabs 補做；缺哪些可執行 <code>node tools/need_audio.js</code> 查看。</p>
+<p class="note"><b>聲音的現況（新版內容：《校園生活英語》護照）</b>：歐力的六句誇獎 <b>Good job!、Well done!、Awesome!、Excellent!、That's right!、You got it!</b>（護照 (5)）是新做的 <b>ElevenLabs AI 語音</b>檔（Bella，美式口音；不是真人錄音），已用語音辨識程式檢查過，列在最下面的 AI 語音表。新內容其他<b>大約 74 句／字（30 個單字、44 個句子，約 930 個字元）還沒有音檔</b>，目前由那台電視瀏覽器的<b>電腦語音</b>唸，畫面標示「電腦語音」。學校的 ElevenLabs 點數已用完，預計 <b>2026-12-17 點數重置後</b>再用 ElevenLabs 補做；缺哪些可執行 <code>node tools/need_audio.js</code> 查看。</p>
 <p class="note">下表是 Wikimedia Commons 的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。表中大多是舊版遊戲（顏色、天氣、動物等）的單字，新遊戲用得到的只有 door、hands、walk、nurse、drink、rest、welcome。單字預設用 ElevenLabs 的聲音；沒有 ElevenLabs 檔的字（例如 door、hands）才播這裡的真人錄音。老師可在 ⚙「單字的聲音」改成「Wikimedia 真人錄音」。</p>
 <p class="note"><b>電視不把單字錄音接成句子。</b>完整的句子一定一次唸完：有 AI 語音檔就播檔案（標示「AI 語音」），沒有就用電腦語音（標示「電腦語音」）。老師可在 ⚙「整句怎麼唸」改成「只唸單字，整句由老師親口示範」。</p>
 <div id="sum" class="note"></div>
@@ -31,7 +31,7 @@
 <table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
 
 <h2 id="ai">ElevenLabs 語音：單字與整句（AI，不是真人錄音）</h2>
-<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。新版遊戲用到的是六句誇獎（Good job! 等）、Open your passport!、We are friends!、刮刮卡的點數，和少數單字（welcome、drink、rest 等）；表中其他的單字和句子（例如 It's a tiger.、I like red.）是舊版遊戲做的，新遊戲不再唸。</p>
+<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。聲音：Bella（ElevenLabs 內建聲音，標示為標準美式口音）；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。新版遊戲用到的是六句誇獎（Good job! 等）、We are friends!、刮刮卡的點數，和少數單字（welcome、drink、rest 等）；表中其他的單字和句子（例如 It's a tiger.、I like red.）是舊版遊戲做的，新遊戲不再唸。</p>
 <p class="note">已做的檢查（都是程式做的）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 六句誇獎用語音辨識程式檢查過；③ 舊版的 69 句，自動語音辨識程式（CMU PocketSphinx）有 68 句辨識成它自己那一句，沒通過的 I like red. 另用母音量測確認。<b>AI 這一邊沒有人用耳朵聽過，請老師活動前至少把六句誇獎各聽一次。</b></p>
 <p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
 <table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>

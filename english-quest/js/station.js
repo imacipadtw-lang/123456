@@ -23,7 +23,7 @@
   $("#scanTitle").textContent = G.title;
   $("#scanSub").innerHTML = `Gate ${gate} · ${G.city} ✈ ${G.zh}`;
   $("#scanGenre").textContent = G.genre;
-  $("#passportRef").textContent = "護照對應：" + G.passport;
+  $("#passportRef").textContent = "句子來源：《校園生活英語》" + G.passport;
   $("#scanOllie").innerHTML = TC.ollieSVG();
   // floating 3D items from this gate's content drift behind the attract screen
   // each game lists its own drifting pictures (game.startArt); these generic ones are the fallback
@@ -42,7 +42,9 @@
   $("#scan").append(TC.badgeEl(gate, "scan-badge bob"));
   const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.remove();
   // a big 3D 土城 emblem stays in the top-left corner the whole time (clear on video)
-  document.body.append(TC.badgeEl(gate, "big-emb"));
+  const bigEmb = TC.badgeEl(gate, "big-emb"); bigEmb.title = "回首頁 Home"; bigEmb.onclick = () => { TC.ac(); TC.goHome(running); };
+  document.body.append(bigEmb);
+  { const sb = document.querySelector("#scan .scan-badge"); if (sb) { sb.title = "回首頁 Home"; sb.onclick = () => TC.goHome(false); } const gb = document.querySelector(".gate-badge"); if (gb) { gb.style.cursor = "pointer"; gb.title = "回首頁 Home"; gb.onclick = () => TC.goHome(running); } }
   TC.setAIPill();
 
   let running = false, resultOpen = null;
@@ -86,7 +88,7 @@
     if (running) return;
     TC.ac(); running = true; TC.sfx("whoosh");
     $("#startBtn").classList.add("pressed");
-    await TC.Mic.init();
+    if (TC.cfg.listen) await TC.Mic.init(); // the microphone is only opened when the teacher switched listening on
     $("#scan").classList.add("hidden"); $("#startBtn").classList.remove("pressed");
     document.body.classList.add("playing");
     await playKid(newPlayer());
@@ -135,13 +137,16 @@
     try { res = await game.play(api); } catch (e) { console.error(e); TC.toast("遊戲發生錯誤，老師可按 Esc 重來"); }
     TC.hideTalk();
     if (api.aborted) return;
-    // 🎉 everybody (classmates + parents) says the child's final line together
+    // 🎉 everybody (classmates + parents) says the child's final line together — no microphone is used:
+    //    the bar fills by itself in a few seconds, and every tap on the screen launches fireworks and fills it faster
     if (TC.lastSay && !TC.cfg.rounds) {
-      const bar = h("i"), ch = h("div", { class: "chorus" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2", style: `font-size:${TC.lastSay.length > 24 ? 6.4 : TC.lastSay.length > 14 ? 8 : 10}rem` }, TC.lastSay), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:1.8rem;color:var(--ink2)" }, "越大聲，煙火越多！"));
+      const bar = h("i"), ch = h("div", { class: "chorus" }, h("div", { class: "c1 zh" }, "🎉 Everybody! 大家一起說！"), h("div", { class: "c2", style: `font-size:${TC.lastSay.length > 24 ? 6.4 : TC.lastSay.length > 14 ? 8 : 10}rem` }, TC.lastSay), h("div", { class: "bar" }, bar), h("div", { class: "zh", style: "font-size:2.4rem;font-weight:700;color:#ffe58a" }, "👆 點螢幕放煙火！ Tap for fireworks!"));
       document.body.append(ch); TC.sfx("levelup");
-      let peak = 0; const t0 = Date.now();
-      await new Promise((res) => { (function loop() { const l = TC.Mic.level || 0; peak = Math.max(peak, l); bar.style.width = Math.min(100, peak * 140) + "%"; if (l > 0.35 && Math.random() < 0.15) TC.confetti(30); if (Date.now() - t0 < 4500 && !api.aborted) requestAnimationFrame(loop); else res(); })(); });
-      TC.confetti(peak > 0.5 ? 260 : 120); TC.sfx(peak > 0.5 ? "fanfare" : "ding"); await sleep(700); ch.remove();
+      let fill = 0, taps = 0; const t0 = Date.now(), COL = ["#ffc83d", "#ff5fa2", "#2ee6b6", "#4cc9ff", "#9b6bff"];
+      const boom = (e) => { taps++; fill = Math.min(100, fill + 9); TC.sfx(taps % 3 ? "pop" : "sparkle"); TC.confetti(26, [COL[taps % COL.length], "#fff"]); if (e && e.clientX != null) TC.floatText("✨", (e.clientX / innerWidth) * 100, (e.clientY / innerHeight) * 100, COL[taps % COL.length]); };
+      ch.addEventListener("pointerdown", boom);
+      await new Promise((res) => { (function loop() { fill = Math.min(100, fill + 0.33); bar.style.width = fill + "%"; if ((fill < 100 && Date.now() - t0 < 6000) && !api.aborted) requestAnimationFrame(loop); else res(); })(); });
+      TC.confetti(taps > 4 ? 260 : 140); TC.sfx("fanfare"); await sleep(800); ch.remove();
       if (api.aborted) return;
     }
     // 🧩 Sentence Builder with a passport sentence (skipped in quick mode)
@@ -151,9 +156,6 @@
       if (pz) await TC.sentencePuzzle(pz.s, pz.zh, pz.keys, api);
       if (api.aborted) return;
     }
-    // 🛂 Booklet Hunt: open the 《校園生活英語》 booklet at the page/line on screen and read it
-    await TC.bookletHunt(gate, api);
-    if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
     const pts = TC.pointsFor(kid.id, gate);
     await TC.scratchCard({ id: kid.id, name: "", gate, city: G.city, points: pts });
@@ -175,7 +177,7 @@
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
       h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母寫在護照第 ${gate} 格，老師會發 ${res.points || 0} 點貼紙給你！`),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, `把字母寫在闖關小卡第 ${gate} 格，老師會發 ${res.points || 0} 點貼紙給你！`),
       h("div", { class: "res-actions" }, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);
@@ -199,11 +201,11 @@
   $("#helpBtn").onclick = () => {
     if (document.querySelector(".settings")) return; // one teacher dialog at a time
     const ICON = { hello: "👋 ", q: "", extra: "＋ ", last: "★ " };
-    const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "護照 " + r.no : ""].filter(Boolean).join(" · ")]);
+    const rows = TC_SCRIPT(gate).map((r) => [ICON[r.kind] + r.t, r.say, r.word, [r.zh, r.no ? "校園生活英語 " + r.no : ""].filter(Boolean).join(" · ")]);
     const card = h("div", { class: "card" }, h("h2", {}, `📋 Gate ${gate} ${G.title} · 老師台詞`),
-      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」、「護照尋寶」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
+      h("p", { class: "zh" }, "主持人問左欄（電腦問模式由歐力唸），孩子只要說出「答案字」就過關（初級畫面會直接顯示答案字，中級是填空）。遊戲後有「句子拼拼看」和刮刮卡。Enter＝說得好 · H＝示範 · N＝跳過 · Esc＝回到開始畫面"),
       h("table", { style: "width:100%;border-collapse:collapse;font-size:1.3rem" },
-        h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文／護照頁-句"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
+        h("tr", {}, ...["主持人問／指令", "畫面上的句子", "答案字（說這個字）", "中文／出處（頁-句）"].map((t) => h("th", { style: "text-align:left;border-bottom:2px solid var(--line);padding:.4rem" }, t))),
         ...rows.map((r) => h("tr", {}, ...r.map((t, i) => h("td", { style: "border-bottom:1px solid var(--line);padding:.4rem;vertical-align:top" + (i === 2 ? ";font-weight:700;color:#ffd23d" : "") }, t))))),
       h("div", { class: "row" }, h("button", { class: "save", onclick: () => wrap.remove() }, "關閉 Close")));
     const wrap = h("div", { class: "settings", onclick: (e) => { if (e.target === wrap) wrap.remove(); } }, card);
@@ -218,7 +220,7 @@
     if (burst || e.repeat) return;
     const k = e.key;
     // Esc first closes a teacher dialog (settings, script card, name picker) if one is open
-    if (k === "Escape") { const dlg = document.querySelectorAll(".settings,.picker"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
+    if (k === "Escape") { const dlg = document.querySelectorAll(".settings,.picker,.home-ask"); if (dlg.length) { dlg.forEach((d) => d.remove()); return; } }
     if (k === "Enter" || k === " ") {
       e.preventDefault();
       if (resultOpen) resultOpen();

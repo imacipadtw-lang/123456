@@ -17,10 +17,9 @@ for (let g = 1; g <= 6; g++) {
   (G.actions || []).forEach((x) => { add(x.say); add(x.w); }); if (G.quiet) { add(G.quiet.say); add(G.wake.say); }
   (G.words || []).forEach((x) => add(x.w)); (G.lines || []).forEach((x) => { add(x.say); add(x.w); });
   (G.pages || []).forEach((x) => { add(x.t); add(x.say); add(x.w); }); if (G.ending) add(G.ending.say);
-  const H = C.hunt[g]; add(H.text); add(H.w); add(`Page ${H.page.replace(/[()]/g, "")}, number ${H.line}`);
   (C.sentences[g] || []).forEach((x) => add(x.s));
 }
-add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Open your passport"); add("Welcome"); add("Go");
+add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Welcome"); add("Go");
 // literal strings in the code
 for (const f of ["js/station.js", "js/control.js", "js/core.js", "js/puzzles.js", "js/scratch.js", ...fs.readdirSync(path.join(R, "js/games")).filter((x) => x.endsWith(".js")).map((x) => "js/games/" + x)]) {
   const src = fs.readFileSync(path.join(R, f), "utf8"); let m; const re = /TC\.(?:speak|teacherLine)\(\s*(["'])((?:(?!\1).)*)\1/g;

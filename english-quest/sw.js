@@ -1,10 +1,10 @@
 /* Offline cache for event day: after the first visit every page, script, sound and font
    is served from the cache (and refreshed in the background when online). */
-const CACHE = "tces-english-day-v15";
+const CACHE = "tces-english-day-v16";
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
-    const core = ["./", "index.html", "station.html", "control.html", "opening.html", "teacher-cards.html", "guide.html", "credits.html", "links.html", "js/links.js", "js/scratch.js", "assets/img/tucheng-emblem.svg", "assets/img/tucheng-emblem-192.png",
+    const core = ["./", "index.html", "station.html", "control.html", "opening.html", "teacher-cards.html", "quest-card.html", "guide.html", "credits.html", "links.html", "js/links.js", "js/scratch.js", "assets/img/tucheng-emblem.svg", "assets/img/tucheng-emblem-192.png",
       "css/core.css", "js/content.js", "js/core.js", "js/art.js", "js/emblem.js", "js/art-body.js", "js/puzzles.js", "js/station.js", "js/control.js",
       "js/games/g1-rescue.js", "js/games/g2-talk.js", "js/games/g3-tpr.js", "js/games/g4-monster.js", "js/games/g5-chant.js", "js/games/g6-story.js",
       "assets/audio/credits.js", "assets/audio/ai-sentences.js", "assets/audio/el-words.js", "fonts/fredoka-latin-400-normal.woff2", "fonts/fredoka-latin-600-normal.woff2", "fonts/fredoka-latin-700-normal.woff2"];

@@ -20,7 +20,8 @@
   .flyin{animation:fly 1.2s cubic-bezier(.2,1.2,.4,1) both}
   @keyframes fly{from{transform:translate(-80vw,30vh) rotate(-30deg)}}
   .gate{display:flex;flex-direction:column;align-items:center;gap:.6rem;font-size:2.4rem;font-weight:700}
-  .gate img{width:15vh;height:15vh;filter:drop-shadow(0 1vh 1vh rgba(0,0,0,.4))}
+  .gate img,.gate .gbadge{width:15vh;height:17vh;filter:drop-shadow(0 1vh 1vh rgba(0,0,0,.4))}
+  .gate .gbadge svg{width:100%;height:100%}
   .gate b{display:grid;place-items:center;width:5rem;height:5rem;border-radius:1.4rem;color:#0a1633;font-size:2.6rem}
   .card{background:#fff;color:#0a1633;border-radius:2rem;padding:1.6rem 2.4rem;font-size:3rem;font-weight:700;box-shadow:0 1.6rem 3rem rgba(0,0,0,.4)}
   .arrow{font-size:6rem;color:var(--sun)}
@@ -48,19 +49,20 @@
 <script src="assets/audio/ai-sentences.js"></script>
 <script src="js/core.js"></script>
 <script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
 <script>
   const { h, sleep } = TC;
-  const G = TC_CONTENT.gates, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
+  const G = TC_CONTENT.gates;
   const S = [
     { say: "Hello! Welcome!", build: () => [h("div", { class: "ollie-wrap flyin", html: TC.ollieSVG("cheer") }), h("div", { class: "en" }, "Hello, Tucheng! I'm Ollie-Bot!"), h("div", { class: "zh2" }, "哈囉，土城國小！我是機器貓頭鷹歐力！")] },
-    { say: "Passport!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🛂 PASSPORT"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▶ START"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Welcome!")),
-        h("div", { class: "en" }, "Bring your passport to every gate!"), h("div", { class: "zh2" }, "帶著護照到每一關，老師按 START 就開始！")] },
-    { say: "Six! Games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.artImg(EMB[n]), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),
+    { say: "Welcome!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🎫 QUEST CARD"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.3s" }, "▶ START"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.6s" }, "✓ Welcome!")),
+        h("div", { class: "en" }, "Take your quest card to every gate!"), h("div", { class: "zh2" }, "拿著闖關小卡到每一關，老師按 START 就開始！")] },
+    { say: "Six! Games!", build: () => [h("div", { class: "row" }, ...[1, 2, 3, 4, 5, 6].map((n, i) => h("div", { class: "gate pop", style: `animation-delay:${i * 0.18}s` }, TC.badgeEl(n, "gbadge"), h("b", { style: `background:${G[n].color}` }, n), G[n].city))),
         h("div", { class: "en" }, "6 gates · 6 cities · 6 games!"), h("div", { class: "zh2" }, "六關、六座城市、六個遊戲！")] },
-    { say: "Listen!", build: () => { const cv = h("canvas", { class: "wave", width: 1200, height: 200 }); waveDemo(cv);
-        return [h("div", { class: "row" }, h("div", { class: "ollie-wrap", html: TC.ollieSVG("talk") }), cv), h("div", { class: "badge pop", style: "animation-delay:1.2s" }, "🤖 AI 聽懂了！ “restroom”"), h("div", { class: "en" }, "Talk with your teacher. AI is listening!"), h("div", { class: "zh2" }, "用英文和老師對話，AI 正在聽！")]; } },
-    { say: "Passport! Go!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "(4)-7"), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:.4s" }, "May I go to the restroom?"), h("div", { class: "arrow" }, "➜"), h("div", { class: "slot on", style: "animation-delay:.8s" }, "F")),
-        h("div", { class: "en" }, "Open your passport!"), h("div", { class: "zh2" }, "護照尋寶：翻到畫面上的頁數，找到那一句念出來，過關得到秘密字母！")] },
+    { say: "Listen!", build: () => [h("div", { class: "row" }, h("div", { class: "ollie-wrap", html: TC.ollieSVG("talk") }), h("div", { class: "card pop", style: "animation-delay:.5s" }, "May I go to the ", h("b", { style: "background:#ffe58a;border-radius:.8rem;padding:0 .8rem" }, "restroom"), "?"), h("div", { class: "arrow" }, "➜"), h("div", { class: "badge pop", style: "animation-delay:1.1s" }, "✓ Good job!")),
+        h("div", { class: "en" }, "Listen, look and say one word!"), h("div", { class: "zh2" }, "聽歐力問、看圖片，說出一個英文字，老師按 ✓ 就過關！")] },
+    { say: "Ten! Twenty! Thirty!", build: () => [h("div", { class: "row" }, h("div", { class: "card pop" }, "🎟"), h("div", { class: "arrow" }, "➜"), ...[10, 20, 30].map((n, i) => h("div", { class: "slot on", style: `animation-delay:${0.4 + i * 0.3}s;width:auto;height:10rem;font-size:6.4rem;padding:0 2.4rem` }, String(n))), h("div", { class: "arrow" }, "➜"), h("div", { class: "card pop", style: "animation-delay:1.4s" }, "⭐ STICKER")),
+        h("div", { class: "en" }, "Scratch your card: 10, 20 or 30 points!"), h("div", { class: "zh2" }, "過關刮刮卡：10、20 或 30 點，老師發點數貼紙，貼在闖關小卡上！")] },
     { say: "Six! Letters!", build: () => { const sl = "??????".split("").map(() => h("div", { class: "slot" }, "?")); setTimeout(async () => { for (let i = 0; i < 6; i++) { await sleep(450); sl[i].textContent = "FRIEND"[i]; sl[i].classList.add("on"); TC.sfx("coin"); } }, 900);
         return [h("div", { class: "slots" }, ...sl), h("div", { class: "en" }, "Crack the code at the Final Gate!"), h("div", { class: "zh2" }, "集滿六個字母，到終點登機門解開密碼！")]; } },
     { say: "Ready? Three, two, one. Go!", build: () => { const c = h("div", { class: "count" }, "3"); setTimeout(async () => { for (const t of ["3", "2", "1", "GO!"]) { c.textContent = t; c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop"); TC.sfx(t === "GO!" ? "fanfare" : "tick"); await sleep(900); } TC.confetti(300); }, 1800);
