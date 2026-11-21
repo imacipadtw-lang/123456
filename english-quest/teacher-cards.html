@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>Gate Host Cards</title>
+<link rel="stylesheet" href="css/core.css">
+<style>
+  html{font-size:16px} html,body{overflow:auto;height:auto}
+  body{background:#e9eefc;color:#14213d;user-select:text;-webkit-user-select:text;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",Fredoka,sans-serif}
+  .bar{max-width:210mm;margin:16px auto;display:flex;gap:10px;align-items:center}
+  .bar button{background:#152a63;color:#fff;border-radius:10px;padding:10px 18px;font-size:16px;font-weight:700}
+  .page{width:210mm;height:297mm;overflow:hidden;margin:0 auto 10mm;background:#fff;padding:10mm 12mm;box-shadow:0 4px 20px rgba(0,0,0,.15);position:relative;break-after:page}
+  .hd{display:flex;align-items:center;gap:5mm;border-bottom:1.2mm solid var(--c);padding-bottom:4mm}
+  .hd .n{width:20mm;height:20mm;border-radius:5mm;background:var(--c);display:grid;place-items:center;font:700 13mm Fredoka,sans-serif;color:#0a1633}
+  .hd h1{margin:0;font:700 9mm Fredoka,sans-serif}
+  .hd .s{font-size:4.2mm;color:#445}
+  .hd img{width:24mm;height:24mm;margin-left:auto}
+  .hd .bdg{width:26mm;height:30mm;margin-left:auto;flex:none;line-height:0}.hd .bdg svg{width:100%;height:100%;overflow:visible}
+  .hd .sch{font-weight:700;color:#152a63;display:flex;align-items:center;gap:1.5mm;margin-top:1mm}.hd .sch img{width:7mm;height:7mm;margin:0}
+  h2{font-size:4.3mm;margin:2.6mm 0 1.3mm;color:#152a63}
+  ol,ul{margin:0;padding-left:6mm;font-size:3.4mm;line-height:1.34}
+  table{width:100%;border-collapse:collapse;font-size:3.6mm}
+  th,td{border:.3mm solid #c9d3ef;padding:1.4mm 2mm;text-align:left;vertical-align:top}
+  th{background:#152a63;color:#fff}
+  td.en{font-family:Fredoka,sans-serif;font-weight:600}
+  table.compact{font-size:2.9mm} table.compact th,table.compact td{padding:.6mm 1.4mm}
+  table.xs{font-size:2.6mm} table.xs th,table.xs td{padding:.3mm 1.2mm}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+  .box{border:.4mm solid #c9d3ef;border-radius:3mm;padding:2.1mm 3.2mm;font-size:3.25mm;line-height:1.36}
+  .url code{font-size:3.3mm;word-break:break-all}
+  .kbd{display:inline-block;border:.3mm solid #889;border-radius:1mm;padding:0 1.5mm;font-family:Fredoka,sans-serif;font-weight:700;background:#f3f5fb}
+  @media print{body{background:#fff}.bar{display:none}.page{box-shadow:none;margin:0}@page{size:A4;margin:0}}
+</style>
+</head>
+<body>
+<div class="bar"><button onclick="print()">🖨 列印全部（6 張 A4）</button><span>每間教室貼一張在電視旁。內容由遊戲內容自動產生，永遠和遊戲一致。</span></div>
+<div id="pages"></div>
+<script src="js/content.js"></script>
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
+<script src="js/art-body.js"></script>
+<script src="js/links.js"></script>
+<script>
+  const C = TC_CONTENT, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const cap = (w) => w[0].toUpperCase() + w.slice(1);
+  const TOUCH = { rescue: "畫面是教室裡的狀況（遲到、想上廁所、口渴…），孩子說出關鍵字，歐力就得救了。", talk: "歐力是脫口秀主持人，孩子是來賓，一問一答；答完觀眾（家長）一起拍手。", tpr: "低年級：歐力做動作，孩子跟著做，不用開口。中、高年級：孩子用英文下指令，歐力照做。最後「午休」，再突然 Wake up!", monster: "怪獸只吃某個開頭音的東西，孩子點對的圖片餵牠，再說出是什麼。", chant: "跟著節奏唸教室口令、做動作，孩子點鼓墊打拍子並說出每句最後一個字。", story: "立體故事書一頁一頁翻，孩子說出每頁缺的那個字，故事才會繼續。" };
+  const out = document.getElementById("pages");
+  for (let g = 1; g <= 6; g++) {
+    const G = C.gates[g], gr = C.greetings[C.greetingOrder[g]], r = TC_SCRIPT(g).filter((x) => x.kind !== "hello"), MARK = { q: "", extra: "＋ ", last: "★ " };
+    const pg = document.createElement("div"); pg.className = "page"; pg.style.setProperty("--c", G.color);
+    pg.innerHTML = `<div class="hd"><div class="n">${g}</div><div><h1>${esc(G.title)} · ${esc(G.zh)}</h1><div class="s">Gate ${g} · ${esc(G.city)} · ${esc(G.genre)}</div><div class="s sch"><img src="assets/img/tucheng-emblem.svg" alt="">南投縣草屯鎮土城國民小學 · 運動會英語日</div></div><div class="bdg">${TC.badgeSVG(g)}</div></div>
+      <div class="grid2" style="margin-top:4mm">
+        <div class="box"><b>開機</b><br>1. Chrome／Edge 開主網址，按 F11 全螢幕<br>2. 不用麥克風：孩子說完，老師按 ✓<br>3. 年級在首頁選好再進這一關；按 START 玩一回合（問題由歐力用語音問）<br>4. 關閉螢幕保護、音量調大</div>
+        <div class="box"><b>老師按鍵</b><br><span class="kbd">Enter</span>/<span class="kbd">空白</span> START／說得好 ✓（孩子說完就按）／DONE<br><span class="kbd">H</span> 🔊 聽示範　<span class="kbd">N</span> ⏭ 跳過　<span class="kbd">Esc</span> 回到開始畫面<br>📋 本關台詞　⚙ 設定<br>換年級：按左上角校徽回首頁重選</div>
+      </div>
+      <div class="box url" style="margin-top:3mm"><b>主網址</b>（GitHub）<code>${esc(TC_LINKS.gate(g).github)}</code><br><b>備用網址</b>（Claude，需登入老師帳號；主網址打不開時用）<code>${esc(TC_LINKS.gate(g).claude)}</code></div>
+      <h2>每位孩子的流程（估計約 3–4 分鐘；⚙ 快速模式約 2 分鐘）</h2>
+      <ol><li>年級在首頁選（低年級 1–2／中年級 3–4／高年級 5–6，電視會記住）→ 一次一位，按 START（Enter）</li><li>👋 暖身：歐力說 <b>${esc(gr.teacher)}</b> → 孩子說 <b>${esc(gr.say)}</b>（揮手打招呼）</li>
+      <li>🎮 遊戲回合：${esc(TOUCH[G.key])} <b>歐力只問，孩子自己先念</b>（低年級：點大小寫字母＋跟立體歐力做動作；中年級：整句、不填空；高年級：先點字填空再念）；按 🔊 歐力才示範。</li><li>👏 答對時歐力會誇獎（Good job! 等護照 (5) 的句子）；最後全場拍手</li>
+      <li>🧩 句子拼拼看：孩子點單字卡排好本關的一句英文，再唸出來</li><li>🎁 神秘禮物盒：孩子點一個禮物盒打開，念出裡面的句子 → 畫面給本關字母（<b>${C.secret[g - 1]}</b>），孩子記住即可（終點會直接給六個字母）。孩子不用帶護照。</li>
+      <li>🎟 刮刮卡：孩子用手指刮開銀色區塊，露出 10／20／30 點 → 老師發同樣點數的貼紙，孩子貼在闖關小卡第 <b>${g}</b> 格（一個年級六關、六張貼紙；六關完成換點心＋飲料，總分超過 100 點再多 1 份小點心）</li>
+      <li>全息印章＋秘密字母 → 按 DONE ✓（Enter）回到 START，換下一位</li></ol>
+      <h2>台詞（歐力問 → 孩子自己念。關鍵字 = 高年級的空格；★ = 最後一題，＋ = 神秘禮物盒）</h2>
+      <table class="${r.length > 7 ? "compact xs" : "compact"}"><tr><th style="width:27%">主持人／指令</th><th style="width:30%">畫面上的句子</th><th style="width:20%">關鍵字</th><th>中文</th></tr>
+      ${r.map((x) => `<tr><td>${MARK[x.kind]}${esc(x.t)}</td><td class="en">${esc(x.say)}</td><td class="en"><b>${esc(x.word.split(" ").join(" / "))}</b></td><td>${esc(x.zh)}　<span class="en" style="color:#667">${esc(x.no ? "（" + x.no + "）" : "")}</span></td></tr>`).join("")}</table>
+      <h2>狀況處理</h2>
+      <ul><li>孩子說完 → 老師按 ✓（Enter）；沒網路也一樣玩</li><li>要重來 → Esc，再按 START</li><li>畫面卡住 → 重新整理（貼紙在闖關小卡上，不會遺失）</li><li>孩子不會念 → 按 🔊 聽示範，再跟著說；低年級只要點字母、跟著歐力做動作；立體歐力可以用手指左右滑，轉 360 度</li></ul>`;
+    out.append(pg);
+  }
+</script>
+</body>
+</html>

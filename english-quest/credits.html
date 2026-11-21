@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>Audio Credits</title>
+<link rel="stylesheet" href="css/core.css">
+<style>
+  html{font-size:16px} html,body{overflow:auto;height:auto}
+  body{max-width:1100px;margin:0 auto;padding:24px 16px 60px;user-select:text;-webkit-user-select:text;line-height:1.6}
+  h1{margin:0 0 6px} h2{margin-top:32px;color:var(--sun)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--ink2);position:sticky;top:0;background:var(--bg1)}
+  a{color:var(--sky)}
+  button.play{background:#2b3f7a;border-radius:8px;padding:2px 10px}
+  .note{color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="tc-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:inherit;letter-spacing:.06em;"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽" style="width:44px;height:44px;flex:none">南投縣草屯鎮土城國民小學</div>
+<h1>🔊 發音與素材來源 Credits</h1>
+<p class="note"><b>聲音的現況（《校園生活英語》版）</b>：六關和終點登機門裡，歐力說的每一句（問題、指令、示範的關鍵字和整句、誇獎、點數）都有 <b>ElevenLabs AI 語音</b>檔（聲音 Bella - Professional, Bright, Warm，美式口音；是 AI 語音，不是真人錄音），列在最下面的 AI 語音表；沒有網路也聽得到。<b>目前的例外：</b>第 3 關的關鍵字 stand、sit、raise 還沒有 ElevenLabs 單字檔，示範時這三個字播的是下表的真人錄音（整句 Stand up!、Sit down!、Raise your hand! 是 ElevenLabs）。</p>
+<p class="note">下表是 Wikimedia Commons 的<b>真人錄音</b>（多數是 Commons「En-us-單字」系列，由 Dvortygirl 等志工錄製；另有 7 個 Lingua Libre 錄音），依原授權使用。我們只把檔案轉成 MP3、去掉前後靜音並統一音量。表中大多是舊版遊戲（顏色、天氣、動物等）的單字。這些錄音沒有更動，留著當作設定：單字預設用 ElevenLabs 的聲音，老師可在 ⚙「單字的聲音」改成「Wikimedia 真人錄音」（只有這裡有錄音的字會改變；重新整理頁面後會回到 ElevenLabs）。預設會播到的真人錄音只有上面說的 stand、sit、raise 三個字。</p>
+<p class="note"><b>電視不把單字錄音接成句子。</b>完整的句子一定一次唸完，播放整句的 AI 語音檔。老師可在 ⚙「整句怎麼唸」改成「只唸單字，整句由老師親口示範」。</p>
+<div id="sum" class="note"></div>
+<p class="note">口音：表中 <b>windy</b> 是澳洲英語錄音，<b>rainy</b> 和 <b>pink</b> 是英式英語錄音，其餘都標示為美式英語（見下表「口音」欄）。這三個字新遊戲不會唸。</p>
+<p class="note">已做的正確性檢查（都是程式做的）：① 每個檔案的 SHA-1 檢查碼都和 Wikimedia Commons 公布的一致；② 每個檔案都是該單字自己的英文 Wiktionary 條目所連結的錄音，或是慣用檔名 En-us-單字.ogg；③ 用自動語音辨識程式（CMU PocketSphinx）把全部 203 個檔案聽過一遍，189 個辨識出來就是該單字，另外 14 個機器聽成別的字。</p>
+<p class="note"><b>請老師活動前親耳聽一次：</b>製作這套程式的 AI 這一邊，沒有任何人用耳朵聽過這些錄音，也沒有聽過電腦語音。請老師在每台電視把自己那一關玩一次，聽聽看發音是否正確。</p>
+<table><thead><tr><th>字</th><th>聽</th><th>檔案 Commons file</th><th>錄音者／作者</th><th>口音</th><th>授權 Licence</th><th>錄音日期</th><th>下載日期</th></tr></thead><tbody id="rows"></tbody></table>
+
+<h2 id="ai">ElevenLabs 語音：單字與整句（AI，不是真人錄音）</h2>
+<p class="note">下面 <span id="aiN"></span> 個單字和句子是用 ElevenLabs 文字轉語音產生的 <b>AI 語音</b>，不是真人錄音。兩種聲音，男女各一：女聲 Bella - Professional, Bright, Warm、男聲 Liam - Energetic, Social Media Creator（都是 ElevenLabs 內建聲音，標示為美式口音）；每一句兩種聲音各錄一份。單數關（1、3、5）歐力的問題用女聲、示範用男聲，雙數關（2、4、6）相反，誇獎隨機，所以整場活動男女聲各半；模型：eleven_multilingual_v2；學校的 ElevenLabs Starter（付費）方案。每種聲音單字 <span id="elN"></span> 個、句子 <span id="sentN"></span> 個（男聲 148 個是 2026-11-21 錄的）。2026-11-21 為新的句子做了 23 個新音檔，並刪掉已經沒有任何畫面會用的舊音檔（例如舊版遊戲的 It's a tiger.、I like red.；<code>node tools/prune_audio.js</code>）；<code>node tools/need_audio.js</code> 回報缺 0 個。學校的 ElevenLabs 額度這個月用了大約 6,324／30,026 字元（2026-12-20 重新計算）。</p>
+<p class="note">已做的檢查（都是程式做的，2026-11-21；程式有它的限制，不能證明發音正確）：① 每個檔案的 SHA-1 記在 assets/audio/el-words.json 和 assets/audio/ai-sentences.json；② 用語音辨識程式（CMU PocketSphinx）檢查：句子 80 個裡 78 個辨識成它自己那一句；沒通過的是 What is it?（程式聽成 what is；錄了三個版本結果都一樣，是辨識程式的限制）和 Bow!（只有一個很短的字）。單字 68 個裡 67 個可以檢查，61 個辨識正確；要再確認的是 done、eat、in、please、six、yes（yes 被聽成 yeah）；lunchbox 不在辨識程式的字典裡，無法用程式檢查。③ Bow! 有兩種唸法，這裡要和 now 押韻（敬禮），不是和 go 押韻：用同一個辨識程式做最小對比測試，它替這個音檔選的是 now 的母音；同一個測試對同一個聲音的 8 個參考字判對了 7 個，所以是不錯的證據，但不是證明。男聲（Liam）同樣的檢查：句子 80 個裡 79 個通過，沒通過的是 What do we do?（他說得很快，程式聽不出來；放慢到 85% 就聽得出來）；單字 67 個可檢查的裡 65 個通過，要再確認的是 fun、light；Bow! 用同樣的對比測試也是 now 的母音。<b>AI 這一邊沒有人用耳朵聽過；請老師活動前把每一句都聽一遍，特別是女聲的 Bow!、What is it?、done、eat、in、please、six、yes，和男聲的 What do we do?、light、fun。</b></p>
+<p class="note">使用條款：ElevenLabs 官方網站從這裡連不上，無法替您查證 Starter 方案的商用與標示規定；請以 ElevenLabs 帳號頁面上的條款為準。本頁仍標明這些是 ElevenLabs AI 語音。</p>
+<table><thead><tr><th>句子</th><th>聽</th><th>聲音</th><th>模型</th><th>產生時間</th><th>下載時間</th></tr></thead><tbody id="airows"></tbody></table>
+
+<h2>其他素材</h2>
+<ul>
+  <li>遊戲裡的所有圖案（教室狀況的圖卡、脫口秀攝影棚、做動作的大歐力、音節怪獸和 14 張護照單字圖、DJ 舞台和跳舞的小朋友、立體故事書、星星、獎盃與機器貓頭鷹歐力），都是為本活動以程式原創繪製（js/art.js、js/art-body.js、js/games/ 裡的各關遊戲檔），沒有使用任何第三方圖庫或遊戲角色。每個圖案上的「土城」小徽章也是原創繪製。</li>
+  <li>六關各自的可愛校徽造型（依關卡順序：金牌、DJ 耳機、像素方塊圈、蛋殼小雞、賽車、禮物盒）：中間都是完整、未修改的學校校徽，外框裝飾為原創繪製（js/emblem.js）。</li>
+  <li>校徽：依學校提供的校徽圖檔（土城校徽.jpg）逐色描繪成向量圖，圖形與文字不變，只加上立體金邊與光影（assets/img/tucheng-emblem.svg；描繪程式 tools/emblem_trace.py）。</li>
+  <li>字型：<a href="https://fonts.google.com/specimen/Fredoka">Fredoka</a>（SIL Open Font License 1.1，見 fonts/Fredoka-OFL.txt）。</li>
+  <li>機器貓頭鷹歐力（Ollie-Bot）的圖形是依《土城國小英語護照》裡的角色描述重新繪製的簡化向量圖；可換成護照原圖。</li>
+  <li>遊戲的句子全部來自學校的《校園生活英語》護照第 (1)–(9) 頁（© 南投縣草屯鎮土城國小）。</li>
+  <li>立體校園模型（<code>js/campus3d.js</code>）是依土城國小校園實際的配置，用程式自己建的原創模型；製作時參考了 YouTube 上公開的空拍影片「【空拍】草屯土城國小」（作者：林小忠）來了解校園配置，沒有使用該影片的任何畫面、截圖或素材。</li>
+  <li>音效與節奏（包括第 5 關的節拍）全部由程式即時合成，沒有使用外部音檔。</li>
+</ul>
+<script src="assets/audio/credits.js"></script>
+<script src="assets/audio/el-words.js"></script>
+<script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/m-words.js"></script>
+<script src="assets/audio/m-sentences.js"></script>
+<script>
+  const A = window.TC_AUDIO || {}, rows = document.getElementById("rows");
+  const words = Object.keys(A).sort();
+  document.getElementById("sum").textContent = words.length ? `共 ${words.length} 個真人發音檔。` : "目前尚未放入真人發音檔（所有語音暫時使用標示清楚的電腦語音）。";
+  const esc = (s) => String(s || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  words.forEach((w) => {
+    const a = A[w];
+    rows.insertAdjacentHTML("beforeend", `<tr><td><b>${esc(w)}</b></td><td><button class="play" data-f="${esc(a.file)}">▶</button></td>
+      <td><a href="${esc(a.page)}" target="_blank" rel="noopener">${esc(a.source)}</a></td><td>${esc(a.speaker)}</td><td>${esc(a.accent || "")}</td>
+      <td>${a.licenceUrl ? `<a href="${esc(a.licenceUrl)}" target="_blank" rel="noopener">${esc(a.licence)}</a>` : esc(a.licence)}</td><td>${esc(a.recorded)}</td><td>${esc(a.downloaded)}</td></tr>`);
+  });
+  const AI = Object.assign({}, window.TC_EL_AUDIO || {}, window.TC_AI_AUDIO || {}), airows = document.getElementById("airows");
+  // the second voice (a man's voice): the same lines again, listed after the first voice
+  const AI2 = Object.assign({}, window.TC_M_EL || {}, window.TC_M_AI || {});
+  for (const [k, v] of Object.entries(AI2)) AI["m:" + k] = v;
+  document.getElementById("aiN").textContent = Object.keys(AI).length;
+  document.getElementById("elN").textContent = Object.keys(window.TC_EL_AUDIO || {}).length; document.getElementById("sentN").textContent = Object.keys(window.TC_AI_AUDIO || {}).length;
+  Object.values(AI).forEach((a) => airows.insertAdjacentHTML("beforeend", `<tr><td><b>${esc(a.text)}</b></td><td><button class="play" data-f="${esc(a.file)}">▶</button></td><td>${esc(a.voice)}</td><td>${esc(a.model)}</td><td>${esc(a.generated)}</td><td>${esc(a.downloaded)}</td></tr>`));
+  [rows, airows].forEach((t) => t.addEventListener("click", (e) => { const f = e.target.dataset.f; if (f) new Audio("assets/audio/" + f).play(); }));
+</script>
+</body>
+</html>

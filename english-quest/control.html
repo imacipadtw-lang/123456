@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>Final Gate</title>
+<link rel="stylesheet" href="css/core.css">
+<style>
+  :root{--gate:#ffc83d}
+  #stage{background:radial-gradient(120% 90% at 50% 0%,#1d3a86,#0a1633)}
+  .tabs{display:flex;gap:.6rem}
+  .tabs button{background:var(--panel);border:2px solid var(--line);border-radius:1.2rem;padding:.6rem 1.2rem;font-size:1.5rem;font-weight:600}
+  .tabs button.on{background:var(--sun);color:#0a1633}
+  .view{position:absolute;inset:7.5rem 0 0 0}
+  /* route map */
+  .route{position:absolute;left:3%;right:3%;top:2%;height:30%}
+  .route svg{width:100%;height:100%}
+  .stats{position:absolute;left:0;right:0;top:33%;display:flex;justify-content:center;gap:1.4rem}
+  .stat{background:var(--panel);border:2px solid var(--line);border-radius:1.4rem;padding:.8rem 1.8rem;text-align:center;min-width:16rem}
+  .stat b{display:block;font-size:4.4rem;line-height:1;color:var(--sun)}
+  .stat span{font-size:1.4rem;color:var(--ink2)}
+  /* decoder */
+  .dec{position:absolute;left:0;right:0;top:31%;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+  .dec h2{margin:0;font-size:3.6rem}
+  .slots{display:flex;gap:1rem}
+  .slot{width:8rem;height:9.4rem;border-radius:1.2rem;border:.4rem solid var(--sun);background:rgba(255,255,255,.06);display:grid;place-items:center;font-size:6.4rem;font-weight:700;position:relative}
+  .slot small{position:absolute;top:.3rem;left:.6rem;font-size:1.1rem;color:var(--ink2);font-weight:600}
+  .slot.bad{border-color:var(--red);animation:shake .4s}
+  .slot.good{background:var(--sun);color:#0a1633}
+  .keys{display:grid;grid-template-columns:repeat(14,1fr);gap:.5rem;width:min(92vw,110rem)}
+  .keys.six{grid-template-columns:repeat(7,1fr);width:min(92vw,90rem);gap:1.2rem}
+  .keys.six button{font-size:5rem;padding:1.2rem 0;border-radius:1.6rem;background:linear-gradient(180deg,#fff7d6,#ffd96b);color:#0a1633;box-shadow:0 .55rem 0 #e0a21a}
+  .keys.six button.wide{background:#2b3f7a;color:#fff;font-size:3rem;box-shadow:0 .3rem 0 rgba(0,0,0,.35)}
+  .keys button{background:#2b3f7a;border-radius:1rem;font-size:2.2rem;font-weight:700;padding:.55rem 0;box-shadow:0 .3rem 0 rgba(0,0,0,.35)}
+  .keys button:active{transform:translateY(.2rem)}
+  .keys .wide{grid-column:span 2;background:#5a2b4f}
+  body.decoding .stats{display:none}
+  .attract{position:absolute;left:0;right:0;top:54%;text-align:center}
+  .attract h2{font-size:3.8rem;margin:.6rem 0 .6rem}
+  .attract .start3d{display:inline-flex;margin:.4rem auto 0;padding:1.4rem 4.4rem 1.4rem 1.6rem}
+  .attract .start3d b{font-size:7rem}.attract .start3d .ic{width:7.6rem;height:7.6rem;font-size:4rem}.attract .start3d i{font-size:2.6rem}
+  .attract{top:50%!important}
+  /* certificate */
+  .cert{width:min(120rem,94vw,calc((100vh - 14rem) * 1.414));aspect-ratio:1.414;font-size:min(1rem,calc((100vh - 14rem) / 88));background:radial-gradient(120% 90% at 50% 0%,#fffef9,#fff6dc);color:#0a1633;border-radius:1.6em;padding:3.2% 4.4% 2.6%;position:relative;box-shadow:0 2em 6em rgba(0,0,0,.5),inset 0 0 0 .25em #fff3c4;border:1.2em solid #ffc83d;border-image:linear-gradient(135deg,#ffe58a,#f2a900 30%,#ffe9a0 50%,#e59a00 72%,#ffd65a) 1;display:flex;flex-direction:column;align-items:center;text-align:center;animation:zoomIn .7s cubic-bezier(.2,1.4,.4,1)}
+  .cert::before{content:"";position:absolute;inset:1.1em;border:.22em solid #e9b530;border-radius:.6em;pointer-events:none}
+  .cert::after{content:"";position:absolute;inset:1.75em;border:.08em solid #f0cf78;border-radius:.3em;pointer-events:none}
+  .cert .k1{font-size:1.7em;letter-spacing:.18em;color:#5a6aa8;font-weight:700}
+  .cert .cert-emb{position:absolute;left:4.2%;top:6%;width:13em;height:13em;filter:drop-shadow(0 .5em .8em rgba(0,0,0,.25))}
+  .cert .cert-prize{display:flex;align-items:stretch;justify-content:center;gap:1.2em;margin-top:.7em;flex-wrap:nowrap}
+  .cert .cert-pts{display:inline-flex;align-items:center;font-size:2.35em;font-weight:700;background:#fff3c4;border:.12em solid #f0bd3a;border-radius:2em;padding:.1em 1em;white-space:nowrap}
+  .cert .pts-line.set{border-bottom-style:solid;min-width:2.2em;text-align:center}
+  .cert .pz-box{display:flex;align-items:center;gap:.6em;border-radius:1.6em;padding:.3em 1.2em;border:.22em dashed #c9b27a;background:#fffaf0;color:#8a7a55;white-space:nowrap}
+  .cert .pz-box b{font-size:2.9em;line-height:1}
+  .cert .pz-box .zh{font-size:1.9em;font-weight:700}
+  .cert .pz-box.on{border:.22em solid #2aa66a;background:#e9fff3;color:#0d5c37;box-shadow:0 .3em 0 #bfe8d1}
+  .cert .pz-box.off{opacity:.45}
+  .prize-rule{display:flex;flex-wrap:wrap;gap:1rem 1.6rem;justify-content:center;margin:.2rem 0 1.4rem;font-size:2rem;font-weight:700}
+  .prize-rule span{display:inline-flex;align-items:center;gap:.8rem;padding:.5rem 1.6rem;border-radius:2rem;background:rgba(255,255,255,.1);border:2px solid rgba(255,229,138,.55);color:#ffe58a;white-space:nowrap}
+  .prize-rule b{font-size:1.5em;line-height:1}
+  .pts-pick{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;margin-top:.8rem;font-size:1.7rem;font-weight:700;color:#fff}
+  .pts-pick span{margin-right:.6rem}
+  .pts-pick button{font:inherit;font-family:Fredoka,sans-serif;min-width:4.6rem;padding:.3rem .6rem;border-radius:1rem;border:0;cursor:pointer;background:linear-gradient(180deg,#fff,#dfe7ff);color:#0a1633;box-shadow:0 .35rem 0 #8fa2ff;touch-action:manipulation}
+  .pts-pick button.on{background:linear-gradient(180deg,#fff7d6,#ffd23d);box-shadow:0 .35rem 0 #e0a21a}
+  .pts-pick button:active{transform:translateY(.25rem);box-shadow:0 .1rem 0 #8fa2ff}
+  .cert .cert-pts b{font-size:1.5em;color:#d6337a}.cert .cert-pts .zh{font-size:1em}
+  .cert h1{font-size:7.4em;margin:.12em 0 .04em;line-height:1;color:#152a63;text-shadow:0 .05em 0 #fff,0 .09em 0 rgba(242,169,0,.55)}
+  .cert .zh{font-size:2.4em}
+  .cert .sub{font-size:3.4em;font-weight:700;color:#d6337a;letter-spacing:.2em}
+  .cert .k2{font-size:2em;color:#5a6aa8;margin:1.1em 0 0}.cert .k2 .zh{font-size:1em}
+  .cert .nm{font-size:8em;font-weight:700;color:#d6337a;margin:.18em 0 .05em;line-height:1}
+  .cert .nm-line{width:52%;height:1.05em;border-bottom:.06em solid #152a63;margin:0 0 .16em}
+  .cert .pts-line{display:inline-block;width:3.6em;border-bottom:.1em dashed #d6337a;margin:0 .2em}
+  .cert p{font-size:2em;margin:.15em 0}
+  .cert .why{font-size:2.2em}.cert .zh.why{font-size:2.5em;font-weight:700}
+  .cert .st{display:flex;gap:2.4em;margin:1.5em 0 .5em}
+  .cert .cg{display:flex;flex-direction:column;align-items:center;gap:.2em}
+  .cert .cg .cb{width:11em;height:12.6em;line-height:0}.cert .cg .cb svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .4em .5em rgba(0,0,0,.22))}
+  .cert .cg b{font-size:1.7em;color:#fff;background:var(--c);border-radius:1em;padding:0 .8em;text-shadow:0 .06em 0 rgba(0,0,0,.25)}
+  .cert .motto{font-size:4.2em;font-weight:700;color:#d6337a;margin:.25em 0 0}
+  .cert .ft{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;width:100%;font-size:1.8em;color:#5a6aa8;padding:0 1.2em}
+  .cert .ft .zh{font-size:1.25em;font-weight:700;color:#152a63}
+  .cert .ft .by{display:flex;flex-direction:column;align-items:center;gap:.2em}.cert .ft .by i{display:block;width:13em;border-bottom:.08em solid #152a63;height:1.6em}.cert .ft .by .zh{font-size:.95em;font-weight:400;color:#5a6aa8}
+  .cert .ph{position:absolute;left:4.6%;top:33%;width:11em;height:11em;border-radius:50%;object-fit:cover;border:.6em solid #ffc83d;box-shadow:0 .6em 1.4em rgba(0,0,0,.25);background:#eef2ff}
+  .cert .ph-o{padding:1em}
+  body:has(.cert) #cap{display:none}
+  .cert .ow{position:absolute;right:4.4%;top:8%;width:10em;height:11.6em}
+  /* live board */
+  .bb{position:absolute;left:2rem;right:2rem;top:.6rem;height:9rem;display:flex;align-items:center;gap:1.6rem;background:var(--panel);border:2px solid var(--line);border-radius:1.6rem;padding:0 1.6rem}
+  .bb-o{width:7rem;height:8rem}
+  .bb-t{flex:1}
+  .bb-h{font-size:2.6rem;font-weight:700}
+  .bb-bar{height:1.6rem;border-radius:1rem;background:rgba(255,255,255,.12);margin-top:.6rem;overflow:hidden}
+  .bb-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2ee6b6,#ffc83d,#ff5fa2);transition:width 1s}
+  .bb-n{text-align:center;min-width:9rem}.bb-n b{display:block;font-size:4rem;color:var(--sun);line-height:1}.bb-n span{font-size:1.3rem;color:var(--ink2)}
+  .board{position:absolute;inset:11rem 2rem 2.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(22rem,1fr));gap:1rem;align-content:start;overflow:auto}
+  .kc{background:var(--panel);border:2px solid var(--line);border-radius:1.2rem;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem}
+  .kc .av{width:4rem;height:4rem;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.8rem;color:#0a1633;flex:0 0 auto}
+  .kc b{font-size:1.6rem;display:block}
+  .kc .dots{display:flex;gap:.35rem;margin-top:.3rem}
+  .kc .dots i{width:2.4rem;height:2.4rem;border-radius:50%;background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.25)}
+  .kc .dots img.emb,.kc .dots .emb{width:2.6rem;height:3rem;animation:pop .4s}
+  .kc .dots .emb svg{width:100%;height:100%}
+  .kc.fin{border-color:var(--sun);box-shadow:0 0 1.2rem rgba(255,200,61,.4)}
+  .src{position:absolute;right:2rem;bottom:1rem;font-size:1.2rem;color:var(--ink2)}
+  @media print{
+    body *{visibility:hidden}
+    .cert,.cert *{visibility:visible}
+    .cert{position:fixed;left:0;top:0;width:297mm;height:210mm;aspect-ratio:auto;font-size:2.32mm;border-width:6mm;border-radius:0;box-shadow:none;animation:none;padding:9mm 13mm 7mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    @page{size:A4 landscape;margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <section class="view" id="vGate">
+    <div class="route" id="route"></div>
+    <div class="stats"><div class="stat"><b id="sKids">0</b><span class="zh">完成環遊的小旅客</span></div><div class="stat"><b id="sLines">0</b><span class="zh">今天說出的英文句子</span></div><div class="stat"><b id="sStamps">0</b><span class="zh">已蓋的關卡印章</span></div></div>
+    <div class="attract" id="attract">
+      <h2 class="zh">集滿 6 個秘密字母，解開密碼就能登機！</h2>
+      <div class="prize-rule zh"><span><b>🍪＋🧃</b> 六關完成：點心 1 份＋飲料 1 瓶</span><span><b>＋🍪</b> 貼紙總分超過 100 點：再多 1 份小點心</span></div>
+      <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始解碼</i></span></button>
+    </div>
+    <div class="dec hidden" id="dec">
+      <h2 id="decTitle">What's the secret word?</h2>
+      <div class="slots" id="slots"></div>
+      <div class="keys" id="keys"></div>
+      <div class="hint zh">六關各拿到一個字母：依關卡順序（第 1 關到第 6 關）點字母排出密碼！ <button class="big-btn" id="assistBtn" style="display:inline-flex;padding:.3rem 1rem;font-size:1.2rem;background:#2b3f7a;margin-left:1rem">🧑‍🏫 老師協助解碼</button></div>
+    </div>
+  </section>
+  <section class="view hidden" id="vBoard">
+    <div class="bb"><div class="bb-o" id="bbO"></div><div class="bb-t"><div class="zh bb-h">🌏 小旅客環遊世界 · 英語即時看板</div><div class="bb-bar"><i id="bbBar"></i></div></div>
+      <div class="bb-n"><b id="bbKids">0</b><span class="zh">完成</span></div><div class="bb-n"><b id="bbStamps">0</b><span class="zh">印章</span></div><div class="bb-n"><b id="bbLines">0</b><span class="zh">英文句子</span></div></div>
+    <div class="board" id="board"></div><div class="src" id="boardSrc"></div></section>
+</div>
+
+<header id="hud">
+  <div class="gate-badge"><img class="emb" src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="num">★</div><div><div class="t0 zh">南投縣草屯鎮土城國民小學</div><div class="t1">Final Gate</div><div class="t2"><span class="zh">終點登機門</span> · Mission Control</div></div></div>
+  <div class="kid-chip hidden" id="kidChip"><div class="av" id="kAv">A</div><span id="kName">Amy</span></div>
+  <div class="tabs" style="margin-left:auto"><button class="on" data-v="vGate">🏁 Final Gate</button><button data-v="vBoard">📊 Live Board</button></div>
+  <div class="ai-pill" id="aiPill"><i></i>AI</div>
+  <button class="icon-btn" id="setBtn">⚙</button>
+</header>
+
+<section id="talk">
+  <div class="talk-main">
+    <div class="t-row"><span class="who t">Teacher</span><div class="t-line" id="tLine"></div></div>
+    <div class="t-row" style="margin-top:.4rem"><span class="who k">You 你說</span><div class="k-line" id="kLine"></div></div>
+    <div class="heard" id="heard">&nbsp;</div>
+  </div>
+  <div class="talk-side">
+    <button class="big-btn btn-ok" id="okBtn">✓ <span class="zh">說得好</span></button>
+    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span></button>
+    <div class="meter"><i id="micMeter"></i></div>
+    <canvas id="wave" width="300" height="70"></canvas>
+    <button class="big-btn btn-skip" id="skipBtn">⏭ <span class="zh">跳過</span></button>
+  </div>
+</section>
+
+<script src="js/content.js"></script>
+<script src="assets/audio/credits.js"></script>
+<script src="assets/audio/el-words.js"></script>
+<script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/voice-m.js"></script>
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
+<script src="js/puzzles.js"></script>
+<script src="js/scratch.js"></script>
+<script src="js/control.js"></script>
+<script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
+</body>
+</html>

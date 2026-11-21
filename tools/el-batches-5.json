@@ -1,0 +1,34 @@
+[
+ {
+  "id": "cmd1",
+  "gen": "EQh3N0OkEh9lkC326Mx1",
+  "created": "2026-11-21T04:44:12Z",
+  "url": "https://elevenlabs.io/app/flows/8KBNEd38TUgNp2pBjnGd",
+  "s": [
+   "Stand up!",
+   "Bow!",
+   "Sit down!",
+   "Clap your hands!",
+   "Raise your hand!",
+   "Put your hands down!",
+   "Open your books!",
+   "Close your books!"
+  ]
+ },
+ {
+  "id": "greet1",
+  "gen": "9tQUXIljMuZocgHytrqO",
+  "created": "2026-11-21T04:44:14Z",
+  "url": "https://elevenlabs.io/app/flows/x27ctBLdOkPwYB7pokMY",
+  "s": [
+   "How are you today?",
+   "I'm good!",
+   "Are we ready?",
+   "Are you okay?",
+   "I'm okay.",
+   "Wanna play basketball?",
+   "That sounds fun!",
+   "Look at the picture."
+  ]
+ }
+]

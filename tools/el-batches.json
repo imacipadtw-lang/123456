@@ -1,0 +1,134 @@
+[
+ {
+  "id": "weather",
+  "gen": "TM7hc0Y7a6YGQbklEUzZ",
+  "s": [
+   "It's sunny.",
+   "It's rainy.",
+   "It's cloudy.",
+   "It's windy.",
+   "It's snowy."
+  ],
+  "created": "2026-11-17T09:11:02Z"
+ },
+ {
+  "id": "colors",
+  "gen": "cguNoZDBkDXXkTULpCa3",
+  "s": [
+   "It's red.",
+   "It's orange.",
+   "It's yellow.",
+   "It's green.",
+   "It's blue.",
+   "It's purple.",
+   "It's pink.",
+   "It's white.",
+   "It's black.",
+   "It's brown."
+  ],
+  "created": "2026-11-17T09:11:44Z"
+ },
+ {
+  "id": "feel",
+  "gen": "pHfeJZyfnnCRdCPq9gXX",
+  "s": [
+   "I'm happy.",
+   "I'm sad.",
+   "I'm angry.",
+   "I'm tired.",
+   "I'm hungry.",
+   "I'm scared.",
+   "It can fly!",
+   "It can't fly."
+  ],
+  "created": "2026-11-17T09:11:45Z"
+ },
+ {
+  "id": "animals1",
+  "gen": "evpKtB2v64nGXIZzjTZi",
+  "s": [
+   "It's a tiger.",
+   "It's an elephant.",
+   "It's a rabbit.",
+   "It's a turtle.",
+   "It's a monkey.",
+   "It's a pig.",
+   "It's a zebra."
+  ],
+  "created": "2026-11-17T09:11:46Z"
+ },
+ {
+  "id": "animals2",
+  "gen": "RG4BxknVPj5gaA54QoZL",
+  "s": [
+   "It's a duck.",
+   "It's a cat.",
+   "It's a horse.",
+   "It's a lion.",
+   "It's a dog.",
+   "It's a bear.",
+   "It's a bird."
+  ],
+  "created": "2026-11-17T09:11:46Z"
+ },
+ {
+  "id": "like",
+  "gen": "h1xLyvMWObbz4p6RMoSE",
+  "s": [
+   "I like red.",
+   "I like orange.",
+   "I like yellow.",
+   "I like green.",
+   "I like blue.",
+   "I like purple.",
+   "I like pink.",
+   "I like white.",
+   "I like black.",
+   "I like brown."
+  ],
+  "created": "2026-11-17T09:11:47Z"
+ },
+ {
+  "id": "want1",
+  "gen": "pn6AZrZEE0BECXjLTOTO",
+  "s": [
+   "I want the tiger.",
+   "I want the elephant.",
+   "I want the rabbit.",
+   "I want the turtle.",
+   "I want the monkey.",
+   "I want the pig.",
+   "I want the zebra."
+  ],
+  "created": "2026-11-17T09:11:48Z"
+ },
+ {
+  "id": "want2",
+  "gen": "zZQpvoKbWmgjdg9U2yvH",
+  "s": [
+   "I want the duck.",
+   "I want the cat.",
+   "I want the horse.",
+   "I want the lion.",
+   "I want the dog.",
+   "I want the bear.",
+   "I want the bird."
+  ],
+  "created": "2026-11-17T09:11:48Z"
+ },
+ {
+  "id": "misc",
+  "gen": "iUX92YQatm4C9Z8AlHiK",
+  "s": [
+   "Open your passport!",
+   "We are friends!",
+   "Five points!",
+   "Ten points!",
+   "Fifteen points!",
+   "Twenty points!",
+   "Thirty points!",
+   "Fifty points!"
+  ],
+  "created": "2026-11-17T09:11:49Z"
+ }
+]

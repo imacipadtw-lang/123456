@@ -1,0 +1,386 @@
+[
+ {
+  "id": "ms01",
+  "gen": "Dp8h7dVF9sV1Apz8A8Cb",
+  "created": "2026-11-21T09:13:32Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "We are friends!",
+    "we are friends"
+   ],
+   [
+    "Ten points!",
+    "ten points"
+   ],
+   [
+    "Twenty points!",
+    "twenty points"
+   ],
+   [
+    "Thirty points!",
+    "thirty points"
+   ],
+   [
+    "Good job!",
+    "good job"
+   ],
+   [
+    "Well done!",
+    "well done"
+   ],
+   [
+    "Awesome!",
+    "awesome"
+   ],
+   [
+    "Excellent!",
+    "excellent"
+   ],
+   [
+    "That's right!",
+    "that's right"
+   ],
+   [
+    "You got it!",
+    "you got it"
+   ]
+  ]
+ },
+ {
+  "id": "ms02",
+  "gen": "qQcjKUNZOjPjUg0hLoHS",
+  "created": "2026-11-21T09:14:10Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "Brush your teeth.",
+    "brush your teeth"
+   ],
+   [
+    "Class is over.",
+    "class is over"
+   ],
+   [
+    "Clean up your table.",
+    "clean up your table"
+   ],
+   [
+    "Close your eyes and rest.",
+    "close your eyes and rest"
+   ],
+   [
+    "Give him a big hand!",
+    "give him a big hand"
+   ],
+   [
+    "Have a nice day!",
+    "have a nice day"
+   ],
+   [
+    "Hurry up!",
+    "hurry up"
+   ],
+   [
+    "I am late.",
+    "i am late"
+   ],
+   [
+    "I forgot my lunchbox.",
+    "i forgot my lunchbox"
+   ],
+   [
+    "I have an idea.",
+    "i have an idea"
+   ]
+  ]
+ },
+ {
+  "id": "ms03",
+  "gen": "SqpGDsavyjkJPtGxlx1s",
+  "created": "2026-11-21T09:14:16Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "I'm hurt.",
+    "i'm hurt"
+   ],
+   [
+    "It's quiet time.",
+    "it's quiet time"
+   ],
+   [
+    "May I come in?",
+    "may i come in"
+   ],
+   [
+    "May I get a drink of water?",
+    "may i get a drink of water"
+   ],
+   [
+    "May I go to the restroom?",
+    "may i go to the restroom"
+   ],
+   [
+    "Open a box!",
+    "open a box"
+   ],
+   [
+    "See you next time.",
+    "see you next time"
+   ],
+   [
+    "Take a break.",
+    "take a break"
+   ],
+   [
+    "Thank you for listening.",
+    "thank you for listening"
+   ],
+   [
+    "Thank you for your help.",
+    "thank you for your help"
+   ]
+  ]
+ },
+ {
+  "id": "ms04",
+  "gen": "5agbTmOQDFZJsP10V9Il",
+  "created": "2026-11-21T09:14:35Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "Time to wake up!",
+    "time to wake up"
+   ],
+   [
+    "Wake up!",
+    "wake up"
+   ],
+   [
+    "Wash your hands.",
+    "wash your hands"
+   ],
+   [
+    "Wash your hands before lunch.",
+    "wash your hands before lunch"
+   ],
+   [
+    "We are...",
+    "we are"
+   ],
+   [
+    "What do we do?",
+    "what do we do"
+   ],
+   [
+    "What do you say?",
+    "what do you say"
+   ],
+   [
+    "What is it?",
+    "what is it"
+   ],
+   [
+    "What's the matter?",
+    "what's the matter"
+   ],
+   [
+    "You're welcome.",
+    "you're welcome"
+   ]
+  ]
+ },
+ {
+  "id": "ms05",
+  "gen": "CxqOmV1qdeknEHG2eQ3m",
+  "created": "2026-11-21T09:14:42Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "What's in the box?",
+    "what's in the box"
+   ],
+   [
+    "Say it!",
+    "say it"
+   ],
+   [
+    "It's water.",
+    "it's water"
+   ],
+   [
+    "It's a window.",
+    "it's a window"
+   ],
+   [
+    "It's a table.",
+    "it's a table"
+   ],
+   [
+    "They're teeth.",
+    "they're teeth"
+   ],
+   [
+    "It's a lunchbox.",
+    "it's a lunchbox"
+   ],
+   [
+    "It's a light.",
+    "it's a light"
+   ],
+   [
+    "It's a door.",
+    "it's a door"
+   ],
+   [
+    "It's a drink.",
+    "it's a drink"
+   ]
+  ]
+ },
+ {
+  "id": "ms06",
+  "gen": "dzOatUK120J9ZDLnF1Lg",
+  "created": "2026-11-21T09:14:49Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "It's a book.",
+    "it's a book"
+   ],
+   [
+    "It's a brush.",
+    "it's a brush"
+   ],
+   [
+    "It's a fan.",
+    "it's a fan"
+   ],
+   [
+    "They're hands.",
+    "they're hands"
+   ],
+   [
+    "It's a mask.",
+    "it's a mask"
+   ],
+   [
+    "It's a nurse.",
+    "it's a nurse"
+   ],
+   [
+    "What are they?",
+    "what are they"
+   ],
+   [
+    "Your turn!",
+    "your turn"
+   ],
+   [
+    "Tell Ollie!",
+    "tell ollie"
+   ],
+   [
+    "Ollie is sleeping!",
+    "ollie is sleeping"
+   ]
+  ]
+ },
+ {
+  "id": "ms07",
+  "gen": "JvboaW9qkxzT7GQzSvm7",
+  "created": "2026-11-21T09:15:11Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "Wake him up!",
+    "wake him up"
+   ],
+   [
+    "Who are we?",
+    "who are we"
+   ],
+   [
+    "Find the small letter!",
+    "find the small letter"
+   ],
+   [
+    "Find the big letter!",
+    "find the big letter"
+   ],
+   [
+    "Stand up!",
+    "stand up"
+   ],
+   [
+    "Bow!",
+    "bow"
+   ],
+   [
+    "Sit down!",
+    "sit down"
+   ],
+   [
+    "Clap your hands!",
+    "clap your hands"
+   ],
+   [
+    "Raise your hand!",
+    "raise your hand"
+   ],
+   [
+    "Put your hands down!",
+    "put your hands down"
+   ]
+  ]
+ },
+ {
+  "id": "ms08",
+  "gen": "GvuexYBGCXmxSo4jcv0X",
+  "created": "2026-11-21T09:15:17Z",
+  "url": "https://elevenlabs.io/app/flows/1sLO88Uj8HRS9PvYXjM7",
+  "s": [
+   [
+    "Open your books!",
+    "open your books"
+   ],
+   [
+    "Close your books!",
+    "close your books"
+   ],
+   [
+    "How are you today?",
+    "how are you today"
+   ],
+   [
+    "I'm good!",
+    "i'm good"
+   ],
+   [
+    "Are we ready?",
+    "are we ready"
+   ],
+   [
+    "Are you okay?",
+    "are you okay"
+   ],
+   [
+    "I'm okay.",
+    "i'm okay"
+   ],
+   [
+    "Wanna play basketball?",
+    "wanna play basketball"
+   ],
+   [
+    "That sounds fun!",
+    "that sounds fun"
+   ],
+   [
+    "Look at the picture.",
+    "look at the picture"
+   ]
+  ]
+ }
+]
