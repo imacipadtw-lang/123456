@@ -508,6 +508,14 @@ body:has(.pz) #cap.show{transform:none}
 /* 低年級 big / small letters: the letter to match on a yellow tile, an arrow, then three choices in the other case */
 .k-line:has(.abc-opts) .abc-big{font-size:1.3em;min-width:1.5em;margin-right:0;line-height:1.15;box-shadow:0 .5rem 0 #e0a21a}
 .k-line .abc-arrow{color:var(--sun);font-size:.9em}
+/* livelier pictures: a picture turns a full 360° in 3D as it comes in, then keeps swaying (the teacher: 更活潑、360 度) */
+@keyframes turn360{from{transform:perspective(70rem) rotateY(-360deg) scale(.3)}to{transform:perspective(70rem) rotateY(0) scale(1)}}
+@keyframes sway3d{0%,100%{transform:perspective(70rem) rotateY(-15deg)}50%{transform:perspective(70rem) rotateY(15deg)}}
+.turn360{animation:turn360 1.1s cubic-bezier(.25,1,.35,1) both,sway3d 4.2s ease-in-out 1.12s infinite}
+/* the gate badge on the START screen turns a full circle every few seconds, then bobs */
+@keyframes scanTurn{0%{transform:perspective(60rem) rotateY(0)}14%{transform:perspective(60rem) rotateY(360deg)}35%{transform:perspective(60rem) rotateY(360deg) translateY(-3%) rotate(2deg)}57%{transform:perspective(60rem) rotateY(360deg) rotate(-2deg)}78%{transform:perspective(60rem) rotateY(360deg) translateY(-3%) rotate(2deg)}100%{transform:perspective(60rem) rotateY(360deg)}}
+#scan .scan-badge.bob svg{animation:scanTurn 8s cubic-bezier(.4,0,.2,1) 1.5s infinite;transform-origin:50% 55%}
+@media (prefers-reduced-motion:reduce){.turn360,#scan .scan-badge.bob svg{animation:none}}
 /* the tag on every badge that goes back home */
 .home-tag{position:absolute;left:50%;bottom:-.5rem;transform:translateX(-50%);z-index:3;white-space:nowrap;padding:.3rem 1.1rem .35rem;border-radius:2rem;background:#fff;color:#152a63;
   font:700 1.45rem/1.2 "Microsoft JhengHei","PingFang TC","Noto Sans TC",var(--font);box-shadow:0 .3rem 0 rgba(0,0,0,.4);pointer-events:none}

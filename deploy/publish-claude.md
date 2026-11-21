@@ -13,6 +13,12 @@ To update the backup, a Claude session publishes `deploy/claude-launch.html` wit
 One version of the artifact holds at most 512 files (the page counts as one), so `README.md` and `sw.js` are not
 published there. After the second 2026-11-21 publish (the nine-unit question bank and the 3D Ollie) the backup holds
 about 390 files: `node tools/prune_audio.js --apply` removed the ElevenLabs clips no screen says any more, and they were
-passed as `null` in the `files` map. Before adding many new files, run that tool again and remove what it lists. Publish only what changed since the last publish
+passed as `null` in the `files` map. Before adding many new files, run that tool again and remove what it lists.
+
+The second voice (about 150 clips under `assets/audio/m/`) is NOT published file by file — that would pass the 512-file
+limit. For the backup, build one file with every clip inside it and publish that file as `assets/audio/voice-m.js`:
+`python3 tools/pack_voice.py --packed <scratchpad>/voice-m.packed.js`, then in the `files` map
+`"assets/audio/voice-m.js": {"from": "<scratchpad>/voice-m.packed.js", "contentType": "text/javascript"}`.
+Never publish `assets/audio/m/…`, `m-words.json` or `m-sentences.json` there. The backup then holds about 393 files. Publish only what changed since the last publish
 (`git diff --name-only <last published commit> HEAD -- english-quest`); if another session published in between, list
 the published files first (`action: "list", scope: "files"`) and compare their hashes with that session's commit.

@@ -681,7 +681,7 @@
     deck.forEach((d, i) => { if (!d.gone) anim(d.slot, [{ transform: "none", opacity: 1 }, { transform: "translateY(70vh) rotate(26deg)", opacity: 0 }], { duration: 650, delay: i * 70, easing: "ease-in", fill: "forwards" }); });
     anim(bubble, [{ transform: "scale(1)", opacity: 1 }, { transform: "scale(.2)", opacity: 0, transformOrigin: "0 80%" }], { duration: 380, fill: "forwards" }); anim(slots, [{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: "forwards" });
     TC.sfx("whoosh");
-    const big = h("div", { class: "big" }, h("div", { class: "rays" }), h("div", { class: "plate" }, h("img", { src: TC.art(w.img), alt: w.w })));
+    const big = h("div", { class: "big" }, h("div", { class: "rays" }), h("div", { class: "plate" }, h("img", { class: "turn360", src: TC.art(w.img), alt: w.w }))); // the picture turns a full 360° in 3D
     layer.append(big);
     const br = big.getBoundingClientRect(), mp = mouthPt(mon);
     mouth(mon, "open"); look(mon, br.left + br.width / 2, br.top + br.height / 2);

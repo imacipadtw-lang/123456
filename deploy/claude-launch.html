@@ -52,7 +52,10 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
 .gate .no { font-family: var(--display); font-size: calc(var(--u) * 2.5); letter-spacing: .06em; color: var(--muted); white-space: nowrap }
 .gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 4.2); margin: calc(var(--u) * .6) 0 calc(var(--u) * .4); line-height: 1.1 }
 .gate .zh { font-size: calc(var(--u) * 2.8); color: var(--muted); line-height: 1.25 }
-@media (prefers-reduced-motion: reduce) { .gate { transition: none } .gate:hover { transform: none } }
+/* the six badges take turns to spin a full 360° in 3D */
+@keyframes bdgTurn { 0% { transform: perspective(50rem) rotateY(0) } 11%, 100% { transform: perspective(50rem) rotateY(360deg) } }
+.gate .bdg svg { animation: bdgTurn 9s cubic-bezier(.4, 0, .2, 1) infinite; animation-delay: calc(var(--i, 0) * 1.5s + 1s) }
+@media (prefers-reduced-motion: reduce) { .gate { transition: none } .gate:hover { transform: none } .gate .bdg svg { animation: none } }
 </style>
 
 <div class="wrap">
@@ -99,7 +102,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
   var box = document.getElementById("gates");
   function tile(href, color, badge, no, title, zh, gate) {
     var a = document.createElement("a");
-    a.className = "gate"; a.href = href; a.style.setProperty("--c", color); if (gate) a.dataset.gate = gate;
+    a.className = "gate"; a.href = href; a.style.setProperty("--c", color); if (gate) { a.dataset.gate = gate; a.style.setProperty("--i", gate - 1); }
     var img = document.createElement("div"); img.className = "bdg"; img.innerHTML = badge;
     var tx = document.createElement("div"); tx.className = "tx";
     var n = document.createElement("span"); n.className = "no"; n.textContent = no;

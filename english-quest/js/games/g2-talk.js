@@ -306,7 +306,7 @@
 .tk .idle b{font-size:3rem;line-height:1}.tk .idle span{font-size:1.8rem}
 .tk .pw{position:absolute;inset:.5rem;display:none;animation:tkFloat 3.2s ease-in-out infinite}
 .tk .prop{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 .9rem .8rem rgba(0,0,50,.42))}
-.tk .prop.in{animation:tkPropIn .65s cubic-bezier(.2,1.5,.4,1)}
+.tk .prop.in{animation:turn360 1.1s cubic-bezier(.25,1,.35,1) both,sway3d 4.2s ease-in-out 1.12s infinite} /* the prop turns a full 360° in 3D, then sways */
 .tk .stat{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.55) 0 .25rem,rgba(0,0,0,.3) .25rem .55rem)}
 .tk .stat.go{animation:tkStatic .38s ease-out}
 @keyframes tkStatic{0%{opacity:.85}100%{opacity:0}}

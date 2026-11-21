@@ -29,6 +29,11 @@
   the school emblem BIG (a 3D medal that turns 360°, `TC.coin3d`) and the 3D Ollie; the teacher wants emblems large, never tiny. The other
   pages (`control.html`, `opening.html`, `quest-card.html`, `guide.html`, `teacher-cards.html`, `links.html`, `credits.html`)
   are opened by address. The printable card (`quest-card.html`) has six sticker places and NO letter boxes.
+- Classroom edition (the teacher, 2026-11-21: the day must not depend on the network, and the files must not spread): after a
+  change, also rebuild the single-file classroom edition — `python3 tools/build_classroom.py <dir outside the repo>` (one
+  self-contained HTML per gate with only that gate's questions, plus Final Gate and opening show) — check it with
+  `node tools/tests/room-fit.js <dir>` and send the ZIP to the teacher. Every game screen must fit ONE page of the big screen:
+  no scrolling, no button off the screen. Every badge that goes home carries the tag 「回首頁 HOME」.
 - Prizes (the teacher, 2026-11-21): a child (a parent may come along) plays only the six gates of their OWN level and collects six
   point stickers (10 / 20 / 30 points, one per gate). All six gates = a snack (點心) and a drink; a total of more than 100 points =
   one more small snack (小點心). Say 點心／小點心 in the pages, not 餅乾.

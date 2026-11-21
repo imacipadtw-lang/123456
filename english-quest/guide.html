@@ -187,6 +187,7 @@
   <li><b>GitHub Pages（建議）</b>：本專案已附自動發佈設定：每次推送到 GitHub，網站會自動更新到 <code>gh-pages</code> 分支並上線（若第一次未自動開啟，到 Settings → Pages 選 Deploy from a branch → <b>gh-pages</b> /(root) 即可）。網址為 <code>https://imacipadtw-lang.github.io/123456/english-quest/</code>。使用 https 網址，瀏覽器才會允許相機（終點獎狀的大頭照）。</li>
   <li><b>斷網也能玩</b>：每台電腦活動前先用 https 網址開過一次所有要用的頁面，程式會自動把頁面、圖案、發音存在電腦裡；當天網路斷掉，遊戲照常。程式更新後，請把頁面重新整理兩次。</li>
   <li><b>離線備份</b>：下載整個專案 ZIP，解壓後用 Chrome 開 <code>index.html</code> 就能玩。</li>
+  <li><b>教室版（建議活動當天用這個）</b>：每間教室一個獨立的 <code>.html</code> 檔（<code>gate1-….html</code> 到 <code>gate6-….html</code>、<code>final-gate.html</code>、<code>opening-show.html</code>），程式、圖、立體歐力、校徽和所有聲音都在這一個檔案裡。複製到教室電腦、點兩下同名的 <code>START-….bat</code>（或直接點 .html 再按 F11）就全螢幕開始，<b>不用網路、不用安裝</b>。每個闖關檔只有那一關的題目；年級在開始畫面下方選；每個畫面都在一頁內、不用捲動（1920×1080、1366×768、1280×720、1024×768 都用程式檢查過）。這些檔案不放在網路上，只放教室電腦和老師的隨身碟。（製作方式：<code>python3 tools/build_classroom.py 資料夾</code>。）</li>
   <li><b>六間教室匯整（選用）</b>：照 <code>apps-script/Code.gs</code> 檔頭說明建立 Google Apps Script，把網址貼到每台電腦的 ⚙「同步網址」。</li>
 </ol>
 <h3 id="voice">聲音的現況（請老師一定要看）</h3>
