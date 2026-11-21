@@ -506,4 +506,16 @@ body:has(.pz) #cap.show{transform:none}
 /* 低年級 big / small letters: the letter to match on a yellow tile, an arrow, then three choices in the other case */
 .k-line:has(.abc-opts) .abc-big{font-size:1.3em;min-width:1.5em;margin-right:0;line-height:1.15;box-shadow:0 .5rem 0 #e0a21a}
 .k-line .abc-arrow{color:var(--sun);font-size:.9em}
+/* start screen: Ollie in 3D at the right-hand side */
+#scan .scan-o3{position:absolute;right:.2vw;bottom:3vh;width:min(15vw,30vh);height:min(19vw,38vh);z-index:2}
+@media (max-aspect-ratio:4/3){#scan .scan-o3{display:none}}
+.k-line .t-zh{display:inline-block;white-space:nowrap} /* the Chinese hint moves to the next line as a whole, never split */
+/* 高年級: two words to choose from for the blank */
+.k-line .pick-opts{display:inline-flex;align-items:center;gap:1.1rem;vertical-align:middle;margin-left:1.4rem}
+.k-line .pick-tip{font-size:.62em}
+.k-line .pick-btn{font:inherit;font-size:.74em;padding:.08em .55em .12em;border:0;border-radius:1.3rem;cursor:pointer;touch-action:manipulation;color:#0a1633;background:linear-gradient(180deg,#fff,#dfe7ff);box-shadow:0 .5rem 0 #8fa2ff;white-space:nowrap}
+.k-line .pick-btn:active{transform:translateY(.35rem);box-shadow:0 .15rem 0 #8fa2ff}
+.k-line .pick-btn.ok{background:linear-gradient(180deg,#d6fff0,#2ee6b6);box-shadow:0 .5rem 0 #17a884}
+.k-line .pick-btn.bad{animation:shake .45s}
+.k-line .pick-opts.done .pick-btn:not(.ok),.k-line .pick-opts.done .pick-tip{display:none}
 .k-line:has(.abc-opts) .abc-btn{font-size:1.1em;min-width:1.9em;line-height:1.15}

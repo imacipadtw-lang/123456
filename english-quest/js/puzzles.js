@@ -142,6 +142,9 @@
   .ab{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:radial-gradient(70% 60% at 50% 45%,#2a5bb8,#0a1633 75%);animation:abIn .35s ease-out}
   @keyframes abIn{from{opacity:0}}
   .ab .stage{position:relative;width:min(46vh,40vw);height:min(52vh,46vw);perspective:120vh;margin-top:-6vh}
+  .ab .stage.s3d{width:min(62vh,54vw);height:min(64vh,56vw);margin-top:-14vh}
+  .ab .o3box{position:absolute;inset:0}
+  .ab .s3d .props{inset:-4% -14%}
   .ab .floor{position:absolute;left:10%;right:10%;bottom:-3%;height:12%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);animation:abShadow var(--sp,1s) ease-in-out infinite}
   .ab .spin{position:absolute;inset:0;transform-style:preserve-3d;animation:abSpin 6.4s cubic-bezier(.45,0,.2,1) both}
   .ab .act{position:absolute;inset:0;transform-style:preserve-3d;animation:var(--anim) var(--sp,1s) ease-in-out infinite}
@@ -220,8 +223,8 @@
     nurse: ["nurse", "abOuch", ["🩹", "👩‍⚕️", "🩹"], "貼 OK 繃，護理師幫你！"],
     rest: ["rest", "abSleep", ["💤", "🌙", "💤"], "趴下來，閉上眼睛休息！"],
     break: ["break", "abSleep", ["💤", "☕", "💤"], "伸伸懶腰，休息一下！"],
-    sleep: ["sleep", "abSleep", ["💤", "🌙", "💤"], "雙手合起放臉旁，睡覺！"],
-    quiet: ["quiet", "abSleep", ["🤫", "🌙", "🤫"], "手指放嘴上：噓～"],
+    sleep: ["rest", "abSleep", ["💤", "🌙", "💤"], "雙手合起放臉旁，休息！"],
+    quiet: ["rest", "abSleep", ["🤫", "🌙", "🤫"], "閉上眼睛，安靜休息！"],
     wake: ["wake", "abStretch", ["☀️", "⏰", "☀️"], "張開眼睛，伸個大懶腰！"],
     everyone: ["wake", "abStretch", ["☀️", "⏰", "☀️"], "張開眼睛，伸個大懶腰！"],
     window: ["window", "abOpen", ["🪟", "🌤️", "🪟"], "雙手往旁邊推，打開窗戶！"],
@@ -252,7 +255,17 @@
     nice: ["happy", "abClap", ["😊", "☀️", "😊"], "笑一個，拍拍手！"],
     happy: ["happy", "abClap", ["😊", "👏", "😊"], "笑一個，拍拍手！"],
     job: ["good", "abThumb", ["👍", "🌟", "👍"], "比兩個讚：好棒！"],
-    thanks: ["thank you", "abBow", ["🙏", "💖", "🙏"], "鞠個躬：謝謝！"]
+    thanks: ["thank you", "abBow", ["🙏", "💖", "🙏"], "鞠個躬：謝謝！"],
+    // booklet units (1)–(3): greetings and the commands of every lesson
+    morning: ["morning", "abWave", ["☀️", "👋", "☀️"], "揮揮手說早安！"],
+    yes: ["yes", "abNod", ["👍", "😊", "👍"], "用力點點頭：Yes！"],
+    fun: ["fun", "abHop", ["🏀", "🎉", "🏀"], "開心地跳一跳！"],
+    stand: ["stand", "abStretch", ["🧍", "⬆️", "🧍"], "起立，站得直直的！"],
+    sit: ["sit", "abNod", ["🪑", "⬇️", "🪑"], "坐下，坐得好好的！"],
+    bow: ["bow", "abBow", ["🙇", "✨", "🙇"], "敬禮，彎彎腰！"],
+    clap: ["clap", "abClap", ["👏", "✨", "👏"], "拍拍手！"],
+    raise: ["raise", "abStretch", ["✋", "⬆️", "✋"], "把手舉高高！"],
+    down: ["down", "abNod", ["⬇️", "🙌", "⬇️"], "把手放下來！"]
   };
   const DEF = ["happy", "abClap", ["👏", "⭐", "👏"], "拍拍手！"];
   /** 低年級: the easy word + action for an answer word (unknown words fall back to the word + clapping) */
@@ -267,7 +280,8 @@
     return new Promise((resolve) => {
       if (!TC.art) { resolve(); return; }
       const A = TC.lowAction(word), anim = A.anim, props = A.props; word = A.w;
-      const src = TC.art("ollie"), N = 26, act = h("div", { class: "act", style: `--anim:${anim};--sp:${anim === "abTwirl" ? "2.4s" : anim === "abSleep" || anim === "abWalkIn" ? "1.8s" : anim === "abRun" || anim === "abBrush" ? ".7s" : anim === "abKnock" || anim === "abBow" || anim === "abOuch" ? "1.6s" : "1.1s"}` });
+      const use3d = !!(TC.O3 && TC.O3.supported()); // the real 3D Ollie (js/ollie3d.js); the stacked picture below is only the fallback
+      const src = TC.art("ollie"), N = use3d ? 0 : 26, act = h("div", { class: "act", style: `--anim:${anim};--sp:${anim === "abTwirl" ? "2.4s" : anim === "abSleep" || anim === "abWalkIn" ? "1.8s" : anim === "abRun" || anim === "abBrush" ? ".7s" : anim === "abKnock" || anim === "abBow" || anim === "abOuch" ? "1.6s" : "1.1s"}` });
       // a thick, solid-looking 3D Ollie: layers stacked in depth, the inner ones darker (the sides)
       for (let i = 0; i < N; i++) {
         const z = (i - (N - 1) / 2) * 0.32, edge = i === 0 || i === N - 1;
@@ -277,22 +291,25 @@
         act.append(im);
       }
       // the thing Ollie holds for this word (cup, toothbrush, waving hand…), in front of him so it turns with him
-      act.append(h("i", { class: "hold", "aria-hidden": "true", style: "transform:translateZ(4.6vh)" }, h("span", {}, props[0])));
-      const spin = h("div", { class: "spin" }, act);
+      if (!use3d) act.append(h("i", { class: "hold", "aria-hidden": "true", style: "transform:translateZ(4.6vh)" }, h("span", {}, props[0])));
+      const spin = use3d ? h("div", { class: "o3box" }) : h("div", { class: "spin" }, act);
       const P = h("div", { class: "props" }, ...props.map((p, i) => h("i", { style: `left:${[2, 44, 86][i]}%;top:${[12, -6, 18][i]}%;animation-delay:${-i * 0.6}s` }, p)));
       const W = String(word || "");
       const done = h("button", { class: "done zh", type: "button" }, "做好了 ✓");
       const ov = h("div", { class: "ab", role: "dialog", "aria-label": "跟著歐力做動作" },
-        h("div", { class: "stage" }, h("div", { class: "floor" }), spin, P),
+        h("div", { class: "stage" + (use3d ? " s3d" : "") }, use3d ? null : h("div", { class: "floor" }), spin, P),
         h("div", { class: "txt" }, h("div", { class: "w" }, h("b", {}, W.slice(0, 1).toUpperCase()), W.slice(1) + "!"), h("div", { class: "zh" }, "🙌 " + (opt.zh || A.zh))),
         done);
       let closed = false;
       const key = (e) => { if (e.key === "Enter" || e.key === " " || e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); close(); } };
-      const close = () => { if (closed) return; closed = true; clearTimeout(t); window.removeEventListener("keydown", key, true); ov.remove(); resolve(); };
+      let o3c = null;
+      const close = () => { if (closed) return; closed = true; clearTimeout(t); window.removeEventListener("keydown", key, true); if (o3c) o3c.destroy(); ov.remove(); resolve(); };
       window.addEventListener("keydown", key, true); // Enter / Space = 做好了 (the game underneath waits)
       done.onclick = () => { TC.ac(); TC.sfx && TC.sfx("pop"); close(); };
       ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
       document.body.append(ov);
+      // Ollie turns a full 360° when he comes in and again every few seconds; a finger can spin him too
+      if (use3d) o3c = TC.O3.mount(spin, { action: TC.O3.forWord(word), spin: "auto", every: 3.4 });
       TC.sfx && TC.sfx("levelup"); TC.confetti && TC.confetti(90);
       if (TC.speak) TC.speak(W.charAt(0).toUpperCase() + W.slice(1) + "!", { human: W.toLowerCase() }).catch(() => {});
       const t = setTimeout(close, opt.ms || 8000);

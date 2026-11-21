@@ -40,6 +40,7 @@
   setInterval(() => { if (Date.now() - lastMove < 4000 || scanEl.classList.contains("hidden")) return; const t = Date.now() / 3000; scanEl.style.setProperty("--mx", (Math.sin(t) * 0.6).toFixed(3)); scanEl.style.setProperty("--my", (Math.cos(t * 0.8) * 0.4).toFixed(3)); }, 400);
   // the big cute 土城 badge of this gate (a different design at every gate) on the scan screen, and a small one in the HUD
   $("#scan").append(TC.badgeEl(gate, "scan-badge bob"));
+  if (TC.O3 && TC.O3.supported()) { const o3 = h("div", { class: "scan-o3" }); $("#scan").append(o3); TC.O3.mount(o3, { action: "wave", spin: "auto", every: 6.5, zoom: 1.1 }); }
   const hudEmb = document.querySelector(".gate-badge .emb"); if (hudEmb) hudEmb.remove();
   // a big 3D 土城 emblem stays in the top-left corner the whole time (clear on video)
   document.body.append(TC.badgeEl(gate, "big-emb"));
@@ -132,9 +133,9 @@
       const age = ["", "seven", "eight", "nine", "ten", "eleven", "twelve"][kid.grade] || "ten"; // typical age for the grade
       const fill = (t) => t.replace(/\[Name\]/g, "___").replace(/\[name\]/g, "").replace("[Age]", age[0].toUpperCase() + age.slice(1)).replace("[age]", age); // no names: the child says their own
       api.progress(-1, 0);
-      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: "先跟老師打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, noAbc: true, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
+      await TC.ask({ teacher: gr.teacher, tzh: gr.tzh, say: fill(gr.say), zh: gr.zh || "先打招呼！", keys: gr.keys.map((g) => g.map(fill).filter(Boolean)), autoModel: false, noAbc: true, word: gr.word || (gr === TC_CONTENT.greetings.age ? age : "") });
       TC.hideTalk();
-      TC.lastSay = ""; // the warm-up ("I'm ___.") is never the class chorus line
+      TC.lastSay = ""; // the warm-up greeting is never the class chorus line
       if (api.aborted) return;
     }
     let res = null;

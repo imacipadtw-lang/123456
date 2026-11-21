@@ -14,14 +14,18 @@
   @media (orientation:portrait){:root{--u:min(.6vh,1.06vw)}}
   html{font-size:calc(var(--u) * 1.6)}
   html,body{height:100%;overflow:hidden}
-  body{margin:0;background:radial-gradient(120% 80% at 50% 0%,#1d3a86,#0a1633) fixed;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:calc(var(--u) * 1.8);
+  body{margin:0;background:radial-gradient(120% 80% at 50% 0%,#1d3a86,#0a1633) fixed;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto minmax(0,1fr);gap:calc(var(--u) * 1.8) calc(var(--u) * 2.4);
     padding:calc(var(--u) * 2) calc(var(--u) * 2.6) calc(var(--u) * 2.4);box-sizing:border-box}
-  .hero{display:flex;align-items:center;gap:calc(var(--u) * 2);min-width:0}
-  .hero .o{width:calc(var(--u) * 10);height:calc(var(--u) * 11.6);flex:none}
+  /* the school emblem: a big 3D medal that turns through 360° (left); Ollie in 3D (right) — both span the title and level rows */
+  .coin3d.emb{grid-column:1;grid-row:1 / 3;align-self:center;--s:calc(var(--u) * 22)}
+  .o3home{grid-column:3;grid-row:1 / 3;position:relative;width:calc(var(--u) * 19);height:calc(var(--u) * 23.5);align-self:center;margin:calc(var(--u) * -1.2) 0}
+  .hero{grid-column:2;display:flex;align-items:center;gap:calc(var(--u) * 2);min-width:0}
+  .lv-home{grid-column:2}
+  .gates{grid-column:1 / 4}
+  @media (orientation:portrait){.coin3d.emb{grid-row:1;--s:calc(var(--u) * 12)}.o3home{display:none}.hero{grid-column:2 / 4}.lv-home{grid-column:1 / 4}}
   .hero .tx{min-width:0}
-  .hero .sch{display:flex;align-items:center;gap:calc(var(--u) * 1);font-weight:700;font-size:calc(var(--u) * 3.1);color:#ffe58a;letter-spacing:.06em;white-space:nowrap}
-  .hero .sch img{width:calc(var(--u) * 6.2);height:calc(var(--u) * 6.2);flex:none}
-  .hero h1{margin:calc(var(--u) * .4) 0 0;font-size:calc(var(--u) * 5.4);line-height:1.05;white-space:nowrap}
+  .hero .sch{font-weight:700;font-size:calc(var(--u) * 3.6);color:#ffe58a;letter-spacing:.08em;white-space:nowrap}
+  .hero h1{margin:calc(var(--u) * .5) 0 0;font-size:calc(var(--u) * 6);line-height:1.05;white-space:nowrap}
   .hero h1 span{font-size:calc(var(--u) * 2.9);margin-left:calc(var(--u) * 1.6);color:var(--ink2)}
   @media (orientation:portrait){.hero .sch{font-size:calc(var(--u) * 2.9)}.hero h1{font-size:calc(var(--u) * 4.8)}.hero h1 span{display:block;margin:calc(var(--u) * .3) 0 0;font-size:calc(var(--u) * 2.6)}.lv-home .lv-t{display:none}}
   .lv-home{display:flex;align-items:center;gap:calc(var(--u) * 1.6);min-width:0}
@@ -57,18 +61,19 @@
 </style>
 </head>
 <body>
+<div class="emb" id="emb"></div>
+<div class="o3home" id="o"></div>
 <div class="hero">
-  <div class="o" id="o"></div>
   <div class="tx">
-    <div class="sch"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">南投縣草屯鎮土城國民小學</div>
+    <div class="sch">南投縣草屯鎮土城國民小學</div>
     <h1>Tucheng English Day<span class="zh">運動會英語日 · 英語闖關</span></h1>
   </div>
 </div>
 <div class="lv-home" id="lvHome" role="radiogroup" aria-label="題目難度">
   <span class="zh lv-t">選年級：</span>
   <button data-l="1" role="radio"><b class="zh">低年級</b><i class="zh">1–2 年級 · 大小寫字母＋做動作</i></button>
-  <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 看整句念</i></button>
-  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 答句填空</i></button>
+  <button data-l="2" role="radio"><b class="zh">中年級</b><i class="zh">3–4 年級 · 聽歐力說再跟著說</i></button>
+  <button data-l="3" role="radio"><b class="zh">高年級</b><i class="zh">5–6 年級 · 點字填空再說</i></button>
 </div>
 <div class="gates" id="gates"></div>
 <script src="js/content.js"></script>
@@ -76,8 +81,11 @@
 <script src="js/art.js"></script>
 <script src="js/emblem.js"></script>
 <script src="js/art-body.js"></script>
+<script src="js/ollie3d.js"></script>
 <script>
-  document.getElementById("o").innerHTML = TC.ollieSVG();
+  // the school emblem as a big 3D medal, and Ollie in 3D (a finger can spin him)
+  document.getElementById("emb").replaceWith(Object.assign(TC.coin3d("emb"), { id: "emb" }));
+  TC.O3.mount(document.getElementById("o"), { action: "wave", spin: "auto", every: 6, zoom: 1.12 });
   // the six gates — the only links on this page
   const g = document.getElementById("gates");
   [1, 2, 3, 4, 5, 6].forEach((n) => {

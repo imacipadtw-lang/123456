@@ -36,7 +36,7 @@
   if (!TC.cfg.lv3) { TC.cfg.level = TC.cfg.level === 2 ? 3 : 2; TC.cfg.lv3 = 1; } // old 初級 (word shown) → 中年級, old 中級 (blank) → 高年級
   { const q = +(new URLSearchParams(location.search).get("lv") || 0); if (q >= 1 && q <= 3) TC.cfg.level = q; }
   if (!(TC.cfg.level >= 1 && TC.cfg.level <= 3)) TC.cfg.level = 2;
-  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 大小寫字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 看整句念出來" }, 3: { zh: "高年級", tip: "5–6 年級 · 答句填空" } };
+  TC.LEVELS = { 1: { zh: "低年級", tip: "1–2 年級 · 大小寫字母＋做動作" }, 2: { zh: "中年級", tip: "3–4 年級 · 聽歐力說再跟著說" }, 3: { zh: "高年級", tip: "5–6 年級 · 點字填空再說" } };
   try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {}
   TC.saveCfg = () => { try { localStorage.setItem("tc_cfg", JSON.stringify(TC.cfg)); } catch (e) {} };
   function safeJSON(s) { try { return JSON.parse(s); } catch (e) { return null; } }
@@ -178,11 +178,13 @@
   };
   const isName = (t) => TC.kid && normTok(t) === normTok(TC.kid.name);
   const clipCache = {};
+  let curClip = null; // the clip that is playing now (TC.stopModel can cut it short)
   function playClip(key) {
     const a = clipOf(key); if (!a) return Promise.resolve(false);
     return new Promise((res) => {
       const au = clipCache[key] || (clipCache[key] = new Audio(TC.audioBase + a.file));
-      let fin = false; const done = (ok) => { if (!fin) { fin = true; res(ok); } };
+      let fin = false; const done = (ok) => { if (!fin) { fin = true; if (curClip && curClip.au === au) curClip = null; res(ok); } };
+      curClip = { au, done };
       try { au.currentTime = 0; } catch (e) {}
       au.volume = TC.cfg.volume; au.onended = () => done(true); au.onerror = () => done(false);
       const p = au.play(); if (p && p.catch) p.catch(() => done(false));
@@ -298,15 +300,37 @@
   TC.sayPoints = (n) => { const w = { 10: "ten", 20: "twenty", 30: "thirty" }[n]; /* a scratch card is 10, 20 or 30 points */ return w ? TC.speak(`${w[0].toUpperCase() + w.slice(1)} points!`, { human: w }) : Promise.resolve(); };
   /** Model the answer: first the answer word (or the whole phrase, "Good morning!") from its human recording,
       then — when the answer is a sentence — the whole sentence read in one go by the computer voice. */
+  let modelRun = 0, modelOn = 0;
+  /** stop Ollie's model line at once (the teacher pressed ✓ while he was still saying it) */
+  TC.stopModel = function () { modelRun++; if (modelOn > 0 && curClip) { const c = curClip; try { c.au.pause(); } catch (e) {} c.done(false); } };
   TC.model = async function (sentence, word) {
     const kl = $("#kLine"), spans = kl ? [...kl.querySelectorAll(".w")] : [];
     const light = (on, words) => spans.forEach((sp) => sp.classList.toggle("saying", !!on && (words || []).some((w) => sp.dataset.n === TC.norm(w)[0])));
     const whole = TC.voicePieces(sentence), one = whole.length === 1 && whole[0].clip ? whole[0].clip : null;
     const wordKey = word && clipKey(normTok(word)), humanWord = wordKey || null; // the answer word's own clip (ElevenLabs or Wikimedia)
+    const my = ++modelRun, clips = whole.map((x) => x.clip);
+    if (whole.length > 1 && clips.every(Boolean)) {
+      // a line of several pieces, each with its own clip ("Sorry, | I am late."): the answer word first, then the pieces in order
+      modelOn++;
+      try {
+        if (humanWord) { light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
+        showSrc("ai", clips[0]); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true);
+        for (const c of clips) { await playClip(c); if (my !== modelRun) break; await sleep(140); }
+        TC.quiet(false); light(false);
+      } finally { modelOn--; TC.quiet(false); }
+      return "ai";
+    }
+    if (one && one === humanWord) { // the line IS the word ("Yes!", "Bow!"): say it once
+      modelOn++; try { showSrc(clipOf(one).ai ? "aiword" : "human", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false); } finally { modelOn--; }
+      return "ai";
+    }
     if (one && clipOf(one).ai) {
       // a whole-sentence AI clip: the answer word from its human recording first, then the sentence in one go
-      if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); await sleep(300); }
-      showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false);
+      modelOn++;
+      try {
+        if (humanWord) { showSrc(clipOf(humanWord).ai ? "aiword" : "human", humanWord); light(true, [word]); TC.quiet(true); await playClip(humanWord); TC.quiet(false); light(false); if (my !== modelRun) return "stopped"; await sleep(300); if (my !== modelRun) return "stopped"; }
+        showSrc("ai", one); spans.forEach((sp) => sp.classList.add("saying")); TC.quiet(true); await playClip(one); TC.quiet(false); light(false);
+      } finally { modelOn--; TC.quiet(false); }
       return humanWord ? "human+ai" : "ai";
     }
     const key = one || wordKey;
@@ -511,17 +535,41 @@
           else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
         }));
       }
+      // 高年級 (5–6 年級): the answer sentence has one blank. To keep it easy in front of guests, two words are offered:
+      //   the child taps the right one, the blank fills in, Ollie says the whole sentence, and the child says it after him.
+      const blanks = lowLine ? [] : [...$("#kLine").querySelectorAll(".w.blank")];
+      if (blanks.length && TC.kid && TC.kid.level === 3 && spec.pick !== false) {
+        const bare = (t) => String(t).replace(/[^A-Za-z' ]/g, "").trim();
+        const right = blanks.map((b) => bare(b.dataset.t)).join(" "), cap = /^[A-Z]/.test(right);
+        const pool = TC.gateWords().filter((w) => w && w.toLowerCase() !== right.toLowerCase() && !keyWords.has(w.toLowerCase()));
+        let wrong = pool.length ? pool[(Math.random() * pool.length) | 0] : (right.toLowerCase() === "book" ? "door" : "book");
+        if (cap) wrong = wrong.charAt(0).toUpperCase() + wrong.slice(1);
+        const opts = Math.random() < 0.5 ? [right, wrong] : [wrong, right];
+        const row = h("span", { class: "pick-opts", role: "group", "aria-label": "選出空格裡的字" }, h("span", { class: "pick-tip zh", "aria-hidden": "true" }, "👆"),
+          ...opts.map((o) => h("button", { type: "button", class: "pick-btn", "data-ok": o === right ? "1" : "0" }, o)));
+        const zhEl = $("#kLine").querySelector(".t-zh"); if (zhEl) $("#kLine").insertBefore(row, zhEl); else $("#kLine").append(row);
+        row.querySelectorAll(".pick-btn").forEach((b) => b.addEventListener("click", () => {
+          TC.ac();
+          if (b.dataset.ok === "1") { if (b.classList.contains("ok")) return; b.classList.add("ok"); row.classList.add("done"); TC.sfx("coin"); revealKey(); setTimeout(() => { if (!finished) TC.model(spec.say, spec.word); }, 350); }
+          else { b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad"); TC.sfx("wrong"); }
+        }));
+      }
       $("#heard").innerHTML = "&nbsp;"; // 115.11.20: the one-line hint for child / host was removed (管理者要求)
       $("#okBtn").classList.remove("glow");
       revealKey = () => $("#kLine").querySelectorAll(".w.blank").forEach((w) => { w.classList.remove("blank"); w.textContent = w.dataset.t; });
       talk.classList.add("show");
-      if (lowLine) TC.speak(lowLine); // 低年級: Ollie only says the letter task, not the booklet question
-      else if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) TC.speak(spec.teacher.replace(/___/g, ""));
+      let asked = null;
+      if (lowLine) asked = TC.speak(lowLine); // 低年級: Ollie only says the letter task, not the booklet question
+      else if (TC.cfg.ollieAsks && spec.teacher && !spec.silentTeacher) asked = TC.speak(spec.teacher.replace(/___/g, ""));
+      // 中年級 (3–4 年級): the whole sentence is on screen and Ollie says it first — listen, then say it. Nobody gets stuck.
+      if (!lowLine && TC.kid && TC.kid.level === 2 && spec.autoModel !== false && spec.say)
+        Promise.resolve(asked).catch(() => {}).then(() => sleep(500)).then(() => { if (!finished && turn && turn.spec === spec) return TC.model(spec.say, spec.word); }).catch(() => {});
       const wrongSeen = new Set();
       let finished = false, hintT = null, best = 0;
       const t0 = Date.now();
       const finish = async (r) => {
         if (finished) return; finished = true; turn = null;
+        TC.stopModel(); // never two voices at once: Ollie's model line stops when the teacher presses ✓
         clearTimeout(hintT); ASR.stop();
         r.ms = Date.now() - t0;
         if (r.ok) {
@@ -562,6 +610,12 @@
       });
       hintT = setTimeout(() => { if (!finished) { $("#okBtn").classList.add("glow"); revealKey(); if (spec.autoModel !== false) TC.model(spec.say, spec.word); } }, (TC.cfg.hintAfter || 9) * 1000 * (spec.hideKey ? 1.4 : 1));
     });
+  };
+  /** the key words of the gate on screen (the wrong choice for a 高年級 blank comes from here) */
+  TC.gateWords = function () {
+    const C = window.TC_CONTENT || {}, G = (C.gates || {})[TC.gate] || {}, H = (C.hunt || {})[TC.gate];
+    const out = [].concat(G.scenes || [], G.qa || [], G.finale ? [G.finale] : [], G.actions || [], G.words || [], G.lines || [], G.pages || [], H ? [H] : []).map((x) => x.w).filter(Boolean);
+    return [...new Set(out)];
   };
   TC.teacherOK = () => {
     if (turn) return turn.finish({ ok: true, by: "teacher", heard: "" });
@@ -622,6 +676,7 @@
   };
   TC.ollie = function (state) {
     document.querySelectorAll("svg.ollie,.ollie3d").forEach((o) => { o.classList.remove("talk", "cheer"); if (state === "talk" || state === "cheer") o.classList.add(state); });
+    if (TC.O3) TC.O3.state(state); // the 3D Ollie moves his beak while he speaks
   };
 
   /* ---------------- keys (passport scanning was removed: the teacher presses START) ---------------- */

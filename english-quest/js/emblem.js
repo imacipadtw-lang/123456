@@ -284,7 +284,25 @@
     d.innerHTML = make(gate);
     return d;
   };
-  const css = `.tc-badge{display:inline-block;line-height:0}.tc-badge svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .6rem 1rem rgba(0,0,0,.4))}
+  /** the school emblem as a thick 3D medal that turns through 360° (both faces show the emblem); size = CSS --s */
+  TC.coin3d = function (cls = "") {
+    const d = document.createElement("div"), N = 16; let edge = "";
+    for (let i = 0; i < N; i++) edge += `<i style="--z:calc(var(--t) * ${(i / (N - 1) - 0.5).toFixed(3)})"></i>`;
+    d.className = "coin3d " + cls; d.setAttribute("role", "img"); d.setAttribute("aria-label", "南投縣草屯鎮土城國民小學校徽");
+    d.innerHTML = `<div class="ci">${edge}<img class="b" src="${EMB}" alt="" draggable="false"><img class="f" src="${EMB}" alt="" draggable="false"></div>`;
+    return d;
+  };
+  const css = `.coin3d{--s:12rem;--t:calc(var(--s) * .1);position:relative;width:var(--s);height:var(--s);perspective:calc(var(--s) * 3.4);flex:none}
+  .coin3d .ci{position:absolute;inset:0;transform-style:preserve-3d;animation:coinSpin 7.5s cubic-bezier(.5,0,.3,1) infinite}
+  .coin3d .ci>*{position:absolute;inset:0;border-radius:50%}
+  .coin3d .ci i{inset:-2.5%;background:linear-gradient(100deg,#a8720a,#ffe9a8 28%,#e9b22e 52%,#fff6c8 74%,#a8720a);transform:translateZ(var(--z))}
+  .coin3d img{width:100%;height:100%;display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .coin3d .f{transform:translateZ(calc(var(--t) / 2 + 1px))}
+  .coin3d .b{transform:rotateY(180deg) translateZ(calc(var(--t) / 2 + 1px))}
+  .coin3d::after{content:"";position:absolute;left:12%;right:12%;bottom:-9%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.45),transparent)}
+  @keyframes coinSpin{0%{transform:rotateY(-20deg)}20%{transform:rotateY(20deg)}40%{transform:rotateY(-20deg)}100%{transform:rotateY(340deg)}}
+  @media (prefers-reduced-motion:reduce){.coin3d .ci{animation:none;transform:rotateY(-16deg)}}
+  .tc-badge{display:inline-block;line-height:0}.tc-badge svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 .6rem 1rem rgba(0,0,0,.4))}
   .tc-badge.bob svg{animation:tcBob 3.2s ease-in-out infinite;transform-origin:50% 80%}
   @keyframes tcBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3%) rotate(2deg)}}
   @media (prefers-reduced-motion:reduce){.tc-badge.bob svg{animation:none}}`;

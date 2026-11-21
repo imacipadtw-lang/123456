@@ -22,8 +22,10 @@ for (let g = 1; g <= 6; g++) {
   if (G.key === "monster") { add("What are they?"); (G.words || []).forEach((x) => add(/^(teeth|hands)$/.test(x.w) ? "They're " + x.w + "." : "It's " + (/^(water)$/.test(x.w) ? "" : /^[aeiou]/.test(x.w) ? "an " : "a ") + x.w + ".")); }
   (C.sentences[g] || []).forEach((x) => add(x.s));
 }
-add(C.greetings.name.teacher); add(C.clap.say); C.praise.forEach(add); add("Welcome"); add("Go");
+Object.values(C.greetings).forEach((g) => { add(g.teacher); add(g.say); add(g.word); }); add(C.clap.say); C.praise.forEach(add); add("Welcome"); add("Go");
 add("Find the small letter"); add("Find the big letter"); // 低年級: the two letter tasks (js/core.js)
+// 低年級: the easy word Ollie says while he does the action (the ACT table of js/puzzles.js)
+{ const src = fs.readFileSync(path.join(R, "js/puzzles.js"), "utf8"), re = /^\s+[a-z]+: \["([^"]+)", "ab[A-Za-z]+"/gm; let m; while ((m = re.exec(src))) add(m[1]); }
 // literal strings in the code
 for (const f of ["js/station.js", "js/control.js", "js/core.js", "js/puzzles.js", "js/scratch.js", ...fs.readdirSync(path.join(R, "js/games")).filter((x) => x.endsWith(".js")).map((x) => "js/games/" + x)]) {
   const src = fs.readFileSync(path.join(R, f), "utf8"); let m; const re = /TC\.(?:speak|teacherLine)\(\s*(["'])((?:(?!\1).)*)\1/g;
@@ -31,6 +33,9 @@ for (const f of ["js/station.js", "js/control.js", "js/core.js", "js/puzzles.js"
   const re2 = /\bteacher:\s*(["'])((?:(?!\1).)*)\1/g; // the question the host line of TC.ask() speaks
   while ((m = re2.exec(src))) if (/^[A-Z]/.test(m[2])) add(m[2]);
 }
+// the opening show (opening.html) speaks its own short lines: say: "Six! Games!"
+{ const src = fs.readFileSync(path.join(R, "opening.html"), "utf8"), re = /\bsay:\s*"([^"]+)"/g; let m; while ((m = re.exec(src))) add(m[1]); }
+if (process.argv.includes("--keys")) { console.log(JSON.stringify([...texts].map(norm))); process.exit(0); } // every clip key in use (for tools/prune_audio.js)
 const miss = [...texts].filter((t) => !have(norm(t))).sort();
 const words = miss.filter((t) => !/\s/.test(t)), sents = miss.filter((t) => /\s/.test(t));
 const chars = (a) => a.reduce((s, t) => s + t.length + 1, 0);

@@ -5,12 +5,13 @@
    Ollie's question is in a big speech bubble, a right answer fills the applause meter and the audience cheers.
    Wow moment: the meter is full -> ON AIR turns gold, confetti cannons fire, spotlights spin.
    Parent moment: the finale question, then TC.clapBanner() ("Give him a big hand!").
-   Pictures (drawn in code, registered in TC.ART): talk-done, talk-welcome, talk-door, talk-help, talk-fan, talk-bye,
-   talk-hand, talk-tv, talk-chair, talk-kid, talk-kid-up, talk-mic, talk-mug.
+   Pictures (drawn in code, registered in TC.ART): the seven question props talk-morning, talk-good, talk-ready, talk-okay,
+   talk-welcome, talk-bye, talk-basketball (content.js picks one per question with "img"), and the studio's own
+   talk-tv, talk-chair, talk-kid, talk-kid-up, talk-mic, talk-mug.
    The school's mark 土城 is the channel logo of this studio and is always part of the thing it is on: the lit roundel of the
    desk, the corner "bug" of the big screen, the cube of the desk microphone, the print on the mug, the crest embroidered on
    the headrests and on the guest's shirt, the hub caps of the confetti cannons - and on every prop picture where such a
-   mark belongs (a stamp, an envelope seal, a door plate, a toolbox sticker, the fan's hub cap, a wristband).
+   mark belongs (the roundel of the school tower, a wristband, a stamp in a book, an envelope seal, the logo of a backboard).
    Nothing here listens to a microphone: the applause meter only moves when the host presses the tick (or N).
    ===================================================================== */
 (function () {
@@ -39,19 +40,93 @@
   }
   const cuff = (c, x, y, w, hgt, col) => `<rect x="${x}" y="${y}" width="${w}" height="${hgt}" rx="9" fill="${c.g(col)}"/><rect x="${x}" y="${y}" width="${w}" height="5" rx="2.5" fill="#fff" opacity=".35"/>`;
 
-  /* done: a checked homework sheet */
-  A["talk-done"] = () => {
-    const c = TC.ArtCtx(); let s = c.shadow(100, 192, 76, 8);
-    s += `<g transform="rotate(-5 100 100)"><rect x="38" y="12" width="126" height="170" rx="10" fill="${c.v("#ffffff", "#e3eaf9")}" stroke="#aebbe3" stroke-width="2.5"/>`;
-    s += `<path d="M54 12 V182" stroke="#ff9aa8" stroke-width="2"/>` + [30, 48, 66].map((y) => `<circle cx="46" cy="${y + 20}" r="3.6" fill="#c3cce8"/>`).join("");
-    s += `<rect x="64" y="26" width="52" height="9" rx="4.5" fill="#6f82c9"/>`;
-    for (let i = 0; i < 5; i++) s += `<rect x="64" y="${52 + i * 19}" width="${i % 2 ? 74 : 86}" height="5.5" rx="2.7" fill="#c7d2f1"/><path d="M64 ${62 + i * 19} H150" stroke="#e1e8fa" stroke-width="1.5"/>`;
-    s += `<circle cx="138" cy="34" r="19" fill="none" stroke="#e8283e" stroke-width="3.4" transform="rotate(-8 138 34)"/><text x="138" y="41" text-anchor="middle" font-family="Fredoka,Arial Rounded MT Bold,Arial Black,Arial" font-weight="900" font-size="19" fill="#e8283e" transform="rotate(-8 138 34)">100</text>`;
-    s += st("M66 110 L92 140 L146 70", "#fff", 21) + st("M66 110 L92 140 L146 70", "#e8283e", 13) + c.hl(100, 106, 30, 4, -40, 0.6);
-    s += TC.seal(82, 163, 10.5, -10, "print"); // the school's stamp at the foot of the sheet
-    s += `</g>`;
-    s += `<g transform="rotate(34 150 150) translate(-14 -14) scale(.9)"><rect x="150" y="96" width="17" height="86" rx="4" fill="${c.v("#ffe066", "#f0a81a")}"/><rect x="150" y="86" width="17" height="14" rx="5" fill="#ff8aa8"/><rect x="150" y="98" width="17" height="6" fill="#b9c4d6"/><path d="M150 182 L158.5 202 L167 182Z" fill="#f4d3a4"/><path d="M155 195 L158.5 202 L162 195Z" fill="#3a2a2a"/></g>`;
-    s += sparkle(30, 40, 10) + sparkle(176, 30, 7) + sparkle(24, 150, 7);
+  /** a little heart centred on (x, y), about 32k wide */
+  const heart = (c, x, y, k, col) => `<g transform="translate(${f1(x - 168 * k)} ${f1(y - 35 * k)}) scale(${k})"><path d="M168 30 C156 20 148 30 156 38 L168 48 L180 38 C188 30 180 20 168 30Z" fill="${c.g(col || "#ff5c8a")}" stroke="#d6204f" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="160" cy="29" rx="3.6" ry="2.2" fill="#fff" opacity=".7" transform="rotate(-30 160 29)"/></g>`;
+
+  /* morning: the sun comes up behind the green hills of the school and a little bird sings
+     ("Good morning, everyone." -> "Good morning!"); the school's crest is the roundel of the school tower */
+  A["talk-morning"] = () => {
+    const c = TC.ArtCtx(), SX = 86, SY = 104; let s = c.shadow(100, 193, 90, 8), rays = "";
+    for (let i = 0; i < 8; i++) {
+      const a = (-167 + i * 22) * Math.PI / 180, r2 = i % 2 ? 71 : 78;
+      const d = `M${f1(SX + Math.cos(a) * 59)} ${f1(SY + Math.sin(a) * 59)} L${f1(SX + Math.cos(a) * r2)} ${f1(SY + Math.sin(a) * r2)}`;
+      rays += st(d, "#ff9a2e", 10.5) + st(d, "#ffe14a", 6.5);
+    }
+    s += `<g><animateTransform attributeName="transform" type="rotate" values="-7 ${SX} ${SY};7 ${SX} ${SY};-7 ${SX} ${SY}" dur="2.6s" repeatCount="indefinite"/>${rays}</g>`; // the rays breathe
+    s += `<circle cx="${SX}" cy="${SY}" r="50" fill="${c.g("#ffc21a", 36, 28)}" stroke="#f08a00" stroke-width="2.6"/>` + c.hl(SX - 19, SY - 27, 21, 11, -30, 0.75);
+    s += c.eyes(SX, SY - 11, 17, 8.5) + c.blush(SX, SY + 4, 29, "#ff6a4a");
+    s += `<path d="M${SX - 13} ${SY + 5} Q${SX} ${SY + 27} ${SX + 13} ${SY + 5}Z" fill="#7a1a2c" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/><path d="M${SX - 6.5} ${SY + 13.5} Q${SX} ${SY + 9} ${SX + 6.5} ${SY + 13.5} Q${SX} ${SY + 19} ${SX - 6.5} ${SY + 13.5}Z" fill="#ff7a9a"/>`;
+    // a cloud
+    s += [["#b9d2ff", 1.6], ["#fff", 0]].map(([col, e]) => `<g fill="${col}"><circle cx="156" cy="32" r="${10 + e}"/><circle cx="169" cy="26" r="${13 + e}"/><circle cx="182" cy="33" r="${9 + e}"/><rect x="${148 - e}" y="${30 - e}" width="${42 + 2 * e}" height="${12 + 2 * e}" rx="${6 + e}"/></g>`).join("") + `<rect x="153" y="37.5" width="32" height="3.6" rx="1.8" fill="#d6e6ff"/>`;
+    // the far hill and the school on it
+    s += `<path d="M58 192 Q76 120 140 114 Q198 110 198 168 V180 Q198 192 186 192Z" fill="${c.g("#2fae5a", 40, 10)}"/>`;
+    s += `<rect x="124" y="137" width="68" height="36" rx="3" fill="${c.v("#fff7e6", "#f0d6ac")}" stroke="#c9a070" stroke-width="2"/><rect x="121" y="131" width="74" height="9" rx="4" fill="${c.g("#e8453c")}"/>`;
+    s += [128, 179].map((x) => `<rect x="${x}" y="147" width="9" height="11" rx="2" fill="#7ab8f0" stroke="#fff" stroke-width="1.8"/>`).join("");
+    s += `<rect x="139" y="99" width="38" height="74" rx="3" fill="${c.v("#fffaf0", "#f0d6ac")}" stroke="#c9a070" stroke-width="2"/>`;
+    s += `<path d="M133 102 L158 79 L183 102Z" fill="${c.g("#e8453c")}" stroke="#b3261e" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="M150 173 V157 Q150 149 158 149 Q166 149 166 157 V173Z" fill="${c.v("#b0702f", "#7a4a1e")}"/><circle cx="163" cy="162" r="1.5" fill="#ffd24a"/>`;
+    s += TC.seal(158, 124, 11.5, 0, "print"); // the school's crest, where a school tower has its roundel
+    // the near hill, flowers, the bird
+    s += `<path d="M2 180 Q0 126 56 126 Q112 126 152 192 H14 Q2 192 2 180Z" fill="${c.g("#7ddc55", 30, 8)}"/>` + c.hl(46, 139, 30, 6, -4, 0.4);
+    s += [[62, 152], [96, 176], [30, 168], [118, 184]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="4" fill="${i % 2 ? "#ffe14a" : "#fff"}"/><circle cx="${x}" cy="${y}" r="1.7" fill="${i % 2 ? "#ff8a2e" : "#ffc21a"}"/>`).join("");
+    s += st("M21 131 v5 M28 131 v5", "#ff9a2e", 2.4) + c.path("M16 126 L3 121 L9 134Z", "#3d8bff") + c.sphere(24, 121, 12, "#5ab0ff", 0.6) + c.ell(19.5, 124, 5.5, 8, "#3d8bff", 20, 0.3);
+    s += `<path d="M34 115 L45 119 L34 123.5Z" fill="#ff8a1f" stroke="#c2540a" stroke-width="1.4" stroke-linejoin="round"/><circle cx="28.5" cy="116.5" r="2.7" fill="${INK}"/><circle cx="27.6" cy="115.6" r="1" fill="#fff"/>`;
+    s += sparkle(22, 40, 8) + sparkle(120, 28, 6);
+    return c.out(s);
+  };
+
+  /* good: a big thumbs-up and a beaming smiley ("How are you today?" -> "I'm good, thanks!") */
+  A["talk-good"] = () => {
+    const c = TC.ArtCtx(), L = "#d98f5c", fx = 152, fy = 46; let s = c.shadow(100, 196, 64, 7);
+    s += cuff(c, 50, 154, 98, 42, "#3d8bff");
+    s += `<rect x="44" y="84" width="106" height="78" rx="33" fill="${c.g(SKIN, 35, 25)}" stroke="${L}" stroke-width="2.4"/>`;
+    s += blob(c, 76, 55, 16, 39, SKIN, -6, L, 0.5);
+    s += [0, 1, 2, 3].map((i) => `<rect x="${61 + i * 1.5}" y="${94 + i * 15.5}" width="${88 - i * 2}" height="16" rx="8" fill="${c.g(SKIN, 40, 20)}" stroke="${L}" stroke-width="2"/>`).join("");
+    s += c.hl(96, 99, 30, 5, -5, 0.5);
+    s += TC.seal(99, 176, 12.5, 0, "patch"); // the wristband carries the school's patch
+    s += `<g transform="rotate(10 ${fx} ${fy})"><circle cx="${fx}" cy="${fy}" r="31.5" fill="#fff" opacity=".92"/><circle cx="${fx}" cy="${fy}" r="28" fill="${c.g("#ffd21f", 36, 28)}" stroke="#e8960c" stroke-width="2.2"/>` + c.hl(fx - 10, fy - 16, 12, 6, -30, 0.8);
+    s += st(`M${fx - 17} ${fy - 4} q6 -9 12 0 M${fx + 5} ${fy - 4} q6 -9 12 0`, INK, 3.6);
+    s += `<ellipse cx="${fx - 19}" cy="${fy + 5}" rx="5.5" ry="3.2" fill="#ff7aa8" opacity=".6"/><ellipse cx="${fx + 19}" cy="${fy + 5}" rx="5.5" ry="3.2" fill="#ff7aa8" opacity=".6"/>`;
+    s += `<path d="M${fx - 14} ${fy + 5} Q${fx} ${fy + 28} ${fx + 14} ${fy + 5}Z" fill="#7a1a2c" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"/><path d="M${fx - 6.5} ${fy + 13.5} Q${fx} ${fy + 9} ${fx + 6.5} ${fy + 13.5} Q${fx} ${fy + 19.5} ${fx - 6.5} ${fy + 13.5}Z" fill="#ff7a9a"/></g>`;
+    s += sparkle(26, 46, 10) + sparkle(112, 22, 6) + sparkle(180, 104, 8) + sparkle(22, 124, 7) + sparkle(176, 148, 6);
+    return c.out(s);
+  };
+
+  /* ready: a big green tick over the open book and the pencil that lie ready on the desk ("Are we ready?" -> "Yes!") */
+  A["talk-ready"] = () => {
+    const c = TC.ArtCtx(); let s = c.shadow(100, 194, 96, 6);
+    s += `<rect x="4" y="176" width="192" height="16" rx="6" fill="${c.v("#c98f4a", "#96622a")}"/>`;
+    s += `<path d="M26 124 H174 Q182 124 184 131 L196 176 Q197 181 191 181 H9 Q3 181 4 176 L16 131 Q18 124 26 124Z" fill="${c.v("#ffe3ad", "#eab368")}" stroke="#b9843f" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="M17 112 L100 123 L183 112 V158 L100 169 L17 158Z" fill="${c.v("#5b8cff", "#2747c2")}" stroke="#1f3aa6" stroke-width="2.4" stroke-linejoin="round"/>`;
+    s += `<path d="M100 119 Q62 104 23 110 V154 Q62 149 100 164Z" fill="${c.v("#ffffff", "#e3eaf9")}" stroke="#aebbe3" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="M100 119 Q138 104 177 110 V154 Q138 149 100 164Z" fill="${c.v("#ffffff", "#dfe7f8")}" stroke="#aebbe3" stroke-width="2" stroke-linejoin="round"/>`;
+    s += st("M100 120 V163", "#9fb0e0", 2.4);
+    s += st("M111 129 Q140 116 167 121", "#6f82c9", 5) + st("M111 139 Q140 126 167 131 M111 149 Q134 138 152 139", "#c7d2f1", 4.6);
+    s += TC.seal(61, 133, 11, -5, "print"); // the school's stamp in the book
+    s += `<g transform="translate(141 171) rotate(-6) scale(.88)"><rect x="-34" y="-8" width="64" height="16" rx="3" fill="${c.v("#ffe066", "#f0a81a")}" stroke="#c98a10" stroke-width="1.6"/><rect x="-34" y="-3" width="62" height="3" fill="#fff" opacity=".45"/><rect x="-49" y="-8" width="15" height="16" rx="5" fill="#ff8aa8"/><rect x="-37" y="-8" width="6" height="16" fill="#b9c4d6"/><path d="M29 -8 L49 0 L29 8Z" fill="#f4d3a4" stroke="#c98a10" stroke-width="1.2" stroke-linejoin="round"/><path d="M42 -2.8 L49 0 L42 2.8Z" fill="#3a2a2a"/></g>`;
+    s += `<circle cx="100" cy="56" r="47" fill="#fff" stroke="#16a34a" stroke-width="2.6"/><circle cx="100" cy="56" r="39.5" fill="${c.g("#22c55e", 36, 26)}" stroke="#12813a" stroke-width="2.2"/>` + c.hl(84, 34, 20, 9, -25, 0.6);
+    s += st("M78 58 L93 74 L124 38", "#0e7a35", 20) + st("M78 58 L93 74 L124 38", "#fff", 13.5);
+    s += sparkle(22, 30, 9) + sparkle(178, 28, 8) + sparkle(170, 92, 6) + sparkle(28, 88, 6);
+    return c.out(s);
+  };
+
+  /* okay: a hand makes the OK sign - thumb and first finger in a ring, three fingers up ("Are you okay?" -> "I'm okay.") */
+  A["talk-okay"] = () => {
+    const c = TC.ArtCtx(), L = "#d98f5c", q = Math.PI / 180; let s = c.shadow(116, 196, 58, 7);
+    /** a thick arc with round ends as a closed shape: centre, radius of the middle line, thickness, from angle a0 to a1 (degrees) */
+    const band = (cx, cy, R, w, a0, a1) => {
+      const pt = (r, a) => `${f1(cx + r * Math.cos(a * q))} ${f1(cy + r * Math.sin(a * q))}`, sw = a1 > a0 ? 1 : 0, big = Math.abs(a1 - a0) > 180 ? 1 : 0, o = R + w / 2, n = R - w / 2;
+      return `M${pt(o, a0)} A${o} ${o} 0 ${big} ${sw} ${pt(o, a1)} A${w / 2} ${w / 2} 0 0 ${sw} ${pt(n, a1)} A${n} ${n} 0 ${big} ${1 - sw} ${pt(n, a0)} A${w / 2} ${w / 2} 0 0 ${sw} ${pt(o, a0)}Z`;
+    };
+    const finger = (d, gx, gy) => `<path d="${d}" fill="${c.g(SKIN, gx, gy)}" stroke="${L}" stroke-width="2.4" stroke-linejoin="round"/>`;
+    s += `<g><animateTransform attributeName="transform" type="rotate" values="-4 120 194;4 120 194;-4 120 194" dur="1.3s" repeatCount="indefinite"/>`;
+    s += cuff(c, 84, 154, 72, 42, "#2ec4b6");
+    s += blob(c, 108, 70, 11.5, 34, SKIN, -10, L, 0.4) + blob(c, 129, 70, 11.5, 33, SKIN, 6, L, 0.4) + blob(c, 151, 86, 10.5, 26, SKIN, 22, L, 0.4); // the three fingers that stay up
+    s += finger(band(71, 105, 23, 20, 25, 215), 30, 40);      // the thumb comes round from below ...
+    s += finger(band(71, 105, 23, 17.5, -25, -170), 40, 22) + c.hl(60, 78, 12, 4, -30, 0.5); // ... and the first finger comes over the top: its tip rests on the thumb
+    s += blob(c, 120, 128, 36, 34, SKIN, 0, L, 0.4);
+    s += TC.seal(120, 176, 12.5, 0, "patch") + `</g>`; // a sweatband with the school's patch
+    s += heart(c, 36, 38, 1.15) + sparkle(180, 36, 9) + sparkle(184, 132, 6) + sparkle(30, 156, 7);
     return c.out(s);
   };
 
@@ -72,53 +147,6 @@
     return c.out(s);
   };
 
-  /* door: an open door with the bright room beyond */
-  A["talk-door"] = () => {
-    const c = TC.ArtCtx(); let s = c.shadow(100, 194, 70, 8);
-    s += `<rect x="34" y="14" width="132" height="176" rx="8" fill="${c.v("#b0702f", "#6a3c16")}"/>`;
-    s += `<rect x="48" y="26" width="104" height="164" fill="${c.v("#fffbe0", "#ffe08a")}"/>`;
-    s += `<path d="M48 150 H152 V190 H48Z" fill="${c.v("#f6cf8a", "#cf9a52")}"/><path d="M70 150 L56 190 M100 150 V190 M130 150 L144 190" stroke="#b9843f" stroke-width="2" opacity=".5"/>`;
-    s += `<rect x="108" y="60" width="30" height="40" rx="3" fill="${c.v("#bfe6ff", "#7ab8f0")}" stroke="#fff" stroke-width="3"/><path d="M123 60 V100 M108 80 H138" stroke="#fff" stroke-width="2.4"/>`;
-    s += `<path d="M48 26 L106 8 L106 196 L48 188Z" fill="${c.v("#f1b469", "#b4743a")}" stroke="#6a3c16" stroke-width="3" stroke-linejoin="round"/>`;
-    s += `<path d="M60 126 L94 124 V172 L60 166Z" fill="${c.v("#e09b52", "#a8672f")}" stroke="#7a4a1e" stroke-width="2" stroke-linejoin="round"/>`;
-    s += `<g transform="translate(77 65) skewY(-11)">${TC.seal(0, 0, 10.5, 0, "plate")}</g>`; // brass door plate, in the door's perspective
-    s += `<path d="M106 8 L120 14 L120 190 L106 196Z" fill="#8a5424" stroke="#6a3c16" stroke-width="2"/>`;
-    s += c.sphere(94, 112, 8, "#ffd24a") + `<rect x="89" y="112" width="11" height="3" rx="1.5" fill="#b98300"/>`;
-    s += c.hl(72, 40, 14, 5, -20, 0.5);
-    s += sparkle(160, 36, 8) + sparkle(30, 70, 6);
-    return c.out(s);
-  };
-
-  /* help: a helper hand holding a toolbox */
-  A["talk-help"] = () => {
-    const c = TC.ArtCtx(); let s = c.shadow(100, 194, 72, 8);
-    s += st("M66 108 Q66 62 100 62 Q134 62 134 108", "#8d9bbf", 11) + st("M66 108 Q66 62 100 62 Q134 62 134 108", "#d7dff5", 6);
-    s += `<rect x="34" y="104" width="132" height="76" rx="14" fill="${c.g("#e8453c")}"/><rect x="34" y="104" width="132" height="22" rx="11" fill="${c.g("#ff6a52")}"/>`;
-    s += `<rect x="86" y="118" width="28" height="22" rx="5" fill="${c.g("#ffd24a")}"/><circle cx="100" cy="129" r="3.4" fill="#b98300"/>`;
-    s += c.hl(64, 113, 26, 4, 0, 0.55) + TC.seal(64, 152, 11.5, -8, "sticker"); // a sticker on the front of the toolbox
-    s += `<g transform="translate(150 150) rotate(-35)"><rect x="-4" y="-24" width="8" height="30" rx="3" fill="${c.v("#e6ecfa", "#8a97bb")}"/><circle cx="0" cy="-26" r="9" fill="${c.g("#cbd5ee")}"/><rect x="-3" y="-34" width="6" height="12" fill="#fff"/></g>`;
-    s += blob(c, 100, 50, 30, 21, "#ffffff", 0, "#9aa8d0", 0.5);
-    s += [78, 92, 106, 120].map((x, i) => blob(c, x, 72 + (i === 0 || i === 3 ? 1 : 0), 7.6, 15, "#ffffff", 0, "#9aa8d0", 0.4)).join("");
-    s += blob(c, 71, 60, 8.5, 15, "#ffffff", 18, "#9aa8d0", 0.3);
-    s += cuff(c, 74, 14, 52, 22, "#3d8bff");
-    s += sparkle(24, 60, 9) + sparkle(178, 76, 7) + sparkle(168, 22, 6);
-    return c.out(s);
-  };
-
-  /* fan: a spinning desk fan (the blades turn inside the picture) */
-  A["talk-fan"] = () => {
-    const c = TC.ArtCtx(); let s = c.shadow(100, 194, 56, 7);
-    s += `<ellipse cx="100" cy="182" rx="46" ry="11" fill="${c.g("#3b4670")}"/><rect x="93" y="124" width="14" height="60" rx="5" fill="${c.g("#9aa6c8")}"/>`;
-    s += `<circle cx="100" cy="84" r="62" fill="rgba(190,225,255,.22)" stroke="#8f9cc6" stroke-width="5"/>`;
-    s += `<g transform="translate(100 84)"><g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur=".55s" repeatCount="indefinite"/>`
-      + [0, 120, 240].map((a) => `<g transform="rotate(${a})"><path d="M0 0 C-22 -12 -26 -46 -6 -54 C10 -58 22 -34 0 0Z" fill="${c.g("#3dc2ff")}" stroke="#1f8fd6" stroke-width="2"/></g>`).join("")
-      + `<circle r="50" fill="none" stroke="#bfeaff" stroke-width="10" opacity=".25"/></g></g>`;
-    s += `<g stroke="#8f9cc6" stroke-width="2.4" fill="none"><circle cx="100" cy="84" r="40"/><circle cx="100" cy="84" r="20"/>` + [0, 30, 60, 90, 120, 150].map((a) => `<path d="M${f1(100 + 62 * Math.cos(a * Math.PI / 180))} ${f1(84 + 62 * Math.sin(a * Math.PI / 180))} L${f1(100 - 62 * Math.cos(a * Math.PI / 180))} ${f1(84 - 62 * Math.sin(a * Math.PI / 180))}"/>`).join("") + `</g>`;
-    s += TC.seal(100, 84, 10.5) + `<rect x="84" y="136" width="32" height="16" rx="8" fill="${c.g("#35e07a")}"/>`;
-    s += st("M168 62 q14 -6 22 2 M170 84 q18 -4 24 4 M168 106 q14 -4 20 4", "#bfeaff", 4.5);
-    return c.out(s);
-  };
-
   /* bye: a waving hand with a "Bye!" bubble (the hand waves) */
   A["talk-bye"] = () => {
     const c = TC.ArtCtx(); let s = c.shadow(100, 196, 56, 7);
@@ -132,15 +160,26 @@
     return c.out(s);
   };
 
-  /* hand: the finale, a thumbs-up glove in a ring of stars ("Could you give me a hand?" -> "Of course.") */
-  A["talk-hand"] = () => {
-    const c = TC.ArtCtx(); let s = c.shadow(100, 196, 60, 7);
-    for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; s += sparkle(f1(100 + Math.cos(a) * 88), f1(104 + Math.sin(a) * 84), i % 2 ? 6 : 9, i % 3 === 0 ? "#fff6c2" : "#ffd21f"); }
-    s += cuff(c, 56, 160, 94, 38, "#3d8bff") + `<g transform="translate(0 -8)">`;
-    s += `<rect x="52" y="98" width="102" height="76" rx="32" fill="${c.g(SKIN, 35, 25)}" stroke="#d98f5c" stroke-width="2.4"/>`;
-    s += blob(c, 82, 66, 15, 38, SKIN, -5, "#d98f5c", 0.5);
-    s += [0, 1, 2, 3].map((i) => `<rect x="${68 + i * 1.5}" y="${108 + i * 15}" width="${86 - i * 2}" height="15.5" rx="7.7" fill="${c.g(SKIN, 40, 20)}" stroke="#d98f5c" stroke-width="2"/>`).join("");
-    s += c.hl(100, 112, 30, 5, -5, 0.5) + `</g>` + TC.seal(103, 181, 10, 0, "patch"); // the wristband carries the school's patch
+  /* basketball: the finale - the ball drops into the hoop ("Wanna play basketball?" -> "Yeah, that sounds fun!");
+     the school's mark is the logo printed on the backboard */
+  A["talk-basketball"] = () => {
+    const c = TC.ArtCtx(), P = Math.PI; let s = c.shadow(100, 194, 52, 6), net = "";
+    s += `<ellipse cx="100" cy="187" rx="38" ry="8" fill="${c.g("#3b4670")}"/><rect x="93" y="112" width="14" height="76" rx="4" fill="${c.v("#aab5d6", "#5a6390")}"/>`;
+    s += `<rect x="26" y="10" width="148" height="108" rx="12" fill="${c.v("#ffffff", "#dde6fb")}" stroke="#4458b8" stroke-width="4"/>`;
+    s += `<rect x="72" y="56" width="56" height="46" rx="4" fill="none" stroke="#e8283e" stroke-width="5"/>`;
+    s += TC.seal(55, 38, 12, 0, "print"); // the logo of the backboard
+    s += st("M190 12 Q158 16 140 42", "#ffb347", 5) + st("M195 34 Q170 34 152 56", "#ffb347", 4.2) + st("M170 6 Q150 8 134 26", "#ffd08a", 3.6);
+    s += `<rect x="92" y="102" width="16" height="18" rx="3" fill="#b3400a"/>` + st("M64 122 A36 9 0 0 1 136 122", "#a8380a", 6.5);
+    s += `<g><animateTransform attributeName="transform" type="translate" values="15 -26;0 0;0 0;15 -26" keyTimes="0;.45;.7;1" dur="1.6s" repeatCount="indefinite"/>`;
+    s += `<circle cx="102" cy="96" r="30" fill="${c.g("#ff8a1f", 36, 28)}" stroke="#a8480a" stroke-width="2.6"/>`;
+    s += st("M72 96 Q102 87 132 96 M102 66 Q96 96 102 126 M84 72 Q100 96 84 120 M120 72 Q104 96 120 120", "#7a2e05", 2.6) + c.hl(91, 81, 12, 6.5, -30, 0.7) + `</g>`;
+    // the front of the rim and the net hang in front of the ball
+    const T = (i) => [f1(100 + 36 * Math.cos(P - i * P / 6)), f1(122 + 9 * Math.sin(P - i * P / 6))], B = (i) => [f1(100 + 21 * Math.cos(P - i * P / 6)), f1(166 + 5 * Math.sin(P - i * P / 6))];
+    for (let i = 0; i < 6; i++) net += `M${T(i)} L${B(i + 1)} M${T(i + 1)} L${B(i)} `;
+    net += `M${T(0)} L${B(0)} M${T(6)} L${B(6)} M79 166 A21 5 0 0 0 121 166`;
+    s += st(net, "#8fa0d8", 4.4) + st(net, "#fff", 2.6);
+    s += st("M64 122 A36 9 0 0 0 136 122", "#a8380a", 9.5) + st("M64 122 A36 9 0 0 0 136 122", "#ff6a1f", 6) + st("M72 126.5 A36 9 0 0 0 100 131", "#ffd0a8", 2);
+    s += sparkle(13, 64, 8) + sparkle(186, 100, 7) + sparkle(158, 152, 6);
     return c.out(s);
   };
 
@@ -218,7 +257,7 @@
   };
 
   // every picture above draws its own 土城 mark where it belongs, so the engine must not add a pin
-  ["talk-done", "talk-welcome", "talk-door", "talk-help", "talk-fan", "talk-bye", "talk-hand", "talk-tv", "talk-chair", "talk-kid", "talk-kid-up", "talk-mic", "talk-mug"]
+  ["talk-morning", "talk-good", "talk-ready", "talk-okay", "talk-welcome", "talk-bye", "talk-basketball", "talk-tv", "talk-chair", "talk-kid", "talk-kid-up", "talk-mic", "talk-mug"]
     .forEach((n) => { TC.SEAL[n] = "none"; try { TC.art(n); } catch (e) { console.error(n, e); } });
 
 
@@ -615,7 +654,7 @@ body.tk-on:has(#cap.show) .tk .hbub{opacity:0}
   }
 
   TC.games.talk = {
-    startArt: ["talk-welcome", "talk-bye", "talk-mic", "talk-done", "talk-tv", "talk-fan", "talk-mug", "talk-help", "talk-door", "talk-hand", "talk-chair"],
+    startArt: ["talk-welcome", "talk-bye", "talk-mic", "talk-ready", "talk-tv", "talk-basketball", "talk-mug", "talk-morning", "talk-okay", "talk-good", "talk-chair"],
     mount,
     idle(a) { api = a; if (!built) mount(a); resetScene(); },
     async play(a) {
@@ -638,7 +677,7 @@ body.tk-on:has(#cap.show) .tk .hbub{opacity:0}
         a.progress(n, n);
         await wow();
         if (a.aborted) return;
-        // finale: "Could you give me a hand?" -> "Of course."  then everybody claps
+        // finale (G.finale in content.js: "Wanna play basketball?" -> "Yeah, that sounds fun!"), then everybody claps
         if (!(await turn(Object.assign({}, G.finale), 6))) return;
         applause(3.6, 1.2, 3); ollieCheer(3400);
         await guard(TC.clapBanner(3400));
