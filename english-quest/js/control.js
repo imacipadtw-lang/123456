@@ -166,7 +166,7 @@
     const ptsLine = h("b", { class: "pts-line" }, "\u00a0");
     const bonusBox = h("div", { class: "pz-box" }, h("b", {}, "＋🍪"), h("span", { class: "zh" }, "總分超過 100 點：再多 1 份小點心"));
     // the teacher (or the child) taps the total of the six stickers: the certificate fills it in and shows the prize
-    const pick = h("div", { class: "pts-pick zh" }, h("span", {}, "貼紙合計幾點？"), ...[60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180].map((n) => h("button", { type: "button", "data-n": n, onclick: (e) => {
+    const pick = h("div", { class: "pts-pick zh" }, h("span", {}, "貼紙合計幾點？"), ...[60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240].map((n) => h("button", { type: "button", "data-n": n, onclick: (e) => {
       TC.ac(); ptsLine.textContent = String(n); ptsLine.classList.add("set"); bonusBox.classList.toggle("on", n > 100); bonusBox.classList.toggle("off", n <= 100);
       pick.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b === e.currentTarget)); TC.sfx(n > 100 ? "fanfare" : "coin"); if (n > 100) TC.confetti(160);
     } }, String(n))));
@@ -187,7 +187,7 @@
         // prizes: all six gates = a snack and a drink; a total of more than 100 points = one more small snack
         h("div", { class: "cert-prize" },
           h("div", { class: "cert-pts" }, "🎟 ", h("span", { class: "zh" }, "點數貼紙合計 "), ptsLine, h("span", { class: "zh" }, " 點")),
-          h("div", { class: "pz-box on" }, h("b", {}, "🍪＋🧃"), h("span", { class: "zh" }, "六關完成：點心 1 份＋飲料 1 瓶")),
+          h("div", { class: "pz-box on" }, h("b", {}, "🍪＋🧃"), h("span", { class: "zh" }, "第 1–6 關完成：點心 1 份＋飲料 1 瓶")),
           bonusBox),
         h("div", { class: "ft" }, h("span", {}, date), h("span", { class: "zh" }, "南投縣草屯鎮土城國民小學 · 運動會英語日"), h("span", { class: "by" }, h("i", {}), h("span", { class: "zh" }, "頒發人 Presented by")))),
       pick,

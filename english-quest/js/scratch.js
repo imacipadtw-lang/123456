@@ -79,7 +79,7 @@
         h("div", { class: "sc-sub zh" }, `${opt.name ? opt.name + "，" : ""}用手指把銀色的地方刮開！ Scratch it!`),
         win,
         h("div", { class: "sc-foot" }, h("span", {}, `GATE ${opt.gate}${opt.city ? " · " + opt.city.toUpperCase() : ""}`), h("span", { class: "tot zh", style: "visibility:hidden" }, "")),
-        h("div", { class: "sc-rule zh" }, "🍪＋🧃 六關完成：點心 1 份＋飲料 1 瓶　·　＋🍪 總分超過 100 點：再多 1 份小點心"),
+        h("div", { class: "sc-rule zh" }, "🍪＋🧃 第 1–6 關完成：點心 1 份＋飲料 1 瓶　·　＋🍪 總分超過 100 點：再多 1 份小點心"),
         next);
       const ov = h("div", { class: "sc-ov overlay-like" }, h("div", { class: "sc-rays" }), card);
       document.body.append(ov);
