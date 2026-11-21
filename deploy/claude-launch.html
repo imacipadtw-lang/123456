@@ -2,9 +2,9 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@400;700&display=swap">
 <style>
-/* Layout: ONE screen — the school name, the three levels, and the eight screens of the day (opening show, six gates,
-   Final Gate). Nothing scrolls and nothing is cut off: every size is in --u, which follows the smaller of the
-   screen's height and width; 4 × 2 tiles on a wide screen, 2 × 4 on a tall one. */
+/* Layout: ONE screen — the school name, the three levels, and the six gates; nothing else (no tools, no other links).
+   Nothing scrolls and nothing is cut off: every size is in --u, which follows the smaller of the screen's height and
+   width; 3 × 2 tiles on a wide screen, 2 × 3 on a tall one. */
 :root {
   --bg: #f3f6fb; --panel: #ffffff; --fg: #17223b; --muted: #5b6784; --line: #dbe2ef; --accent: #2f6bff;
   --display: "Fredoka", "Noto Sans TC", system-ui, sans-serif;
@@ -32,22 +32,21 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
 .lv button[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 calc(var(--u) * .45) color-mix(in srgb, var(--accent) 28%, transparent) }
 .lv button[aria-checked="true"] b::before { content: "✓ " }
 .lv button:focus-visible { outline: calc(var(--u) * .4) solid var(--accent); outline-offset: 2px }
-.gates { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.8); min-height: 0 }
-@media (orientation: portrait) { .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)) } }
-.gate { --c: var(--accent); display: grid; grid-template-columns: calc(var(--u) * 15) minmax(0, 1fr); gap: calc(var(--u) * 1.2); align-items: center; min-width: 0; min-height: 0; overflow: hidden; text-decoration: none; color: inherit;
+.gates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.8); min-height: 0 }
+@media (orientation: portrait) { .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)) } }
+/* a phone held upright: the tiles are tall and narrow, so the badge sits above the words */
+@media (max-aspect-ratio: 3/5) { .gate { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: auto auto; justify-items: center; align-content: center; text-align: center } }
+.gate { --c: var(--accent); display: grid; grid-template-columns: calc(var(--u) * 21) minmax(0, 1fr); gap: calc(var(--u) * 1.2); align-items: center; min-width: 0; min-height: 0; overflow: hidden; text-decoration: none; color: inherit;
   background: var(--panel); border: 1px solid var(--line); border-top: calc(var(--u) * .7) solid var(--c); border-radius: calc(var(--u) * 2.2); padding: calc(var(--u) * 1.2) calc(var(--u) * 1.5) calc(var(--u) * 1.2) calc(var(--u) * 1);
   transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation }
 .gate:hover, .gate:focus-visible { transform: translateY(calc(var(--u) * -.3)); box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2.6) rgba(20, 40, 90, .16); outline: none }
 .gate:focus-visible { box-shadow: 0 0 0 calc(var(--u) * .45) var(--c) }
-.gate .bdg { width: calc(var(--u) * 15); height: calc(var(--u) * 17.2); line-height: 0; display: grid; place-items: center }
+.gate .bdg { width: calc(var(--u) * 21); height: calc(var(--u) * 24); line-height: 0; display: grid; place-items: center }
 .gate .bdg svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * .5) calc(var(--u) * .8) rgba(20, 40, 90, .25)) }
-.gate .bdg .pic { position: relative; width: calc(var(--u) * 13.4); height: calc(var(--u) * 13.4) }
-.gate .bdg .pic img { width: 100%; height: 100% }
-.gate .bdg .pic i { position: absolute; right: calc(var(--u) * -.8); bottom: calc(var(--u) * -.6); width: calc(var(--u) * 6.2); height: calc(var(--u) * 6.2); border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: calc(var(--u) * 3.4); background: var(--panel); border: calc(var(--u) * .3) solid var(--c) }
 .gate .tx { min-width: 0 }
-.gate .no { font-family: var(--display); font-size: calc(var(--u) * 1.9); letter-spacing: .06em; color: var(--muted); white-space: nowrap }
-.gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 3.2); margin: calc(var(--u) * .4) 0 calc(var(--u) * .3); line-height: 1.1 }
-.gate .zh { font-size: calc(var(--u) * 2.1); color: var(--muted); line-height: 1.25 }
+.gate .no { font-family: var(--display); font-size: calc(var(--u) * 2.5); letter-spacing: .06em; color: var(--muted); white-space: nowrap }
+.gate h2 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 4.2); margin: calc(var(--u) * .6) 0 calc(var(--u) * .4); line-height: 1.1 }
+.gate .zh { font-size: calc(var(--u) * 2.8); color: var(--muted); line-height: 1.25 }
 @media (prefers-reduced-motion: reduce) { .gate { transition: none } .gate:hover { transform: none } }
 </style>
 
@@ -64,7 +63,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     <button type="button" role="radio" data-l="3"><b>高年級</b><span>5–6 年級 · 答句填空</span></button>
   </div>
 
-  <div class="gates" id="gates" aria-label="八個畫面：開場、六關、終點"></div>
+  <div class="gates" id="gates" aria-label="六關"></div>
 </div>
 
 <script src="js/content.js"></script>
@@ -97,16 +96,13 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     var z = document.createElement("div"); z.className = "zh"; z.textContent = zh;
     tx.append(n, t, z); a.append(img, tx); box.append(a);
   }
-  function pic(icon) { return '<div class="pic"><img src="assets/img/tucheng-emblem.svg" alt=""><i>' + icon + "</i></div>"; }
-  // the eight screens of the day; the gate list comes from the same content file the games use, so names always match
+  // the six gates — the only links on this page; the list comes from the same content file the games use
   var C = (window.TC_CONTENT && TC_CONTENT.gates) || {};
-  tile("opening.html", "#ffc83d", pic("🎬"), "開場 OPENING", "Opening Show", "開場動畫 · 大廳");
   [1, 2, 3, 4, 5, 6].forEach(function (n) {
     if (!C[n]) return;
     var b = ""; try { if (window.TC && TC.badgeSVG) b = TC.badgeSVG(n); } catch (e) {}
     tile("station.html?gate=" + n + "#gate-" + n, C[n].color, b, "GATE " + n, C[n].title, C[n].zh + " · " + C[n].city, n);
   });
-  tile("control.html", "#ff9a2e", pic("🏁"), "終點 FINAL", "Final Gate", "終點登機門 · 解碼領獎");
 
   var lv = saved() || 2, pick = document.getElementById("lv");
   function paint() {

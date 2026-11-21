@@ -1,9 +1,9 @@
-/* The home page must show all eight tiles (opening, six gates, Final Gate) on ONE screen with nothing cut off or
-   shortened, at every screen shape.   usage: node tools/tests/home-fit.js [url of index.html] [screenshot prefix] */
+/* The home page must show the six gates — and nothing else to tap but the three level buttons — on ONE screen with
+   nothing cut off or shortened, at every screen shape.   usage: node tools/tests/home-fit.js [url of index.html] [screenshot prefix] */
 const { chromium } = require("playwright");
 (async () => {
   const url = process.argv[2] || "http://localhost:8767/index.html";
-  const sizes = [[1920, 1080], [1366, 768], [1280, 720], [3840, 2160], [1024, 768], [2560, 1080], [390, 844], [412, 915], [768, 1024], [844, 390], [1180, 820]];
+  const sizes = [[1920, 1080], [1366, 768], [1280, 720], [3840, 2160], [1024, 768], [2560, 1080], [390, 844], [412, 915], [360, 640], [768, 1024], [820, 1180], [600, 960], [844, 390], [1180, 820]];
   const b = await chromium.launch();
   let bad = 0;
   for (const [w, h] of sizes) {
@@ -28,9 +28,9 @@ const { chromium } = require("playwright");
       let textCut = 0;
       for (const el of document.querySelectorAll(".hero h1, .hero h1 span, .hero .sch, #lvHome b, #lvHome i, a.gate .th, a.gate h2, a.gate .zh")) { const q = el.getBoundingClientRect(); if (q.right > vw + 0.5 || q.bottom > vh + 0.5 || el.scrollWidth > el.clientWidth + 1) textCut++; }
       const hero = document.querySelector(".hero").getBoundingClientRect();
-      return { tiles: tiles.length, cut, clipped, minFont: Math.round(minFont), scroll: document.documentElement.scrollHeight > vh + 1 || document.documentElement.scrollWidth > vw + 1, lvCut: lv, heroCut: hero.right > vw + 0.5, textCut };
+      return { tiles: tiles.length, links: document.querySelectorAll("a[href]").length, cut, clipped, minFont: Math.round(minFont), scroll: document.documentElement.scrollHeight > vh + 1 || document.documentElement.scrollWidth > vw + 1, lvCut: lv, heroCut: hero.right > vw + 0.5, textCut };
     });
-    const ok = r.tiles === 8 && !r.cut && !r.clipped && !r.scroll && !r.lvCut && !r.heroCut && !r.textCut && !errs.length;
+    const ok = r.tiles === 6 && r.links === 6 && !r.cut && !r.clipped && !r.scroll && !r.lvCut && !r.heroCut && !r.textCut && !errs.length;
     if (!ok) bad++;
     console.log((ok ? "ok   " : "FAIL ") + w + "x" + h + " " + JSON.stringify(r) + (errs.length ? " " + errs[0] : ""));
     if (process.argv[3] && (w === 1920 || w === 390 || w === 1366)) await p.screenshot({ path: process.argv[3] + "-" + w + ".png" });
