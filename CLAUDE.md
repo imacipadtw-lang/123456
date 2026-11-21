@@ -17,7 +17,8 @@
   中年級 = booklet sentences shown in full, never a blank; 高年級 = booklet answer sentences with the answer word blank.
 - The home page (and the backup launcher) is ONE screen with exactly the six gates plus the level buttons; nothing else is
   shown there — no tools, no opening / Final Gate tiles — and nothing scrolls (`node tools/tests/home-fit.js`). The other
-  pages (`control.html`, `opening.html`, `guide.html`, `teacher-cards.html`, `links.html`, `credits.html`) are opened by address.
+  pages (`control.html`, `opening.html`, `quest-card.html`, `guide.html`, `teacher-cards.html`, `links.html`, `credits.html`)
+  are opened by address. The printable card (`quest-card.html`) has six sticker places and NO letter boxes.
 - Prizes: all six gates = a pack of cookies and a drink; more than 100 sticker points in all = one more pack of cookies.
 - More than one session may work on this branch: `git fetch` and merge before pushing, never force-push, and keep the other
   session's flow decisions unless the teacher says otherwise.
