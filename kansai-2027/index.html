@@ -61,7 +61,7 @@ a{color:var(--kobe)}
 .tab{flex:1;max-width:150px;border:1px solid var(--line);border-bottom:0;background:var(--soft);color:var(--ink2);border-radius:12px 12px 0 0;padding:9px 6px 8px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:14px;position:relative;top:1px}
 .tab svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .tab[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:700;padding-top:12px;box-shadow:inset 0 3px 0 var(--tabc,var(--indigo))}
-.tab[data-tab="days"]{--tabc:var(--indigo)}.tab[data-tab="flights"]{--tabc:var(--stamp)}.tab[data-tab="stays"]{--tabc:var(--kobe)}.tab[data-tab="places"]{--tabc:var(--waka)}.tab[data-tab="todo"]{--tabc:var(--osaka)}
+.tab[data-tab="days"]{--tabc:var(--indigo)}.tab[data-tab="flights"]{--tabc:var(--stamp)}.tab[data-tab="stays"]{--tabc:var(--kobe)}.tab[data-tab="places"]{--tabc:var(--waka)}.tab[data-tab="book"]{--tabc:var(--sug)}.tab[data-tab="todo"]{--tabc:var(--osaka)}
 
 main{flex:1;min-height:0;max-width:1180px;width:100%;margin:0 auto;padding:0 16px 16px;display:flex}
 .panel{flex:1;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:0 14px 14px 14px;overflow:hidden;display:flex}
@@ -132,6 +132,14 @@ h2{font-family:var(--display);font-size:22px;margin:0 0 4px;font-weight:700;text
 .cost .how{color:var(--ink2)}
 .links{display:flex;gap:12px;flex-wrap:wrap}
 .maplink{font-size:12.5px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:3px}
+.leg{display:grid;grid-template-columns:52px 30px 1fr;gap:10px;padding:0 0 2px}
+.leg .lx{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12.5px;color:var(--ink2);border-left:0;padding:2px 0}
+.leg .lx .walk{display:inline-flex;align-items:center;gap:4px}
+.leg .lx svg{width:14px;height:14px;stroke:var(--ink3);fill:none;stroke-width:2}
+.leg .lx a{font-weight:700;text-decoration:none}
+.routebar{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 14px}
+.routebtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;text-decoration:none;background:var(--card)}
+.staycard .codes{margin-top:4px}
 .mine{font-size:11px;color:var(--sug);border:1px solid var(--sug);border-radius:4px;padding:0 5px;margin-left:6px;font-weight:700;vertical-align:1px}
 .del{background:none;border:0;color:var(--ink3);font-size:12.5px;cursor:pointer;padding:0;text-decoration:underline}
 .note{font-size:13.5px;border-radius:10px;padding:9px 12px;margin-top:14px}
@@ -180,6 +188,26 @@ textarea{min-height:90px;resize:vertical}
 .st.check{background:var(--warnbg);color:var(--warn)}
 .st.suggest{background:var(--sugbg);color:var(--sug)}
 
+/* ---------- bookings ---------- */
+.lock{max-width:420px;margin:30px auto;border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;text-align:left}
+.lock svg{width:34px;height:34px;stroke:var(--sug);fill:none;stroke-width:1.8}
+.lock .err{color:var(--stamp);font-size:13px;min-height:1em}
+.lock label.rm{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink2)}
+.bk{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.bk.warn{border-color:var(--stamp);background:var(--warnbg)}
+.bk .top2{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.bk .dt{font-family:var(--mono);font-weight:600;color:var(--ink2);font-size:13px}
+.bk p{margin:0;font-size:13.5px;color:var(--ink2)}
+.bk .wtxt{color:var(--stamp);font-weight:700;font-size:13.5px}
+.codes{display:flex;flex-wrap:wrap;gap:8px}
+.code{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:4px 6px 4px 10px}
+.code small{font-size:11px;color:var(--ink2)}
+.code b{font-family:var(--mono);font-size:15px;letter-spacing:.03em}
+.code button{border:0;background:var(--card);border-radius:7px;padding:3px 8px;font-size:12px;cursor:pointer;border:1px solid var(--line)}
+.mails{display:flex;flex-wrap:wrap;gap:6px 14px}
+.mails a{font-size:12.5px;font-weight:700;text-decoration:none;display:inline-flex;gap:4px;align-items:center}
+.bklist{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.bkh{font-size:12.5px;letter-spacing:.1em;color:var(--ink2);margin:6px 0 8px;font-weight:700}
 /* ---------- places ---------- */
 .ptools{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
@@ -226,6 +254,7 @@ textarea{min-height:90px;resize:vertical}
 
 /* ---------- mobile ---------- */
 @media (max-width:760px){
+  .leg{grid-template-columns:44px 30px 1fr;gap:8px}
   .top{padding:8px 16px 6px;gap:10px}
   .top h1{font-size:20px}
   .stampmark{width:50px;height:50px}
@@ -265,7 +294,7 @@ textarea{min-height:90px;resize:vertical}
 <header class="top">
   <div class="grow">
     <h1 id="ttl">2027 關西慢旅</h1>
-    <div class="sub">1/23（六）– 2/4（四）・神戶 → 大阪 → 和歌山・2 人</div>
+    <div class="sub">1/23（六）– 2/4（四）・神戶 → 大阪・2 人</div>
   </div>
   <div class="stampmark" id="stamp" aria-live="polite"><span>還有</span><b>—</b><span>天</span></div>
 </header>
@@ -274,6 +303,7 @@ textarea{min-height:90px;resize:vertical}
   <button class="tab" role="tab" data-tab="days" aria-selected="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>行程</button>
   <button class="tab" role="tab" data-tab="flights" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M2 16l20-6-3-2-7 2-6-5-2 1 4 5-4 1-2-1-1 1 3 3z"/></svg>航班</button>
   <button class="tab" role="tab" data-tab="stays" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 18V8M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/></svg>住宿</button>
+  <button class="tab" role="tab" data-tab="book" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>訂單</button>
   <button class="tab" role="tab" data-tab="places" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>口袋名單</button>
   <button class="tab" role="tab" data-tab="todo" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>待辦</button>
 </nav>
@@ -283,6 +313,7 @@ textarea{min-height:90px;resize:vertical}
     <section class="view" id="v-days"></section>
     <section class="view scroll" id="v-flights" hidden></section>
     <section class="view scroll" id="v-stays" hidden></section>
+    <section class="view scroll" id="v-book" hidden></section>
     <section class="view scroll" id="v-places" hidden></section>
     <section class="view scroll" id="v-todo" hidden></section>
   </div>
@@ -312,6 +343,7 @@ textarea{min-height:90px;resize:vertical}
 </div>
 
 <script src="trip-data.js"></script>
+<script src="bookings.enc.js"></script>
 <script>
 (function(){
 const T = window.TRIP, DAYS = window.DAYS, STAYS = window.STAYS, FLIGHTS = window.FLIGHTS, PLACES = window.PLACES, TODOS = window.TODOS, REG = window.REGIONS;
@@ -323,6 +355,8 @@ const store = {
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MAP = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+const DIR = (a, b, mode) => 'https://www.google.com/maps/dir/?api=1&origin=' + encodeURIComponent(a) + '&destination=' + encodeURIComponent(b) + '&travelmode=' + (mode || 'transit');
+const DIRW = (pts) => 'https://www.google.com/maps/dir/' + pts.map(encodeURIComponent).join('/');
 const WD = ['日','一','二','三','四','五','六'];
 const WDE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 const pad = n => String(n).padStart(2,'0');
@@ -338,8 +372,9 @@ const todayISO = iso(new Date());
 let sel = dayIndex(todayISO) >= 0 ? todayISO : store.get('sel', T.start);
 if(dayIndex(sel) < 0) sel = T.start;
 let tab = (location.hash || '').replace('#','') || store.get('tab','days');
-if(!['days','flights','stays','places','todo'].includes(tab)) tab = 'days';
+if(!['days','flights','stays','book','places','todo'].includes(tab)) tab = 'days';
 let pcat = '全部', pq = '';
+let BK = null;
 
 const yen = n => '¥' + Number(n).toLocaleString('en-US');
 const nt = n => 'NT$' + (Math.round(n * rate / 10) * 10).toLocaleString('en-US');
@@ -384,7 +419,7 @@ function calendarHTML(){
   }
   return h;
 }
-function itemHTML(it, isMine){
+function itemHTML(it, isMine, k){
   const ty = ICON[it.type] ? it.type : 'other';
   return `<li class="it ty-${ty}">
     <span class="t">${esc(it.t || '')}</span>
@@ -392,12 +427,37 @@ function itemHTML(it, isMine){
     <div class="x">
       <b>${esc(it.title)}${isMine?'<span class="mine">自己加的</span>':''}</b>
       ${it.note ? `<p>${esc(it.note)}</p>` : ''}
+      ${it.type === 'flight' ? flightCode(sel) : ''}
       ${it.yen ? `<span class="cost"><span class="y">${yen(it.yen)}</span><span class="nt">≈ ${nt(it.yen)}</span>${it.how?`<span class="how">${esc(it.how)}</span>`:''}</span>` : ''}
       <span class="links">
         ${it.q ? `<a class="maplink" href="${MAP(it.q)}" target="_blank" rel="noopener">${PIN}Google 地圖</a>` : ''}
         ${isMine ? `<button class="del" data-del="${esc(it.id)}">刪除</button>` : ''}
       </span>
     </div></li>`;
+}
+const WALK = '<svg viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M8 12l3-4 4 2 2 3M11 8l-1 5"/></svg>';
+function legHTML(all, k){
+  const a = all[k], b = all[k+1];
+  if(!b) return '';
+  const qa = a.q, qb = b.q;
+  if(!a.leg && !(qa && qb && qa !== qb)) return '';
+  const mode = /步行/.test(a.leg || '') ? 'walking' : 'transit';
+  return `<li class="leg"><span></span><span></span><div class="lx">${a.leg ? `<span class="walk">${WALK}${esc(a.leg)}</span>` : ''}${qa && qb && qa !== qb ? `<a href="${DIR(qa, qb, mode)}" target="_blank" rel="noopener">看路線 ›</a>` : ''}</div></li>`;
+}
+function routeBar(all){
+  const pts = []; all.forEach(x => { if(x.q && pts[pts.length-1] !== x.q) pts.push(x.q); });
+  if(pts.length < 2) return '';
+  return `<div class="routebar"><a class="routebtn" href="${DIRW(pts)}" target="_blank" rel="noopener">${PIN}在 Google 地圖看今天整條路線（${pts.length} 站）</a></div>`;
+}
+function hotelCode(date){
+  if(!BK) return '';
+  const h = BK.hotels.find(h => !h.warn && (() => { const n = parseInt((h.nights.match(/(\d+) 晚/)||[])[1]||'1'); const d0 = parse(h.date); const d = parse(date); return d >= d0 && (d - d0)/864e5 < n; })());
+  return h ? `<div class="codes">${codeChip('Agoda 訂單', h.agoda)}</div>` : '';
+}
+function flightCode(date){
+  if(!BK) return '';
+  const f = BK.flights.find(f => f.date === date);
+  return f ? `<div class="codes">${codeChip('訂位代號', f.pnr)}${codeChip('Agoda', f.agoda)}</div>` : '';
 }
 function renderDays(){
   const i = dayIndex(sel), day = DAYS[i], st = stayFor(sel), dt = parse(sel);
@@ -425,10 +485,11 @@ function renderDays(){
         </div>
       </div>
       <div class="daybody scroll pad" id="daybody">
-        ${st ? `<div class="staycard">${svg(ICON.stay)}<div class="s"><small>今晚住</small><b>${esc(st.name)}</b></div>
+        ${routeBar(all)}
+        ${st ? `<div class="staycard">${svg(ICON.stay)}<div class="s"><small>今晚住</small><b>${esc(st.name)}</b>${hotelCode(sel)}</div>
           <span class="st ${st.status}">${({booked:'已訂',check:'待確認',suggest:'建議'})[st.status]}</span>
           <a class="maplink" href="${MAP(st.q)}" target="_blank" rel="noopener">${PIN}地圖</a></div>` : ''}
-        <ol class="tl">${all.map(x => itemHTML(x, x._m)).join('')}</ol>
+        <ol class="tl">${all.map((x, k) => itemHTML(x, x._m, k) + legHTML(all, k)).join('')}</ol>
         ${day.alt ? `<div class="note alt"><b>替代方案：</b>${esc(day.alt)}</div>` : ''}
         ${day.tip ? `<div class="note tip">${esc(day.tip)}</div>` : ''}
         <button class="addbtn" id="add">＋ 在 ${md(sel)} 新增行程</button>
@@ -449,12 +510,13 @@ function renderFlights(){
         <div class="ap r"><span class="code">${f.to.code}</span><span class="city">${esc(f.to.city)}</span><span class="time">${f.to.time}</span>${f.to.terminal?`<span class="term">${esc(f.to.terminal)}</span>`:''}</div>
       </div>
       <div class="meta"><span>航班 <b>${esc(f.no)}</b></span><span>時區 <b>${f.from.tz} → ${f.to.tz}</b></span></div>
+      ${BK ? `<div style="padding:0 16px 8px">${flightCode(f.date)}</div>` : ''}
       <div class="perf"></div>
       <div class="pb"><ul>${f.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>
     </article>`).join('')}</div>
     <div class="private">
-      <label for="priv">我的訂位代號、訂單編號</label>
-      <small>只存在這支手機的瀏覽器，不會上傳到網路，別人看不到。</small>
+      <label for="priv">我的備註</label>
+      <small>訂位代號、訂單編號都在「訂單」頁。這裡可以寫其他備註，只存在這支手機。</small>
       <textarea id="priv" placeholder="例如：回程航空公司編號 ______">${esc(priv)}</textarea>
       <span class="msg" id="privmsg"></span>
     </div></div>`;
@@ -473,6 +535,55 @@ function renderStays(){
           <p>${esc(s.note)}</p>
           <a class="maplink" href="${MAP(s.q)}" target="_blank" rel="noopener">${PIN}Google 地圖</a></div>
       </div>`;}).join('')}</div></div>`;
+}
+
+/* ---------- bookings (encrypted) ---------- */
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function unlock(pw){
+  const E = window.BOOKINGS_ENC;
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:b64(E.salt), iterations:E.iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(E.iv)}, key, b64(E.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+const MAIL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+function codeChip(label, val){ return `<span class="code"><small>${esc(label)}</small><b>${esc(val)}</b><button data-copyval="${esc(val)}">複製</button></span>`; }
+function mailLinks(arr){ return `<div class="mails">${(arr||[]).map(m => `<a href="${esc(BK.gmail + m[1])}" target="_blank" rel="noopener">${MAIL}${esc(m[0])}</a>`).join('')}</div>`; }
+function renderBook(){
+  const el = $('#v-book');
+  if(!window.BOOKINGS_ENC){ el.innerHTML = '<div class="pad"><p class="lead">找不到訂單資料檔。</p></div>'; return; }
+  if(!BK){
+    el.innerHTML = `<div class="pad" style="width:100%"><form class="lock" id="lockform">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <h2>訂單資料已上鎖</h2>
+      <p class="lead" style="margin:0">這頁有訂單編號、訂位代號和姓名。網站是公開的，所以加了密碼。</p>
+      <input type="password" id="bkpw" placeholder="輸入密碼" autocomplete="current-password" aria-label="密碼">
+      <label class="rm"><input type="checkbox" id="bkrm" checked> 這支手機記住密碼</label>
+      <button class="btn" type="submit">打開</button>
+      <span class="err" id="bkerr"></span></form></div>`;
+    const saved = store.get('bkpw', '');
+    if(saved){ unlock(saved).then(d => { BK = d; renderBook(); }).catch(() => store.set('bkpw','')); }
+    return;
+  }
+  const D = BK;
+  el.innerHTML = `<div class="pad" style="width:100%">
+    <h2>訂單</h2><p class="lead">全部從 Gmail 整理（${esc(D.updated)}）。點信件連結會開你的 Gmail 原信，要登入你的 Google 帳號才看得到。</p>
+    <div class="bkh">機票</div><div class="bklist">${D.flights.map(f => `<div class="bk">
+      <div class="top2"><b>${esc(f.label)}・${esc(f.no)}・${esc(f.airline)}</b><span class="dt">${md(f.date)}</span></div>
+      <p>${esc(f.route)}</p>
+      <div class="codes">${codeChip('航空公司訂位代號', f.pnr)}${codeChip('Agoda 訂單', f.agoda)}</div>
+      <p>乘客：${esc(f.pax)}</p>
+      ${f.note?`<p>${esc(f.note)}</p>`:''}${mailLinks(f.mail)}</div>`).join('')}</div>
+    <div class="bkh">住宿</div><div class="bklist">${D.hotels.map(h => `<div class="bk ${h.warn?'warn':''}">
+      <div class="top2"><b>${esc(h.name)}</b><span class="dt">${esc(h.nights)}</span></div>
+      <div class="codes">${codeChip('Agoda 訂單', h.agoda)}</div>
+      ${h.room?`<p>${esc(h.room)}</p>`:''}
+      ${h.warn?`<span class="wtxt">${esc(h.warn)}</span>`:''}
+      ${h.note?`<p>${esc(h.note)}</p>`:''}${mailLinks(h.mail)}</div>`).join('')}</div>
+    <div class="bkh">其他相關信件</div><div class="bklist">${D.other.map(o => `<div class="bk">
+      <b>${esc(o.name)}</b><p>${esc(o.note)}</p>${mailLinks(o.mail)}</div>`).join('')}</div>
+    <button class="btn ghost" id="bklock">鎖上這頁</button>
+  </div>`;
 }
 
 /* ---------- places ---------- */
@@ -556,8 +667,8 @@ function copyText(text, ta, msgEl){
 /* ---------- render & events ---------- */
 function show(){
   document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
-  ['days','flights','stays','places','todo'].forEach(t => $('#v-'+t).hidden = t !== tab);
-  ({days:renderDays, flights:renderFlights, stays:renderStays, places:renderPlaces, todo:renderTodo})[tab]();
+  ['days','flights','stays','book','places','todo'].forEach(t => $('#v-'+t).hidden = t !== tab);
+  ({days:renderDays, flights:renderFlights, stays:renderStays, book:renderBook, places:renderPlaces, todo:renderTodo})[tab]();
   store.set('tab', tab);
 }
 function selectDay(k){ sel = k; store.set('sel', k); renderDays(); }
@@ -579,6 +690,10 @@ document.addEventListener('click', e => {
   }
   const fc = e.target.closest('.fchip'); if(fc){ pcat = fc.dataset.cat; renderPlaces(); return; }
   if(e.target.closest('#ics')){ makeICS(); return; }
+  const cv = e.target.closest('[data-copyval]');
+  if(cv){ const v = cv.dataset.copyval; const done1 = () => { cv.textContent = '已複製'; setTimeout(() => cv.textContent = '複製', 1500); };
+    if(navigator.clipboard) navigator.clipboard.writeText(v).then(done1, () => {}); return; }
+  if(e.target.closest('#bklock')){ BK = null; store.set('bkpw',''); renderBook(); return; }
   if(e.target.closest('#copyexp')){ copyText($('#exp').value, $('#exp'), $('#expmsg')); return; }
   if(e.target.closest('#doimp')){
     try{
@@ -590,6 +705,13 @@ document.addEventListener('click', e => {
     }catch(err){ $('#impmsg').textContent = '格式不對，請貼上從「複製」得到的完整內容'; }
     return;
   }
+});
+document.addEventListener('submit', e => {
+  if(e.target.id !== 'lockform') return;
+  e.preventDefault();
+  const pw = $('#bkpw').value; $('#bkerr').textContent = '解鎖中…';
+  unlock(pw).then(d => { BK = d; if($('#bkrm').checked) store.set('bkpw', pw); renderBook(); })
+    .catch(() => { $('#bkerr').textContent = '密碼不對，請再試一次。'; });
 });
 document.addEventListener('input', e => {
   if(e.target.id === 'pq'){ pq = e.target.value; renderPlaces(true); }
@@ -632,6 +754,7 @@ $('#addform').addEventListener('submit', e => {
 
 stamp();
 show();
+(function(){ const pw = store.get('bkpw',''); if(pw && window.BOOKINGS_ENC){ unlock(pw).then(d => { BK = d; show(); }).catch(() => {}); } })();
 })();
 </script>
 </body>
