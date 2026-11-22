@@ -243,9 +243,10 @@ void main(){
     pictures();
     const J = {}, root = node({}), turn = (J.turn = add(root));
     /* the round stand he turns on */
-    add(turn, { mesh: MESH.cyl, p: [0, -0.2, 0], s: [1.95, 0.2, 1.95], col: C.gold, spec: 0.55 });
-    add(turn, { mesh: MESH.cyl, p: [0, -0.19, 0], s: [1.78, 0.2, 1.78], col: C.navy, spec: 0.2 });
-    add(turn, { mesh: MESH.ringThin, p: [0, 0.012, 0], s: [1.5, 1, 1.5], col: C.mint, emis: 0.5 });
+    const stand = (J.stand = add(turn)); // hidden with O3.mount(…, { stand: false }), e.g. for a picture on paper
+    add(stand, { mesh: MESH.cyl, p: [0, -0.2, 0], s: [1.95, 0.2, 1.95], col: C.gold, spec: 0.55 });
+    add(stand, { mesh: MESH.cyl, p: [0, -0.19, 0], s: [1.78, 0.2, 1.78], col: C.navy, spec: 0.2 });
+    add(stand, { mesh: MESH.ringThin, p: [0, 0.012, 0], s: [1.5, 1, 1.5], col: C.mint, emis: 0.5 });
     J.shadow = add(turn, { mesh: MESH.quad, p: [0, 0.02, 0], r: [-90, 0, 0], s: [2.5, 2.2, 1], mode: 1, alpha: 0.42 });
     /* a little stool for "Sit down" / "Stand up" */
     const stool = (J.stool = add(turn, { p: [0, 0, -0.1], vis: false }));
@@ -402,6 +403,7 @@ void main(){
     host.append(canvas);
     const R = Renderer(canvas); if (!R) { canvas.remove(); return flat(host, opt); }
     const { root, J } = buildOllie();
+    if (opt.stand === false) J.stand.vis = false;
     const P = Object.assign({}, REST), Q = Object.assign({}, REST), keys = Object.keys(REST);
     const proj = m4(), view = m4(), vp = m4(), light = (() => { const v = [0.42, 0.78, 0.62], l = Math.hypot(v[0], v[1], v[2]); return new Float32Array(v.map((x) => x / l)); })();
     let act = A[opt.action] ? opt.action : "idle", t0 = performance.now() / 1000, last = t0, raf = 0, dead = false, talking = false, W = 0, H = 0;

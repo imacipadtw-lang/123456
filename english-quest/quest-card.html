@@ -15,33 +15,40 @@
   .bar button,.bar select{background:#152a63;color:#fff;border-radius:10px;padding:10px 18px;font-size:16px;font-weight:700;border:0}
   .bar a{color:#152a63;font-weight:700}
   .page{width:210mm;height:297mm;overflow:hidden;margin:0 auto 10mm;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.15);break-after:page;display:grid;grid-template-rows:1fr 1fr}
-  .qc{position:relative;padding:6.5mm 10mm 5.5mm;display:flex;flex-direction:column;gap:2.4mm;overflow:hidden}
+  /* the teacher, 2026-11-22: quality colours children love, and our mascot Ollie (very cute) on the card */
+  .qc{position:relative;padding:6mm 9mm 5mm;display:flex;flex-direction:column;gap:2.6mm;overflow:hidden;
+    background:
+      radial-gradient(60% 55% at 0% 0%,#ffe1ec 0,transparent 70%),
+      radial-gradient(55% 60% at 100% 0%,#dff3ff 0,transparent 70%),
+      radial-gradient(60% 60% at 100% 100%,#dcfbef 0,transparent 70%),
+      radial-gradient(60% 60% at 0% 100%,#fff1c9 0,transparent 70%),
+      #fdf8ff}
   .qc + .qc{border-top:.3mm dashed #9aa6c8}
-  .qc + .qc::before{content:"✂";position:absolute;left:3mm;top:-3.2mm;font-size:5mm;color:#9aa6c8;background:#fff;line-height:1}
-  .top{display:flex;align-items:center;gap:4mm}
-  .top img{width:30mm;height:30mm;flex:none;margin:-1.5mm 0 -2.5mm}
+  .qc + .qc::before{content:"✂";position:absolute;left:3mm;top:-3.2mm;font-size:5mm;color:#9aa6c8;background:#fff;line-height:1;z-index:3}
+  .qc .spark{position:absolute;color:var(--k);font-size:var(--z);line-height:1;opacity:.9;pointer-events:none}
+  .top{display:flex;align-items:center;gap:3.5mm;padding-right:33mm;position:relative;z-index:1}
+  .top img.emb{width:27mm;height:27mm;flex:none;margin:-1mm 0 -1.5mm;filter:drop-shadow(0 .8mm .8mm rgba(40,40,90,.25))}
   .top .t{flex:1;min-width:0}
-  .top .l1{display:flex;align-items:flex-end;gap:4mm}
-  .top .sch{font-size:4mm;font-weight:700;color:#152a63;letter-spacing:.06em;white-space:nowrap}
-  .top h1{margin:1.5mm 0 0;font:700 8.4mm/1.05 Fredoka,sans-serif;color:#152a63;white-space:nowrap}
-  .top h1 span{font-family:Fredoka,"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;font-size:6.4mm;color:#e0457b;margin-left:3mm}
-  .who{margin-left:auto;font-size:4mm;font-weight:700;display:flex;gap:2.5mm;align-items:flex-end;white-space:nowrap}
-  .who i{display:inline-block;border-bottom:.5mm solid #14213d;height:7mm}
-  .cells{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:2.6mm;min-height:0}
-  .cell{border:.6mm solid var(--c);border-radius:4mm;padding:1.6mm 2.4mm 2mm;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto 1fr;align-items:center;column-gap:2mm;row-gap:1mm;background:color-mix(in srgb,var(--c) 7%,#fff);min-height:0}
-  .cell .hd{grid-column:1 / 3;display:flex;align-items:center;gap:1.8mm;min-width:0;white-space:nowrap}
-  .cell .n{width:9mm;height:9mm;border-radius:50%;background:var(--c);color:#0a1633;display:grid;place-items:center;font:700 6mm Fredoka,sans-serif;flex:none}
-  .cell .nm{font:700 6mm/1.1 "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;min-width:0;letter-spacing:.08em}
-  .cell .zh{font:700 3.2mm/1.2 "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:#445;margin-left:auto}
+  .top .sch{font-size:3.9mm;font-weight:700;color:#3b4aa8;letter-spacing:.08em;white-space:nowrap}
+  .top h1{margin:1mm 0 0;font:700 8.6mm/1.05 Fredoka,sans-serif;color:#2b3a8f;white-space:nowrap;text-shadow:0 .5mm 0 #fff}
+  .top h1 span{display:inline-block;vertical-align:.8mm;font-family:Fredoka,"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;font-size:4.6mm;color:#fff;margin-left:2.5mm;padding:.6mm 3mm .8mm;border-radius:4mm;background:linear-gradient(135deg,#ff7eb3,#ff5f9e);box-shadow:0 .6mm 0 #d93f80}
+  .who{margin-top:1.8mm;font-size:3.9mm;font-weight:700;display:flex;gap:2.5mm;align-items:flex-end;white-space:nowrap;color:#2b3a8f}
+  .who i{display:inline-block;border-bottom:.5mm solid #2b3a8f;height:6mm}
+  .ollie{position:absolute;right:5mm;top:2.5mm;height:44mm;width:auto;max-width:none;z-index:2;filter:drop-shadow(0 1mm 1.2mm rgba(40,50,120,.25))}
+  .bubble{position:absolute;right:34mm;top:5mm;z-index:2;background:#fff;color:#ff5f9e;font:700 4mm/1 Fredoka,sans-serif;padding:1.4mm 2.6mm;border-radius:4mm;border:.45mm solid #ffc2d9;box-shadow:0 .6mm 0 #ffd6e6}
+  .bubble::after{content:"";position:absolute;right:-2.2mm;top:2.4mm;border:1.2mm solid transparent;border-left:1.8mm solid #ffc2d9}
+  .cells{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:3mm;min-height:0;position:relative;z-index:1}
+  .cell{border:.7mm solid var(--c);border-radius:5mm;padding:1.8mm 2.4mm 2mm;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto 1fr;align-items:center;column-gap:1.5mm;row-gap:.8mm;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--c) 16%,#fff) 0,#fff 9mm);box-shadow:0 1mm 0 color-mix(in srgb,var(--c) 45%,#fff);min-height:0}
+  .cell .hd{grid-column:1 / 3;display:flex;align-items:center;gap:2mm;min-width:0;white-space:nowrap}
+  .cell .n{width:9mm;height:9mm;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font:700 6mm Fredoka,sans-serif;flex:none;box-shadow:inset 0 -.8mm 0 rgba(0,0,0,.15),0 .5mm 0 rgba(0,0,0,.12);text-shadow:0 .4mm 0 rgba(0,0,0,.2)}
+  .cell .nm{font:700 6.2mm/1.1 "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;min-width:0;letter-spacing:.1em;color:color-mix(in srgb,var(--c) 55%,#1b2353)}
   .cell .bdg{width:15mm;height:17mm;flex:none;line-height:0}.cell .bdg svg{width:100%;height:100%;overflow:visible}
-  .stk{justify-self:center;width:30mm;height:30mm;border:.6mm dashed #8791b3;border-radius:50%;background:#fff;display:grid;place-items:center;color:#8791b3;font-size:3mm;font-weight:700;text-align:center;line-height:1.25}
-  .foot{display:flex;align-items:center;gap:3mm;font-size:3.5mm;font-weight:700}
-  .foot .rule{display:flex;gap:2mm;flex-wrap:nowrap;min-width:0}
-  .foot .rule span{display:inline-flex;align-items:center;gap:1.2mm;padding:.8mm 2.4mm;border-radius:4mm;border:.4mm solid #c9b27a;background:#fffaf0;white-space:nowrap}
-  .foot .rule b{font-size:5mm;line-height:1}
-  .foot{justify-content:center}.foot .done{font-size:5mm;color:#152a63;padding:1mm 5mm;border-radius:5mm;border:.4mm solid #c9b27a;background:#fffaf0;white-space:nowrap}
-  .foot .sum{margin-left:auto;white-space:nowrap;font-size:4mm}
-  .foot .sum i{display:inline-block;width:22mm;border-bottom:.5mm solid #14213d;height:7mm;vertical-align:bottom}
+  .stk{justify-self:center;width:30mm;height:30mm;border:.7mm dashed var(--c);border-radius:50%;background:radial-gradient(circle,#fff 62%,color-mix(in srgb,var(--c) 10%,#fff))}
+  .foot{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;height:11mm}
+  .foot .done{display:inline-flex;align-items:center;gap:2mm;font-size:5.2mm;font-weight:700;color:#fff;padding:1.6mm 7mm 1.8mm 16mm;border-radius:6mm;white-space:nowrap;
+    background:linear-gradient(90deg,#ff8a5c,#ffc23d 22%,#5fd38d 45%,#46b8ff 68%,#a678ff 88%,#ff6fae);box-shadow:0 .8mm 0 rgba(60,40,120,.22);text-shadow:0 .4mm 0 rgba(0,0,0,.25);position:relative}
+  .foot .cheer{position:absolute;left:-1mm;bottom:-1.5mm;height:15mm;width:auto;max-width:none;filter:drop-shadow(0 .6mm .6mm rgba(40,50,120,.25))}
   @media print{body{background:#fff}.bar{display:none}.page{box-shadow:none;margin:0}@page{size:A4;margin:0}}
 </style>
 </head>
@@ -62,9 +69,14 @@
   const COUNTRY = { "San Diego": "美國", Tokyo: "日本", Sydney: "澳洲", Vancouver: "加拿大", Cairo: "埃及", Paris: "法國" };
   const cell = (n) => `<div class="cell" style="--c:${G[n].color}"><div class="hd"><div class="n">${n}</div><div class="nm">${esc(COUNTRY[G[n].city] || "")}</div></div>
     <div class="bdg">${TC.badgeSVG ? TC.badgeSVG(n) : ""}</div><div class="stk"></div></div>`;
-  const card = () => `<div class="qc"><div class="top"><img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="t"><div class="l1"><div class="sch">南投縣草屯鎮土城國民小學</div><div class="who">Name 姓名 <i style="width:33mm"></i> Class 班級 <i style="width:14mm"></i></div></div><h1>Tucheng English Day<span>Sticker Card 闖關小卡</span></h1></div></div>
+  // little coloured stars round the edge of every card
+  const SPARKS = [[3, 22, "#ffc83d", 4.5], [96, 34, "#ff5fa2", 3.6], [2, 70, "#4cc9ff", 3.6], [97, 72, "#9b6bff", 4.2], [52, 3, "#2ee6b6", 3.2], [70, 96, "#ff9a2e", 3.6], [24, 96, "#ff5fa2", 3]];
+  const sparks = () => SPARKS.map(([x, y, k, z]) => `<span class="spark" style="left:${x}%;top:${y}%;--k:${k};--z:${z}mm">★</span>`).join("");
+  const card = () => `<div class="qc">${sparks()}<img class="ollie" src="assets/img/ollie-wave.png" alt="歐力"><div class="bubble">Hi!</div>
+    <div class="top"><img class="emb" src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="t"><div class="sch">南投縣草屯鎮土城國民小學</div><h1>Tucheng English Day<span>闖關小卡</span></h1>
+      <div class="who">Name 姓名 <i style="width:40mm"></i> Class 班級 <i style="width:16mm"></i></div></div></div>
     <div class="cells">${[1, 2, 3, 4, 5, 6].map(cell).join("")}</div>
-    <div class="foot"><span class="done">🎉 六個章都蓋滿，就可以到終點站領取小獎品！</span></div></div>`;
+    <div class="foot"><span class="done"><img class="cheer" src="assets/img/ollie-cheer.png" alt="">六個章都蓋滿，就可以到終點站領取小獎品！</span></div></div>`;
   const cnt = document.getElementById("cnt");
   function render() { const n = +cnt.value || 28, out = []; for (let i = 0; i < Math.ceil(n / 2); i++) out.push(`<div class="page">${card()}${card()}</div>`); document.getElementById("pages").innerHTML = out.join(""); }
   cnt.onchange = render; render();
