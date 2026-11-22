@@ -181,8 +181,10 @@
     await TC.mysteryBox(gate, api);
     if (api.aborted) return;
     // 🎟 scratch card: points to trade for prizes
-    const pts = TC.pointsFor(kid.id, gate);
-    await TC.scratchCard({ id: kid.id, name: "", gate, city: G.city, points: pts });
+    // the sticker card has six places (the teacher, 2026-11-22): only gates 1–6 (the ones with a letter) give a points sticker;
+    // gates 7 and 8 are extra games with no scratch card and no sticker
+    const pts = LETTER ? TC.pointsFor(kid.id, gate) : 0;
+    if (LETTER) await TC.scratchCard({ id: kid.id, name: "", gate, city: G.city, points: pts });
     if (api.aborted) return;
     TC.log({ type: "points", points: pts });
     await showResult(kid, Object.assign(res || {}, { points: pts }));
@@ -200,8 +202,8 @@
       h("div", { class: "stamp-wrap" }, h("div", { class: "stamp" }, h("div", { class: "holo" }), h("div", { class: "s1" }, "TUCHENG"), TC.badgeEl(gate, "art st-badge"), h("div", { class: "s2" }, G.city.toUpperCase()), h("div", { class: "s3" }, `GATE ${gate} · ${date}`))),
       h("div", { class: "stars" }, ...[0, 1, 2].map((i) => TC.artImg("star", i < stars ? "" : "off"))),
       h("div", { class: "code-reveal", style: LETTER ? "" : "display:none" }, h("span", { class: "zh" }, "秘密代碼 Secret code"), letter, boxes),
-      h("div", { class: "pts-chip" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
-      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, LETTER ? `記住字母 ${LETTER}！闖完六關，到終點登機門排出密碼 · 把 ${res.points || 0} 點貼紙貼在闖關小卡上！` : `加分關完成！把 ${res.points || 0} 點貼紙貼在闖關小卡上！`),
+      h("div", { class: "pts-chip", style: LETTER ? "" : "display:none" }, TC.artImg("star"), h("b", {}, "+" + (res.points || 0)), h("span", { class: "zh" }, "點 points")),
+      h("div", { class: "zh", style: "font-size:2.6rem;font-weight:700" }, LETTER ? `記住字母 ${LETTER}！闖完六關，到終點登機門排出密碼 · 把 ${res.points || 0} 點貼紙貼在闖關小卡上！` : `第 ${gate} 關完成！這一關是加分小遊戲，不用貼紙。`),
       h("div", { class: "res-actions" }, next));
     ov.append(TC.badgeEl(gate, "res-badge bob")); // this gate's big 土城 badge beside the stamp
     document.body.append(ov);

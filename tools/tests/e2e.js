@@ -31,7 +31,7 @@ const base = process.argv[2] || "http://localhost:8767", gates = (process.argv[3
       await p.keyboard.press("Enter"); await p.waitForTimeout(350);
     }
     const pts = done ? await p.locator(".pts-chip b").innerText().catch(() => "?") : "-";
-    const ok = done && scratch && !errs.length && !auto; if (!ok) fail++;
+    const ok = done && (scratch === (g <= 6)) && !errs.length && !auto; // only gates 1–6 give a points sticker (the card has six places) if (!ok) fail++;
     console.log(`${ok ? "PASS" : "FAIL"} gate ${g} level ${L}: ${Math.round((Date.now() - t0) / 1000)}s, ${asked.length} questions, scratch ${scratch}, points ${pts}${slow ? ", word buttons tapped " + picked + ", answers read by Ollie before 🔊: " + auto : ""}${errs.length ? " | " + errs.slice(0, 3).join(" | ") : ""}`);
     if (process.env.VERBOSE) asked.forEach((a) => console.log("     " + a));
     if (process.env.FAKE_TTS) { const said = await p.evaluate(() => [...new Set(window.__tts || [])]); console.log("     computer voice read " + said.length + " different lines: " + said.join(" | ")); }

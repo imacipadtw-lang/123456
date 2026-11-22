@@ -18,7 +18,7 @@ const base = process.argv[2] || "http://localhost:8767";
     }
     if (u === "quest-card.html") { // the sticker card: six sticker places on each card, no letter boxes, nothing overflowing
       const c = await p.evaluate(() => { const q = document.querySelector(".qc"); return { stk: q.querySelectorAll(".stk").length, letters: /字母|Letter/.test(q.innerText), over: q.scrollHeight > q.clientHeight + 1 || q.scrollWidth > q.clientWidth + 1 }; });
-      extra = ` stickers=${c.stk}`; if (c.stk !== 8) errs.push("the card must have eight sticker places (six gates + two bonus gates)"); if (c.letters) errs.push("the card must not ask for letters"); if (c.over) errs.push("the card overflows");
+      extra = ` stickers=${c.stk}`; if (c.stk !== 6) errs.push("the card must have six sticker places"); if (c.letters) errs.push("the card must not ask for letters"); if (c.over) errs.push("the card overflows");
     }
     if (u === "credits.html") extra = " rows=" + (await p.locator("#rows tr").count());
     console.log((errs.length ? "FAIL " : "ok   ") + u + extra + (errs.length ? "  " + errs.slice(0, 4).join(" | ") : "")); bad += errs.length; await p.close();

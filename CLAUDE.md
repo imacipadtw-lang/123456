@@ -29,7 +29,7 @@
   (Washington): easy questions in Chinese with 注音 → tap the right picture, then a one-line fact with 注音. 6 of 8 items at
   random; 2 answers at 低年級, 3 at 中／高年級; a wrong tap only wobbles; Enter or ⏭ 看答案 shows the answer; then the CHILD
   says the English first (same 🔊 rule). 注音 is one syllable per character (`node tools/tests/zhuyin.js`); words whose reading
-  is disputed in Taiwan are avoided. Gates 7–8 give no secret letter; the Final Gate uses the six letters FRIEND of gates 1–6.
+  is disputed in Taiwan are avoided. Gates 7–8 give no secret letter and no sticker; the Final Gate uses the six letters FRIEND of gates 1–6.
 - Levels: 低年級 = big/small letters and "Ollie says a word, do the action" only (no booklet sentence in the question bar);
   (Every gate screen has the 低／中／高年級 switch at the top, usable at any time; the home campus flags 1–8 link to the gates.
   Levels below describe gates 1–6; the quizzes of gates 7–8 are the same for every level except the number of answers.)
@@ -39,8 +39,8 @@
   tapped there — no tools, no opening / Final Gate tiles — and nothing scrolls (`node tools/tests/home-fit.js` expects 8). Its header shows
   the school emblem BIG (a 3D medal that turns 360°, `TC.coin3d`) and the 3D Ollie; the teacher wants emblems large, never tiny. The other
   pages (`control.html`, `opening.html`, `quest-card.html`, `guide.html`, `teacher-cards.html`, `links.html`, `credits.html`)
-  are opened by address. The printable card (`quest-card.html`) has eight sticker places
-  (six + two marked ★ 加分關) and NO letter boxes.
+  are opened by address. The printable card (`quest-card.html`) has SIX sticker places (the teacher, 2026-11-22: 闖關只有六關)
+  and NO letter boxes.
 - Classroom edition (the teacher, 2026-11-21: the day must not depend on the network, and the files must not spread): after a
   change, also rebuild the single-file classroom edition — `python3 tools/build_classroom.py <dir outside the repo>` (one
   self-contained HTML per gate, all eight, with only that gate's questions, plus Final Gate and opening show) — check it with
@@ -55,9 +55,8 @@
 - Prizes (the teacher, 2026-11-21): a child (a parent may come along) plays only the gates of their OWN level; gates 1–6 give six
   point stickers (10 / 20 / 30 points, one per gate). All of gates 1–6 = a snack (點心) and a drink; a total of more than 100 points =
   one more small snack (小點心). Say 點心／小點心 in the pages, not 餅乾.
-  PROVISIONAL (暫定，待老師確認): gates 7 and 8 are 加分關 (bonus gates) — the snack + drink still needs only gates 1–6; the
-  stickers of gates 7 and 8 (10 / 20 / 30 each) count toward the total for the "more than 100 points" rule. Every page that
-  states this must mark it as provisional until the teacher confirms.
+  Gates 7 and 8 (the teacher, 2026-11-22: 闖關只有六關): extra games only — no scratch card, no sticker, no letter; the result
+  screen says 「這一關是加分小遊戲，不用貼紙」. The Final Gate point buttons go 60…180.
 - More than one session may work on this branch: `git fetch` and merge before pushing, never force-push, and keep the other
   session's flow decisions unless the teacher says otherwise.
 - Artwork is original (drawn in code in `english-quest/js/art.js`, and `js/art-world.js` for gates 7–8); no third-party images.
@@ -73,7 +72,7 @@
   the backup launcher) with the eight gates round it, and on the first slide of the opening show. It was modelled after the real layout seen in a public
   aerial video; no frame of that video may be used. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
 - Before pushing: load every page in headless Chromium with no errors (`node tools/tests/pages.js`: 17 pages with gates 1–8, 8 host cards,
-  8 sticker places); play at least one gate
+  6 sticker places); play at least one gate
   end to end (`node tools/tests/e2e.js <base> <gates, default 1–8> <levels 1,2,3>`; with `SLOW=4500 FAKE_TTS=1` in front it taps the 高年級 word buttons,
   presses 🔊 so every model line plays, and lists the lines a computer voice had to read — there must be none);
   `node tools/tests/opening.js <base>` does the same for the opening show.
