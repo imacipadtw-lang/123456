@@ -64,7 +64,10 @@
   (track, classroom block, footbridge, big trees, solar roof, banana grove, paddies, greenhouses, mountains) built with the kit of
   `ollie3d.js`; it turns 360° and carries the six numbered gate flags (links to the gates). It sits in the middle of the home page (and of
   the backup launcher) with the six gates round it, and on the first slide of the opening show. It was modelled after the real layout seen in a public
-  aerial video; no frame of that video may be used. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
+  aerial video; no frame of that video may be used. A tap on the home campus (not a drag, not a flag) plays a surprise
+  (the teacher, 2026-11-24): fireworks, rain + rainbow, the 1921 gold medal, a relay race with confetti, a hot-air balloon, the school
+  bell (Westminster chime, synthesised) with dancing flags, Ollie flying past — a different one each tap (`surprise: true`); sound
+  effects only, nothing spoken. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
 - Before pushing: load every page in headless Chromium with no errors (`node tools/tests/pages.js`: 15 pages with gates 1–6, 6 host cards,
   6 sticker places); play at least one gate
   end to end (`node tools/tests/e2e.js <base> <gates, default 1–6> <levels 1,2,3>`; with `SLOW=4500 FAKE_TTS=1` in front it taps the 高年級 word buttons,

@@ -18,6 +18,9 @@
      c.ok · c.el (the canvas) · c.destroy() · c.pause(on) · c.setGate(n) · c.onFrame(fn) (fn(c) after every drawn frame)
      c.yaw (degrees, get / set) · c.nodes (draw calls)
      c.project(n) → { x, y, visible }: where flag n is now, in CSS pixels of the host (for HTML labels)
+     surprise       true: a tap on the model (not a drag) plays a surprise — fireworks, rain and a rainbow, the 1921 gold
+                    medal, a relay race, a hot-air balloon, the school bell with dancing flags, Ollie flying past —
+                    a different one on every tap (the teacher, 2026-11-24).  c.surprise(name) plays one by name.
      TC.Campus.supported() → boolean;  without WebGL mount() draws nothing and returns { ok: false, … }
    ===================================================================== */
 (function () {
@@ -270,7 +273,7 @@
   const gateColour = (i) => { const g = window.TC_CONTENT && window.TC_CONTENT.gates && window.TC_CONTENT.gates[i + 1]; return g && /^#[0-9a-f]{6}$/i.test(g.color || "") ? g.color : GATE[i]; };
 
   Campus.mount = function (host, opt = {}) {
-    const none = { ok: false, el: null, nodes: 0, yaw: 0, destroy() {}, pause() { return none; }, setGate() { return none; }, onFrame() { return none; }, project() { return { x: 0, y: 0, visible: false }; } };
+    const none = { ok: false, el: null, nodes: 0, yaw: 0, surprise() { return none; }, destroy() {}, pause() { return none; }, setGate() { return none; }, onFrame() { return none; }, project() { return { x: 0, y: 0, visible: false }; } };
     if (!host || !Campus.supported()) return none;
     const K = TC.O3.kit, { MESH, node, add, m4, mMul, mPersp, mLook, hex, paint, emblem, clamp, lerp, wave, RAD } = K;
     const canvas = document.createElement("canvas"); canvas.className = "c3c"; canvas.setAttribute("role", "img"); canvas.setAttribute("aria-label", opt.label || "土城國小校園的立體模型，可以轉 360 度");
@@ -288,7 +291,7 @@
     add(turn, { mesh: M.S, tex: M.palette, spec: 0.12 }); add(turn, { mesh: M.V, tex: M.palette, spec: 0.06 });
     const field = add(turn, { p: [TX, 0, TZ], r: [0, TA, 0] });
     add(field, { mesh: M.TRACK, p: [0, 0.03, 0], tex: M.lanes, col: col("#dc5140"), spec: 0.04 });
-    const kids = [["#3d8bff", 1.18, 0.052, 0], ["#ffc83d", 1.36, 0.047, 0.3], ["#ff5fa2", 1.54, 0.043, 0.62]].map((q) => ({ n: add(field, { mesh: M.KID, tex: M.palette, col: col(q[0]), s: [1.5, 1.5, 1.5], spec: 0.1 }), r: q[1], v: q[2], u: q[3] }));
+    const kids = [["#3d8bff", 1.18, 0.052, 0], ["#ffc83d", 1.36, 0.047, 0.3], ["#ff5fa2", 1.54, 0.043, 0.62]].map((q) => ({ n: add(field, { mesh: M.KID, tex: M.palette, col: col(q[0]), s: [1.5, 1.5, 1.5], spec: 0.1 }), r: q[1], v: q[2], u: q[3], x: 0, big: 1 }));
     const cars = [["#e2463f", 0.38, 1.5, 0], ["#ffffff", -0.38, 1.2, 0.3], ["#ffc83d", 0.38, 1.3, 0.55], ["#4cc9ff", -0.38, 1.7, 0.8]].map((q) => ({ n: add(turn, { mesh: M.CAR, tex: M.palette, col: col(q[0]), p: [M.bridge[0] + q[1], 0.04, 0], r: [0, q[1] > 0 ? 180 : 0, 0], spec: 0.3 }), v: q[2], u: q[3] })); // they drive on the right
     const crowns = M.big.map((q, i) => ({ n: add(turn, { mesh: M.CROWN, tex: M.palette, p: [q[0], q[1], q[2]], r: [0, i * 77, 0], s: [q[3], q[3], q[3]], spec: 0.05 }), ph: i * 0.37 }));
     [[0.05, 0], [-0.045, 180]].forEach((q) => add(turn, { mesh: MESH.disc, p: [M.medal[0], 2.46, M.medal[1] + q[0]], r: [0, q[1], 0], s: [0.63, 0.63, 1], col: col("#ffd768"), tex: emblem, spec: 0.12 })); // the school emblem over the entrance
@@ -304,6 +307,37 @@
         g.lineWidth = 24; g.strokeStyle = "#152a63"; g.strokeText(i + 1, s / 2, s / 2 + 10); g.fillStyle = "#fff"; g.fillText(i + 1, s / 2, s / 2 + 10); }));
       return { f, pole, sign, h: q[3], k: 1 }; });
     add(turn, { mesh: M.GROUND, s: [R0, 1, R0], tex: M.ground, col: col("#78c45c"), spec: 0.03 }); // drawn last: what stands on the ground hides much of it
+
+    /* ---------- surprises (opt.surprise): their pieces wait, hidden, until a tap plays one ---------- */
+    const FX = [], fxAdd = (parent, o) => { const n = add(parent, Object.assign({ vis: false, spec: 0.2 }, o)); FX.push(n); return n; };
+    const rnd = (a, b) => a + Math.random() * (b - a), PAL = ["#ff4f6d", "#ffc83d", "#2ee6b6", "#4cc9ff", "#a77bff", "#ff8fd0", "#ffffff", "#7dff6a"].map(col);
+    kids.forEach((k, i) => (k.trail = opt.surprise ? Array.from({ length: 7 }, () => fxAdd(field, { mesh: MESH.sphere, col: col(["#3d8bff", "#ffc83d", "#ff5fa2"][i]), emis: 0.9, spec: 0 })) : []));
+    let bursts = [], drops = [], rainbow = null, medal = null, orbit = [], confetti = [], balloon = null;
+    if (opt.surprise) {
+      // fireworks: six rockets, each bursting into 30 sparks with a flash
+      bursts = [0, 1, 2, 3, 4, 5].map(() => ({ rocket: fxAdd(root, { mesh: MESH.sphere, s: [0.16, 0.16, 0.16], col: col("#fff3b0"), emis: 1 }),
+        sparks: Array.from({ length: 30 }, () => ({ n: fxAdd(root, { mesh: MESH.sphere, emis: 1, spec: 0 }), d: [0, 0, 0] })), c: [0, 0, 0], at: 0, R: 1.3, bang: false,
+        flash: fxAdd(root, { mesh: MESH.sphere, col: col("#fffbe0"), emis: 1, spec: 0, alpha: 0.6 }) }));
+      // rain, then a rainbow standing over the school (its lower half is hidden under the ground)
+      drops = Array.from({ length: 64 }, () => ({ n: fxAdd(root, { mesh: MESH.cyl, s: [0.05, 0.6, 0.05], col: col("#cfeaff"), emis: 0.6, alpha: 0.85 }), x: 0, z: 0, ph: 0 }));
+      rainbow = fxAdd(root, { p: [0, 0, -3.2], r: [90, 0, 0] });
+      ["#ff4d4d", "#ff9a2e", "#ffd93d", "#4cd964", "#3fa9ff", "#5b6cff", "#a35bff"].forEach((c, i) => { const R = 7.6 - i * 0.62; add(rainbow, { mesh: K.torus(0.33 / R), s: [R, R, R], col: col(c), emis: 0.5, spec: 0.35 }); });
+      // the 1921 gold medal: the school emblem on both faces of a thick gold coin, with stars going round it
+      medal = fxAdd(root, {});
+      add(medal, { mesh: MESH.cyl, p: [0, 0, -0.1], r: [90, 0, 0], s: [1, 0.2, 1], col: col("#f0b429"), spec: 0.9 });
+      [[0.104, 0], [-0.104, 180]].forEach((q) => add(medal, { mesh: MESH.disc, p: [0, 0, q[0]], r: [0, q[1], 0], s: [0.93, 0.93, 1], col: col("#ffe08a"), tex: emblem, spec: 0.25 }));
+      orbit = Array.from({ length: 8 }, () => fxAdd(root, { mesh: MESH.star, col: col("#ffd23d"), emis: 0.75, spec: 0.8 }));
+      // confetti for the relay race
+      confetti = Array.from({ length: 72 }, (x, i) => ({ n: fxAdd(root, { mesh: MESH.box, s: [0.34, 0.05, 0.22], col: PAL[i % 7], emis: 0.45 }), x: 0, y: 0, z: 0, v: 1, sp: [0, 0] }));
+      // a hot-air balloon in rainbow stripes, with the emblem on its side
+      const stripes = paint(256, (g, S) => { const c = ["#ff4f6d", "#ffc83d", "#2ee6b6", "#4cc9ff", "#a77bff", "#ff8fd0"]; for (let i = 0; i < 12; i++) { g.fillStyle = c[i % 6]; g.fillRect((i * S) / 12, 0, S / 12 + 1, S); } });
+      balloon = fxAdd(root, {});
+      add(balloon, { mesh: MESH.sphere, p: [0, 1.85, 0], s: [1, 1.18, 1], tex: stripes, spec: 0.5 });
+      add(balloon, { mesh: MESH.cone, p: [0, 1.2, 0], r: [180, 0, 0], s: [0.74, 0.52, 0.74], tex: stripes, spec: 0.4 });
+      add(balloon, { mesh: MESH.disc, p: [0, 1.95, 1.0], s: [0.44, 0.44, 1], col: col("#ffe08a"), tex: emblem, spec: 0.2 });
+      add(balloon, { mesh: MESH.box, p: [0, 0.22, 0], s: [0.46, 0.34, 0.46], col: col("#a0652c"), spec: 0.2 });
+      [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => add(balloon, { mesh: MESH.cyl, p: [a * 0.2, 0.38, b * 0.2], s: [0.015, 0.36, 0.015], col: col("#5a3a1c") }));
+    }
     let count = 0; (function walk(n) { if (n.mesh) count++; n.kids.forEach(walk); })(root);
 
     /* ---------- the camera: far enough for the whole base, whatever the shape of the host ---------- */
@@ -341,12 +375,13 @@
       if (!dragging) { yaw += ((spin ? speed : 0) + vel) * dt; vel *= Math.exp(-dt * 2.4); if (Math.abs(vel) < 2) vel = 0; }
       turn.r[1] = yaw;
       crowns.forEach((c) => { c.n.r[0] = 2.2 * wave(t, 3.4, c.ph); c.n.r[2] = 2.6 * wave(t, 2.7, c.ph + 0.3); });
-      kids.forEach((k) => { const p = lap(k.u + t * k.v, k.r); k.n.p[0] = p[0]; k.n.p[2] = p[1]; k.n.r[1] = p[2]; k.n.p[1] = 0.03 + 0.05 * Math.abs(wave(t, 0.5, k.u)); k.n.r[0] = reduce ? 0 : 10; });
+      if (cur) runFx(now - cur.at, dt);
+      kids.forEach((k) => { const p = lap(k.u + t * k.v + k.x, k.r); k.n.s[0] = k.n.s[1] = k.n.s[2] = 1.5 * k.big; k.n.p[0] = p[0]; k.n.p[2] = p[1]; k.n.r[1] = p[2]; k.n.p[1] = 0.03 + 0.05 * Math.abs(wave(t, 0.5, k.u)); k.n.r[0] = reduce ? 0 : 10; });
       cars.forEach((c) => { const z = ((((t * c.v) / 14.8 + c.u) % 1) - 0.5) * 14.8, k = clamp((7.4 - Math.abs(z)) / 0.6); c.n.p[2] = c.n.r[1] ? -z : z; c.n.vis = k > 0.02; c.n.s[0] = c.n.s[1] = c.n.s[2] = k; }); // … and come and go at the edge of the base
       banner.r[1] = TA + 20 + 16 * wave(t, 2.3);
       const ease = 1 - Math.exp(-dt * 9);
       flags.forEach((f, i) => { const on = gate === i + 1, k = gate ? (on ? 1.5 : 0.6) : 1; f.k = drawn ? lerp(f.k, k, ease) : k;
-        const y = f.h * (on ? 1.2 : 1) + (on ? 0.42 * Math.abs(wave(t, 1.2)) : 0); f.pole.s[1] = y; f.sign.p[1] = y; f.sign.s[0] = f.sign.s[1] = 0.7 * f.k; f.sign.r[0] = -tilt; f.sign.r[1] = -yaw; });
+        const y = f.h * (on ? 1.2 : 1) + (on ? 0.42 * Math.abs(wave(t, 1.2)) : 0) + (f.jy || 0); f.pole.s[1] = y; f.sign.p[1] = y; f.sign.s[0] = f.sign.s[1] = 0.7 * f.k * (1 + 0.35 * (f.jy || 0)); f.sign.r[0] = -tilt; f.sign.r[1] = -yaw + (f.spin || 0); });
       R.render(root, vp, eye, light); drawn = true;
       for (let i = 0; i < subs.length; i++) subs[i](ctl);
       /* a slow computer (not the first two seconds, when everything is being made): draw fewer pixels rather than stutter */
@@ -355,13 +390,130 @@
     }
 
     const feel = () => 0.55 * clamp(320 / cssW, 0.22, 1); // the same feel as turning Ollie: a drag across the model is about half a turn
-    const pd = (e) => { dragging = true; lastX = e.clientX; vel = 0; canvas.style.cursor = "grabbing"; try { canvas.setPointerCapture(e.pointerId); } catch (err) {} };
-    const pm = (e) => { if (!dragging) return; const d = (e.clientX - lastX) * feel(); lastX = e.clientX; yaw += d; vel = clamp(d * 60, -300, 300); };
-    const pu = () => { dragging = false; canvas.style.cursor = "grab"; };
+    let downX = 0, downY = 0, downT = 0, moved = 0;
+    const pd = (e) => { dragging = true; lastX = e.clientX; vel = 0; downX = e.clientX; downY = e.clientY; downT = performance.now(); moved = 0; canvas.style.cursor = "grabbing"; try { canvas.setPointerCapture(e.pointerId); } catch (err) {} };
+    const pm = (e) => { if (!dragging) return; moved = Math.max(moved, Math.hypot(e.clientX - downX, e.clientY - downY)); const d = (e.clientX - lastX) * feel(); lastX = e.clientX; yaw += d; vel = clamp(d * 60, -300, 300); };
+    const pu = (e) => { const was = dragging; dragging = false; canvas.style.cursor = "grab";
+      if (was && opt.surprise && e && e.type === "pointerup" && moved < 12 && performance.now() - downT < 700) tap(e.clientX, e.clientY); }; // a tap, not a drag
     if (opt.drag !== false) { canvas.addEventListener("pointerdown", pd); canvas.addEventListener("pointermove", pm); canvas.addEventListener("pointerup", pu); canvas.addEventListener("pointercancel", pu); }
+
+    /* ---------- the surprises ---------- */
+    const ease = (x) => 1 - Math.pow(1 - clamp(x), 3), inout = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+    const back = (x) => { x = clamp(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+    const sfx = (n) => { try { TC.sfx && TC.sfx(n); } catch (e) {} };
+    const t0fx = () => (reduce ? 0 : performance.now() / 1000 - t0); // the clock the kids run on (frame's t)
+    const SHOWS = {
+      fireworks: { dur: 5.4, cap: "🎆 運動會煙火！ Fireworks!" }, rainbow: { dur: 6.6, cap: "🌈 雨停了，出彩虹！ Rainbow!" },
+      medal: { dur: 5.2, cap: "🏅 土城金牌 1921！ Gold medal!" }, relay: { dur: 5.2, cap: "🏃 大隊接力衝衝衝！ Run, run, run!" },
+      balloon: { dur: 6.8, cap: "🎈 熱氣球起飛！ Up, up and away!" }, bell: { dur: 5.4, cap: "🔔 噹噹噹～上課囉！ Ding-dong!" },
+      ollie: { dur: 4.8, cap: "🦉 歐力飛來了！ Hi, I'm Ollie!" } };
+    const order = Object.keys(SHOWS).sort(() => Math.random() - 0.5); let turnNo = 0, cur = null;
+    let layer = null; // the HTML layer over the model: the caption, the sparkles at the finger, Ollie flying past, music notes
+    if (opt.surprise) { layer = document.createElement("div"); layer.className = "c3fx"; layer.setAttribute("aria-hidden", "true"); layer.style.cssText = "position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1"; host.append(layer); }
+    const el = (tag, css, text) => { const d = document.createElement(tag); d.style.cssText = "position:absolute;" + css; if (text) d.textContent = text; layer.append(d); return d; };
+    const later = (d, ms) => setTimeout(() => d.remove(), ms);
+    function sparkle(x, y) { // stars burst out of the place the finger touched
+      const u = Math.max(14, Math.min(cssW, cssH) * 0.045);
+      for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2 + Math.random() * 0.4, r = u * (2 + Math.random() * 2.2);
+        const d = el("span", `left:${x}px;top:${y}px;font-size:${u * (0.7 + Math.random() * 0.6)}px;line-height:1;color:${["#ffd23d", "#ff8fd0", "#7de3ff", "#a8ff8a", "#ffffff"][i % 5]};text-shadow:0 0 .3em rgba(255,255,255,.8)`, i % 3 ? "★" : "✦");
+        d.animate([{ transform: "translate(-50%,-50%) scale(.3)", opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(a) * r}px),calc(-50% + ${Math.sin(a) * r}px)) scale(1) rotate(${rnd(-160, 160)}deg)`, opacity: 0 }], { duration: 750 + Math.random() * 300, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" });
+        later(d, 1100); }
+    }
+    function caption(text, dur) {
+      layer.querySelectorAll(".c3cap").forEach((c) => c.remove());
+      const u = Math.max(13, Math.min(cssW * 0.042, cssH * 0.06));
+      const d = el("div", `left:50%;top:3%;transform:translateX(-50%);white-space:nowrap;padding:.35em 1em .4em;border-radius:2em;background:linear-gradient(180deg,#fff,#fff4d6);color:#2b3a8f;font:700 ${u}px Fredoka,'Noto Sans TC','Microsoft JhengHei',sans-serif;box-shadow:0 .2em 0 #e0a21a,0 .5em 1.2em rgba(0,0,0,.3);border:.12em solid #ffd23d`, text);
+      d.className = "c3cap";
+      d.animate([{ transform: "translateX(-50%) scale(.2) rotate(-8deg)", opacity: 0 }, { transform: "translateX(-50%) scale(1.12) rotate(2deg)", opacity: 1, offset: 0.08 }, { transform: "translateX(-50%) scale(1)", opacity: 1, offset: 0.14 }, { transform: "translateX(-50%) scale(1)", opacity: 1, offset: 0.86 }, { transform: "translateX(-50%) scale(.6)", opacity: 0 }], { duration: dur * 1000, fill: "forwards" });
+      later(d, dur * 1000 + 100);
+    }
+    function ollieFly(dur) { // our 3D Ollie (a still of him) swoops over the campus, waving, with a trail of stars
+      const h = Math.min(cssH * 0.42, cssW * 0.3), img = document.createElement("img"); img.alt = ""; img.src = opt.ollieImg || "assets/img/ollie-wave.png";
+      img.onerror = () => { img.onerror = null; if (TC.art) img.src = TC.art("ollie"); };
+      img.style.cssText = `position:absolute;left:0;top:0;height:${h}px;width:auto;max-width:none;filter:drop-shadow(0 .6em .5em rgba(0,0,0,.35))`; layer.append(img);
+      const hi = el("span", `left:0;top:0;padding:.2em .6em;border-radius:1em;background:#fff;color:#ff5f9e;font:700 ${h * 0.13}px Fredoka,sans-serif;box-shadow:0 .15em 0 #ffc2d9`, "Hi!");
+      const P = [[-0.35, 0.75, -15], [0.05, 0.3, -6], [0.32, 0.08, 8], [0.55, 0.22, -4], [0.62, 0.5, 10], [0.4, 0.4, -10], [0.7, 0.05, 6], [1.15, -0.2, 18]];
+      const k = P.map((q, i) => ({ transform: `translate(${q[0] * cssW}px,${q[1] * cssH}px) rotate(${q[2]}deg)`, offset: i / (P.length - 1) }));
+      img.animate(k, { duration: dur * 1000, easing: "ease-in-out", fill: "forwards" });
+      hi.animate(P.map((q, i) => ({ transform: `translate(${q[0] * cssW + h * 0.62}px,${q[1] * cssH - h * 0.02}px)`, opacity: i === 0 || i === P.length - 1 ? 0 : 1, offset: i / (P.length - 1) })), { duration: dur * 1000, easing: "ease-in-out", fill: "forwards" });
+      const hostR = host.getBoundingClientRect(), trail = setInterval(() => { if (!img.isConnected) return clearInterval(trail); const r = img.getBoundingClientRect(); if (r.right < hostR.left || r.left > hostR.right) return;
+        const d = el("span", `left:${r.left - hostR.left + r.width * 0.3}px;top:${r.top - hostR.top + r.height * 0.75}px;font-size:${h * 0.11}px;color:${["#ffd23d", "#ff8fd0", "#7de3ff"][(Math.random() * 3) | 0]}`, "★");
+        d.animate([{ transform: "scale(1)", opacity: 1 }, { transform: `translate(${rnd(-20, 20)}px,${rnd(10, 40)}px) scale(.2) rotate(180deg)`, opacity: 0 }], { duration: 900, fill: "forwards" }); later(d, 950); }, 90);
+      later(img, dur * 1000 + 50); later(hi, dur * 1000 + 50); setTimeout(() => clearInterval(trail), dur * 1000 + 60);
+      sfx("whoosh"); setTimeout(() => sfx("sparkle"), 900); setTimeout(() => sfx("ding"), 1900);
+    }
+    function notes(dur) { // music notes float up from the school while the bell rings
+      for (let i = 0; i < 14; i++) setTimeout(() => { if (!layer.isConnected) return; const u = Math.min(cssW, cssH) * rnd(0.08, 0.12);
+        const d = el("span", `left:${rnd(18, 78)}%;top:${rnd(45, 70)}%;font-size:${u}px;line-height:1;color:${["#ffd23d", "#ff8fd0", "#7de3ff", "#a8ff8a", "#ffffff"][i % 5]};text-shadow:0 0 .06em #2b3a8f,0 0 .06em #2b3a8f,0 .08em 0 #2b3a8f;font-weight:700`, ["♪", "♫", "♬", "♩"][i % 4]);
+        d.animate([{ transform: "translateY(0) scale(.4)", opacity: 0 }, { transform: `translate(${rnd(-12, 12)}px,-${u * 0.8}px) scale(1)`, opacity: 1, offset: 0.2 }, { transform: `translate(${rnd(-40, 40)}px,-${u * 4}px) scale(.9) rotate(${rnd(-25, 25)}deg)`, opacity: 0 }], { duration: 2200, easing: "ease-out", fill: "forwards" }); later(d, 2300); }, i * ((dur - 2) * 1000 / 14));
+    }
+    function projY(x, y, z) { const w = vp[3] * x + vp[7] * y + vp[11] * z + vp[15]; return [(vp[0] * x + vp[4] * y + vp[8] * z + vp[12]) / w, (vp[1] * x + vp[5] * y + vp[9] * z + vp[13]) / w]; }
+    function reset() { FX.forEach((n) => (n.vis = false)); kids.forEach((k) => (k.big = 1)); flags.forEach((f) => { f.jy = 0; f.spin = 0; }); cur = null; }
+    function start(name) {
+      reset(); const S = SHOWS[name]; if (!S) return;
+      cur = { name, at: performance.now() / 1000, dur: S.dur, cue: {} }; caption(S.cap, S.dur);
+      if (name === "fireworks") bursts.forEach((b, i) => { // as high as the screen allows, spread over the campus
+        b.R = rnd(3.2, 4.2); let x = rnd(-3.5, 3.5), z = rnd(0, 3), y = rnd(3, 4.4); while (y > 1.8 && projY(x, y + b.R * 0.8, z)[1] > 0.95) y -= 0.2;
+        if (Math.abs(projY(x, y, z)[0]) > 0.85) x *= 0.6;
+        b.c = [x, y, z]; b.at = [0, 0.5, 1.0, 1.7, 2.45, 2.5][i]; // the last two go off together: the finale b.bang = false; b.launch = false;
+        const c1 = PAL[(Math.random() * 8) | 0], c2 = PAL[(Math.random() * 8) | 0];
+        b.sparks.forEach((s, j) => { let d = [rnd(-1, 1), rnd(-1, 1), rnd(-1, 1)], l = Math.hypot(d[0], d[1], d[2]) || 1; s.d = d.map((v) => v / l); s.n.col = j % 2 ? c1 : c2; }); });
+      if (name === "rainbow") { drops.forEach((d) => { const a = rnd(0, Math.PI * 2), r = Math.sqrt(Math.random()) * 8; d.x = Math.cos(a) * r; d.z = Math.sin(a) * r; d.ph = Math.random(); }); sfx("rain"); }
+      if (name === "medal") sfx("levelup");
+      if (name === "relay") { confetti.forEach((c) => { c.x = rnd(-6.5, 6.5); c.z = rnd(-3, 5.5); c.y = rnd(3, 9); c.v = rnd(1.1, 2); c.sp = [rnd(-400, 400), rnd(-400, 400)]; }); sfx("drum"); }
+      if (name === "balloon") { sfx("whoosh"); setTimeout(() => sfx("pop"), 300); }
+      if (name === "bell") { sfx("bell"); notes(S.dur); }
+      if (name === "ollie") ollieFly(S.dur);
+    }
+    function runFx(e, dt) {
+      if (e > cur.dur) { reset(); return; }
+      const once = (k, fn) => { if (!cur.cue[k]) { cur.cue[k] = 1; fn(); } };
+      const n = cur.name, out = clamp((cur.dur - e) / 0.6); // the last 0.6 s: everything shrinks away
+      if (n === "fireworks") bursts.forEach((b) => { const le = e - b.at;
+        if (le < 0) { b.rocket.vis = false; b.flash.vis = false; return; }
+        if (le < 0.6) { once("l" + b.at, () => sfx("rocket")); const k = ease(le / 0.6); b.rocket.vis = true; b.rocket.p = [b.c[0], lerp(0.3, b.c[1], k), b.c[2]]; b.sparks.forEach((s) => (s.n.vis = false)); return; }
+        b.rocket.vis = false; once("b" + b.at, () => sfx("boom"));
+        { const f = (le - 0.6) / 0.35; b.flash.vis = f < 1; if (f < 1) { const z = 0.4 + 1.6 * ease(f); b.flash.p = b.c.slice(); b.flash.s = [z, z, z]; b.flash.alpha = 0.7 * (1 - f); } }
+        const k = (le - 0.6) / 1.5; b.sparks.forEach((s, j) => { s.n.vis = k < 1; if (k >= 1) return; const r = b.R * ease(k * 1.3), tw = k > 0.6 && (j + ((e * 20) | 0)) % 3 === 0 ? 0.4 : 1;
+          s.n.p = [b.c[0] + s.d[0] * r, b.c[1] + s.d[1] * r - 0.8 * k * k, b.c[2] + s.d[2] * r]; const sc = 0.34 * (1 - 0.5 * k) * tw; s.n.s = [sc, sc, sc]; s.n.alpha = 1 - k * k; }); });
+      if (n === "rainbow") {
+        drops.forEach((d) => { const show = e < 2.8; d.n.vis = show; if (!show) return; d.n.p = [d.x, 6.5 - (((e * 1.4 + d.ph) % 1) * 6.5), d.z]; d.n.alpha = 0.85 * clamp(e / 0.4) * clamp((2.8 - e) / 0.5); });
+        const k = e < 1.8 ? 0 : back((e - 1.8) / 1.1) * out; rainbow.vis = k > 0.01; rainbow.s = [k, k, k];
+        if (e > 1.8) { once("d", () => sfx("ding")); once("s", () => setTimeout(() => sfx("sparkle"), 400)); }
+      }
+      if (n === "medal") {
+        const up = back(e / 1.2) * out, y = 0.5 + 2.7 * ease(e / 1.2), sc = 2.3 * up; medal.vis = sc > 0.01; medal.p = [0, y, 2.4]; medal.s = [sc, sc, sc];
+        medal.r = [-12, 720 * inout(e / 3.4) + Math.max(0, e - 3.4) * 60, 0];
+        orbit.forEach((o, i) => { const a = e * 2.2 + (i / orbit.length) * Math.PI * 2, r = 3.3 * up; o.vis = up > 0.05; o.p = [Math.cos(a) * r, y + 0.6 * Math.sin(e * 3 + i), 2.4 + Math.sin(a) * r * 0.5]; o.s = [0.36 * up, 0.36 * up, 0.36 * up]; o.r = [0, 0, e * 200 + i * 40]; });
+        if (e > 1.1) once("f", () => sfx("fanfare"));
+      }
+      if (n === "relay") {
+        const boost = clamp(e / 0.6) * clamp((cur.dur - 0.8 - e) / 0.8);
+        kids.forEach((k, i) => { k.x += dt * boost * 0.55; k.big = 1 + 1.2 * boost;
+          k.trail.forEach((s, j) => { const q = lap(k.u + t0fx(e) * k.v + k.x - (j + 1) * 0.018 * boost, k.r); s.vis = boost > 0.05; s.p = [q[0], 0.28, q[1]]; const z = 0.2 * (1 - j / 7) * boost; s.s = [z, z, z]; s.alpha = 1 - j / 7; }); });
+        flags.forEach((f, i) => (f.jy = 0.35 * boost * Math.abs(Math.sin(e * 6 + i))));
+        confetti.forEach((c) => { const y = c.y - c.v * Math.max(0, e - 0.3); c.n.vis = e > 0.3 && y > 0.05; c.n.p = [c.x + 0.3 * Math.sin(e * 2 + c.x), y, c.z]; c.n.r = [c.sp[0] * e, c.sp[1] * e, 0]; });
+        if (e > cur.dur - 1.6) once("f", () => sfx("fanfare"));
+      }
+      if (n === "balloon") {
+        const k = 1.9 * back(e / 0.8) * clamp((cur.dur - e) / 1.3), y = 0.2 + 0.5 * e + 0.03 * e * e; balloon.vis = k > 0.01;
+        balloon.p = [1.3 * Math.sin(e * 0.55), y, 2.8]; balloon.s = [k, k, k]; balloon.r = [0, 18 * Math.sin(e * 0.8), 5 * Math.sin(e * 1.7)];
+      }
+      if (n === "bell") flags.forEach((f, i) => { const a = (e - 0.35 - i * 0.28) / 0.75, b = (e - 2.6 - i * 0.28) / 0.75, j = (x) => (x > 0 && x < 1 ? Math.sin(Math.PI * x) : 0);
+        f.jy = 1.1 * Math.max(j(a), j(b)); f.spin = 360 * (inout(a) + inout(b)); });
+    }
+    let lastTap = 0;
+    function tap(cx, cy) {
+      const r = host.getBoundingClientRect(); sparkle(cx - r.left, cy - r.top); sfx("pop");
+      const now = performance.now() / 1000;
+      if (cur && now - cur.at < 2.2) return; // the surprise that is playing goes on; the next tap after it starts the next one
+      if (now - lastTap < 0.25) return; lastTap = now;
+      start(order[turnNo++ % order.length]);
+    }
 
     const ctl = {
       ok: true, el: canvas, nodes: count,
+      surprise(name) { if (opt.surprise) start(SHOWS[name] ? name : order[turnNo++ % order.length]); return ctl; },
       get yaw() { return yaw; }, set yaw(v) { yaw = +v || 0; vel = 0; },
       pause(on) { paused = !!on; return ctl; },
       setGate(n) { gate = +n || 0; return ctl; },
@@ -369,9 +521,10 @@
       project(n) { const f = flags[n - 1]; if (!f || !drawn || !showFlags) return { x: 0, y: 0, visible: false };
         const m = f.sign.W, x = m[12], y = m[13], z = m[14], w = vp[3] * x + vp[7] * y + vp[11] * z + vp[15], nx = (vp[0] * x + vp[4] * y + vp[8] * z + vp[12]) / w, ny = (vp[1] * x + vp[5] * y + vp[9] * z + vp[13]) / w;
         return { x: (nx * 0.5 + 0.5) * cssW, y: (0.5 - ny * 0.5) * cssH, visible: w > 0 && Math.abs(nx) <= 1 && Math.abs(ny) <= 1 }; },
-      destroy() { if (dead) return; dead = true; subs.length = 0; cancelAnimationFrame(raf); R.lose(); canvas.remove(); }
+      destroy() { if (dead) return; dead = true; subs.length = 0; cancelAnimationFrame(raf); R.lose(); canvas.remove(); if (layer) layer.remove(); }
     };
     raf = requestAnimationFrame(frame);
+    Campus.last = ctl; // the model mounted last (for tests)
     return ctl;
   };
 })();
