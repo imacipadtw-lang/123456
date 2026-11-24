@@ -12,5 +12,6 @@
 ## 方塊冒險遊戲：Barcelona Block Quest
 
 - 線上網址：https://imacipadtw-lang.github.io/123456/picture-books/spain/block-quest/
-- 方塊世界（麥塊風格，原創材質與角色），8 個任務照課文順序：撿 4 張車票 → 看月曆回答今天星期幾 → 用金磚蓋聖家堂 → 跟小男孩說 Hola → Edison 提議看足球 → Is it Wednesday? → 工作人員開門 → 踢進 3 球 PK、全場喊 Go! Go! Go!
+- 約 5 分鐘玩完：每完成一個任務會自動傳送到下一個任務地點，任務面板也有「🚀 帶我去任務地點」；結束畫面顯示用時
+- 方塊世界（麥塊風格，原創材質與角色），8 個任務照課文順序：撿 3 張車票 → 看月曆回答今天星期幾 → 放 3 塊金磚蓋聖家堂 → 跟小男孩說 Hola → Edison 提議看足球 → Is it Wednesday? → 工作人員開門 → 踢進 2 球 PK、全場喊 Go! Go! Go!
 - 完成任務會收進「句子本」，可以重聽；進度自動存在瀏覽器

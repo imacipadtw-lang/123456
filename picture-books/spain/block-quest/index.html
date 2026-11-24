@@ -77,7 +77,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 </head>
 <body>
 <canvas id="cv" aria-label="方塊世界，可拖曳旋轉視角，點地面走路"></canvas>
-<section class="quest" aria-live="polite"><div class="n px" id="qn">QUEST 1/8</div><h2 id="qt"></h2><p id="qo"></p><div class="bar"><i id="qb"></i></div></section>
+<section class="quest" aria-live="polite"><div class="n px" id="qn">QUEST 1/8</div><h2 id="qt"></h2><p id="qo"></p><div class="bar"><i id="qb"></i></div><button class="btn alt" id="qgo" style="margin-top:8px;width:100%">🚀 帶我去任務地點</button></section>
 <div class="tr"><button class="tb" id="zh" aria-pressed="true">中文字幕</button><button class="tb" id="zin" aria-label="拉近">＋</button><button class="tb" id="zout" aria-label="拉遠">－</button><button class="tb" id="book" aria-label="句子本">句子本</button></div>
 <div class="modes" role="group" aria-label="模式"><button class="tb" data-m="walk" aria-pressed="true">走路</button><button class="tb" data-m="mine">挖方塊</button><button class="tb" data-m="place">放方塊</button></div>
 <div class="hot" id="hot"></div>
@@ -86,7 +86,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 <div class="toast" id="toast"></div>
 <section class="screen" id="start"><div class="card">
  <h1>BARCELONA BLOCK QUEST</h1><div class="sub">方塊巴塞隆納大冒險・五年級</div>
- <p>撿車票、看月曆說出今天星期幾、用金磚蓋出聖家堂、用西班牙文說 Hola，再走進足球場踢 PK！完成 8 個任務，學會繪本裡的英文句子。</p>
+ <p>撿車票、看月曆說出今天星期幾、用金磚蓋出聖家堂、用西班牙文說 Hola，再走進足球場踢 PK！8 個任務約 5 分鐘玩完，學會課文 17 句。</p>
  <p><b>選你的角色：</b></p><div class="pick" id="pick"></div>
  <button class="btn alt" id="go" style="font-size:22px;min-height:60px">開始冒險 START</button>
  <p class="help">操作：點地面＝走路；拖曳＝旋轉視角；切到「挖方塊」點方塊挖起來，切到「放方塊」點方塊旁邊把方塊放上去。</p>
@@ -255,24 +255,26 @@ const act=$('#act');function showAct(label,fn){act._fn=fn;if(act.classList.conta
 /* ===== quests ===== */
 const notesItems=[];let ghosts=[],tram=null,ball=null;
 const QUESTS=[
- {t:'Let’s Go Here!',o:'收集 4 張發光的車票 🎫（走過去就會撿到）',start(){spawnNotes()},prog:()=>QS.notes/4},
- {t:'What Day Is Today?',o:'看看廣場旁的大月曆，再點 Mia 回答今天星期幾',start(){},prog:()=>0},
- {t:'Build the Sagrada Família',o:'切到「放方塊」，選金磚，把聖家堂門口金色藍圖的 9 格放滿',start(){inv.gold=Math.max(inv.gold,9);drawHot();ghostArch()},prog:()=>1-ghosts.length/9},
- {t:'Hola!',o:'到奎爾公園（彩色馬賽克長椅）找穿紅衣的小男孩，跟他打招呼',start(){},prog:()=>0},
- {t:'Let’s Watch Football',o:'回到路上點 Edison，聽聽他的好點子',start(){placeNPC(who('Edison'),13,29,Math.PI)},prog:()=>0},
- {t:'TGIF!',o:'走到足球場大門口（木頭門），點 Edison',start(){placeNPC(who('Edison'),21,20,Math.PI)},prog:()=>0},
- {t:'Have a Good Time',o:'點大門口的工作人員（黃衣服），讓他幫你們開門',start(){},prog:()=>0},
- {t:'Big G, little o. Go!',o:'走進球場，站到罰球點（白色方塊）旁，按「射門」，趁守門員跑開時踢進 3 球',start(){QS.hits=0},prog:()=>(QS.hits||0)/3}
+ {t:'Let’s Go Here!',o:'點地面走過去，撿 3 張發光的車票 🎫',at:[9.5,40.5],start(){spawnNotes()},prog:()=>QS.notes/3},
+ {t:'What Day Is Today?',o:'看大月曆，點 Mia 回答今天星期幾',at:[14.5,42.5],start(){},prog:()=>0},
+ {t:'Build the Sagrada Família',o:'點 3 個發光的金色格子，放上金磚，聖家堂就會長出來！',at:[10.5,28.5],start(){inv.gold=Math.max(inv.gold,3);sel=HOT.indexOf('gold');setMode('place');drawHot();ghostArch()},prog:()=>1-ghosts.length/3},
+ {t:'Hola!',o:'點穿紅衣的小男孩，跟他打招呼',at:[37.5,26.5],start(){setMode('walk')},prog:()=>0},
+ {t:'Let’s Watch Football',o:'點 Edison，聽聽他的好點子',at:[13.5,31.5],start(){placeNPC(who('Edison'),13,29,Math.PI)},prog:()=>0},
+ {t:'TGIF!',o:'點球場門口的 Edison',at:[22.5,22.5],start(){placeNPC(who('Edison'),21,20,Math.PI)},prog:()=>0},
+ {t:'Have a Good Time',o:'點黃衣服的工作人員，請他開門',at:[22.5,22.5],start(){},prog:()=>0},
+ {t:'Big G, little o. Go!',o:'按「射門」，趁守門員跑開時踢進 2 球！',at:[23.5,13.5],start(){QS.hits=0},prog:()=>(QS.hits||0)/2}
 ];
-function setQuest(i){Q=i;SAVEQ();QS={notes:QS.notes||0};const q=QUESTS[i];if(!q){finish();return}$('#qn').textContent='QUEST '+(i+1)+'/8';$('#qt').textContent=q.t;$('#qo').textContent=q.o.replace(/Mia/g,who('Mia')).replace(/Edison/g,who('Edison'));upd();q.start&&q.start()}
+function setQuest(i){Q=i;SAVEQ();QS={notes:QS.notes||0};const q=QUESTS[i];if(!q){finish();return}$('#qn').textContent='QUEST '+(i+1)+'/8';$('#qt').textContent=q.t;$('#qo').textContent=q.o.replace(/Mia/g,who('Mia')).replace(/Edison/g,who('Edison'));upd();q.start&&q.start();if(i>0)hop(q.at)}
+function hop(at){if(!at||!player)return;target=null;burst(ppos.clone().add(new T.Vector3(0,1,0)),20);ppos.set(at[0],groundY(at[0],at[1],8),at[1]);noise(.25,.2,1200);tone(400,.3,'sine',.1,2.5);burst(ppos.clone().add(new T.Vector3(0,1,0)),20)}
+$('#qgo').onclick=()=>{ac();const q=QUESTS[Q];if(q)hop(q.at)};
 function upd(){const q=QUESTS[Q];if(!q)return;$('#qb').style.width=Math.round(Math.max(0,Math.min(1,q.prog()))*100)+'%'}
 async function complete(lines){SFX.win();burst(ppos.clone().add(new T.Vector3(0,2,0)),50);upd();$('#qb').style.width='100%';if(lines)await say(lines);setQuest(Q+1)}
 function ticketTex(){const c=document.createElement('canvas');c.width=64;c.height=40;const x=c.getContext('2d');x.fillStyle='#ffd23f';x.fillRect(0,0,64,40);x.fillStyle='#e63946';x.fillRect(0,0,64,10);x.fillStyle='#1d1b2e';x.font='bold 16px monospace';x.textAlign='center';x.fillText('BCN',32,30);x.setLineDash([3,3]);x.strokeStyle='#1d1b2e';x.beginPath();x.moveTo(48,10);x.lineTo(48,40);x.stroke();return ttex(c)}
-function spawnNotes(){notesItems.forEach(n=>scene.remove(n));notesItems.length=0;QS.notes=0;const mt=new T.MeshBasicMaterial({map:ticketTex(),side:T.DoubleSide});[[12,40],[6,35],[14,34],[20,31]].forEach(([x,z],i)=>{const m=new T.Mesh(new T.PlaneGeometry(.9,.56),mt);m.position.set(x+.5,groundY(x,z)+1,z+.5);m.userData.ph=i;scene.add(m);notesItems.push(m)})}
+function spawnNotes(){notesItems.forEach(n=>scene.remove(n));notesItems.length=0;QS.notes=0;const mt=new T.MeshBasicMaterial({map:ticketTex(),side:T.DoubleSide});[[11,39],[7,38],[12,43]].forEach(([x,z],i)=>{const m=new T.Mesh(new T.PlaneGeometry(.9,.56),mt);m.position.set(x+.5,groundY(x,z)+1,z+.5);m.userData.ph=i;scene.add(m);notesItems.push(m)})}
 function calendarBoard(){const c=document.createElement('canvas');c.width=320;c.height=192;const x=c.getContext('2d');x.fillStyle='#fffaf0';x.fillRect(0,0,320,192);const D=['MON','TUE','WED','THU','FRI','SAT','SUN'];x.textAlign='center';D.forEach((d,i)=>{const cx=24+i*45;if(i===4){x.fillStyle='#ffd23f';x.fillRect(cx-21,30,42,90)}x.fillStyle=i>4?'#e63946':'#1d1b2e';x.font='bold 18px monospace';x.fillText(d,cx,60);x.font='bold 26px monospace';x.fillText(String(23+i),cx,100)});x.fillStyle='#1d1b2e';x.font='bold 26px monospace';x.fillText('TODAY: FRIDAY',160,165);
  const m=new T.Mesh(new T.PlaneGeometry(5,3),new T.MeshBasicMaterial({map:new T.CanvasTexture(c)}));m.position.set(17.5,4.5,41.02);scene.add(m);const m2=m.clone();m2.position.z=39.98;m2.rotation.y=Math.PI;scene.add(m2)}
-function ghostArch(){ghosts.forEach(g=>scene.remove(g));ghosts=[];[[8,3],[8,4],[12,3],[12,4],[8,5],[9,5],[10,5],[11,5],[12,5]].forEach(([x,y])=>{if(get(x,y,26)==='gold')return;const g=new T.Mesh(new T.BoxGeometry(1.02,1.02,1.02),new T.MeshBasicMaterial({color:0xffe066,transparent:true,opacity:.35,depthWrite:false}));g.add(new T.LineSegments(new T.EdgesGeometry(g.geometry),new T.LineBasicMaterial({color:0xffc531})));g.position.set(x+.5,y+.5,26+.5);g.userData.c=[x,y,26];scene.add(g);ghosts.push(g)})}
-async function operaRise(){for(let i=0;i<OPERA.length;i++){const[x,y,z,t]=OPERA[i];set(x,y,z,t,1);if(i%6===0){rebuild();await sleep(16)}}rebuild();SFX.win()}
+function ghostArch(){ghosts.forEach(g=>scene.remove(g));ghosts=[];[[9,3],[10,3],[11,3]].forEach(([x,y])=>{if(get(x,y,26)==='gold')return;const g=new T.Mesh(new T.BoxGeometry(1.02,1.02,1.02),new T.MeshBasicMaterial({color:0xffe066,transparent:true,opacity:.35,depthWrite:false}));g.add(new T.LineSegments(new T.EdgesGeometry(g.geometry),new T.LineBasicMaterial({color:0xffc531})));g.position.set(x+.5,y+.5,26+.5);g.userData.c=[x,y,26];scene.add(g);ghosts.push(g)})}
+async function operaRise(){for(let i=0;i<OPERA.length;i++){const[x,y,z,t]=OPERA[i];set(x,y,z,t,1);if(i%40===0){rebuild();await sleep(30)}}rebuild();SFX.win()}
 function noteGlow(){}
 let tvScreen=null;const who=n=>n!==me?n:(n==='Edison'?'Rocky':n==='Mia'?'Teddy':'Abu');
 let pitchT=0,flying=false,hitWin=false,keeper=null;
@@ -309,7 +311,7 @@ const L={s01:['Amber','Let’s go here!','我們一起去這裡吧！'],s02:['Te
  s07:['Little boy','Hola.','嗨。'],s08:['Rocky','Hola.','嗨。'],s09:['Edison','Let’s go watch football.','我們去看足球吧。'],s10:['Mia','Good idea!','好主意！'],s11:['Edison','Is it Wednesday today?','今天是星期三嗎？'],s12:['Amber','No, it isn’t. It’s Friday.','不，不是。今天是星期五。'],s13:['Edison','TGIF! There’s a football game today.','謝天謝地今天是星期五！今天有足球賽。'],
  h14:['The Staff','Have a good time.','祝你們玩得開心。'],h15:['Abu+Mia','Thank you.','謝謝。'],s16:['ALL','Big G, little o. Go! Go! Go!','大 G，小 o。加油！加油！加油！'],h17:['Amber','Good job!','做得好！']};
 const ln=k=>{const v=L[k];return{who:v[0],en:v[1],zh:v[2],k:v[3]||[k]}};
-async function talkTo(n){const p=NPC[n].position;if(Math.hypot(p.x-ppos.x,p.z-ppos.z)>7){target=p.clone();toast('走過去找 '+(CHARS[n].name||n));return}
+async function talkTo(n){const p=NPC[n].position;if(Math.hypot(p.x-ppos.x,p.z-ppos.z)>7){hop([p.x,p.z+2])}
  if(Q===1&&n===who('Mia')){await say([ln('s03')]);await ask('看看廣場旁的大月曆，Teddy 問今天星期幾，你會回答：',['It’s Monday.','It’s Friday.','It’s Wednesday.'],1);await complete([ln('s04'),ln('s05')]);return}
  if(Q===3&&n==='Boy'){await say([ln('s07')]);await ask('西班牙小男孩跟你打招呼，你也用西班牙文回他：',['Bonjour.','Hola.','Good job!'],1);await complete([ln('s08')]);toast('Hola! 你用西班牙文打招呼了！');return}
  if(Q===4&&n===who('Edison')){await say([ln('s09')]);await ask('Edison 想去看足球，你覺得是好主意，你會說：',['Good idea!','Have a good time.','What day is today?'],0);await complete([ln('s10')]);return}
@@ -329,14 +331,14 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDelta
  for(const n of Object.values(NPC)){if(!n.visible)continue;const nu=n.userData;nu.head.rotation.y=Math.sin(t*.7+n.position.x)*.3;n.position.y+=(groundY(n.position.x,n.position.z,n.userData.gy)+(nu.talk?Math.abs(Math.sin(t*8))*.15:0)-n.position.y)*.3;nu.limbs[1].rotation.x=nu.talk?-1.8+Math.sin(t*10)*.4:0;
   if(Math.hypot(n.position.x-ppos.x,n.position.z-ppos.z)<5){const want=Math.atan2(ppos.x-n.position.x,ppos.z-n.position.z);n.rotation.y+=(want-n.rotation.y)*.05}}
  // quest 1 notes
- notesItems.forEach(m=>{if(!m.visible)return;m.rotation.y=t*2;m.position.y+=Math.sin(t*3+m.userData.ph)*.005;if(Q===0&&Math.hypot(m.position.x-ppos.x,m.position.z-ppos.z)<1.3){m.visible=false;QS.notes++;note([523,587,659,698,784][QS.notes-1]);burst(m.position.clone(),15);upd();if(QS.notes>=4)complete([ln('s01'),ln('s02')])}});
+ notesItems.forEach(m=>{if(!m.visible)return;m.rotation.y=t*2;m.position.y+=Math.sin(t*3+m.userData.ph)*.005;if(Q===0&&Math.hypot(m.position.x-ppos.x,m.position.z-ppos.z)<1.3){m.visible=false;QS.notes++;note([523,587,659,698,784][QS.notes-1]);burst(m.position.clone(),15);upd();if(QS.notes>=3)complete([ln('s01'),ln('s02')])}});
  ghosts.forEach(g=>g.material.opacity=.25+Math.abs(Math.sin(t*3))*.25);
  // penalty
- if(Q===7){const near=Math.hypot(ppos.x-23.5,ppos.z-12.5)<2.6;if(!keeper){keeper=placeNPC(who('Mia'),23,5,0);keeper.userData.gy=3}keeper.position.x=23.5+Math.sin(t*1.6)*1.7;keeper.rotation.y=0;
+ if(Q===7){const near=Math.hypot(ppos.x-23.5,ppos.z-12.5)<2.6;if(!keeper){keeper=placeNPC(who('Mia'),23,5,0);keeper.userData.gy=3}keeper.position.x=23.5+Math.sin(t*1.2)*1.8;keeper.rotation.y=0;
   if(near&&!dlg.classList.contains('on')){if(!flying)showAct('射門 Kick!',swing);else hideAct()}else hideAct();
   if(!ball){ball=new T.Mesh(new T.BoxGeometry(.4,.4,.4),new T.MeshLambertMaterial({color:0xffffff}));scene.add(ball)}
   if(!flying){ball.position.set(23.5,3.2,12.5)}else{const b=ball.userData;b.t+=dt*1.6;const p=Math.min(1,b.t);ball.position.set(23.5,3.2+Math.sin(p*Math.PI)*1.2,12.5-p*7.6);ball.rotation.x-=dt*10;
-   if(p>=1&&!b.done){b.done=1;const saved=Math.abs(keeper.position.x-23.5)<1;if(saved){SFX.no();toast('被守門員擋下來了！等守門員跑開再踢');burst(ball.position.clone(),10,0xffffff)}else{QS.hits=(QS.hits||0)+1;upd();SFX.win();burst(ball.position.clone(),40);toast('GOAL! 進球了！ '+QS.hits+' / 3');if(QS.hits>=3){setTimeout(()=>{hideAct();for(const n of['Teddy','Amber','Edison','Rocky','Abu'])placeNPC(n,19+['Teddy','Amber','Edison','Rocky','Abu'].indexOf(n)*2,14,Math.PI);complete([ln('s16'),ln('h17')])},900)}}
+   if(p>=1&&!b.done){b.done=1;const saved=Math.abs(keeper.position.x-23.5)<1;if(saved){SFX.no();toast('被守門員擋下來了！等守門員跑開再踢');burst(ball.position.clone(),10,0xffffff)}else{QS.hits=(QS.hits||0)+1;upd();SFX.win();burst(ball.position.clone(),40);toast('GOAL! 進球了！ '+QS.hits+' / 2');if(QS.hits>=2){setTimeout(()=>{hideAct();for(const n of['Teddy','Amber','Edison','Rocky','Abu'])placeNPC(n,19+['Teddy','Amber','Edison','Rocky','Abu'].indexOf(n)*2,14,Math.PI);complete([ln('s16'),ln('h17')])},900)}}
     setTimeout(()=>{flying=false},900)}}}
  // tv screen face player
  if(tvScreen)tvScreen.lookAt(cam.position.x,tvScreen.position.y,cam.position.z);
@@ -346,11 +348,11 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(.05,clock.getDelta
  const cx=ppos.x+Math.sin(yaw)*Math.cos(pitch)*dist,cz=ppos.z+Math.cos(yaw)*Math.cos(pitch)*dist,cy=ppos.y+1.4+Math.sin(pitch)*dist;cam.position.lerp(new T.Vector3(cx,cy,cz),.2);cam.lookAt(ppos.x,ppos.y+1.4,ppos.z);
  R.render(scene,cam)}
 function swingOld(){const a=player.userData.limbs[1];a.rotation.x=-2.4;setTimeout(()=>a.rotation.x=0,250);noise(.15,.15,400);if(flying&&hitWin&&!ball.userData.hit){ball.userData.hit=true;ball.userData.ht=0;tone(220,.08,'square',.2);QS.hits=(QS.hits||0)+1;upd();SFX.win();toast('全壘打！Home run! '+QS.hits+' / 2');if(QS.hits>=2){setTimeout(()=>{hideAct();complete([{who:'Mozart',en:'Wow! Magic!',zh:'哇！真神奇！',k:['h18a','v18b']}])},1600)}}}
-function swing(){if(flying||(QS.hits||0)>=3)return;flying=true;ball.userData={t:0};noise(.12,.2,300);const a=player.userData.limbs[3];a.rotation.x=-1.2;setTimeout(()=>a.rotation.x=0,250)}
+function swing(){if(flying||(QS.hits||0)>=2)return;flying=true;ball.userData={t:0};noise(.12,.2,300);const a=player.userData.limbs[3];a.rotation.x=-1.2;setTimeout(()=>a.rotation.x=0,250)}
 /* ===== start / end ===== */
 function finish(){hideAct();$('#qn').textContent='ALL CLEAR';$('#qt').textContent='Barcelona Block Hero!';$('#qo').textContent='全部任務完成！可以繼續自由建造。';$('#qb').style.width='100%';
  for(let i=0;i<6;i++)setTimeout(()=>{burst(ppos.clone().add(new T.Vector3((Math.random()-.5)*6,4,(Math.random()-.5)*6)),40);SFX.win()},i*300);
- $('#endSub').textContent=me+' 完成了方塊巴塞隆納大冒險！你學會的句子：';$('#learn').innerHTML=Object.entries(LEARNED).map(([en,v],i)=>'<div><button data-i="'+i+'" aria-label="播放">▶</button><span>'+en+'<small>'+v.who+'：'+v.zh+'</small></span></div>').join('');
+ const sec=Math.round((Date.now()-T0)/1000);$('#endSub').textContent=me+' 完成了方塊巴塞隆納大冒險！用時 '+Math.floor(sec/60)+' 分 '+String(sec%60).padStart(2,'0')+' 秒。你學會的句子：';$('#learn').innerHTML=Object.entries(LEARNED).map(([en,v],i)=>'<div><button data-i="'+i+'" aria-label="播放">▶</button><span>'+en+'<small>'+v.who+'：'+v.zh+'</small></span></div>').join('');
  const ent=Object.values(LEARNED);$('#learn').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>play(ent[+b.dataset.i].k));setTimeout(()=>$('#end').classList.remove('off'),1800)}
 $('#free').onclick=()=>$('#end').classList.add('off');
 $('#again').onclick=()=>{store.set('q',0);store.set('inv',null);location.reload()};
@@ -362,10 +364,10 @@ pick.querySelectorAll('canvas').forEach(c=>face(c,CHARS[c.dataset.n]));pick.quer
 gen();rebuild();calendarBoard();loop0();
 window.VBQ={place:(x,y,z,t)=>{sel=HOT.indexOf(t);mode='place';const f={x,y:y-1,z,n:new T.Vector3(0,1,0),t:get(x,y-1,z)};doPlace(f)},mine:(x,y,z)=>{mode='mine';doMine({x,y,z,t:get(x,y,z)})},talk:n=>talkTo(n),swing:()=>swing(),setQuest:i=>setQuest(i),st:()=>({Q,QS:JSON.stringify(QS),p:[ppos.x,ppos.y,ppos.z].map(v=>+v.toFixed(2)),inv:JSON.stringify(inv),blocks:world.size}),go:(x,z)=>{target=new T.Vector3(x,0,z)},tp:(x,z,y0=4)=>{ppos.set(x,groundY(x,z,y0),z)}};
 function loop0(){/* idle preview before start */cam.position.set(24,26,60);cam.lookAt(24,2,24);R.render(scene,cam)}
-$('#go').onclick=()=>{ac();$('#start').classList.add('off');player=blocky(Object.assign({},CHARS[me]));scene.add(player);setupNPCs();drawHot();
- const saved=store.get('q',0);if(saved>=3){for(const[x,y,z,t]of OPERA)set(x,y,z,t,1);[[8,3],[8,4],[12,3],[12,4],[8,5],[9,5],[10,5],[11,5],[12,5]].forEach(([x,y])=>set(x,y,26,'gold',1))}
+let T0=Date.now();$('#go').onclick=()=>{ac();T0=Date.now();$('#start').classList.add('off');player=blocky(Object.assign({},CHARS[me]));scene.add(player);setupNPCs();drawHot();
+ const saved=store.get('q',0);if(saved>=3){for(const[x,y,z,t]of OPERA)set(x,y,z,t,1);[[9,3],[10,3],[11,3]].forEach(([x,y])=>set(x,y,26,'gold',1))}
  if(saved>=7)openGate();if(saved>=3)ppos.set(10.5,3,28.5);if(saved>=5)ppos.set(23.5,3,24.5);if(saved>=7)ppos.set(23.5,3,14.5);
- loop();setQuest(saved);if(saved===0)say([{who:'Narrator',en:'Welcome to Block Barcelona!',zh:'歡迎來到方塊巴塞隆納！先去撿 4 張發光的車票吧。'}])};
+ loop();setQuest(saved);if(saved===0)say([{who:'Narrator',en:'Welcome to Block Barcelona!',zh:'歡迎來到方塊巴塞隆納！先去撿 3 張發光的車票吧。'}])};
 }
 </script>
 </body>
