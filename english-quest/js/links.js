@@ -7,7 +7,7 @@
   });
   L.gate = (g) => ({ github: L.github + "station.html?gate=" + g, claude: L.claude + "#gate-" + g });
   L.list = () => [
-    ...[1, 2, 3, 4, 5, 6, 7, 8].map((g) => ({ key: "gate-" + g, gate: g, ...L.gate(g) })),
+    ...[1, 2, 3, 4, 5, 6].map((g) => ({ key: "gate-" + g, gate: g, ...L.gate(g) })),
     { key: "final", github: L.github + "control.html", claude: L.claude + "#final" },
     { key: "opening", github: L.github + "opening.html", claude: L.claude + "#opening" },
     { key: "home", github: L.github, claude: L.claude },

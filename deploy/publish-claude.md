@@ -3,7 +3,7 @@
 Every screen has two addresses (see `english-quest/js/links.js`):
 
 - **Main — GitHub Pages:** https://imacipadtw-lang.github.io/123456/english-quest/ (published automatically by `.github/workflows/pages.yml` on every push, to the `gh-pages` branch)
-- **Backup — claude.ai Artifact:** https://claude.ai/artifact/EGDBXGnMnVbkMtdUMgWxjn (`#gate-1` … `#gate-8`, `#final`, `#opening`)
+- **Backup — claude.ai Artifact:** https://claude.ai/artifact/EGDBXGnMnVbkMtdUMgWxjn (`#gate-1` … `#gate-6`, `#final`, `#opening`)
 
 To update the backup, a Claude session publishes `deploy/claude-launch.html` with the Artifact tool to the URL above, with
 `root: "english-quest"` and `files` = every tracked file under `english-quest/` except `index.html` (the launcher replaces it),
@@ -15,12 +15,12 @@ published there. After the second 2026-11-21 publish (the nine-unit question ban
 about 390 files: `node tools/prune_audio.js --apply` removed the ElevenLabs clips no screen says any more, and they were
 passed as `null` in the `files` map. Before adding many new files, run that tool again and remove what it lists.
 
-The second voice (166 clips under `assets/audio/m/` since the eight-gate change of 2026-11-21) is NOT published file by file — that would pass the 512-file
+The second voice (148 clips under `assets/audio/m/` since gates 7 and 8 were removed on 2026-11-24) is NOT published file by file — that would pass the 512-file
 limit. For the backup, build one file with every clip inside it and publish that file as `assets/audio/voice-m.js`:
 `python3 tools/pack_voice.py --packed <scratchpad>/voice-m.packed.js`, then in the `files` map
 `"assets/audio/voice-m.js": {"from": "<scratchpad>/voice-m.packed.js", "contentType": "text/javascript"}`.
-Never publish `assets/audio/m/…`, `m-words.json` or `m-sentences.json` there. The backup then held about 393 files (counted before gates 7 and 8, `js/art-world.js`, `js/toys.js`, `js/games/g7-quiz.js` and
-the new woman's-voice clips were added — count again with `python3 deploy/claude_files.py` before publishing). The launcher
-`deploy/claude-launch.html` shows the same one-screen home as `index.html`: the eight gates round the 3D campus. Publish only what changed since the last publish
+Never publish `assets/audio/m/…`, `m-words.json` or `m-sentences.json` there. The backup then held about 393 files (counted before `js/toys.js` was added — count again with `python3 deploy/claude_files.py`
+before publishing; files removed since the last publish, such as the gates 7–8 code and clips taken out on 2026-11-24, go in as `null`). The launcher
+`deploy/claude-launch.html` shows the same one-screen home as `index.html`: the six gates round the 3D campus. Publish only what changed since the last publish
 (`git diff --name-only <last published commit> HEAD -- english-quest`); if another session published in between, list
 the published files first (`action: "list", scope: "files"`) and compare their hashes with that session's commit.

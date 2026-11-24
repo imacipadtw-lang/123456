@@ -12,7 +12,7 @@
 
      const c = TC.Campus.mount(hostElement, { spin: true, speed: 9, drag: true, flags: true, gate: 0, zoom: 1, tilt: 34, dim: 0, yaw: 30, label: "…" });
        spin / speed   turns by itself, degrees per second (never with prefers-reduced-motion)
-       drag           a finger or the mouse turns it        flags   the gate flags are shown
+       drag           a finger or the mouse turns it        flags   the six gate flags are shown
        gate           1–6: this gate's flag is big and bounces, the others are small
        zoom, tilt     size, and the height angle of the camera in degrees        dim   0–1 darkens it (behind text)
      c.ok · c.el (the canvas) · c.destroy() · c.pause(on) · c.setGate(n) · c.onFrame(fn) (fn(c) after every drawn frame)
@@ -25,7 +25,7 @@
   const TC = (window.TC = window.TC || {});
   const R0 = 11; // radius of the round base
   const TX = 0.2, TZ = -0.3, TA = 24, TL = 1.5, TR = 1.7, TI = 1.0; // the track: centre, angle, half straight, outer and inner radius
-  const GATE = ["#ff9a2e", "#4cc9ff", "#2ee6b6", "#9b6bff", "#ff5fa2", "#ffc83d", "#ff6b6b", "#3d7bff"];
+  const GATE = ["#ff9a2e", "#4cc9ff", "#2ee6b6", "#9b6bff", "#ff5fa2", "#ffc83d"];
   let model = null; // built once, shared by every mount
 
   /** the track's outline at radius r, in the track's own frame (x across, z along) */
@@ -259,9 +259,8 @@
       on(0, 0, 0, () => shade.forEach((p) => blob(p[0], p[1], p[2], "22,74,40", 0.5, 0.35)));
     });
     return { S: S.mesh(), V: V.mesh(), TRACK, GROUND, CROWN, KID, CAR, BOARD, palette, lanes, name, ground, big, medal, pole, bridge: [RX, BZ],
-      /* where the gate flags stand: [x, the height the pole starts at, z, the length of the pole]
-         (7 = by the greenhouses, 8 = by the rice paddies west of the road — the two picture-quiz gates) */
-      spots: [[cls[0], 1.42, cls[1], 1.5], [-4.75, 1.6, -2.0, 1.75], [TX, 0, TZ, 2.6], [3.3, 2.6, 5.5, 1.1], [7.0, 1.5, 2.5, 1.5], [RX, 1.0, BZ, 1.7], [7.4, 0.5, -4.4, 2.0], [-9.2, 0.1, 1.5, 2.3]] };
+      /* where the six gate flags stand: [x, the height the pole starts at, z, the length of the pole] */
+      spots: [[cls[0], 1.42, cls[1], 1.5], [-4.75, 1.6, -2.0, 1.75], [TX, 0, TZ, 2.6], [3.3, 2.6, 5.5, 1.1], [7.0, 1.5, 2.5, 1.5], [RX, 1.0, BZ, 1.7]] };
   }
 
   /* ================= on the page ================= */

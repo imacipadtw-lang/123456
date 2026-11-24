@@ -47,9 +47,9 @@
   const C = TC_CONTENT, EMB = { 1: "kart", 2: "rainbow", 3: "mystegg", 4: "mic", 5: "gift", 6: "trophy" };
   const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const cap = (w) => w[0].toUpperCase() + w.slice(1);
-  const TOUCH = { quiz: "看圖選答案：畫面出現圖片或有注音的中文題目，孩子用手點答案（點錯可以再點）；點對後畫面出現英文，孩子用英文說出來。孩子卡住時按 Enter 或「⏭ 看答案」。", rescue: "畫面是教室裡的狀況（遲到、想上廁所、口渴…），孩子說出關鍵字，歐力就得救了。", talk: "歐力是脫口秀主持人，孩子是來賓，一問一答；答完觀眾（家長）一起拍手。", tpr: "低年級：歐力做動作，孩子跟著做，不用開口。中、高年級：孩子用英文下指令，歐力照做。最後「午休」，再突然 Wake up!", monster: "怪獸只吃某個開頭音的東西，孩子點對的圖片餵牠，再說出是什麼。", chant: "跟著節奏唸教室口令、做動作，孩子點鼓墊打拍子並說出每句最後一個字。", story: "立體故事書一頁一頁翻，孩子說出每頁缺的那個字，故事才會繼續。" };
+  const TOUCH = { rescue: "畫面是教室裡的狀況（遲到、想上廁所、口渴…），孩子說出關鍵字，歐力就得救了。", talk: "歐力是脫口秀主持人，孩子是來賓，一問一答；答完觀眾（家長）一起拍手。", tpr: "低年級：歐力做動作，孩子跟著做，不用開口。中、高年級：孩子用英文下指令，歐力照做。最後「午休」，再突然 Wake up!", monster: "怪獸只吃某個開頭音的東西，孩子點對的圖片餵牠，再說出是什麼。", chant: "跟著節奏唸教室口令、做動作，孩子點鼓墊打拍子並說出每句最後一個字。", story: "立體故事書一頁一頁翻，孩子說出每頁缺的那個字，故事才會繼續。" };
   const out = document.getElementById("pages");
-  for (let g = 1; g <= 8; g++) {
+  for (let g = 1; g <= 6; g++) {
     const G = C.gates[g], gr = C.greetings[C.greetingOrder[g]], r = TC_SCRIPT(g).filter((x) => x.kind !== "hello"), MARK = { q: "", extra: "＋ ", last: "★ " };
     const pg = document.createElement("div"); pg.className = "page"; pg.style.setProperty("--c", G.color);
     pg.innerHTML = `<div class="hd"><div class="n">${g}</div><div><h1>${esc(G.title)} · ${esc(G.zh)}</h1><div class="s">Gate ${g} · ${esc(G.city)} · ${esc(G.genre)}</div><div class="s sch"><img src="assets/img/tucheng-emblem.svg" alt="">南投縣草屯鎮土城國民小學 · 運動會英語日</div></div><div class="bdg">${TC.badgeSVG(g)}</div></div>
