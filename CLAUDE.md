@@ -68,7 +68,14 @@
   (the teacher, 2026-11-24): fireworks, rain + rainbow, the 1921 gold medal, a relay race with confetti, a hot-air balloon, the school
   bell (Westminster chime, synthesised) with dancing flags, Ollie flying past — a different one each tap (`surprise: true`); sound
   effects only, nothing spoken. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
-- Before pushing: load every page in headless Chromium with no errors (`node tools/tests/pages.js`: 15 pages with gates 1–6, 6 host cards,
+- Practice before the day (the teacher, 2026-11-26): `practice.html` + `js/practice.js` is a quick listening / speaking practice book
+  (not a game) with every line of the six gates, in a deliberately DIFFERENT picture style (ink doodles on notebook paper) so the
+  day keeps its surprise; 高年級 there has the four steps listen → pick the word → say it covered → check. Its 低年級 cards follow
+  the gates (gate 3 and the gate-6 ending: no letter, copy Ollie). `node tools/tests/practice.js <base>` checks it.
+  The Word question bank for 低年級／中年級 (for 怡伶老師's lessons) is made by `node tools/practice_docx.js <base> <out.docx>` and kept
+  as `english-quest/downloads/question-bank-low-mid.docx`; it describes each gate as the game code runs it (rounds, who speaks
+  first, gate 4 asks only letters with two words), so rebuild and re-check it whenever a gate's content or flow changes.
+- Before pushing: load every page in headless Chromium with no errors (`node tools/tests/pages.js`: 16 pages with gates 1–6, 6 host cards,
   6 sticker places); play at least one gate
   end to end (`node tools/tests/e2e.js <base> <gates, default 1–6> <levels 1,2,3>`; with `SLOW=4500 FAKE_TTS=1` in front it taps the 高年級 word buttons,
   presses 🔊 so every model line plays, and lists the lines a computer voice had to read — there must be none);

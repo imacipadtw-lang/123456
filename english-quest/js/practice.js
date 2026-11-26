@@ -122,28 +122,28 @@
   function chapters() {
     const G = C.gates, gr = C.greetings[C.greetingOrder[1]], out = [];
     out.push({ id: "hi", g: 1, tab: "熱身", title: "見面打招呼", desc: "每一關一開始，歐力都會先跟你打招呼，你要回答他。", items: [
-      { id: "hi", kind: "say", noAbc: true, q: gr.teacher, qzh: gr.tzh, a: gr.say, azh: gr.zh, w: gr.word, sit: SIT.hi, pic: "wave" }] });
+      { id: "hi", kind: "say", noAbc: true, no: gr.no, q: gr.teacher, qzh: gr.tzh, a: gr.say, azh: gr.zh, w: gr.word, sit: SIT.hi, pic: "wave" }] });
     const extras = (g, items) => {
       const H = C.hunt[g];
-      if (H) items.push({ id: "box", kind: "say", extra: "🎁 神秘禮物盒", q: "What's in the box?", qzh: "盒子裡是哪一句？說說看！", a: H.text, azh: H.zh, w: H.w, sit: "過關前會打開一個禮物盒，裡面有一句話。", pic: "gift" });
-      (C.sentences[g] || []).forEach((s, i) => items.push({ id: "order" + i, kind: "order", extra: "🧩 句子拼拼看", lv: [2, 3], q: "Say it!", qzh: "把句子排好，再唸出來！", a: s.s, azh: s.zh, w: s.keys[0][0], sit: "把字卡排成一句話。", pic: "cards" }));
+      if (H) items.push({ id: "box", kind: "say", no: H.page + "-" + H.line, extra: "🎁 神秘禮物盒", q: "What's in the box?", qzh: "盒子裡是哪一句？說說看！", a: H.text, azh: H.zh, w: H.w, sit: "過關前會打開一個禮物盒，裡面有一句話。", pic: "gift" });
+      (C.sentences[g] || []).forEach((s, i) => items.push({ id: "order" + i, kind: "order", no: s.no, extra: "🧩 句子拼拼看", lv: [2, 3], q: "Say it!", qzh: "把句子排好，再唸出來！", a: s.s, azh: s.zh, w: s.keys[0][0], sit: "把字卡排成一句話。", pic: "cards" }));
       return items;
     };
     const g1 = G[1]; out.push({ id: "g1", g: 1, tab: "第 1 關", title: "第 1 關 " + g1.zh, desc: "看看教室裡發生什麼事，說出這時候該說的話。",
-      items: extras(1, g1.scenes.map((x) => ({ id: x.w, kind: "say", q: g1.teacher, qzh: g1.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))) });
+      items: extras(1, g1.scenes.map((x) => ({ id: x.w, kind: "say", no: x.no, q: g1.teacher, qzh: g1.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))) });
     const g2 = G[2]; out.push({ id: "g2", g: 2, tab: "第 2 關", title: "第 2 關 " + g2.zh, desc: "歐力是主持人，他問一句，你回答一句。",
-      items: extras(2, g2.qa.concat([g2.finale]).map((x) => ({ id: x.w, kind: "say", q: x.t, qzh: x.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))) });
+      items: extras(2, g2.qa.concat([g2.finale]).map((x) => ({ id: x.w, kind: "say", no: x.no, q: x.t, qzh: x.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))) });
     const g3 = G[3]; out.push({ id: "g3", g: 3, tab: "第 3 關", title: "第 3 關 " + g3.zh, desc: "看圖上的動作，用英文叫歐力做（低年級：聽單字，跟著做動作）。",
-      items: extras(3, g3.actions.map((x) => ({ id: x.w, kind: "say", q: "Tell Ollie!", qzh: "用英文叫歐力做這個動作！", a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))
-        .concat([{ id: "quiet", kind: "listen", q: g3.quiet.say, qzh: "", a: "", azh: g3.quiet.zh, w: g3.quiet.w, sit: "聽歐力說，做出他說的動作。", pic: "rest" },
-          { id: "wake", kind: "say", q: "Ollie is sleeping! Wake him up!", qzh: "歐力睡著了！用英文把他叫醒！", a: g3.wake.say, azh: g3.wake.zh, w: g3.wake.w, sit: SIT.wake, pic: "alarm" }])) });
+      items: extras(3, g3.actions.map((x) => ({ id: x.w, kind: "say", follow: true, no: x.no, q: "Tell Ollie!", qzh: "用英文叫歐力做這個動作！", a: x.say, azh: x.zh, w: x.w, sit: SIT[x.w], pic: PIC[x.w] }))
+        .concat([{ id: "quiet", kind: "listen", no: g3.quiet.no, q: g3.quiet.say, qzh: "", a: "", azh: g3.quiet.zh, w: g3.quiet.w, sit: "聽歐力說，做出他說的動作。", pic: "rest" },
+          { id: "wake", kind: "say", follow: true, no: g3.wake.no, q: "Ollie is sleeping! Wake him up!", qzh: "歐力睡著了！用英文把他叫醒！", a: g3.wake.say, azh: g3.wake.zh, w: g3.wake.w, sit: SIT.wake, pic: "alarm" }])) });
     const g4 = G[4]; out.push({ id: "g4", g: 4, tab: "第 4 關", title: "第 4 關 " + g4.zh, desc: "看東西，說出它是什麼。注意第一個字母的聲音。",
-      items: extras(4, g4.words.map((x) => { const pl = /^(teeth|hands)$/.test(x.w); return { id: x.w, kind: "say", q: pl ? "What are they?" : g4.teacher, qzh: pl ? "這些是什麼？" : g4.tzh, a: itIs(x.w), azh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", w: x.w, sit: SIT[x.w + "4"] || SIT[x.w], pic: PIC[x.w] }; })) });
+      items: extras(4, g4.words.map((x) => { const pl = /^(teeth|hands)$/.test(x.w); return { id: x.w, kind: "say", no: x.no, q: pl ? "What are they?" : g4.teacher, qzh: pl ? "這些是什麼？" : g4.tzh, a: itIs(x.w), azh: x.zh + "（" + x.L.toUpperCase() + " 開頭）", w: x.w, sit: SIT[x.w + "4"] || SIT[x.w], pic: PIC[x.w] }; })) });
     const g5 = G[5]; out.push({ id: "g5", g: 5, tab: "第 5 關", title: "第 5 關 " + g5.zh, desc: "跟著節奏唸，一邊做動作；最後一個字要大聲說出來。",
-      items: extras(5, g5.lines.map((x) => ({ id: x.w, kind: "say", q: "Your turn!", qzh: "換你唸！", a: x.say, azh: x.zh, w: x.w, sit: SIT["5:" + x.w], pic: MOVE["5:" + x.w] }))) });
+      items: extras(5, g5.lines.map((x) => ({ id: x.w, kind: "say", no: x.no, q: "Your turn!", qzh: "換你唸！", a: x.say, azh: x.zh, w: x.w, sit: SIT["5:" + x.w], pic: MOVE["5:" + x.w] }))) });
     const g6 = G[6]; out.push({ id: "g6", g: 6, tab: "第 6 關", title: "第 6 關 " + g6.zh, desc: "校園的一天，故事的每一頁說一句。",
-      items: extras(6, g6.pages.map((x) => ({ id: x.w, kind: "say", q: x.t || g6.teacher, qzh: x.tzh || g6.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT["6:" + x.w], pic: PIC[x.w] }))
-        .concat([{ id: "ending", kind: "say", q: "", qzh: "故事說完了，大家一起說：", a: g6.ending.say, azh: g6.ending.zh, w: "nice", sit: "故事說完了，全班一起說最後一句。", pic: "nice" }])) });
+      items: extras(6, g6.pages.map((x) => ({ id: x.w, kind: "say", no: x.no, q: x.t || g6.teacher, qzh: x.tzh || g6.tzh, a: x.say, azh: x.zh, w: x.w, sit: SIT["6:" + x.w], pic: PIC[x.w] }))
+        .concat([{ id: "ending", kind: "say", follow: true, no: g6.ending.no, q: "", qzh: "故事說完了，大家一起說：", a: g6.ending.say, azh: g6.ending.zh, w: "nice", sit: "故事說完了，全班一起說最後一句。", pic: "nice" }])) });
     out.push({ id: "final", g: 1, tab: "終點", title: "終點登機門", desc: "六關都過了！到終點排出六個字母的密碼，再說出最後一句。", items: [
       { id: "spell", kind: "spell", q: "", qzh: "六關的六個字母，排成一個英文字：", a: C.secret.toUpperCase(), azh: "朋友", w: "friend", sit: "每一關過關會拿到一個字母。", pic: "trophy" },
       { id: "friends", kind: "say", q: "Who are we? We are…", qzh: "我們是什麼？", a: C.finalLine.say, azh: "我們是好朋友！", w: "friend", sit: "密碼解開了！歐力問：我們是什麼？", pic: "friends" }] });
@@ -218,6 +218,10 @@
       body += `<div class="q"><small>${esc(it.qzh)}</small></div><div class="tiles answer" data-spell="${esc(it.a)}"></div>
         <div class="tiles">${letters.map((ch2) => `<button type="button" class="btn word" data-letter="${ch2}">${ch2}</button>`).join("")}</div>
         <div class="act" data-after="1"><span class="big-en">${esc(it.a)}</span>${sbtn("🔊", "Friend!", vA(ch))}<span class="tip">friend＝朋友</span></div>`;
+    } else if (level === 1 && it.follow) {
+      // 低年級 on the day (g3-tpr.js "Ollie Says", g6-story.js ending): no letter here — Ollie says the line and everybody copies him
+      body += `<div class="q"><span class="who">歐力說</span><span class="big-en">${esc(it.a)}</span>${sbtn("🔊", it.a, vQ(ch))}<small>${esc(it.azh)}</small></div>
+        <div class="tip">不用找字母：聽歐力說，跟著他${it.id === "ending" ? "一起說、揮揮手" : "做：" + esc(low.zh)}</div>`;
     } else if (level === 1 && it.kind !== "order" && !it.noAbc) {
       const L = low.w[0].toUpperCase(), big = L === "L" || L === "I" || Math.random() < 0.5, show = big ? L : L.toLowerCase();
       const pool = shuffle("ABCDEFGHJKMNOPRSTUVWY".split("").filter((x) => x !== L)).slice(0, 2), opts = shuffle([L].concat(pool));
