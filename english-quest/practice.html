@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>運動會英語練習本</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  /* 運動會英語練習本 — listening and speaking practice before the sports day (the teacher, 2026-11-26).
+     The same sentences as the six gates, but NOT the games' pictures: ink doodles on notebook paper, so the day keeps its surprise.
+     Short and interactive, so that parents see their child learning: the child says it first, then listens to check. */
+  :root{--paper:#fffdf6;--line:#d9e4f2;--margin:#f2a7a7;--ink:#2f2a26;--soft:#6b6259;--blue:#3e6fd8;--green:#2f9e6b;--red:#d8503f;--yel:#f6c445;--card:#ffffff;--shadow:rgba(80,60,30,.13)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--paper:#1f1d1a;--line:#2f3542;--margin:#6e3b3b;--ink:#f1ebe2;--soft:#bdb3a7;--card:#2a2723;--shadow:rgba(0,0,0,.4)}}
+  :root[data-theme=dark]{--paper:#1f1d1a;--line:#2f3542;--margin:#6e3b3b;--ink:#f1ebe2;--soft:#bdb3a7;--card:#2a2723;--shadow:rgba(0,0,0,.4)}
+  *{box-sizing:border-box;min-width:0}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;color:var(--ink);font:17px/1.6 "Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+    background:var(--paper) repeating-linear-gradient(180deg,transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
+  .en,.big-en{font-family:"Patrick Hand","Comic Sans MS","Noto Sans TC",sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px 80px;position:relative}
+  .wrap::before{content:"";position:fixed;top:0;bottom:0;left:max(10px,calc(50% - 470px));width:2px;background:var(--margin);opacity:.7;pointer-events:none}
+  header{padding:22px 0 8px;display:flex;gap:16px;align-items:center}
+  header img{width:64px;height:64px;flex:none}
+  header .sch{font-weight:700;color:var(--soft);font-size:15px;letter-spacing:.05em}
+  header h1{margin:2px 0 0;font-size:clamp(26px,5vw,36px);line-height:1.15}
+  header h1 .en{font-size:.8em;color:var(--blue);margin-left:8px;white-space:nowrap}
+  .lead{margin:6px 0 16px;color:var(--soft)}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 14px}
+  .bar b{font-weight:900}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button,.tabs button,.btn{font:inherit;cursor:pointer;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:14px 10px 16px 9px;padding:6px 14px;min-height:44px;font-weight:700;box-shadow:2px 3px 0 var(--ink);touch-action:manipulation}
+  .seg button[aria-pressed=true]{background:var(--yel);color:#2f2a26}
+  .seg button small{display:block;font-weight:400;font-size:12px;line-height:1.2}
+  .btn:active,.seg button:active,.tabs button:active{transform:translate(2px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible,.seg button:focus-visible,.tabs button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .parent{background:var(--card);border:2px dashed var(--soft);border-radius:16px;padding:12px 16px;margin:6px 0 18px;box-shadow:0 4px 14px var(--shadow)}
+  .parent h2{margin:0 0 6px;font-size:18px}
+  .meter{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:8px}
+  .meter div{border:2px solid var(--line);border-radius:12px;padding:6px 10px;font-size:14px}
+  .meter b{display:block;font-size:20px}
+  .meter i{display:block;height:6px;border-radius:3px;background:var(--line);margin-top:4px;overflow:hidden}
+  .meter i span{display:block;height:100%;background:var(--green)}
+  .tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;background:var(--paper)}
+  .tabs button{flex:none;border-radius:12px 12px 4px 4px;padding:6px 12px}
+  .tabs button[aria-current=true]{background:var(--ink);color:var(--paper)}
+  .tabs button .ok{color:var(--green);margin-left:4px}
+  .tabs button[aria-current=true] .ok{color:#9be3bf}
+  .chap-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px;margin:14px 0 6px}
+  .chap-head h2{margin:0;font-size:clamp(22px,4vw,28px)}
+  .chap-head p{margin:2px 0 0;color:var(--soft)}
+  .modes{display:flex;gap:6px}
+  .cards{display:grid;gap:16px;margin-top:10px}
+  .card{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:18px 14px 20px 12px;padding:14px;box-shadow:4px 5px 0 var(--shadow);
+    display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start}
+  .card.done{border-color:var(--green)}
+  .card.done::after{content:"✓ 練熟了";position:absolute;right:12px;top:-14px;background:var(--green);color:#fff;font-weight:900;font-size:14px;padding:2px 10px;border-radius:10px;transform:rotate(3deg)}
+  .pic{position:relative;background:#fff;border-radius:6px;padding:6px 6px 16px;box-shadow:0 3px 8px var(--shadow);transform:rotate(-2deg)}
+  .card:nth-child(even) .pic{transform:rotate(2deg)}
+  .pic::before{content:"";position:absolute;left:50%;top:-9px;width:54px;height:18px;margin-left:-27px;background:rgba(246,196,69,.75);transform:rotate(-4deg)}
+  .dd{display:block;width:100%;height:auto}
+  .dd .ink *{fill:none;stroke:#2f2a26;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .dd .ink .f{fill:#2f2a26}
+  .dd .ink .t{fill:#2f2a26;stroke:none;font:700 15px "Patrick Hand",sans-serif}
+  .dd .wash *{stroke:none;opacity:.55}
+  .num{font-weight:900;color:var(--soft);font-size:14px}
+  .sit{margin:0 0 8px;font-size:17px}
+  .q{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0;padding:6px 10px;border-radius:12px;background:color-mix(in srgb,var(--blue) 10%,transparent)}
+  .q .who{font-weight:900;color:var(--blue);font-size:14px}
+  .q .big-en{font-size:22px}
+  .q small{color:var(--soft)}
+  .a{margin:8px 0;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--yel) 22%,transparent)}
+  .a .who{font-weight:900;color:#a5690c;font-size:14px}
+  .a .big-en{font-size:28px;line-height:1.25;display:block}
+  .a small{color:var(--soft)}
+  .blank{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--ink);text-align:center;color:transparent}
+  .blank.on{color:var(--green)}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+  .btn.say{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .btn.good{background:var(--green);color:#fff;border-color:var(--green)}
+  .btn.word{font-family:"Patrick Hand",sans-serif;font-size:22px;padding:2px 16px}
+  .btn.word.right{background:var(--green);color:#fff;border-color:var(--green)}
+  .btn.playing{opacity:.55}
+  .btn.wrong{animation:no .4s}
+  @keyframes no{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .tip{font-size:14px;color:var(--soft)}
+  .steps{font-size:14px;color:var(--soft);margin:0 0 6px}
+  .step{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:900;font-size:14px;flex:none}
+  .a .big-en.covered{filter:blur(10px);user-select:none}
+  .qz3{display:grid;grid-template-columns:160px minmax(0,1fr);gap:14px;margin-top:10px;align-items:start}
+  .opts3{display:grid;gap:10px;margin-top:10px}
+  .quiz .opt.en3{font:24px/1.25 "Patrick Hand",sans-serif;text-align:left;padding:10px 14px}
+  @media (max-width:620px){.qz3{grid-template-columns:1fr}.qz3 .pic{max-width:200px}}
+  .letters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .letters .show{font:700 54px/1 "Patrick Hand",sans-serif;width:64px;text-align:center}
+  .letters .btn{font:700 34px/1 "Patrick Hand",sans-serif;width:60px;height:60px;padding:0}
+  .act{margin-top:8px;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--green) 14%,transparent);display:none}
+  .act.on{display:block}
+  .act .big-en{font-size:30px;margin-right:8px}
+  .tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;padding:8px;border:2px dashed var(--line);border-radius:12px;margin:6px 0}
+  .tiles .btn{font-family:"Patrick Hand",sans-serif;font-size:22px;padding:2px 12px}
+  .tiles.answer{border-color:var(--soft);background:color-mix(in srgb,var(--yel) 12%,transparent)}
+  .hide{display:none!important}
+  .quiz{background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:16px;box-shadow:4px 5px 0 var(--shadow);margin-top:10px}
+  .quiz .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+  .quiz .opt{font:inherit;cursor:pointer;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:8px;text-align:center;box-shadow:2px 3px 0 var(--ink)}
+  .quiz .opt .dd{max-width:140px;margin:0 auto}
+  .quiz .opt.right{border-color:var(--green);background:color-mix(in srgb,var(--green) 18%,var(--card))}
+  .quiz .opt.no{opacity:.45}
+  .score{font-size:20px;font-weight:900}
+  .howto{font-size:15px;color:var(--soft);margin:0}
+  .howto li{margin:2px 0}
+  footer{margin-top:30px;font-size:13px;color:var(--soft)}
+  @media (max-width:620px){.card{grid-template-columns:1fr}.pic{max-width:220px}.quiz .opts{grid-template-columns:1fr 1fr 1fr;gap:6px}.a .big-en{font-size:24px}}
+  @media (prefers-reduced-motion:reduce){.btn.wrong{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter>
+    <filter id="wc"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="3" seed="9"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </defs>
+</svg>
+<div class="wrap">
+  <header>
+    <img src="assets/img/tucheng-emblem.svg" alt="土城國小校徽">
+    <div>
+      <div class="sch">南投縣草屯鎮土城國民小學 · 運動會英語日</div>
+      <h1>英語闖關練習本<span class="en">Practice Book</span></h1>
+    </div>
+  </header>
+  <p class="lead">運動會六關會出現的每一句英文都在這裡。每天練 5 分鐘：<b>孩子先說，再按 🔊 聽聽看對不對</b>。</p>
+  <div class="bar"><b>選年級：</b><div class="seg" id="levels"></div></div>
+  <section class="parent" id="parent" aria-live="polite"></section>
+  <nav class="tabs" id="tabs" aria-label="關卡"></nav>
+  <main id="main"></main>
+  <footer>聲音：ElevenLabs 的 AI 語音（不是真人錄音），男女兩種聲音。練習紀錄只存在這台裝置的瀏覽器。　<span id="ver"></span></footer>
+</div>
+<script src="js/content.js"></script>
+<script src="assets/audio/credits.js"></script>
+<script src="assets/audio/el-words.js"></script>
+<script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/voice-m.js"></script>
+<script src="js/core.js"></script>
+<script src="js/puzzles.js"></script>
+<script src="js/practice.js"></script>
+</body>
+</html>

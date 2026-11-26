@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<link rel="icon" href="assets/img/tucheng-emblem-192.png">
+<title>English Day Gate</title>
+<link rel="stylesheet" href="css/core.css">
+</head>
+<body>
+<div id="stage"></div>
+
+<header id="hud">
+  <div class="gate-badge"><img class="emb" src="assets/img/tucheng-emblem.svg" alt="土城國小校徽"><div class="num" id="gNum">1</div><div><div class="t0 zh">南投縣草屯鎮土城國民小學</div><div class="t1" id="gTitle">Gate</div><div class="t2" id="gSub"></div></div></div>
+  <div class="kid-chip hidden" id="kidChip"><div class="av" id="kAv">A</div><span id="kName">Amy</span></div>
+  <div class="lvl" id="lvlBtns"></div>
+  <div class="pips" id="pips"></div>
+  <div class="ai-pill" id="clock" title="這位孩子已玩的時間">⏱ 0:00</div>
+  <div class="ai-pill" id="aiPill"><i></i>AI</div>
+  <button class="icon-btn" id="helpBtn" title="Teacher script">📋</button>
+  <button class="icon-btn" id="setBtn" title="Settings">⚙</button>
+</header>
+
+<section id="talk">
+  <div class="talk-main">
+    <div class="t-row"><span class="who t">Teacher</span><div class="t-line" id="tLine"></div></div>
+    <div class="t-row" style="margin-top:.4rem"><span class="who k">You 你說</span><div class="k-line" id="kLine"></div></div>
+    <div class="heard" id="heard">&nbsp;</div>
+  </div>
+  <div class="talk-side">
+    <button class="big-btn btn-ok" id="okBtn">✓ <span class="zh">說得好</span></button>
+    <button class="big-btn btn-hear" id="hearBtn">🔊 <span class="zh">聽示範</span></button>
+    <div class="meter"><i id="micMeter"></i></div>
+    <canvas id="wave" width="300" height="70"></canvas>
+    <button class="big-btn btn-skip" id="skipBtn">⏭ <span class="zh">跳過</span></button>
+  </div>
+</section>
+
+<section id="scan">
+  <div class="scan-top"><div style="width:11.5rem;height:13rem" id="scanOllie"></div>
+    <div class="school-row"><div><b class="zh">南投縣草屯鎮土城國民小學</b><span>Tucheng Elementary School · English Day <i class="zh">運動會英語日</i></span></div></div></div>
+  <div class="genre zh" id="scanGenre"></div>
+  <h1 id="scanTitle">Gate</h1>
+  <div class="sub zh" id="scanSub"></div>
+  <button class="start3d" id="startBtn"><span class="ic">▶</span><span class="tx"><b>START</b><i class="zh">開始遊戲</i></span></button>
+  <div class="lvl-now zh" id="lvlPick"></div>
+</section>
+
+<script src="js/content.js"></script>
+<script src="assets/audio/credits.js"></script>
+<script src="assets/audio/el-words.js"></script>
+<script src="assets/audio/ai-sentences.js"></script>
+<script src="assets/audio/voice-m.js"></script>
+<script src="js/core.js"></script>
+<script src="js/art.js"></script>
+<script src="js/emblem.js"></script>
+<script src="js/art-body.js"></script>
+<script src="js/ollie3d.js"></script>
+<script src="js/puzzles.js"></script>
+<script src="js/scratch.js"></script>
+<script src="js/games/g1-rescue.js"></script>
+<script src="js/games/g2-talk.js"></script>
+<script src="js/games/g3-tpr.js"></script>
+<script src="js/games/g4-monster.js"></script>
+<script src="js/games/g5-chant.js"></script>
+<script src="js/games/g6-story.js"></script>
+<script src="js/toys.js"></script>
+<script src="js/station.js"></script>
+<script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});</script>
+</body>
+</html>
