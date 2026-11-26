@@ -10,6 +10,7 @@
     ...[1, 2, 3, 4, 5, 6].map((g) => ({ key: "gate-" + g, gate: g, ...L.gate(g) })),
     { key: "final", github: L.github + "control.html", claude: L.claude + "#final" },
     { key: "opening", github: L.github + "opening.html", claude: L.claude + "#opening" },
+    { key: "practice", github: L.github + "practice.html", claude: L.claude + "#practice" },
     { key: "home", github: L.github, claude: L.claude },
   ];
 })();

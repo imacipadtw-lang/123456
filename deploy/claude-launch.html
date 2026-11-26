@@ -112,6 +112,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: calc(var(--u) * 5
     if (m) { location.replace("station.html?gate=" + m[1] + (saved() ? "&lv=" + saved() : "") + "#gate-" + m[1]); return true; }
     if (h === "final") { location.replace("control.html"); return true; }
     if (h === "opening") { location.replace("opening.html"); return true; }
+    if (h === "practice") { location.replace("practice.html"); return true; }
     return false;
   }
   window.addEventListener("hashchange", route);

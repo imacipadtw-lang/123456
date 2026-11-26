@@ -36,7 +36,7 @@
 <script src="js/links.js"></script>
 <script>
   const C = TC_CONTENT, t = document.getElementById("t");
-  const name = (r) => r.gate ? `第 ${r.gate} 關 ${C.gates[r.gate].zh}` : { final: "終點解碼關＋家長看板", opening: "開場動畫（大廳）", home: "入口（全部）" }[r.key];
+  const name = (r) => r.gate ? `第 ${r.gate} 關 ${C.gates[r.gate].zh}` : { final: "終點解碼關＋家長看板", opening: "開場動畫（大廳）", practice: "運動會英語練習本（賽前在家／課堂練習）", home: "入口（全部）" }[r.key];
   const cell = (u) => { const td = document.createElement("td"); const a = document.createElement("a"); a.href = u; a.target = "_blank"; a.rel = "noopener"; a.textContent = u; const b = document.createElement("button"); b.textContent = "複製"; b.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(u).then(() => { b.textContent = "已複製"; setTimeout(() => (b.textContent = "複製"), 1500); }, () => {}); }; td.append(a, b); return td; };
   TC_LINKS.list().forEach((r) => {
     const tr = document.createElement("tr"); const n = document.createElement("td"); n.className = "n";
