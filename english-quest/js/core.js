@@ -136,9 +136,7 @@
       case "hat": noise(0, 0.04, 0.12, 6000); break;
       case "fanfare": [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.35, "triangle", 0.25)); [1047, 1319, 1568].forEach((f) => tone(f, 0.5, 1.1, "triangle", 0.16)); tone(131, 0.5, 1.1, "sine", 0.35); tone(262, 0.5, 1.1, "sine", 0.18); sparkle(0.55); break;
       case "levelup": [392, 523, 659, 784, 1047].forEach((f, i) => { tone(f, i * 0.07, 0.22, "square", 0.09); tone(f, i * 0.07, 0.3, "sine", 0.12); }); sparkle(0.35); break;
-      // the campus surprises (js/campus3d.js): a firework rocket and its bang, rain, and the school bell
-      case "rocket": tone(320, 0, 0.55, "sine", 0.07, 1500); noise(0, 0.5, 0.06, 3000); break;
-      case "boom": tone(95, 0, 0.5, "sine", 0.55, 38); noise(0, 0.4, 0.32, 160); for (let i = 0; i < 7; i++) noise(0.18 + i * 0.07 + Math.random() * 0.05, 0.03, 0.12, 4000); break;
+      // the campus surprises (js/campus3d.js): rain and the school bell
       case "rain": for (let i = 0; i < 26; i++) noise(i * 0.09, 0.12, 0.05, 2500 + Math.random() * 2500); break;
       case "bell": // the school chime everyone knows (the Westminster Quarters, a traditional tune from 1793): Mi Do Re Sol · Sol Re Mi Do
         [659, 523, 587, 392, 392, 587, 659, 523].forEach((f, i) => { const t = i * 0.55 + (i > 3 ? 0.45 : 0); tone(f, t, 1.6, "sine", 0.22); tone(f * 2.76, t, 0.5, "sine", 0.04); tone(f * 2, t, 0.9, "sine", 0.06); }); break;

@@ -18,9 +18,11 @@
      c.ok · c.el (the canvas) · c.destroy() · c.pause(on) · c.setGate(n) · c.onFrame(fn) (fn(c) after every drawn frame)
      c.yaw (degrees, get / set) · c.nodes (draw calls)
      c.project(n) → { x, y, visible }: where flag n is now, in CSS pixels of the host (for HTML labels)
-     surprise       true: a tap on the model (not a drag) plays a surprise — fireworks, rain and a rainbow, the 1921 gold
-                    medal, a relay race, a hot-air balloon, the school bell with dancing flags, Ollie flying past —
-                    a different one on every tap (the teacher, 2026-11-24).  c.surprise(name) plays one by name.
+     surprise       true: a tap on the model (not a drag) plays a surprise — the school's English (ABC blocks spell TUCHENG,
+                    turn round to ENGLISH), the school's AI (a drone scans the campus and names what it finds in English),
+                    rain and a rainbow, a relay race, a hot-air balloon, the school bell with dancing flags, Ollie flying past —
+                    a different one on every tap (the teacher, 2026-11-24; English and AI replaced the fireworks and the
+                    gold medal on 2026-11-26).  c.surprise(name) plays one by name.
      TC.Campus.supported() → boolean;  without WebGL mount() draws nothing and returns { ok: false, … }
    ===================================================================== */
 (function () {
@@ -312,21 +314,40 @@
     const FX = [], fxAdd = (parent, o) => { const n = add(parent, Object.assign({ vis: false, spec: 0.2 }, o)); FX.push(n); return n; };
     const rnd = (a, b) => a + Math.random() * (b - a), PAL = ["#ff4f6d", "#ffc83d", "#2ee6b6", "#4cc9ff", "#a77bff", "#ff8fd0", "#ffffff", "#7dff6a"].map(col);
     kids.forEach((k, i) => (k.trail = opt.surprise ? Array.from({ length: 7 }, () => fxAdd(field, { mesh: MESH.sphere, col: col(["#3d8bff", "#ffc83d", "#ff5fa2"][i]), emis: 0.9, spec: 0 })) : []));
-    let bursts = [], drops = [], rainbow = null, medal = null, orbit = [], confetti = [], balloon = null;
+    let drops = [], rainbow = null, confetti = [], balloon = null, abc = null, blocks = [], drone = null, rotors = [], beam = null, pins = [];
+    /* what the AI drone finds, in the order it flies (turn frame: [x, y, z]); the last one is the school itself */
+    const SEEN = [[[TX, 0.05, TZ], "running track", "跑道"], [[M.spots[0][0], 1.0, M.spots[0][2]], "classrooms", "教室"], [[0.7, 0.05, -7.45], "rice field", "稻田"],
+      [[1.93, 1.4, -9.1], "mountains", "山"], [[7.4, 0.45, -4.4], "greenhouses", "溫室"], [[7.0, 1.45, 2.5], "solar panels", "太陽能板"], [[8.0, 0.5, 5.9], "banana trees", "香蕉樹"],
+      [[M.big[0][0], 1.6, M.big[0][2]], "big tree", "大樹"], [[M.bridge[0], 1.1, M.bridge[1]], "footbridge", "天橋"], [[M.medal[0], 2.46, M.medal[1]], "Tucheng Elementary School", "土城國小"]];
+    const ARRIVE = [0.8]; for (let i = 1; i < SEEN.length; i++) { const a = SEEN[i - 1][0], b = SEEN[i][0]; ARRIVE.push(ARRIVE[i - 1] + 0.42 + 0.05 * Math.hypot(b[0] - a[0], b[2] - a[2])); } // a long hop takes longer
     if (opt.surprise) {
-      // fireworks: six rockets, each bursting into 30 sparks with a flash
-      bursts = [0, 1, 2, 3, 4, 5].map(() => ({ rocket: fxAdd(root, { mesh: MESH.sphere, s: [0.16, 0.16, 0.16], col: col("#fff3b0"), emis: 1 }),
-        sparks: Array.from({ length: 30 }, () => ({ n: fxAdd(root, { mesh: MESH.sphere, emis: 1, spec: 0 }), d: [0, 0, 0] })), c: [0, 0, 0], at: 0, R: 1.3, bang: false,
-        flash: fxAdd(root, { mesh: MESH.sphere, col: col("#fffbe0"), emis: 1, spec: 0, alpha: 0.6 }) }));
+      // English: seven ABC blocks; their fronts spell TUCHENG, their backs ENGLISH
+      const W1 = "TUCHENG", W2 = "ENGLISH", BC = ["#ff4f6d", "#ff9a2e", "#ffc83d", "#2ee6b6", "#4cc9ff", "#7b6bff", "#ff5fa2"];
+      const face = (L, c) => paint(128, (g, S) => { g.fillStyle = c; g.fillRect(0, 0, S, S); g.fillStyle = "rgba(255,255,255,.28)"; g.fillRect(8, 8, S - 16, 10);
+        g.textAlign = "center"; g.textBaseline = "middle"; g.font = "900 96px Fredoka,'Arial Black',Arial,sans-serif"; g.lineJoin = "round"; g.lineWidth = 12; g.strokeStyle = "#152a63"; g.strokeText(L, S / 2, S / 2 + 6); g.fillStyle = "#fff"; g.fillText(L, S / 2, S / 2 + 6); });
+      abc = fxAdd(root, {});
+      blocks = W1.split("").map((L, i) => { const n = add(abc, {}), c = BC[i], c2 = BC[(i + 3) % 7];
+        add(n, { mesh: MESH.box, col: col(c), spec: 0.35 });
+        add(n, { mesh: MESH.quad, p: [0, 0, 0.505], s: [0.92, 0.92, 1], tex: face(L, c), emis: 0.3, spec: 0.1 });
+        add(n, { mesh: MESH.quad, p: [0, 0, -0.505], r: [0, 180, 0], s: [0.92, 0.92, 1], tex: face(W2[i], c2), emis: 0.3, spec: 0.1 });
+        [[0.505, 90], [-0.505, -90]].forEach((q) => add(n, { mesh: MESH.quad, p: [q[0], 0, 0], r: [0, q[1], 0], s: [0.92, 0.92, 1], tex: face("★", c2), emis: 0.2, spec: 0.1 }));
+        return { n, x: 0, s: 1, from: [0, 0, 0] }; });
+      // AI: a little drone that flies with the campus as it turns, its scan beam, and a ring on each thing it finds
+      drone = fxAdd(turn, {});
+      add(drone, { mesh: MESH.box, s: [0.5, 0.16, 0.56], col: col("#f4f7ff"), spec: 0.8 });
+      add(drone, { mesh: MESH.box, p: [0, 0.1, 0], s: [0.3, 0.08, 0.32], col: col("#3d8bff"), spec: 0.8 });
+      [45, -45].forEach((a) => add(drone, { mesh: MESH.box, r: [0, a, 0], s: [1.0, 0.05, 0.07], col: col("#5a6aa8"), spec: 0.4 }));
+      add(drone, { mesh: MESH.sphere, p: [0, -0.1, 0.18], s: [0.12, 0.1, 0.12], col: col("#152a63"), spec: 0.9 }); // the camera
+      add(drone, { mesh: MESH.sphere, p: [0, 0.01, 0.29], s: [0.06, 0.06, 0.06], col: col("#39f5ff"), emis: 1, spec: 0 }); // its eye light
+      rotors = [[1, 1], [-1, 1], [1, -1], [-1, -1]].map(([a, b2]) => { const r = add(drone, { p: [a * 0.36, 0.08, b2 * 0.36] });
+        add(r, { mesh: MESH.cyl, s: [0.03, 0.06, 0.03], col: col("#5a6aa8") });
+        add(r, { mesh: MESH.box, p: [0, 0.07, 0], s: [0.42, 0.015, 0.06], col: col("#ff5fa2"), spec: 0.3 }); return r; });
+      beam = fxAdd(turn, { mesh: MESH.cone, col: col("#39f5ff"), emis: 1, spec: 0, alpha: 0.16 });
+      pins = SEEN.map((q, i) => fxAdd(turn, { mesh: MESH.ringThin, p: q[0].slice(), col: col(i === SEEN.length - 1 ? "#ffd23d" : "#39f5ff"), emis: 1, spec: 0 }));
       // rain, then a rainbow standing over the school (its lower half is hidden under the ground)
       drops = Array.from({ length: 64 }, () => ({ n: fxAdd(root, { mesh: MESH.cyl, s: [0.05, 0.6, 0.05], col: col("#cfeaff"), emis: 0.6, alpha: 0.85 }), x: 0, z: 0, ph: 0 }));
       rainbow = fxAdd(root, { p: [0, 0, -3.2], r: [90, 0, 0] });
       ["#ff4d4d", "#ff9a2e", "#ffd93d", "#4cd964", "#3fa9ff", "#5b6cff", "#a35bff"].forEach((c, i) => { const R = 7.6 - i * 0.62; add(rainbow, { mesh: K.torus(0.33 / R), s: [R, R, R], col: col(c), emis: 0.5, spec: 0.35 }); });
-      // the 1921 gold medal: the school emblem on both faces of a thick gold coin, with stars going round it
-      medal = fxAdd(root, {});
-      add(medal, { mesh: MESH.cyl, p: [0, 0, -0.1], r: [90, 0, 0], s: [1, 0.2, 1], col: col("#f0b429"), spec: 0.9 });
-      [[0.104, 0], [-0.104, 180]].forEach((q) => add(medal, { mesh: MESH.disc, p: [0, 0, q[0]], r: [0, q[1], 0], s: [0.93, 0.93, 1], col: col("#ffe08a"), tex: emblem, spec: 0.25 }));
-      orbit = Array.from({ length: 8 }, () => fxAdd(root, { mesh: MESH.star, col: col("#ffd23d"), emis: 0.75, spec: 0.8 }));
       // confetti for the relay race
       confetti = Array.from({ length: 72 }, (x, i) => ({ n: fxAdd(root, { mesh: MESH.box, s: [0.34, 0.05, 0.22], col: PAL[i % 7], emis: 0.45 }), x: 0, y: 0, z: 0, v: 1, sp: [0, 0] }));
       // a hot-air balloon in rainbow stripes, with the emblem on its side
@@ -403,8 +424,8 @@
     const sfx = (n) => { try { TC.sfx && TC.sfx(n); } catch (e) {} };
     const t0fx = () => (reduce ? 0 : performance.now() / 1000 - t0); // the clock the kids run on (frame's t)
     const SHOWS = {
-      fireworks: { dur: 5.4, cap: "🎆 運動會煙火！ Fireworks!" }, rainbow: { dur: 6.6, cap: "🌈 雨停了，出彩虹！ Rainbow!" },
-      medal: { dur: 5.2, cap: "🏅 土城金牌 1921！ Gold medal!" }, relay: { dur: 5.2, cap: "🏃 大隊接力衝衝衝！ Run, run, run!" },
+      english: { dur: 6.4, cap: "🔤 土城特色：英語！ Let's speak English!" }, rainbow: { dur: 6.6, cap: "🌈 雨停了，出彩虹！ Rainbow!" },
+      ai: { dur: ARRIVE[ARRIVE.length - 1] + 1.9, cap: "🤖 土城特色：AI！ AI, find our school!" }, relay: { dur: 5.2, cap: "🏃 大隊接力衝衝衝！ Run, run, run!" },
       balloon: { dur: 6.8, cap: "🎈 熱氣球起飛！ Up, up and away!" }, bell: { dur: 5.4, cap: "🔔 噹噹噹～上課囉！ Ding-dong!" },
       ollie: { dur: 4.8, cap: "🦉 歐力飛來了！ Hi, I'm Ollie!" } };
     const order = Object.keys(SHOWS).sort(() => Math.random() - 0.5); let turnNo = 0, cur = null;
@@ -448,18 +469,44 @@
         d.animate([{ transform: "translateY(0) scale(.4)", opacity: 0 }, { transform: `translate(${rnd(-12, 12)}px,-${u * 0.8}px) scale(1)`, opacity: 1, offset: 0.2 }, { transform: `translate(${rnd(-40, 40)}px,-${u * 4}px) scale(.9) rotate(${rnd(-25, 25)}deg)`, opacity: 0 }], { duration: 2200, easing: "ease-out", fill: "forwards" }); later(d, 2300); }, i * ((dur - 2) * 1000 / 14));
     }
     function projY(x, y, z) { const w = vp[3] * x + vp[7] * y + vp[11] * z + vp[15]; return [(vp[0] * x + vp[4] * y + vp[8] * z + vp[12]) / w, (vp[1] * x + vp[5] * y + vp[9] * z + vp[13]) / w]; }
-    function reset() { FX.forEach((n) => (n.vis = false)); kids.forEach((k) => (k.big = 1)); flags.forEach((f) => { f.jy = 0; f.spin = 0; }); cur = null; }
+    function reset() { FX.forEach((n) => (n.vis = false)); kids.forEach((k) => (k.big = 1)); flags.forEach((f) => { f.jy = 0; f.spin = 0; }); cur = null;
+      if (layer) layer.querySelectorAll(".c3ai").forEach((d) => d.remove()); }
+    function bubbles() { // speech bubbles with lines the children know pop up over the campus
+      const L = ["Hello!", "Good morning!", "Thank you!", "Good job!", "You're welcome.", "Have a nice day!"], C = ["#ff4f6d", "#2b7bff", "#0aa37f", "#ff8a00", "#7b4dff", "#e83e8c"];
+      const u = Math.max(12, Math.min(cssW * 0.034, cssH * 0.05)), spots = [[12, 58], [70, 52], [28, 78], [60, 76], [8, 36], [76, 32]];
+      L.forEach((t, i) => setTimeout(() => { if (!layer.isConnected) return;
+        const d = el("div", `left:${spots[i][0] + rnd(-3, 3)}%;top:${spots[i][1] + rnd(-3, 3)}%;padding:.3em .75em .35em;border-radius:1.2em;background:#fff;color:${C[i]};font:700 ${u}px Fredoka,'Noto Sans TC',sans-serif;white-space:nowrap;box-shadow:0 .15em 0 ${C[i]},0 .4em .8em rgba(0,0,0,.25);border:.1em solid ${C[i]}`, t);
+        const tail = document.createElement("i"); tail.style.cssText = `position:absolute;left:1.1em;bottom:-.45em;width:.8em;height:.8em;background:#fff;border-right:.1em solid ${C[i]};border-bottom:.1em solid ${C[i]};transform:rotate(45deg)`; d.append(tail);
+        d.animate([{ transform: "translateY(.6em) scale(.2)", opacity: 0 }, { transform: "translateY(0) scale(1.12)", opacity: 1, offset: 0.12 }, { transform: "translateY(0) scale(1)", opacity: 1, offset: 0.2 },
+          { transform: "translateY(-1.6em) scale(1)", opacity: 1, offset: 0.8 }, { transform: "translateY(-2.4em) scale(.8)", opacity: 0 }], { duration: 2300, easing: "ease-out", fill: "forwards" });
+        later(d, 2400); sfx("pop"); }, i * 330));
+    }
+    function scr(x, y, z) { // a point in the turning campus → CSS pixels of the host (turn.W was set by the last frame)
+      const m = turn.W, X = m[0] * x + m[4] * y + m[8] * z + m[12], Y = m[1] * x + m[5] * y + m[9] * z + m[13], Z = m[2] * x + m[6] * y + m[10] * z + m[14];
+      const w = vp[3] * X + vp[7] * Y + vp[11] * Z + vp[15], nx = (vp[0] * X + vp[4] * Y + vp[8] * Z + vp[12]) / w, ny = (vp[1] * X + vp[5] * Y + vp[9] * Z + vp[13]) / w;
+      return { x: (nx * 0.5 + 0.5) * cssW, y: (0.5 - ny * 0.5) * cssH, ok: w > 0 && Math.abs(nx) < 1.05 && Math.abs(ny) < 1.05 };
+    }
+    function tag(i) { // the AI's label on a thing it found: the English word, the Chinese under it
+      const last = i === SEEN.length - 1, u = Math.max(11, Math.min(cssW * 0.026, cssH * 0.04)) * (last ? 1.25 : 1), c = last ? "#ffd23d" : "#39f5ff";
+      const d = el("div", `left:0;top:0;padding:.22em .6em .3em;border-radius:.4em;background:rgba(8,20,52,.82);border:.12em solid ${c};box-shadow:0 0 .7em ${c};color:#fff;font:700 ${u}px Fredoka,'Noto Sans TC',sans-serif;white-space:nowrap;text-align:center;line-height:1.15`);
+      d.className = "c3ai";
+      const b = document.createElement("b"); b.textContent = (last ? "★ " : "") + SEEN[i][1]; b.style.color = last ? "#ffe58a" : "#fff";
+      const s2 = document.createElement("small"); s2.textContent = "AI ✓ " + SEEN[i][2]; s2.style.cssText = `display:block;font-size:.68em;color:${c};font-weight:700`;
+      d.append(b, s2); d.animate([{ opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1.15, offset: 0.6 }, { opacity: 1, scale: 1 }], { duration: 380, easing: "ease-out" });
+      return d;
+    }
+    let tags = [], hud = null;
     function start(name) {
       reset(); const S = SHOWS[name]; if (!S) return;
       cur = { name, at: performance.now() / 1000, dur: S.dur, cue: {} }; caption(S.cap, S.dur);
-      if (name === "fireworks") bursts.forEach((b, i) => { // as high as the screen allows, spread over the campus
-        b.R = rnd(3.2, 4.2); let x = rnd(-3.5, 3.5), z = rnd(0, 3), y = rnd(3, 4.4); while (y > 1.8 && projY(x, y + b.R * 0.8, z)[1] > 0.95) y -= 0.2;
-        if (Math.abs(projY(x, y, z)[0]) > 0.85) x *= 0.6;
-        b.c = [x, y, z]; b.at = [0, 0.5, 1.0, 1.7, 2.45, 2.5][i]; // the last two go off together: the finale b.bang = false; b.launch = false;
-        const c1 = PAL[(Math.random() * 8) | 0], c2 = PAL[(Math.random() * 8) | 0];
-        b.sparks.forEach((s, j) => { let d = [rnd(-1, 1), rnd(-1, 1), rnd(-1, 1)], l = Math.hypot(d[0], d[1], d[2]) || 1; s.d = d.map((v) => v / l); s.n.col = j % 2 ? c1 : c2; }); });
+      if (name === "english") { // the row of blocks floats as high as the screen allows (under the caption), as wide as it allows
+        let y = 3.8; while (y > 1.6 && projY(0, y + 0.9, 2.2)[1] > 0.64) y -= 0.1;
+        let g = 1.62; const edge = Math.abs(projY(3.5 * g, y, 2.2)[0]); if (edge > 0.9) g *= 0.9 / edge;
+        abc.p = [0, y, 2.2]; abc.r = [-tilt * 0.45, 0, 0];
+        blocks.forEach((b, i) => { b.x = (i - 3) * g; b.s = g * 0.84; b.from = [(i - 3) * g * 0.3 + rnd(-0.3, 0.3), -y + 0.3, rnd(-1.2, 0.4)]; b.n.p = b.from.slice(); b.n.s = [0, 0, 0]; }); }
+      if (name === "ai") { tags = []; hud = el("div", `left:2%;bottom:3%;padding:.3em .8em;border-radius:.5em;background:rgba(8,20,52,.8);border:.12em solid #39f5ff;color:#7df9ff;font:700 ${Math.max(11, Math.min(cssW * 0.026, cssH * 0.04))}px Fredoka,'Noto Sans TC',monospace;white-space:nowrap;box-shadow:0 0 .6em #39f5ff`, "🤖 AI scanning…");
+        hud.className = "c3ai"; drone.p = [SEEN[0][0][0], 0.2, SEEN[0][0][2]]; sfx("whoosh"); }
       if (name === "rainbow") { drops.forEach((d) => { const a = rnd(0, Math.PI * 2), r = Math.sqrt(Math.random()) * 8; d.x = Math.cos(a) * r; d.z = Math.sin(a) * r; d.ph = Math.random(); }); sfx("rain"); }
-      if (name === "medal") sfx("levelup");
       if (name === "relay") { confetti.forEach((c) => { c.x = rnd(-6.5, 6.5); c.z = rnd(-3, 5.5); c.y = rnd(3, 9); c.v = rnd(1.1, 2); c.sp = [rnd(-400, 400), rnd(-400, 400)]; }); sfx("drum"); }
       if (name === "balloon") { sfx("whoosh"); setTimeout(() => sfx("pop"), 300); }
       if (name === "bell") { sfx("bell"); notes(S.dur); }
@@ -469,23 +516,40 @@
       if (e > cur.dur) { reset(); return; }
       const once = (k, fn) => { if (!cur.cue[k]) { cur.cue[k] = 1; fn(); } };
       const n = cur.name, out = clamp((cur.dur - e) / 0.6); // the last 0.6 s: everything shrinks away
-      if (n === "fireworks") bursts.forEach((b) => { const le = e - b.at;
-        if (le < 0) { b.rocket.vis = false; b.flash.vis = false; return; }
-        if (le < 0.6) { once("l" + b.at, () => sfx("rocket")); const k = ease(le / 0.6); b.rocket.vis = true; b.rocket.p = [b.c[0], lerp(0.3, b.c[1], k), b.c[2]]; b.sparks.forEach((s) => (s.n.vis = false)); return; }
-        b.rocket.vis = false; once("b" + b.at, () => sfx("boom"));
-        { const f = (le - 0.6) / 0.35; b.flash.vis = f < 1; if (f < 1) { const z = 0.4 + 1.6 * ease(f); b.flash.p = b.c.slice(); b.flash.s = [z, z, z]; b.flash.alpha = 0.7 * (1 - f); } }
-        const k = (le - 0.6) / 1.5; b.sparks.forEach((s, j) => { s.n.vis = k < 1; if (k >= 1) return; const r = b.R * ease(k * 1.3), tw = k > 0.6 && (j + ((e * 20) | 0)) % 3 === 0 ? 0.4 : 1;
-          s.n.p = [b.c[0] + s.d[0] * r, b.c[1] + s.d[1] * r - 0.8 * k * k, b.c[2] + s.d[2] * r]; const sc = 0.34 * (1 - 0.5 * k) * tw; s.n.s = [sc, sc, sc]; s.n.alpha = 1 - k * k; }); });
+      if (n === "english") { abc.vis = true;
+        blocks.forEach((b, i) => { const k = clamp((e - 0.15 - i * 0.16) / 0.6); // one after another the blocks jump up out of the campus …
+          if (k <= 0) { b.n.s = [0, 0, 0]; return; } once("p" + i, () => sfx("pop"));
+          const f1 = inout((e - 2.0 - i * 0.13) / 0.5), f2 = inout((e - 4.25 - i * 0.1) / 0.7); // … turn round to ENGLISH, and later turn once more, all the way
+          if (f1 > 0.5) once("f" + i, () => sfx("tick"));
+          const hop = 0.5 * Math.max(0, Math.sin(Math.PI * clamp((e - 3.1 - i * 0.05) / 0.45))), bob = e > 3.6 ? 0.1 * Math.sin((e - 3.6) * 5 + i * 0.8) : 0;
+          b.n.p = [lerp(b.from[0], b.x, ease(k)), lerp(b.from[1], 0, ease(k)) + 1.4 * Math.sin(Math.PI * k) + hop + bob, lerp(b.from[2], 0, ease(k))];
+          b.n.r = [540 * (1 - ease(k)), 180 * f1 + 360 * f2, 0]; const sc = b.s * back(k) * out; b.n.s = [sc, sc, sc]; });
+        if (e > 3.1) once("hi", () => { sfx("fanfare"); bubbles(); });
+      }
+      if (n === "ai") {
+        const A = ARRIVE, last = A.length - 1, P = (i) => SEEN[i][0], high = (i) => Math.max(2.9, P(i)[1] + 1.6);
+        const at = (t) => { // where the drone is at time t: it takes off from the track, then flies from one thing to the next, slowing down at each
+          if (t <= A[0]) { const k = inout(t / A[0]), p = P(0); return [p[0], lerp(0.2, high(0), k), p[2]]; }
+          if (t >= A[last]) { const p = P(last), a = (t - A[last]) * 2.4; return [p[0] + 0.9 * Math.sin(a), high(last) + 0.15 * Math.sin(a * 2), p[2] + 0.9 * (1 - Math.cos(a))]; }
+          let i = 0; while (t > A[i + 1]) i++; const k = inout((t - A[i]) / (A[i + 1] - A[i])), a = P(i), b2 = P(i + 1);
+          return [lerp(a[0], b2[0], k), lerp(high(i), high(i + 1), k) + 0.5 * Math.sin(Math.PI * k), lerp(a[2], b2[2], k)]; };
+        const p = at(e), q = at(e + 0.06), dx = q[0] - p[0], dz = q[2] - p[2], v = Math.hypot(dx, dz), k = 2.8 * back(e / 0.5) * out;
+        drone.vis = k > 0.01; drone.p = [p[0], p[1] + 0.06 * Math.sin(e * 7), p[2]]; drone.s = [k, k, k];
+        if (v > 0.004) drone.r[1] = Math.atan2(dx, dz) / RAD; drone.r[0] = clamp(v * 120, 0, 18); rotors.forEach((r, i) => (r.r[1] = e * (i % 2 ? -2200 : 2200)));
+        let flash = 0; A.forEach((t, i) => { if (e >= t) flash = Math.max(flash, Math.exp(-(e - t) * 4)); });
+        beam.vis = drone.vis && e > A[0] - 0.3; beam.p = [p[0], 0.03, p[2]]; beam.s = [0.55 + 0.35 * flash, Math.max(0.1, drone.p[1] - 0.2), 0.55 + 0.35 * flash]; beam.alpha = (0.1 + 0.28 * flash) * out;
+        pins.forEach((pn, i) => { const g = e - A[i]; pn.vis = g > 0 && out > 0.01; if (!pn.vis) return; const z = (i === last ? 1.0 : 0.62) * back(g / 0.35) * (1 + 0.08 * Math.sin(e * 5 + i)) * out; pn.s = [z, z, z]; pn.r[1] = e * 90; });
+        A.forEach((t, i) => { if (e >= t) once("t" + i, () => { tags[i] = tag(i); sfx(i === last ? "levelup" : "coin"); if (hud) hud.textContent = i === last ? `🤖 AI found ${A.length} things! 找到 ${A.length} 個土城特色！` : `🤖 AI scanning… ${i + 1} / ${A.length}`; }); });
+        const shown = tags.filter(Boolean).length; // the label hangs under the thing (the drone hovers over it); older labels get small, so they don't pile up
+        tags.forEach((d, i) => { if (!d) return; const s3 = scr(P(i)[0], P(i)[1], P(i)[2]), big = i === last || i >= shown - 2; d.style.visibility = s3.ok ? "visible" : "hidden";
+          d.style.transform = `translate(${s3.x.toFixed(1)}px,${s3.y.toFixed(1)}px) translate(-50%,30%) scale(${big ? 1 : 0.72})`; d.style.opacity = String(out * (big ? 1 : 0.82)); d.style.zIndex = big ? "2" : "1";
+          d.lastChild.style.display = big ? "block" : "none"; });
+        if (hud) hud.style.opacity = String(out);
+      }
       if (n === "rainbow") {
         drops.forEach((d) => { const show = e < 2.8; d.n.vis = show; if (!show) return; d.n.p = [d.x, 6.5 - (((e * 1.4 + d.ph) % 1) * 6.5), d.z]; d.n.alpha = 0.85 * clamp(e / 0.4) * clamp((2.8 - e) / 0.5); });
         const k = e < 1.8 ? 0 : back((e - 1.8) / 1.1) * out; rainbow.vis = k > 0.01; rainbow.s = [k, k, k];
         if (e > 1.8) { once("d", () => sfx("ding")); once("s", () => setTimeout(() => sfx("sparkle"), 400)); }
-      }
-      if (n === "medal") {
-        const up = back(e / 1.2) * out, y = 0.5 + 2.7 * ease(e / 1.2), sc = 2.3 * up; medal.vis = sc > 0.01; medal.p = [0, y, 2.4]; medal.s = [sc, sc, sc];
-        medal.r = [-12, 720 * inout(e / 3.4) + Math.max(0, e - 3.4) * 60, 0];
-        orbit.forEach((o, i) => { const a = e * 2.2 + (i / orbit.length) * Math.PI * 2, r = 3.3 * up; o.vis = up > 0.05; o.p = [Math.cos(a) * r, y + 0.6 * Math.sin(e * 3 + i), 2.4 + Math.sin(a) * r * 0.5]; o.s = [0.36 * up, 0.36 * up, 0.36 * up]; o.r = [0, 0, e * 200 + i * 40]; });
-        if (e > 1.1) once("f", () => sfx("fanfare"));
       }
       if (n === "relay") {
         const boost = clamp(e / 0.6) * clamp((cur.dur - 0.8 - e) / 0.8);

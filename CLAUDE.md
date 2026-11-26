@@ -65,7 +65,9 @@
   `ollie3d.js`; it turns 360° and carries the six numbered gate flags (links to the gates). It sits in the middle of the home page (and of
   the backup launcher) with the six gates round it, and on the first slide of the opening show. It was modelled after the real layout seen in a public
   aerial video; no frame of that video may be used. A tap on the home campus (not a drag, not a flag) plays a surprise
-  (the teacher, 2026-11-24): fireworks, rain + rainbow, the 1921 gold medal, a relay race with confetti, a hot-air balloon, the school
+  (the teacher, 2026-11-24; on 2026-11-26 the fireworks and the gold medal were replaced by the school's own features, English × AI):
+  ENGLISH (seven ABC blocks spell TUCHENG, turn round to ENGLISH, booklet greetings pop up in bubbles), AI (a drone flies round the
+  campus and labels ten real places in English + Chinese, ending with Tucheng Elementary School), rain + rainbow, a relay race with confetti, a hot-air balloon, the school
   bell (Westminster chime, synthesised) with dancing flags, Ollie flying past — a different one each tap (`surprise: true`); sound
   effects only, nothing spoken. Pictures should be lively: props and badges turn a full 360° (`.turn360`).
 - Practice before the day (the teacher, 2026-11-26): `practice.html` + `js/practice.js` is a quick listening / speaking practice book

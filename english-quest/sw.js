@@ -1,6 +1,6 @@
 /* Offline cache for event day. 115.11.21: network first (the newest version shows at once when online);
    only when the network fails or takes over 4 s is the cached copy used. */
-const CACHE = "tces-english-day-v34-20261124";
+const CACHE = "tces-english-day-v35-20261126";
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
